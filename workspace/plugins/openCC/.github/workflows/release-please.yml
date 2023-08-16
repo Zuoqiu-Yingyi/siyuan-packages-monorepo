@@ -13,7 +13,7 @@ permissions:
   pull-requests: write
 
 env:
-  PACKAGE_NAME: custom-fonts
+  PACKAGE_NAME: openCC
   PACKAGE_VERSION: 0.0.0
 
 jobs:
