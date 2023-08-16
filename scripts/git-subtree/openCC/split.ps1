@@ -1,3 +1,3 @@
 git subtree split `
-    -P workspace/plugins/chinese-convert `
+    -P workspace/plugins/openCC `
     --rejoin
