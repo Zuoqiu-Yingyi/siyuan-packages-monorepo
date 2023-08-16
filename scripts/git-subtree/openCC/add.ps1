@@ -1,5 +1,5 @@
 git subtree add `
-    -P workspace/plugins/chinese-convert `
-    https://github.com/Zuoqiu-Yingyi/siyuan-plugin-chinese-convert.git `
+    -P workspace/plugins/openCC `
+    https://github.com/Zuoqiu-Yingyi/siyuan-plugin-openCC.git `
     dev `
     --squash
