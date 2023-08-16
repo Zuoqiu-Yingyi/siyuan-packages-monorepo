@@ -7,6 +7,7 @@
 - 添加附属仓库 `template` 的管理脚本 | Add management scripts for sub-repository `template`.
 - 完善插件模板 | Improve plugin template.
 - 重新添加附属仓库 `template` | Re-add sub-repository `template`.
+- 添加附属仓库 `openCC` 的管理脚本 | Add management scripts for sub-repository `openCC`.
 
 ## 2023-08-15
 
