@@ -23,6 +23,7 @@ import type { IProtyle } from "@workspace/types/siyuan/protyle";
 
 // import { BlockType } from "./../block";
 import * as sdk from "@siyuan-community/siyuan-sdk";
+import { IOpenMenuContentDetail } from "@workspace/types/siyuan/events";
 
 /* 块菜单上下文 */
 export interface IBlockMenuDetail {
@@ -68,6 +69,12 @@ export interface IBlockMenuContext extends IBlockContext {
     blocks: IBlockContext[];
 }
 
+/* 划选内容的上下文 */
+export interface ISelectedMenuContext {
+    block: IBlockContext,
+    range: Range;
+}
+
 /* 块菜单上下文 */
 export function getBlockMenuContext(detail: BlockMenuDetail): IBlockMenuContext | null {
     const { protyle, data, blockElements } = detail;
@@ -105,5 +112,23 @@ export function getBlockMenuContext(detail: BlockMenuDetail): IBlockMenuContext 
         }
     }
 
+    return null;
+}
+
+/* 划选菜单上下文 */
+export function getSelectedMenuContext(detail: IOpenMenuContentDetail): ISelectedMenuContext | null {
+    const { element, range } = detail;
+
+    if (element && range) {
+        return {
+            block: {
+                element,
+                id: element.dataset.nodeId as BlockID,
+                type: element.dataset.type as sdk.siyuan.NodeType,
+                subtype: element.dataset.subtype as sdk.siyuan.BlockSubType,
+            },
+            range,
+        };
+    }
     return null;
 }

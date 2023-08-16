@@ -43,16 +43,27 @@ export interface IClickEditorContentDetail {
     protyle: IProtyle;
 }
 
-export interface IOpenMenuLinkDetail {
-    element: HTMLSpanElement,
+/* 菜单事件详情 */
+export interface IMenuBaseDetail {
+    element: HTMLElement;
     menu: InstanceType<typeof siyuan.Menu>;
     protyle: IProtyle;
 }
 
-export interface IOpenMenuBlockRefDetail {
+/* 超链接右键菜单事件详情 */
+export interface IOpenMenuLinkDetail extends IMenuBaseDetail {
+    element: HTMLSpanElement;
+}
+
+/* 块引用右键菜单事件详情 */
+export interface IOpenMenuBlockRefDetail extends IMenuBaseDetail {
     element: HTMLSpanElement,
-    menu: InstanceType<typeof siyuan.Menu>;
-    protyle: IProtyle;
+}
+
+/* 划选文本右键菜单事件详情 */
+export interface IOpenMenuContentDetail extends IMenuBaseDetail {
+    element: HTMLDivElement,
+    range: Range;
 }
 
 export interface IOpenSiyuanUrlDetail {
@@ -93,6 +104,10 @@ export interface IOpenMenuLinkEvent extends CustomEvent<IOpenMenuLinkDetail> {
 
 export interface IOpenMenuBlockRefEvent extends CustomEvent<IOpenMenuBlockRefDetail> {
     type: "open-menu-blockref";
+}
+
+export interface IOpenMenuContentEvent extends CustomEvent<IOpenMenuContentDetail> {
+    type: "open-menu-content";
 }
 
 export interface IOpenSiyuanUrlEvent extends CustomEvent<IOpenSiyuanUrlDetail> {

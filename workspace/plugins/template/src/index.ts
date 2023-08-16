@@ -30,11 +30,13 @@ import {
 import { Logger } from "@workspace/utils/logger";
 import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
 import { DEFAULT_CONFIG } from "./configs/default";
+import type { I18N } from "./utils/i18n";
 import type { IConfig } from "./types/config";
 
 export default class TemplatePlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "global-config";
 
+    declare public readonly i18n: I18N;
     public readonly siyuan = siyuan;
     public readonly logger: InstanceType<typeof Logger>;
     public readonly client: InstanceType<typeof Client>;
