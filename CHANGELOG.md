@@ -11,6 +11,7 @@
 - 调整附属仓库 `openCC` 的管理脚本 | Adjust the management scripts for sub-repository `openCC`.
 - 初始化附属仓库 `openCC` | Initialize sub-repository `openCC`.
 - 重新添加附属仓库 `opencc` | Re-add sub-repository `opencc`.
+- 封装 `opencc-js` 转换器构造函数 | Encapsulate the `opencc-js` converter constructor.
 
 ## 2023-08-15
 
