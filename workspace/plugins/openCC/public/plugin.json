@@ -1,7 +1,7 @@
 {
-    "name": "template",
+    "name": "openCC",
     "author": "Zuoqiu Yingyi",
-    "url": "https://github.com/Zuoqiu-Yingyi/siyuan-plugin-template",
+    "url": "https://github.com/Zuoqiu-Yingyi/siyuan-plugin-openCC",
     "version": "0.0.0",
     "minAppVersion": "2.9.0",
     "backends": [
@@ -11,14 +11,14 @@
         "all"
     ],
     "displayName": {
-        "default": "",
-        "zh_CN": "",
-        "zh_CHT": ""
+        "default": "Chinese Convert",
+        "zh_CN": "中文转换",
+        "zh_CHT": "中文轉換"
     },
     "description": {
-        "default": "",
-        "zh_CN": "",
-        "zh_CHT": ""
+        "default": "<a href='https://github.com/BYVoid/OpenCC'>Open Chinese Convert (OpenCC)</a> is an opensource project for conversions between Traditional Chinese, Simplified Chinese and Japanese Kanji (Shinjitai). It supports character-level and phrase-level conversion, character variant conversion and regional idioms among Mainland China, Taiwan and Hong Kong. This is not translation tool between Mandarin and Cantonese, etc.",
+        "zh_CN": "<a href='https://github.com/BYVoid/OpenCC'>开放中文转换 (Open Chinese Convert, OpenCC)</a>是一个中文简繁转换开源项目，支持词汇级别的转换、异体字转换和地区习惯用词转换（中国大陆、台湾、香港、日本新字体）。不提供普通话与粤语的转换。",
+        "zh_CHT": "<a href='https://github.com/BYVoid/OpenCC'>開放中文轉換 (Open Chinese Convert, OpenCC)</a>是一個中文簡繁轉換開源項目，支持詞彙級別的轉換、異體字轉換和地區習慣用詞轉換（中國大陸、臺灣、香港、日本新字體）。不提供普通話與粵語的轉換。"
     },
     "readme": {
         "default": "README.md",
