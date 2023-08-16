@@ -1,3 +1,3 @@
 git subtree split `
-    -P workspace/plugins/openCC `
+    -P workspace/plugins/opencc `
     --rejoin
