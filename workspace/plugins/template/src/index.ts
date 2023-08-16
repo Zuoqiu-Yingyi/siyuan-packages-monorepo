@@ -32,22 +32,12 @@ import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
 import { DEFAULT_CONFIG } from "./configs/default";
 import type { IConfig } from "./types/config";
 
-import type {
-    IWebSocketMainEvent,
-    IClickEditorContentEvent,
-    ILoadedProtyleEvent,
-} from "@workspace/types/siyuan/events";
-import type { BlockID } from "@workspace/types/siyuan";
-
-type INotebook = types.kernel.api.notebook.lsNotebooks.INotebook;
-
-export default class WakaTimePlugin extends siyuan.Plugin {
+export default class TemplatePlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "global-config";
 
     public readonly siyuan = siyuan;
     public readonly logger: InstanceType<typeof Logger>;
     public readonly client: InstanceType<typeof Client>;
-    public readonly notebook = new Map<BlockID, INotebook>(); // 笔记本 ID => 笔记本信息
 
     protected readonly SETTINGS_DIALOG_ID: string;
 
@@ -69,7 +59,7 @@ export default class WakaTimePlugin extends siyuan.Plugin {
         this.addIcons([
         ].join(""));
 
-        this.loadData(WakaTimePlugin.GLOBAL_CONFIG_NAME)
+        this.loadData(TemplatePlugin.GLOBAL_CONFIG_NAME)
             .then(config => {
                 this.config = mergeIgnoreArray(DEFAULT_CONFIG, config || {}) as IConfig;
             })
@@ -111,6 +101,6 @@ export default class WakaTimePlugin extends siyuan.Plugin {
         if (config && config !== this.config) {
             this.config = config;
         }
-        return this.saveData(WakaTimePlugin.GLOBAL_CONFIG_NAME, this.config);
+        return this.saveData(TemplatePlugin.GLOBAL_CONFIG_NAME, this.config);
     }
 };
