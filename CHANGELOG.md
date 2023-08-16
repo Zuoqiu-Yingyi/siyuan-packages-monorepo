@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-08-17
+
+- 修复无法正确解析子标题块问题 | Fix the issue that the subheading block cannot be parsed correctly.
+
 ## 2023-08-16
 
 - 添加文件/文件夹更新时间 | Add file/folder update time.
