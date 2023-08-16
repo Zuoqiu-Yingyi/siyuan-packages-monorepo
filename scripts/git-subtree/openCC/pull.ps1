@@ -1,4 +1,4 @@
 git subtree pull `
-    -P workspace/plugins/openCC `
-    https://github.com/Zuoqiu-Yingyi/siyuan-plugin-openCC.git `
+    -P workspace/plugins/opencc `
+    https://github.com/Zuoqiu-Yingyi/siyuan-plugin-opencc.git `
     dev
