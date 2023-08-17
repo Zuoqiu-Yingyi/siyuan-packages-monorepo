@@ -58,7 +58,7 @@
             },
             "globalTab": {
                 "dictionary": {
-                    "title": "Global Custom Dictionary"
+                    "title": "Global Extension Dictionary"
                 },
                 "title": "Global Settings"
             },
@@ -82,7 +82,7 @@
             "dictionary": {
                 "description": "The custom dictionary to be used during conversion<br/>Separate source and target words with spaces in each entry; separate entries with <code class='fn__code'>|</code> or line breaks<br/>Example: <code class='fn__code'>汉语 漢語|自行車 腳踏車|資訊科技 信息技術</code>",
                 "placeholder": "No expand words",
-                "title": "Expand Dictionary"
+                "title": "Extension Dictionary"
             },
             "sourceTextType": {
                 "description": "Select the type of the text before conversion",
