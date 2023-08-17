@@ -16,6 +16,45 @@
  */
 
 import type { IConfig } from "@/types/config";
+import { Locale } from "@/opencc";
+import type { IDicts } from "@/types/dictionary";
 
 export const DEFAULT_CONFIG: IConfig = {
+    opencc: {
+        dict: "",
+        s2t: {
+            from: Locale.cn,
+            to: Locale.tw,
+            dict: "",
+        },
+        t2s: {
+            from: Locale.tw,
+            to: Locale.cn,
+            dict: "",
+        },
+        custom: {
+            from: Locale.cn,
+            to: Locale.hk,
+            dict: "",
+        },
+    },
+};
+
+export const DEFAULT_CUSTOM_DICTS: IDicts = {
+    global: {
+        str: "",
+        dict: [],
+    },
+    s2t: {
+        str: "",
+        dict: [],
+    },
+    t2s: {
+        str: "",
+        dict: [],
+    },
+    custom: {
+        str: "",
+        dict: [],
+    },
 };

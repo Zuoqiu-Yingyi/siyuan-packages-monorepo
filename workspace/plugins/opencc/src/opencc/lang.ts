@@ -15,22 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Locale } from "@/opencc";
+import { Locale } from ".";
 
-/* 转换设置 */
-export interface IConvert {
-    from: Locale;
-    to: Locale;
-    dict: string;
+export enum Language {
+    zh_Hans = "zh-Hans",
+    zh_Hant = "zh-Hant",
+    zh_Hans_CN = "zh-Hans-CN",
+    zh_Hant_HK = "zh-Hant-HK",
+    zh_Hant_TW = "zh-Hant-TW",
+    ja_Hani_JP = "ja-Hani-JP",
 }
 
-export interface IOpenCC {
-    dict: string; // 全局字典
-    s2t: IConvert; // 简体 → 繁体
-    t2s: IConvert; // 繁体 → 简体
-    custom: IConvert; // 自定义转换
-}
-
-export interface IConfig {
-    opencc: IOpenCC;
+/* 地区 -> BCP 47 语言标识 */
+export function locale2lang(locale: Locale): Language {
+    switch (locale) {
+        case Locale.cn:
+            return Language.zh_Hans_CN;
+        case Locale.t:
+            return Language.zh_Hant;
+        case Locale.hk:
+            return Language.zh_Hant_HK;
+        case Locale.tw:
+        case Locale.twp:
+            return Language.zh_Hant_TW;
+        case Locale.jp:
+            return Language.ja_Hani_JP;
+    }
 }

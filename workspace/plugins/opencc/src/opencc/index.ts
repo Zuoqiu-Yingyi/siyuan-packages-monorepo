@@ -20,11 +20,11 @@ import * as opencc from "opencc-js";
 
 export enum Locale {
     cn = "cn",
+    t = "t",
+    hk = "hk",
     tw = "tw",
     twp = "twp",
-    hk = "hk",
     jp = "jp",
-    t = "t",
 }
 
 /* 转换器参数 */
@@ -45,9 +45,9 @@ export function locale2dict(locale: Locale, type: keyof opencc.ILocale): opencc.
 }
 
 /**
- * 构造转换器
+ * 创建转换器
  */
-export function buildConverter(options: IConverterOptions): opencc.ConvertText {
+export function createConverter(options: IConverterOptions): opencc.ConvertText {
     const dicts: opencc.TDict[] = [];
 
     /* 获取字典 */
@@ -72,6 +72,6 @@ export function convert(
     text: string,
     options: IConverterOptions,
 ): string {
-    const converter = buildConverter(options);
+    const converter = createConverter(options);
     return converter(text);
 }

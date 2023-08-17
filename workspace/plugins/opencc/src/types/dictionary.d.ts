@@ -15,22 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Locale } from "@/opencc";
-
-/* 转换设置 */
-export interface IConvert {
-    from: Locale;
-    to: Locale;
-    dict: string;
+export interface IDict {
+    str: string;
+    dict: [string, string][];
 }
 
-export interface IOpenCC {
-    dict: string; // 全局字典
-    s2t: IConvert; // 简体 → 繁体
-    t2s: IConvert; // 繁体 → 简体
-    custom: IConvert; // 自定义转换
-}
-
-export interface IConfig {
-    opencc: IOpenCC;
+export interface IDicts {
+    global: IDict;
+    s2t: IDict;
+    t2s: IDict;
+    custom: IDict;
 }
