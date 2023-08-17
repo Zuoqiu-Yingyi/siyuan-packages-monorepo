@@ -1,6 +1,72 @@
 {
     "displayName": "中文轉換",
+    "locale": {
+        "cn": "簡體中文",
+        "hk": "繁體中文（香港繁體）",
+        "jp": "日文新字型",
+        "t": "繁體中文（OpenCC 標準）",
+        "tw": "繁體中文（臺灣正體）",
+        "twp": "繁體中文（臺灣正體常用詞）"
+    },
+    "menu": {
+        "copyResult": {
+            "accelerator": {
+                "plaintext": "純文字"
+            },
+            "label": "複製轉換結果"
+        },
+        "custom": {
+            "label": "自定義轉換"
+        },
+        "insertAfter": {
+            "label": "在下方插入轉換結果"
+        },
+        "insertAfterEachBlock": {
+            "label": "在每個塊的下方插入轉換結果"
+        },
+        "insertBefore": {
+            "label": "在上方插入轉換結果"
+        },
+        "insertBeforeEachBlock": {
+            "label": "在每個塊的上方插入轉換結果"
+        },
+        "other": {
+            "label": "其他轉換"
+        },
+        "replaceOriginalText": {
+            "label": "轉換結果替換原文字"
+        },
+        "s2t": {
+            "label": "簡 → 繁"
+        },
+        "t2s": {
+            "label": "繁 → 簡"
+        }
+    },
+    "messages": {
+        "copy": {
+            "success": "轉換結果已寫入剪貼簿"
+        }
+    },
     "settings": {
+        "convertSettings": {
+            "customTab": {
+                "title": "自定義轉換"
+            },
+            "globalTab": {
+                "dictionary": {
+                    "title": "全域性擴充套件詞典"
+                },
+                "title": "全域性設定"
+            },
+            "s2tTab": {
+                "title": "簡 → 繁"
+            },
+            "t2sTab": {
+                "title": "繁 → 簡"
+            },
+            "title": "轉換設定"
+        },
         "generalSettings": {
             "reset": {
                 "description": "重置所有設定選項為預設選項（重置後將重新整理頁面）",
@@ -8,6 +74,21 @@
                 "title": "重置設定選項"
             },
             "title": "常規設定"
+        },
+        "options": {
+            "dictionary": {
+                "description": "擴充套件詞典將會在轉換時被使用<br/>每一個詞條中使用空格分隔原始詞彙與目標詞彙，詞條之間使用 <code class='fn__code'>|</code> 或換行分隔<br/>示例：<code class='fn__code'>漢語 漢語|腳踏車 腳踏車|資訊科技 資訊科技</code>",
+                "placeholder": "無擴充套件詞彙",
+                "title": "擴充套件詞典"
+            },
+            "sourceTextType": {
+                "description": "選擇轉換前文字的型別",
+                "title": "原始文字型別"
+            },
+            "targetTextType": {
+                "description": "選擇轉換後文字的型別",
+                "title": "目標文字型別"
+            }
         }
     }
 }

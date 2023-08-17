@@ -49,6 +49,24 @@
         }
     },
     "settings": {
+        "convertSettings": {
+            "customTab": {
+                "title": "自定义转换"
+            },
+            "globalTab": {
+                "dictionary": {
+                    "title": "全局扩展词典"
+                },
+                "title": "全局设置"
+            },
+            "s2tTab": {
+                "title": "简 → 繁"
+            },
+            "t2sTab": {
+                "title": "繁 → 简"
+            },
+            "title": "转换设置"
+        },
         "generalSettings": {
             "reset": {
                 "description": "重置所有设置选项为默认选项（重置后将刷新页面）",
@@ -56,6 +74,21 @@
                 "title": "重置设置选项"
             },
             "title": "常规设置"
+        },
+        "options": {
+            "dictionary": {
+                "description": "扩展词典将会在转换时被使用<br/>每一个词条中使用空格分隔原始词汇与目标词汇，词条之间使用 <code class='fn__code'>|</code> 或换行分隔<br/>示例：<code class='fn__code'>汉语 漢語|自行車 腳踏車|資訊科技 信息技術</code>",
+                "placeholder": "无扩展词汇",
+                "title": "扩展词典"
+            },
+            "sourceTextType": {
+                "description": "选择转换前文本的类型",
+                "title": "原始文本类型"
+            },
+            "targetTextType": {
+                "description": "选择转换后文本的类型",
+                "title": "目标文本类型"
+            }
         }
     }
 }

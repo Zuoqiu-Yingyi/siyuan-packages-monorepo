@@ -42,13 +42,14 @@
             <Tab
                 on:changed={changed}
                 key={tab.key}
+                icon={!!tab.icon}
                 name={tab.name}
                 focus={tab.key === focus}
             >
                 <span slot="icon">
-                    {#if tab.icon.startsWith("#")}
+                    {#if tab.icon?.startsWith("#")}
                         <Svg icon={tab.icon} />
-                    {:else}
+                    {:else if tab.icon}
                         {@html tab.icon}
                     {/if}
                 </span>

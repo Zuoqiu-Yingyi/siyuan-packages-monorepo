@@ -1,13 +1,94 @@
 {
     "displayName": "Chinese Convert",
+    "locale": {
+        "cn": "Simplified Chinese",
+        "hk": "Traditional Chinese (Hong Kong)",
+        "jp": "Japanese Shinjitai",
+        "t": "Traditional Chinese (OpenCC Standard)",
+        "tw": "Traditional Chinese (Taiwan)",
+        "twp": "Traditional Chinese (Taiwan Common Words)"
+    },
+    "menu": {
+        "copyResult": {
+            "accelerator": {
+                "plaintext": "Plain Text"
+            },
+            "label": "Copy Conversion Result"
+        },
+        "custom": {
+            "label": "Custom Conversion"
+        },
+        "insertAfter": {
+            "label": "Insert Conversion Result Below"
+        },
+        "insertAfterEachBlock": {
+            "label": "Insert Conversion Result Below Each Block"
+        },
+        "insertBefore": {
+            "label": "Insert Conversion Result Above"
+        },
+        "insertBeforeEachBlock": {
+            "label": "Insert Conversion Result Above Each Block"
+        },
+        "other": {
+            "label": "Other Conversion"
+        },
+        "replaceOriginalText": {
+            "label": "Replace Original Text with Conversion Result"
+        },
+        "s2t": {
+            "label": "Simplified to Traditional"
+        },
+        "t2s": {
+            "label": "Traditional to Simplified"
+        }
+    },
+    "messages": {
+        "copy": {
+            "success": "The conversion result has been copied to the clipboard"
+        }
+    },
     "settings": {
+        "convertSettings": {
+            "customTab": {
+                "title": "Custom Conversion"
+            },
+            "globalTab": {
+                "dictionary": {
+                    "title": "Global Custom Dictionary"
+                },
+                "title": "Global Settings"
+            },
+            "s2tTab": {
+                "title": "Simplified to Traditional"
+            },
+            "t2sTab": {
+                "title": "Traditional to Simplified"
+            },
+            "title": "Conversion Settings"
+        },
         "generalSettings": {
             "reset": {
-                "description": "Reset all settings options to default options (refresh page after reset)",
+                "description": "Reset all settings options to default (refresh page after resetting)",
                 "text": "Reset",
-                "title": "Reset settings options"
+                "title": "Reset Settings"
             },
-            "title": "General"
+            "title": "General Settings"
+        },
+        "options": {
+            "dictionary": {
+                "description": "The custom dictionary to be used during conversion<br/>Separate source and target words with spaces in each entry; separate entries with <code class='fn__code'>|</code> or line breaks<br/>Example: <code class='fn__code'>汉语 漢語|自行車 腳踏車|資訊科技 信息技術</code>",
+                "placeholder": "No expand words",
+                "title": "Expand Dictionary"
+            },
+            "sourceTextType": {
+                "description": "Select the type of the text before conversion",
+                "title": "Source Text Type"
+            },
+            "targetTextType": {
+                "description": "Select the type of the text after conversion",
+                "title": "Target Text Type"
+            }
         }
     }
 }
