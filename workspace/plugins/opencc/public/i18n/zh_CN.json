@@ -1,5 +1,53 @@
 {
     "displayName": "中文转换",
+    "locale": {
+        "cn": "简体中文",
+        "hk": "繁体中文（香港繁体）",
+        "jp": "日文新字体",
+        "t": "繁体中文（OpenCC 标准）",
+        "tw": "繁体中文（台湾正体）",
+        "twp": "繁体中文（台湾正体常用词）"
+    },
+    "menu": {
+        "copyResult": {
+            "accelerator": {
+                "plaintext": "纯文本"
+            },
+            "label": "复制转换结果"
+        },
+        "custom": {
+            "label": "自定义转换"
+        },
+        "insertAfter": {
+            "label": "在下方插入转换结果"
+        },
+        "insertAfterEachBlock": {
+            "label": "在每个块的下方插入转换结果"
+        },
+        "insertBefore": {
+            "label": "在上方插入转换结果"
+        },
+        "insertBeforeEachBlock": {
+            "label": "在每个块的上方插入转换结果"
+        },
+        "other": {
+            "label": "其他转换"
+        },
+        "replaceOriginalText": {
+            "label": "转换结果替换原文本"
+        },
+        "s2t": {
+            "label": "简 → 繁"
+        },
+        "t2s": {
+            "label": "繁 → 简"
+        }
+    },
+    "messages": {
+        "copy": {
+            "success": "转换结果已写入剪贴板"
+        }
+    },
     "settings": {
         "generalSettings": {
             "reset": {

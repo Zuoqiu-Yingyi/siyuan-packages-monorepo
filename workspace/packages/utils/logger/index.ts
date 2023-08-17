@@ -46,7 +46,9 @@ export class Logger {
         }
 
         if (multiple) {
-            args.forEach(arg => Array.isArray(arg) ? func(...arg) : func(arg)); // 输出多条日志
+            for (const arg of args) {
+                Array.isArray(arg) ? func(...arg) : func(arg); // 输出多日志
+            }
         }
         else {
             func(...args); // 输出日志

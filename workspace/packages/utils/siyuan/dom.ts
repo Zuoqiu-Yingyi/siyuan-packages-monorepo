@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import siyuan from "siyuan";
+
 import {
     BlockID,
     SnippetID,
@@ -218,4 +220,19 @@ export function getSnapshotIDs(e: Event): { id: SnapshotID | void, id2: Snapshot
         id2: undefined,
         name: undefined,
     };
+}
+
+/**
+ * 更新块 DOM 中的 ID
+ */
+export function updateBlockID(
+    html: string,
+    Lute: typeof siyuan.Lute = globalThis.Lute,
+): string {
+    const element = document.createElement("div");
+    element.innerHTML = html;
+    element
+        .querySelectorAll<HTMLDivElement>("div[data-node-id]")
+        ?.forEach(block => block.dataset.nodeId = Lute.NewNodeID());
+    return element.innerHTML;
 }

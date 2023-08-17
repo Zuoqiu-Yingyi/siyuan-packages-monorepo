@@ -37,13 +37,14 @@ export default class TemplatePlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "global-config";
 
     declare public readonly i18n: I18N;
+
     public readonly siyuan = siyuan;
     public readonly logger: InstanceType<typeof Logger>;
     public readonly client: InstanceType<typeof Client>;
 
     protected readonly SETTINGS_DIALOG_ID: string;
 
-    protected config: IConfig;
+    protected config: IConfig = DEFAULT_CONFIG;
 
     constructor(options: any) {
         super(options);
