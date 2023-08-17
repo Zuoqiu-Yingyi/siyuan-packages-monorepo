@@ -22,6 +22,7 @@
     import type { ITabEvent } from "./../event";
 
     export let key: TabKey; // 该页签的唯一标识
+    export let icon: boolean; // 是否显示图标
     export let name: string = ""; // 该页签的名称
     export let focus: boolean = false; // 该页签是否聚焦
 
@@ -45,7 +46,7 @@
 >
     <!-- [组件子级 / Checking for slot content • Svelte 教程 | Svelte 中文网](https://www.svelte.cn/tutorial/optional-slots) -->
     <span class="fn__flex-1" />
-    {#if $$slots.icon}
+    {#if icon && $$slots.icon}
         <span class="item__icon">
             <slot name="icon" />
         </span>

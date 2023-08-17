@@ -5,6 +5,7 @@
 - 修复无法正确解析子标题块问题 | Fix the issue that the subheading block cannot be parsed correctly.
 - 捕获删除块导致的异常 | Catch exceptions caused by deleted blocks.
 - 添加中文转换菜单 | Add Chinese conversion menu.
+- 添加设置面板 | Add settings panel.
 
 ## 2023-08-16
 
