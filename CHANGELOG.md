@@ -3,6 +3,7 @@
 ## 2023-08-17
 
 - 修复无法正确解析子标题块问题 | Fix the issue that the subheading block cannot be parsed correctly.
+- 捕获删除块导致的异常 | Catch exceptions caused by deleted blocks.
 
 ## 2023-08-16
 
