@@ -33,6 +33,9 @@
         "other": {
             "label": "其他转换"
         },
+        "renameDocumentTitle": {
+            "label": "转换文档标题"
+        },
         "replaceOriginalText": {
             "label": "转换结果替换原文本"
         },

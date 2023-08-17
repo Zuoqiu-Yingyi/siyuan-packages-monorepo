@@ -202,7 +202,7 @@ export default class OpenCCPlugin extends siyuan.Plugin {
 
     /* 划选文本菜单事件监听器 */
     protected readonly openMenuContentEventListener = (e: IOpenMenuContentEvent) => {
-        this.logger.debug(e);
+        // this.logger.debug(e);
 
         const detail = e.detail;
         const context = getSelectedMenuContext(detail);
@@ -522,6 +522,26 @@ export default class OpenCCPlugin extends siyuan.Plugin {
                 await insertWhole("after");
             },
             disabled,
+        });
+
+        submenu.push({ type: "separator" });
+
+        /* 转换文档标题 */
+        submenu.push({
+            icon: "iconCopy",
+            label: this.i18n.menu.renameDocumentTitle.label,
+            click: async () => {
+                const title = (protyle.title.editElement as HTMLDivElement).innerText;
+                const result = convert(title, options);
+                this.client.renameDoc({
+                    notebook: protyle.notebookId,
+                    path: protyle.path,
+                    title: result,
+                });
+            },
+            disabled: disabled
+                || !("isDocumentBlock" in context)
+                || (!context.isDocumentBlock),
         });
 
         return submenu;
