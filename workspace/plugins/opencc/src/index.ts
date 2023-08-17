@@ -364,6 +364,10 @@ export default class OpenCCPlugin extends siyuan.Plugin {
     ): siyuan.IMenuItemOption[] {
         const submenu: siyuan.IMenuItemOption[] = [];
 
+        const flag_select = ("range" in context);
+        const flag_block = ("isDocumentBlock" in context);
+        const flag_document = flag_block && context.isDocumentBlock;
+
         /* 复制转换结果 */
         const copy = async (type: "plaintext" | "markdown" | "kramdown") => {
             const html = await this.getSelectedHTML(context, false);
@@ -488,7 +492,7 @@ export default class OpenCCPlugin extends siyuan.Plugin {
             click: async () => {
                 await insertParts("before");
             },
-            disabled,
+            disabled: disabled || flag_select,
         });
 
         /* 转换结果替换原内容 */
@@ -511,7 +515,7 @@ export default class OpenCCPlugin extends siyuan.Plugin {
             click: async () => {
                 await insertParts("after");
             },
-            disabled,
+            disabled: disabled || flag_select,
         });
 
         /* 在下方插入转换结果 */
@@ -539,9 +543,7 @@ export default class OpenCCPlugin extends siyuan.Plugin {
                     title: result,
                 });
             },
-            disabled: disabled
-                || !("isDocumentBlock" in context)
-                || (!context.isDocumentBlock),
+            disabled: disabled || !flag_document,
         });
 
         return submenu;
