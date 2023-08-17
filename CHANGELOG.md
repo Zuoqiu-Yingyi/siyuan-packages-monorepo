@@ -6,6 +6,7 @@
 - 捕获删除块导致的异常 | Catch exceptions caused by deleted blocks.
 - 添加中文转换菜单 | Add Chinese conversion menu.
 - 添加设置面板 | Add settings panel.
+- 添加转换文档标题功能 | Add the function of converting document title.
 
 ## 2023-08-16
 

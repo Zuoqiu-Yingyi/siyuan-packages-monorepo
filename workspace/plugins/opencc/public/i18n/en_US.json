@@ -33,6 +33,9 @@
         "other": {
             "label": "Other Conversion"
         },
+        "renameDocumentTitle": {
+            "label": "Convert Document Title"
+        },
         "replaceOriginalText": {
             "label": "Replace Original Text with Conversion Result"
         },
