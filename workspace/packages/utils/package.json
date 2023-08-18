@@ -18,6 +18,7 @@
         "html-escaper": "^3.0.3",
         "jstimezonedetect": "^1.0.7",
         "mapbox-to-css-font": "^2.4.2",
+        "moment": "^2.29.4",
         "normalize-path": "^3.0.0",
         "parse-data-url": "^5.0.0",
         "path-browserify": "^1.0.1",

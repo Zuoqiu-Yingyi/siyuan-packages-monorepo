@@ -15,36 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { IConfig } from "@/types/config";
-import { Category } from "@/wakatime/heartbeats";
+import moment from "moment";
 
-export const DEFAULT_CONFIG: IConfig = {
-    wakatime: {
-        api_url: "",
-        api_key: "",
-        timeout: 30,
-        hide_branch_names: true,
-        hide_file_names: true,
-
-        offline: false,
-
-        includeID: [],
-        excludeID: [],
-
-        include: [],
-        exclude: [],
-
-        heartbeats: false,
-        project: "",
-        language: "",
-        hostname: "",
-        interval: 60,
-
-        view: {
-            category: Category.Browsing,
-        },
-        edit: {
-            category: Category.Learning,
-        },
-    },
-};
+export default moment;
