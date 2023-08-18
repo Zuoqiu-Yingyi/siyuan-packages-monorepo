@@ -2,14 +2,14 @@
 <img alt="圖標" src="https://cdn.jsdelivr.net/gh/Zuoqiu-Yingyi/siyuan-plugin-opencc/public/icon.png" style="width: 8em; height: 8em;">
 
 ---
-[![GitHub 最新發行版本 (最新一次發行/預發行)](https://img.shields.io/github/v/release/Zuoqiu-Yingyi/siyuan-plugin-opencc?include_prereleases)](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-opencc/releases/latest)
-[![GitHub 最新發行時間](https://img.shields.io/github/release-date/Zuoqiu-Yingyi/siyuan-plugin-opencc)](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-opencc/releases/latest)
-[![GitHub 許可證](https://img.shields.io/github/license/Zuoqiu-Yingyi/siyuan-plugin-opencc)](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-opencc/blob/main/LICENSE)
-[![GitHub 最後一次提交時間](https://img.shields.io/github/last-commit/Zuoqiu-Yingyi/siyuan-plugin-opencc)](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-opencc/commits/main)
-![GitHub 倉庫大小](https://img.shields.io/github/repo-size/Zuoqiu-Yingyi/siyuan-plugin-opencc)
-<!-- ![查看次數](https://hits.b3log.org/Zuoqiu-Yingyi/siyuan-plugin-opencc.svg) -->
-![jsDelivr 查看次數 (GitHub)](https://img.shields.io/jsdelivr/gh/hy/Zuoqiu-Yingyi/siyuan-packages-opencc)
-[![GitHub 發行版本下載次數](https://img.shields.io/github/downloads/Zuoqiu-Yingyi/siyuan-plugin-opencc/total)](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-opencc/releases)
+[![GitHub 最新發行版本 (最新一次發行/預發行)](https://img.shields.io/github/v/release/Zuoqiu-Yingyi/siyuan-plugin-opencc?include_prereleases&style=flat-square)](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-opencc/releases/latest)
+[![GitHub 最新發行時間](https://img.shields.io/github/release-date/Zuoqiu-Yingyi/siyuan-plugin-opencc?style=flat-square)](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-opencc/releases/latest)
+[![GitHub 許可證](https://img.shields.io/github/license/Zuoqiu-Yingyi/siyuan-plugin-opencc?style=flat-square)](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-opencc/blob/main/LICENSE)
+[![GitHub 最後一次提交時間](https://img.shields.io/github/last-commit/Zuoqiu-Yingyi/siyuan-plugin-opencc?style=flat-square)](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-opencc/commits/main)
+![GitHub 倉庫大小](https://img.shields.io/github/repo-size/Zuoqiu-Yingyi/siyuan-plugin-opencc?style=flat-square)
+![查看次數](https://hits.b3log.org/Zuoqiu-Yingyi/siyuan-plugin-opencc.svg)
+<!-- ![jsDelivr 查看次數 (GitHub)](https://img.shields.io/jsdelivr/gh/hy/Zuoqiu-Yingyi/siyuan-packages-opencc?style=flat-square) -->
+[![GitHub 發行版本下載次數](https://img.shields.io/github/downloads/Zuoqiu-Yingyi/siyuan-plugin-opencc/total?style=flat-square)](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-opencc/releases)
 
 ---
 [簡體中文](./README_zh_CN.md) \| 繁體中文 \| [English](./README.md)
