@@ -15,36 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { IConfig } from "@/types/config";
-import { Category } from "@/wakatime/heartbeats";
-
-export const DEFAULT_CONFIG: IConfig = {
-    wakatime: {
-        api_url: "",
-        api_key: "",
-        timeout: 30,
-        hide_branch_names: true,
-        hide_file_names: true,
-
-        offline: false,
-
-        includeID: [],
-        excludeID: [],
-
-        include: [],
-        exclude: [],
-
-        heartbeats: false,
-        project: "",
-        language: "",
-        hostname: "",
-        interval: 60,
-
-        view: {
-            category: Category.Browsing,
-        },
-        edit: {
-            category: Category.Learning,
-        },
-    },
-};
+/**
+ * 异步休眠
+ * @param ms 休眠时间 (单位: ms)
+ */
+export async function sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}

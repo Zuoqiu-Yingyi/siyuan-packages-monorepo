@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-08-19
+
+- 添加离线缓存功能 | Add offline cache function.
+
 ## 2023-08-17
 
 - 修复无法正确解析子标题块问题 | Fix the issue that the subheading block cannot be parsed correctly.
