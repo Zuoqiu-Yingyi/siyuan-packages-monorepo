@@ -201,10 +201,10 @@
     ];
 
     const tree = getContext<ITree>("tree");
-    tree.appendNode(props);
+    tree?.appendNode(props);
 
     onDestroy(() => {
-        tree.removeNode(props);
+        tree?.removeNode(props);
         unsubscribes.forEach(unsubscribe => unsubscribe());
     });
 
@@ -328,6 +328,7 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <li
     bind:this={li}
     on:dragstart|stopPropagation={ondragstart}
@@ -354,7 +355,10 @@
     class="node b3-list-item"
 >
     <!-- 折叠/展开按钮 -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-interactive-supports-focus -->
     <span
+        role="button"
         on:click|stopPropagation|preventDefault={toggle}
         style:padding-left="calc(4px + {indent} * {depth})"
         aria-label={toggleAriaLabel}
@@ -384,7 +388,7 @@
                 {icon}
                 id={iconPopoverID}
             />
-        {:else if icon.startsWith("/")}
+        {:else if icon.startsWith("/") || icon.startsWith("http") || icon.startsWith("data") || icon.startsWith("blob")}
             <!-- url 图标 -->
             <img
                 src={icon}
@@ -432,7 +436,9 @@
     </span>
 
     <!-- 菜单按钮 -->
+    <!-- svelte-ignore a11y-interactive-supports-focus -->
     <span
+        role="button"
         on:click|stopPropagation|preventDefault={menu}
         data-type="more"
         aria-label={menuAriaLabel}
