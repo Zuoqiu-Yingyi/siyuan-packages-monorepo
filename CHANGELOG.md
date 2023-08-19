@@ -3,6 +3,7 @@
 ## 2023-08-19
 
 - 添加离线缓存功能 | Add offline cache function.
+- 初始化 `jupyter-client` 项目 | Initialize `jupyter-client` project.
 
 ## 2023-08-17
 
