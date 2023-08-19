@@ -59,12 +59,12 @@ export interface IFileTreeEvent {
 /* 文档树节点 */
 export interface IFileTreeNode {
     type: FileTreeNodeType; // 节点类型
-    name: string; // 节点名称 (文件名/文件夹名)
+    name?: string; // 节点名称 (文件名/文件夹名)
     path: string; // 节点完整路径 (作为 ID)
-    root: string; // 根节点路径
+    root?: string; // 根节点路径
     depth?: number; // 深度, root 节点为 0
     indent?: string; // 缩进单位
-    relative: string; // 节点相对于根节点的路径
+    relative?: string; // 节点相对于根节点的路径
     directory: string; // 节点所在目录完整路径 (作为上级节点的 ID)
 
     focus?: boolean; // 是否聚焦
@@ -88,8 +88,8 @@ export interface IFileTreeNode {
     iconAriaLabel?: string; // 图标提示文本 (目录备注)
     iconPopoverID?: string; // 图标浮窗预览块 ID
 
-    text: string; // 文本
-    textAriaLabel: string; // 文本提示文本 (相对路径)
+    text?: string; // 文本
+    textAriaLabel?: string; // 文本提示文本 (相对路径)
 
     menuIcon?: string; // 菜单图标
     menuAriaLabel?: string; // 菜单提示文本

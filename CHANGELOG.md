@@ -4,6 +4,7 @@
 
 - 添加离线缓存功能 | Add offline cache function.
 - 初始化 `jupyter-client` 项目 | Initialize `jupyter-client` project.
+- 添加 Jupyter 状态面板 | Add Jupyter status panel.
 
 ## 2023-08-17
 
