@@ -242,7 +242,7 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
                     meta: reaular_font.family,
                     style: `font-family: "${reaular_font.family}"`,
                     fold: true,
-                    // indent: "1em",
+                    indent: "18px",
                     children: font_list.map(font => ({
                         icon: "#iconFont",
                         text: font.fullName,
