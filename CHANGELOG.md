@@ -3,6 +3,7 @@
 ## 2023-08-20
 
 - 重新添加附属仓库 `custom-fonts` | Re-add sub-repository `custom-fonts`.
+- 添加折叠/展开列表功能 | Add fold/unfold list function.
 
 ## 2023-08-19
 
