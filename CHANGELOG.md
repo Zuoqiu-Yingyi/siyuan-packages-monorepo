@@ -4,6 +4,7 @@
 
 - 重新添加附属仓库 `custom-fonts` | Re-add sub-repository `custom-fonts`.
 - 添加折叠/展开列表功能 | Add fold/unfold list function.
+- 添加侧边栏菜单 | Add dock menu.
 
 ## 2023-08-19
 
