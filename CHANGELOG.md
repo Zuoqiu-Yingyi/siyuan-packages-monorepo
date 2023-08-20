@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-08-20
+
+- 重新添加附属仓库 `custom-fonts` | Re-add sub-repository `custom-fonts`.
+
 ## 2023-08-19
 
 - 添加离线缓存功能 | Add offline cache function.
