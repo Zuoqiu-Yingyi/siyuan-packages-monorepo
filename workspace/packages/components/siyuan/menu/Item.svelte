@@ -29,6 +29,7 @@
     export let accelerator: string = ""; // 捷径提示
 
     export let file: boolean = false; // 是否为文件上传
+    export let accept: string = ""; // 文件上传类型
     // REF: https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/input/file#multiple
     export let multiple: boolean = true; // 是否支持多文件/文件夹上传
     // REF: https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/input/file#webkitdirectory
@@ -103,6 +104,7 @@
             type="file"
             bind:this={element}
             bind:files
+            {accept}
             {disabled}
             {multiple}
             on:change={selected}

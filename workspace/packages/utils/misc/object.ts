@@ -15,25 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { IConfig } from "@/types/config";
+/**
+ * 判断对象是否为空
+ * @params obj 对象
+ * @returns 是否为空
+ */
+export function isEmptyObject(obj: object): boolean {
+    return Object.keys(obj).length === 0
+}
 
-export const DEFAULT_CONFIG: IConfig = {
-    jupyter: {
-        server: {
-            enable: false,
-            settings: {
-                baseUrl: "",
-                appUrl: "",
-                wsUrl: "",
-                token: "",
-                appendToken: false,
-            },
-        },
-        import: {
-            params: {
-                escaped: true,
-                cntrl: true,
-            },
-        },
-    },
-};
+export function isString(str: unknown) {
+    return Object.prototype.toString.call(str) === '[object String]'
+}
+
+export function isObject(obj: unknown) {
+    return Object.prototype.toString.call(obj) === '[object Object]'
+}
+
+export function isArray(arr: unknown) {
+    return Array.isArray(arr)
+}
