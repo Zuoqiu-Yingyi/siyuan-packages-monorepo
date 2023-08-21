@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-08-22
+
+- 使用 `worker` 重构 | Refactor with `worker`.
+
 ## 2023-08-21
 
 - 添加 jupyter 资源列表 | Add jupyter resource list.
