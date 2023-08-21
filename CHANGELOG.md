@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-08-21
+
+- 添加 jupyter 资源列表 | Add jupyter resource list.
+
 ## 2023-08-20
 
 - 重新添加附属仓库 `custom-fonts` | Re-add sub-repository `custom-fonts`.
