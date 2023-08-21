@@ -21,6 +21,7 @@
 
     import { FileTreeNodeType, type IFileTreeEvent, type IFileTreeNode, type IFileTreeNodeStores, type ITree } from ".";
     import Svg from "./../../misc/Svg.svelte";
+    import Icon from "./../../misc/Icon.svelte";
     import SvgArrow from "./../../misc/SvgArrow.svelte";
 
     export let type: IFileTreeNode["type"];
@@ -382,21 +383,12 @@
         class:b3-tooltips__ne={!!iconAriaLabel && type !== FileTreeNodeType.Root}
         class="icon b3-list-item__icon"
     >
-        {#if icon.startsWith("#")}
+        {#if icon}
             <!-- svg 图标 -->
-            <Svg
+            <Icon
                 {icon}
                 id={iconPopoverID}
             />
-        {:else if icon.startsWith("/") || icon.startsWith("http") || icon.startsWith("data") || icon.startsWith("blob")}
-            <!-- url 图标 -->
-            <img
-                src={icon}
-                alt="icon"
-            />
-        {:else if icon}
-            <!-- emojis 字符图标 -->
-            {icon}
         {:else if type === FileTreeNodeType.File}
             <!-- 文件图标 -->
             <Svg
@@ -447,7 +439,7 @@
         class:b3-tooltips__nw={!!menuAriaLabel && type !== FileTreeNodeType.Root}
         class="menu b3-list-item__action"
     >
-        <Svg icon={menuIcon} />
+        <Icon icon={menuIcon} />
     </span>
 
     <!-- 符号链接 -->
@@ -460,7 +452,7 @@
             class:b3-tooltips__nw={!!symlinkAriaLabel && type !== FileTreeNodeType.Root}
             class="symblink b3-list-item__action"
         >
-            <Svg icon={symlinkIcon} />
+            <Icon icon={symlinkIcon} />
         </span>
     {/if}
 
