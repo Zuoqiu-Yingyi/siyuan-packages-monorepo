@@ -3,6 +3,7 @@
 ## 2023-08-22
 
 - 使用 `worker` 重构 | Refactor with `worker`.
+- 更新依赖项 | Update dependencies.
 
 ## 2023-08-21
 
