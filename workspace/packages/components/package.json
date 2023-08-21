@@ -8,7 +8,7 @@
     },
     "devDependencies": {
         "@tsconfig/svelte": "^4.0.1",
-        "less": "^4.1.3",
+        "less": "^4.2.0",
         "svelte": "^3.59.2",
         "svelte-preprocess": "^5.0.4",
         "svelte-preprocess-less": "^0.4.0",

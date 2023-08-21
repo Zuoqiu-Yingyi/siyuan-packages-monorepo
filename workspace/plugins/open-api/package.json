@@ -8,7 +8,7 @@
     },
     "devDependencies": {
         "typescript": "^5.1.6",
-        "vite": "^4.3.9"
+        "vite": "^4.4.9"
     },
     "dependencies": {
         "@workspace/types": "workspace:^",
