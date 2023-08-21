@@ -3,6 +3,7 @@
 ## 2023-08-21
 
 - 添加 jupyter 资源列表 | Add jupyter resource list.
+- 添加导入 `*.ipynb` 文件功能 | Add import `*.ipynb` file function.
 
 ## 2023-08-20
 

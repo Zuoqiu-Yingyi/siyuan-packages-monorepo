@@ -17,10 +17,61 @@
 
 import parser from "parse-data-url";
 
-export function dataURL2svg(dataURL: string): string {
+export function dataURL2str(dataURL: string): string | undefined {
     const result = parser(dataURL);
     if (result) {
         return result.toBuffer().toString();
     }
-    return ""
+    return;
+}
+
+export function dataURL2blob(dataURL: string): Blob | undefined {
+    const result = parser(dataURL);
+    if (result) {
+        return new Blob(
+            [result.toBuffer()],
+            { type: result.contentType },
+        );
+    }
+    return;
+}
+
+export function base64ToBlob(
+    base64: string,
+    mime: string,
+): Blob | undefined {
+    const data_url = `data:${mime};base64,${base64}`;
+    return dataURL2blob(data_url);
+}
+
+export function base64ToFile(
+    base64: string,
+    mime: string,
+    filename: string,
+): File | undefined {
+    const blob = base64ToBlob(base64, mime);
+    if (blob) {
+        return new File([blob], filename, {
+            type: mime,
+        });
+    }
+    return;
+}
+
+export async function blob2dataURL(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+        // REF: https://developer.mozilla.org/zh-CN/docs/Web/API/FileReader
+        const reader = new FileReader();
+
+        reader.addEventListener("load", e => resolve(reader.result as string), {
+            once: true,
+            passive: true,
+        });
+        reader.addEventListener("error", e => reject(e), {
+            once: true,
+            passive: true,
+        });
+        // REF: https://developer.mozilla.org/zh-CN/docs/Web/API/FileReader/readAsDataURL
+        reader.readAsDataURL(blob);
+    });
 }

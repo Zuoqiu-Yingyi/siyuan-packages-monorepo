@@ -124,6 +124,9 @@ importers:
       '@types/jstimezonedetect':
         specifier: ^1.0.3
         version: 1.0.3
+      '@types/parse-data-url':
+        specifier: ^3.0.0
+        version: 3.0.0
       '@types/streamsaver':
         specifier: ^2.0.1
         version: 2.0.1
@@ -2240,7 +2243,7 @@ packages:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 20.5.0
+      '@types/node': 20.5.1
     dev: true
 
   /@types/html-escaper@3.0.0:
@@ -2275,8 +2278,18 @@ packages:
     resolution: {integrity: sha512-Mgq7eCtoTjT89FqNoTzzXg2XvCi5VMhRV6+I2aYanc6kQCBImeNaAYRs/DyoVqk1YEUJK5gN9VO7HRIdz4Wo3Q==}
     dev: true
 
+  /@types/node@20.5.1:
+    resolution: {integrity: sha512-4tT2UrL5LBqDwoed9wZ6N3umC4Yhz3W3FloMmiiG4JwmUJWpie0c7lcnUNd4gtMKuDEO4wRVS8B6Xa0uMRsMKg==}
+    dev: true
+
   /@types/opencc-js@1.0.0:
     resolution: {integrity: sha512-vde1AUIJIEC2WvvHuqKWu/7P6WBqbcs4sB/B6zVFTNw/mFIUgSvWlFtYdg+NEEdkxBOeehdSZmEVVheikItS3A==}
+    dev: true
+
+  /@types/parse-data-url@3.0.0:
+    resolution: {integrity: sha512-W7j36KpA780hfh4jyQoLab3+uS+Svmug7GgdJoHe/4ak66ws6ar5/wD8Cqch01O+UT69pzfsBtpNzrF4/6ThBw==}
+    dependencies:
+      '@types/node': 20.5.1
     dev: true
 
   /@types/prettier@2.7.3:
