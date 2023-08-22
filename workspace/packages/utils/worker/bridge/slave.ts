@@ -16,54 +16,35 @@
  */
 
 import { Logger } from "./../../logger";
+import { WorkerBridgeBase } from "./base";
 
 import type {
     THandlers,
-    TMainMessageData,
-    TWorkerMessageData,
 } from ".";
 
-export class WorkerBridgeSlave<H extends THandlers> {
+export class WorkerBridgeSlave<
+    T extends WindowOrWorkerGlobalScope = WindowOrWorkerGlobalScope,
+    LH extends THandlers = THandlers,
+    RH extends THandlers = THandlers,
+> extends WorkerBridgeBase<
+    LH,
+    RH
+> {
     constructor(
-        protected readonly handlers: H,
-        protected readonly logger: InstanceType<typeof Logger>,
-        protected readonly self: typeof global = self,
+        public readonly self: T = self,
+        protected readonly logger: InstanceType<typeof Logger>, // 日志记录器
+        protected readonly handlers: LH = {} as LH, // local handlers
     ) {
-        this.self.addEventListener("error", this.errerEventListener);
-        this.self.addEventListener("messageerror", this.errerEventListener);
-        this.self.addEventListener("message", this.messageEventListener);
+        super(
+            // @ts-ignore
+            self,
+            handlers,
+            logger,
+        );
     }
 
     public close() {
+        // @ts-ignore
         return this.self.close();
-    }
-
-    protected readonly errerEventListener = async (e: ErrorEvent | MessageEvent) => {
-        this.logger.warn(e);
-    }
-
-    protected readonly messageEventListener = async (e: MessageEvent<TMainMessageData<H>>) => {
-        // this.logger.debug(e);
-
-        const data = e.data;
-        switch (data.type) {
-            case "call": {
-                const handler = this.handlers[data.handler.name];
-                // const result = await handler.call(this.self, ...data.handler.args);
-                const result = await handler.call(this.self, ...data.handler.args);
-                const message: TWorkerMessageData<H, typeof handler> = {
-                    type: "call",
-                    id: data.id,
-                    handler: {
-                        name: data.handler.name,
-                        result,
-                    },
-                };
-                this.self.postMessage(message);
-                break;
-            }
-            default:
-                break;
-        }
     }
 }

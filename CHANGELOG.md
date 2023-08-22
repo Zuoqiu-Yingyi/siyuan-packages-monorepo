@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-08-23
+
+- 重构 Worker 通讯桥 | Refactor Worker communication bridge.
+
 ## 2023-08-22
 
 - 使用 `worker` 重构 | Refactor with `worker`.

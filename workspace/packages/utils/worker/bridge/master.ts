@@ -15,85 +15,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import siyuan from "siyuan";
 import { Logger } from "./../../logger";
+import { WorkerBridgeBase } from "./base";
 
 import type {
-    THandler,
     THandlers,
-    TMainMessageData,
-    TWorkerMessageData,
 } from ".";
 
-export class WorkerBridgeMaster<H extends THandlers> {
-    protected readonly worker: Worker;
-    protected readonly map = new Map<string, (r: ReturnType<THandler>) => void>();
-
+export class WorkerBridgeMaster<
+    T extends Worker = Worker,
+    LH extends THandlers = THandlers,
+    RH extends THandlers = THandlers,
+> extends WorkerBridgeBase<
+    LH,
+    RH
+> {
     constructor(
-        protected readonly plugin: InstanceType<typeof siyuan.Plugin>,
-        protected readonly logger: InstanceType<typeof Logger>,
-        protected readonly idCreater: () => string,
-        protected readonly url: string,
-        options: WorkerOptions = {
-            type: "module",
-            name: plugin.name,
-            credentials: "same-origin",
-        },
+        public readonly worker: T,
+        protected readonly logger: InstanceType<typeof Logger>, // 日志记录器 
+        protected readonly handlers: LH = {} as LH, // local handlers
     ) {
-        this.worker = new Worker(url, options);
-        this.worker.addEventListener("error", this.errerEventListener);
-        this.worker.addEventListener("messageerror", this.errerEventListener);
-        this.worker.addEventListener("message", this.messageEventListener);
+        super(
+            worker,
+            handlers,
+            logger,
+        );
     }
 
     public terminate() {
         return this.worker.terminate();
-    }
-
-    public async call<
-        F extends THandler,
-        K extends keyof H = keyof H,
-        R = ReturnType<F>
-    >(
-        name: K,
-        ...args: Parameters<F>
-    ): Promise<R> {
-        // this.logger.debug(name, args);
-
-        return new Promise<R>((resolve, reject) => {
-            const id = this.idCreater();
-            this.map.set(id, resolve);
-            const message: TMainMessageData<H, Parameters<F>> = {
-                type: "call",
-                id,
-                handler: {
-                    name,
-                    args,
-                },
-            };
-            this.worker.postMessage(message);
-        });
-    }
-
-    protected readonly errerEventListener = async (e: ErrorEvent | MessageEvent) => {
-        this.logger.warn(e);
-    }
-
-    protected readonly messageEventListener = async (e: MessageEvent<TWorkerMessageData<H>>) => {
-        // this.logger.debug(e);
-
-        const data = e.data;
-        switch (data.type) {
-            case "call": {
-                const resolve = this.map.get(data.id);
-                if (resolve) {
-                    resolve(data.handler.result);
-                    this.map.delete(data.id);
-                }
-                break;
-            }
-            default:
-                break;
-        }
     }
 }
