@@ -5,6 +5,7 @@
 - 使用 `worker` 重构 | Refactor with `worker`.
 - 更新依赖项 | Update dependencies.
 - 添加设置项 `User-Agent` | Add setting item `User-Agent`.
+- 重新添加附属仓库 `wakatime` | Re-add sub-repository `wakatime`.
 
 ## 2023-08-21
 
