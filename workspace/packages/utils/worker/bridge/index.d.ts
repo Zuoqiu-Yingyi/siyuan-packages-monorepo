@@ -15,45 +15,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+export interface IFunction {
+    (...args: any[]): any;
+}
 
-export type THandler = (
-    this: WindowOrWorkerGlobalScope,
-    ...args: any[],
-) => any
-export type THandlers = Record<string, THandler>;
+export interface IHandler {
+    this: any;
+    func: IFunction;
+};
 
-export interface IMainMessageHandlerData<
+export type THandlers = Record<string, IHandler>;
+
+export interface ICallMessageData<
     H extends THandlers,
     A = Parameters<THandler>,
     K = keyof H,
 > {
     type: "call";
-    id: string;
+    id: number;
     handler: {
         name: K;
         args: A;
     },
 }
 
-export type TMainMessageData<
-    H extends THandlers,
-    A = Parameters<THandler>,
-> = IMainMessageHandlerData<H, A>;
-
-export interface IWorkerMessageHandlerData<
+export interface IReturnMessageData<
     H extends THandlers,
     A = Parameters<THandler>,
     K = keyof H,
 > {
-    type: "call";
-    id: string;
+    type: "return";
+    id: number;
     handler: {
         name: K;
         result: A;
     };
 }
 
-export type TWorkerMessageData<
-    H extends THandlers,
-    A = Parameters<THandler>,
-> = IWorkerMessageHandlerData<H, A>;
+export interface IErrorMessageData {
+    type: "error";
+    id: number;
+    error: any;
+}
