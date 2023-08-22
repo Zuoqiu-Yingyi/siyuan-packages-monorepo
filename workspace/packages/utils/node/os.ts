@@ -15,38 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { IConfig } from "@/types/config";
-import { Category } from "@/wakatime/heartbeats";
+import type os from "os";
 
-export const DEFAULT_CONFIG: IConfig = {
-    wakatime: {
-        api_url: "",
-        api_key: "",
-        timeout: 30,
-        hide_branch_names: true,
-        hide_file_names: true,
-
-        offline: false,
-
-        includeID: [],
-        excludeID: [],
-
-        include: [],
-        exclude: [],
-
-        heartbeats: false,
-        project: "",
-        language: "",
-        hostname: "",
-        interval: 60,
-
-        view: {
-            category: Category.Browsing,
-        },
-        edit: {
-            category: Category.Learning,
-        },
-
-        useragent: "",
-    },
-};
+export const release: typeof os.release = (...args: any[]) => {
+    return globalThis
+        ?.require("os")
+        ?.release(...args);
+}
