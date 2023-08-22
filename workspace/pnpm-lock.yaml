@@ -211,7 +211,7 @@ importers:
         version: 5.1.6
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+        version: 4.4.9(less@4.2.0)
 
   plugins/custom-fonts:
     dependencies:
@@ -251,7 +251,7 @@ importers:
         version: 5.1.6
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+        version: 4.4.9(less@4.2.0)
 
   plugins/jupyter-client:
     dependencies:
@@ -294,7 +294,7 @@ importers:
         version: 5.1.6
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+        version: 4.4.9(less@4.2.0)
 
   plugins/monaco-editor:
     dependencies:
@@ -426,7 +426,7 @@ importers:
         version: 5.1.6
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+        version: 4.4.9(less@4.2.0)
 
   plugins/template:
     dependencies:
@@ -466,7 +466,7 @@ importers:
         version: 5.1.6
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+        version: 4.4.9(less@4.2.0)
 
   plugins/wakatime:
     dependencies:
@@ -506,7 +506,7 @@ importers:
         version: 5.1.6
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+        version: 4.4.9(less@4.2.0)
 
   plugins/webview:
     dependencies:
@@ -618,7 +618,7 @@ importers:
         version: 4.9.5
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+        version: 4.4.9(less@4.2.0)
       vue:
         specifier: ^3.3.4
         version: 3.3.4
@@ -1210,7 +1210,7 @@ packages:
       '@sveltejs/vite-plugin-svelte': 2.4.5(svelte@3.59.2)(vite@4.4.9)
       debug: 4.3.4
       svelte: 3.59.2
-      vite: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+      vite: 4.4.9(less@4.2.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -1226,7 +1226,7 @@ packages:
       '@sveltejs/vite-plugin-svelte': 2.4.5(svelte@4.2.0)(vite@4.4.9)
       debug: 4.3.4
       svelte: 4.2.0
-      vite: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+      vite: 4.4.9(less@4.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -1244,7 +1244,7 @@ packages:
       magic-string: 0.30.3
       svelte: 3.59.2
       svelte-hmr: 0.15.3(svelte@3.59.2)
-      vite: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+      vite: 4.4.9(less@4.2.0)
       vitefu: 0.2.4(vite@4.4.9)
     transitivePeerDependencies:
       - supports-color
@@ -1264,7 +1264,7 @@ packages:
       magic-string: 0.30.3
       svelte: 4.2.0
       svelte-hmr: 0.15.3(svelte@4.2.0)
-      vite: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+      vite: 4.4.9(less@4.2.0)
       vitefu: 0.2.4(vite@4.4.9)
     transitivePeerDependencies:
       - supports-color
@@ -1515,7 +1515,7 @@ packages:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+      vite: 4.4.9
       vue: 3.3.4
 
   /@vitest/expect@0.32.2:
@@ -3388,6 +3388,13 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
 
+  /rollup@3.28.1:
+    resolution: {integrity: sha512-R9OMQmIHJm9znrU3m3cpE8uhN0fGdXiawME7aZIpQqvpS/85+Vt1Hq1/yVIcYfOmaQiHjvXkQAoJukvLpau6Yw==}
+    engines: {node: '>=14.18.0', npm: '>=8.0.0'}
+    hasBin: true
+    optionalDependencies:
+      fsevents: 2.3.3
+
   /run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
     dependencies:
@@ -4126,7 +4133,7 @@ packages:
       mlly: 1.4.0
       pathe: 1.1.1
       picocolors: 1.0.0
-      vite: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+      vite: 4.4.9(@types/node@20.5.1)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -4149,6 +4156,76 @@ packages:
       fs-extra: 11.1.1
       picocolors: 1.0.0
       vite: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+    dev: true
+
+  /vite@4.4.9:
+    resolution: {integrity: sha512-2mbUn2LlUmNASWwSCNSJ/EG2HuSRTnVNaydp6vMCm5VIqJsjMfbIWtbH2kDuwUVW5mMUKKZvGPX/rqeqVvv1XA==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      lightningcss: ^1.21.0
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      lightningcss:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      esbuild: 0.18.20
+      postcss: 8.4.28
+      rollup: 3.28.0
+    optionalDependencies:
+      fsevents: 2.3.3
+
+  /vite@4.4.9(@types/node@20.5.1):
+    resolution: {integrity: sha512-2mbUn2LlUmNASWwSCNSJ/EG2HuSRTnVNaydp6vMCm5VIqJsjMfbIWtbH2kDuwUVW5mMUKKZvGPX/rqeqVvv1XA==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      lightningcss: ^1.21.0
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      lightningcss:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      '@types/node': 20.5.1
+      esbuild: 0.18.20
+      postcss: 8.4.28
+      rollup: 3.28.0
+    optionalDependencies:
+      fsevents: 2.3.3
     dev: true
 
   /vite@4.4.9(@types/node@20.5.1)(less@4.2.0):
@@ -4187,6 +4264,41 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
 
+  /vite@4.4.9(less@4.2.0):
+    resolution: {integrity: sha512-2mbUn2LlUmNASWwSCNSJ/EG2HuSRTnVNaydp6vMCm5VIqJsjMfbIWtbH2kDuwUVW5mMUKKZvGPX/rqeqVvv1XA==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      lightningcss: ^1.21.0
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      lightningcss:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      esbuild: 0.18.20
+      less: 4.2.0
+      postcss: 8.4.28
+      rollup: 3.28.1
+    optionalDependencies:
+      fsevents: 2.3.3
+
   /vitefu@0.2.4(vite@4.4.9):
     resolution: {integrity: sha512-fanAXjSaf9xXtOOeno8wZXIhgia+CZury481LsDaV++lSvcU2R9Ch2bPh3PYFyoHW+w9LqAeYRISVQjUIew14g==}
     peerDependencies:
@@ -4195,7 +4307,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+      vite: 4.4.9(less@4.2.0)
 
   /vitest@0.32.2:
     resolution: {integrity: sha512-hU8GNNuQfwuQmqTLfiKcqEhZY72Zxb7nnN07koCUNmntNxbKQnVbeIS6sqUgR3eXSlbOpit8+/gr1KpqoMgWCQ==}
@@ -4250,7 +4362,7 @@ packages:
       strip-literal: 1.0.1
       tinybench: 2.5.0
       tinypool: 0.5.0
-      vite: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+      vite: 4.4.9(@types/node@20.5.1)
       vite-node: 0.32.2(@types/node@20.5.1)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
