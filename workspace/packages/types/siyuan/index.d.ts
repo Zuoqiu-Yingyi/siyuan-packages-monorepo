@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import siyuan from "siyuan";
+import type siyuan from "siyuan";
 
 export type BlockID = string; // 块 ID
 export type SnippetID = string; // 代码片段 ID
@@ -27,3 +27,36 @@ export type HistoryCreated = string; // 文档历史创建时间
 export type openTabParameters = Parameters<siyuan.openTab>;
 export type openTabParametersOptions = openTabParameters[0];
 export type openTabParametersOptionsCustom = openTabParametersOptions.custom;
+
+export interface ISiyuan {
+    /* Siyuan */
+    Lute: siyuan.Lute;
+    katex: any;
+    siyuan: any;
+    pdfjsLib: any;
+}
+
+export interface ISiyuanElectron {
+    /* Electron */
+    require: Function;
+    process: NodeJS.Process;
+
+    __filename: string;
+    __dirname: string;
+
+    require: NodeRequire;
+    module: NodeModule;
+}
+
+export interface ISiyuanExtends extends ISiyuan, Partial<ISiyuanElectron> { }
+
+export interface ISiyuanGlobal extends ISiyuanExtends, Window { }
+
+declare var globalThis: ISiyuanGlobal;
+
+declare global {
+    interface Window extends ISiyuanExtends {
+    }
+    interface globalThis extends ISiyuanExtends {
+    }
+}

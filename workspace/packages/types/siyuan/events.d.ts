@@ -83,45 +83,45 @@ export interface ILoadedProtyleDetail extends IProtyle {
 }
 
 export interface IWebSocketMainEvent extends CustomEvent<IWebSocketMainDetail> {
-    type: "ws-main";
+    // type: "ws-main";
 }
 
 export interface IClickBlockIconEvent extends CustomEvent<IOtherBlockMenuDetail> {
-    type: "click-blockicon";
+    // type: "click-blockicon";
 }
 
 export interface IClickEditorTitleIconEvent extends CustomEvent<IDocumentBlockMenuDetail> {
-    type: "click-editorcontent";
+    // type: "click-editorcontent";
 }
 
 export interface IClickEditorContentEvent extends CustomEvent<IClickEditorContentDetail> {
-    type: "click-editorcontent";
+    // type: "click-editorcontent";
 }
 
 export interface IOpenMenuLinkEvent extends CustomEvent<IOpenMenuLinkDetail> {
-    type: "open-menu-link";
+    // type: "open-menu-link";
 }
 
 export interface IOpenMenuBlockRefEvent extends CustomEvent<IOpenMenuBlockRefDetail> {
-    type: "open-menu-blockref";
+    // type: "open-menu-blockref";
 }
 
 export interface IOpenMenuContentEvent extends CustomEvent<IOpenMenuContentDetail> {
-    type: "open-menu-content";
+    // type: "open-menu-content";
 }
 
 export interface IOpenSiyuanUrlEvent extends CustomEvent<IOpenSiyuanUrlDetail> {
-    type: "open-siyuan-url";
+    // type: "open-siyuan-url";
 }
 
 export interface IOpenSiyuanUrlBlockEvent extends CustomEvent<IOpenSiyuanUrlBlockDetail> {
-    type: "open-siyuan-url-block";
+    // type: "open-siyuan-url-block";
 }
 
 export interface IOpenSiyuanUrlPluginEvent extends CustomEvent<IOpenSiyuanUrlPluginDetail> {
-    type: "open-siyuan-url-plugin";
+    // type: "open-siyuan-url-plugin";
 }
 
 export interface ILoadedProtyleEvent extends CustomEvent<ILoadedProtyleDetail> {
-    type: "loaded-protyle";
+    // type: "loaded-protyle";
 }

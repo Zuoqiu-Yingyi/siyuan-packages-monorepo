@@ -16,6 +16,7 @@
  */
 
 import siyuan from "siyuan";
+import type { ISiyuanGlobal } from "@workspace/types/siyuan";
 
 import {
     Client,
@@ -32,6 +33,8 @@ import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
 import { DEFAULT_CONFIG } from "./configs/default";
 import type { I18N } from "./utils/i18n";
 import type { IConfig } from "./types/config";
+
+declare var globalThis: ISiyuanGlobal;
 
 export default class TemplatePlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "global-config";

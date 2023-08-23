@@ -23,7 +23,7 @@ import type {
 } from ".";
 
 export class WorkerBridgeSlave<
-    T extends WindowOrWorkerGlobalScope = WindowOrWorkerGlobalScope,
+    T extends EventTarget = EventTarget,
     LH extends THandlers = THandlers,
     RH extends THandlers = THandlers,
 > extends WorkerBridgeBase<
@@ -31,7 +31,7 @@ export class WorkerBridgeSlave<
     RH
 > {
     constructor(
-        public readonly self: T = self,
+        public readonly self: T,
         protected readonly logger: InstanceType<typeof Logger>, // 日志记录器
         protected readonly handlers: LH = {} as LH, // local handlers
     ) {
@@ -41,10 +41,24 @@ export class WorkerBridgeSlave<
             handlers,
             logger,
         );
+        this.port.addEventListener("message", this.pingEventListener);
+    }
+
+    protected readonly pingEventListener = async (e: MessageEvent<"ping">) => {
+        // this.logger.debug(e);
+        if (e.data === "ping") this.port.postMessage("pong");
     }
 
     public close() {
-        // @ts-ignore
-        return this.self.close();
+        switch (true) {
+            case "close" in this.port:
+                // @ts-ignore
+                this.port.close();
+                break;
+            case "terminate" in this.port:
+                // @ts-ignore
+                this.port.terminate();
+                break;
+        }
     }
 }
