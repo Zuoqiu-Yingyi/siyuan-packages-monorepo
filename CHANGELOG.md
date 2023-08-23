@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-08-24
+
+- 使用 `BroadcastChannel` 重构与 Worker 的通讯 | Refactor communication with Worker using `BroadcastChannel`.
+
 ## 2023-08-23
 
 - 重构 Worker 通讯桥 | Refactor Worker communication bridge.

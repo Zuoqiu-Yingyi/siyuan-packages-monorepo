@@ -51,7 +51,11 @@ export class WorkerBridgeBase<
         this.logger.warn(e);
     }
 
-    protected readonly messageEventListener = async (e: MessageEvent<ICallMessageData<LH> | IReturnMessageData<RH> | IErrorMessageData>) => {
+    protected readonly messageEventListener = async (e: MessageEvent<
+        ICallMessageData<LH>
+        | IReturnMessageData<RH>
+        | IErrorMessageData
+    >) => {
         // this.logger.debug(e);
 
         const data = e.data;

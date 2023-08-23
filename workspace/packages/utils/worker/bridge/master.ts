@@ -23,7 +23,7 @@ import type {
 } from ".";
 
 export class WorkerBridgeMaster<
-    T extends Worker = Worker,
+    T extends EventTarget = EventTarget,
     LH extends THandlers = THandlers,
     RH extends THandlers = THandlers,
 > extends WorkerBridgeBase<
@@ -36,13 +36,44 @@ export class WorkerBridgeMaster<
         protected readonly handlers: LH = {} as LH, // local handlers
     ) {
         super(
+            // @ts-ignore
             worker,
             handlers,
             logger,
         );
     }
 
+    /**
+     * ping
+     * @param timeout 超时时间
+     * @returns 耗时
+     */
+    public async ping(timeout: number = 1_000): Promise<number> {
+        const start = Date.now();
+        return new Promise<number>((resolve, reject) => {
+            const timer = setTimeout(() => {
+                reject(new Error(`timeout: ${timeout}`));
+            }, timeout);
+            this.port.addEventListener("message", (e: MessageEvent<"pong">) => {
+                if (e.data === "pong") {
+                    clearTimeout(timer);
+                    resolve(Date.now() - start);
+                }
+            });
+            this.port.postMessage("ping");
+        });
+    }
+
     public terminate() {
-        return this.worker.terminate();
+        switch (true) {
+            case "terminate" in this.port:
+                // @ts-ignore
+                this.port.terminate();
+                break;
+            case "close" in this.port:
+                // @ts-ignore
+                this.port.close();
+                break;
+        }
     }
 }
