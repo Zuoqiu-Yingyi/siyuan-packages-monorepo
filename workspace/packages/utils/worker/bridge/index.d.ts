@@ -24,10 +24,19 @@ export interface IHandler {
     func: IFunction;
 };
 
-export type THandlers = Record<string, IHandler>;
+export interface IHandlers {
+    readonly [key: string]: IHandler;
+}
+
+export type THandlersWrapper<H extends IHandlers> = {
+    [K in keyof H]: {
+        this: any,
+        func: (...args: Parameters<H[K]["func"]>) => ReturnType<H[K]["func"]>,
+    };
+};
 
 export interface ICallMessageData<
-    H extends THandlers,
+    H extends IHandlers,
     A = Parameters<THandler>,
     K = keyof H,
 > {
@@ -40,7 +49,7 @@ export interface ICallMessageData<
 }
 
 export interface IReturnMessageData<
-    H extends THandlers,
+    H extends IHandlers,
     A = Parameters<THandler>,
     K = keyof H,
 > {

@@ -16,6 +16,9 @@
  */
 
 import parser from "parse-data-url";
+import { Buffer } from "buffer";
+
+globalThis.Buffer = Buffer;
 
 export function dataURL2str(dataURL: string): string | undefined {
     const result = parser(dataURL);

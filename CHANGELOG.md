@@ -3,6 +3,7 @@
 ## 2023-08-24
 
 - 使用 `BroadcastChannel` 重构与 Worker 的通讯 | Refactor communication with Worker using `BroadcastChannel`.
+- 使用 `worker` 重构 | Refactor with `worker`.
 
 ## 2023-08-23
 

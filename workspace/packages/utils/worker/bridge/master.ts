@@ -19,13 +19,13 @@ import { Logger } from "./../../logger";
 import { WorkerBridgeBase } from "./base";
 
 import type {
-    THandlers,
+    IHandlers,
 } from ".";
 
 export class WorkerBridgeMaster<
     T extends EventTarget = EventTarget,
-    LH extends THandlers = THandlers,
-    RH extends THandlers = THandlers,
+    LH extends IHandlers = IHandlers,
+    RH extends IHandlers = IHandlers,
 > extends WorkerBridgeBase<
     LH,
     RH

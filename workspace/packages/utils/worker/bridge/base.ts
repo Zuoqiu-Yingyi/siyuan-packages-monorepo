@@ -35,7 +35,7 @@ export class WorkerBridgeBase<
     T extends Worker = Worker,
 > {
     protected readonly map = new Map<number, PromiseParameter>();
-    protected counter = 0;
+    protected counter = Math.random();
 
     constructor(
         protected readonly port: T, // 通信端口
