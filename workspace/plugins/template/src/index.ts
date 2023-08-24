@@ -88,13 +88,16 @@ export default class TemplatePlugin extends siyuan.Plugin {
             width: FLAG_MOBILE ? "92vw" : "720px",
             height: FLAG_MOBILE ? undefined : "640px",
         });
-        const settings = new Settings({
-            target: dialog.element.querySelector(`#${that.SETTINGS_DIALOG_ID}`),
-            props: {
-                config: this.config,
-                plugin: this,
-            },
-        });
+        const target = dialog.element.querySelector(`#${that.SETTINGS_DIALOG_ID}`);
+        if (target) {
+            const settings = new Settings({
+                target,
+                props: {
+                    config: this.config,
+                    plugin: this,
+                },
+            });
+        }
     }
 
     /* 重置插件配置 */

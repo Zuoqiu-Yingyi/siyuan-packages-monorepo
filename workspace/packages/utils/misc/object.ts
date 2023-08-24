@@ -25,11 +25,11 @@ export function isEmptyObject(obj: object): boolean {
 }
 
 export function isString(str: unknown) {
-    return Object.prototype.toString.call(str) === '[object String]'
+    return Object.prototype.toString.call(str) === "[object String]"
 }
 
 export function isObject(obj: unknown) {
-    return Object.prototype.toString.call(obj) === '[object Object]'
+    return Object.prototype.toString.call(obj) === "[object Object]"
 }
 
 export function isArray(arr: unknown) {
