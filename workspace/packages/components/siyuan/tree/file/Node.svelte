@@ -25,12 +25,12 @@
     import SvgArrow from "./../../misc/SvgArrow.svelte";
 
     export let type: IFileTreeNode["type"];
-    export let name: IFileTreeNode["name"];
+    export let name: IFileTreeNode["name"] = "";
     export let path: IFileTreeNode["path"];
-    export let root: IFileTreeNode["root"];
+    export let root: IFileTreeNode["root"] = "";
     export let depth: IFileTreeNode["depth"] = 0;
     export let indent: IFileTreeNode["indent"] = "1em";
-    export let relative: IFileTreeNode["relative"];
+    export let relative: IFileTreeNode["relative"] = "";
     export let directory: IFileTreeNode["directory"];
 
     export let focus: IFileTreeNode["focus"] = false;
@@ -54,7 +54,7 @@
     export let iconAriaLabel: IFileTreeNode["iconAriaLabel"] = "";
     export let iconPopoverID: IFileTreeNode["iconPopoverID"] = "";
 
-    export let text: IFileTreeNode["text"];
+    export let text: IFileTreeNode["text"] = "";
     export let textAriaLabel: IFileTreeNode["textAriaLabel"] = "";
 
     export let menuIcon: IFileTreeNode["menuIcon"] = "#iconMore";

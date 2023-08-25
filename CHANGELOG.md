@@ -1,5 +1,13 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-08-26
+
+- 添加 `运行`, `会话` 与 `内核` 菜单项 | Add `Run`, `Session` and `Kernel` menu items.
+
+## 2023-08-25
+
+- 添加 `*.ipynb` 文件类型定义 | Add `*.ipynb` file type definition.
+
 ## 2023-08-24
 
 - 使用 `BroadcastChannel` 重构与 Worker 的通讯 | Refactor communication with Worker using `BroadcastChannel`.
