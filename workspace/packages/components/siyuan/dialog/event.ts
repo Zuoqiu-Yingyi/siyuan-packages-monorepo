@@ -15,15 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export interface IPromptEvent {
-    change: {
-        value: string;
-        event: Event;
+export interface IDialogEvent {
+    cancel: {
+        event: MouseEvent;
     };
-    input: {
-        value: string;
-        event: Event;
+    confirm: {
+        event: MouseEvent;
     };
+}
+
+export interface IPromptEvent extends IDialogEvent {
     cancel: {
         value: string;
         event: MouseEvent;
@@ -31,5 +32,13 @@ export interface IPromptEvent {
     confirm: {
         value: string;
         event: MouseEvent;
+    };
+    change: {
+        value: string;
+        event: Event;
+    };
+    input: {
+        value: string;
+        event: Event;
     };
 }
