@@ -62,17 +62,19 @@ export class WorkerBridgeBase<
         switch (data.type) {
             case "call": {
                 try {
-                    const handler = this.handlers[data.handler.name];
-                    const result = await handler.func.call(handler.this, ...data.handler.args);
-                    const message: IReturnMessageData<LH, typeof handler> = {
-                        type: "return",
-                        id: data.id,
-                        handler: {
-                            name: data.handler.name,
-                            result,
-                        },
-                    };
-                    this.port.postMessage(message);
+                    if (data.handler.name in this.handlers) {
+                        const handler = this.handlers[data.handler.name];
+                        const result = await handler.func.call(handler.this, ...data.handler.args);
+                        const message: IReturnMessageData<LH, typeof handler> = {
+                            type: "return",
+                            id: data.id,
+                            handler: {
+                                name: data.handler.name,
+                                result,
+                            },
+                        };
+                        this.port.postMessage(message);
+                    }
                 } catch (error) {
                     const message: IErrorMessageData = {
                         type: "error",

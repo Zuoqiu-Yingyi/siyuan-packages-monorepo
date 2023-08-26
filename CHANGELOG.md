@@ -3,6 +3,7 @@
 ## 2023-08-26
 
 - 添加 `运行`, `会话` 与 `内核` 菜单项 | Add `Run`, `Session` and `Kernel` menu items.
+- 添加会话与内核信息显示菜单项 | Add session and kernel information display menu items.
 
 ## 2023-08-25
 
