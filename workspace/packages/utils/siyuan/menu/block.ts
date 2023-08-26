@@ -35,7 +35,7 @@ export interface IBlockMenuDetail {
 
 export interface IDocumentData {
     id: BlockID;
-    ial: Record<string, string>[];
+    ial: Record<string, string>;
     icon: string;
     name: string;
     rootID: BlockID;
@@ -63,11 +63,24 @@ export interface IBlockContext {
     subtype?: sdk.siyuan.BlockSubType; // 块子类型
 }
 
-export interface IBlockMenuContext extends IBlockContext {
+export interface IBaseBlockMenuContext extends IBlockContext {
     isDocumentBlock: boolean; // 是否为文档块
     isMultiBlock: boolean; // 是否为多个块
     blocks: IBlockContext[];
+    protyle: IProtyle; // 编辑器对象
 }
+
+export interface IOtherBlockMenuContext extends IBaseBlockMenuContext {
+    isDocumentBlock: false; // 是否为文档块
+}
+
+export interface IDocumentBlockMenuContext extends IBaseBlockMenuContext {
+    isDocumentBlock: true; // 是否为文档块
+    isMultiBlock: false; // 是否为多个块
+    data: IDocumentData; // 文档数据
+}
+
+export type IBlockMenuContext = IOtherBlockMenuContext | IDocumentBlockMenuContext;
 
 /* 划选内容的上下文 */
 export interface ISelectedMenuContext {
@@ -90,6 +103,8 @@ export function getBlockMenuContext(detail: BlockMenuDetail): IBlockMenuContext 
             isDocumentBlock: true,
             isMultiBlock: false,
             blocks: [context],
+            protyle,
+            data,
         }
     }
     else if (blockElements) { // 其他块
@@ -108,6 +123,7 @@ export function getBlockMenuContext(detail: BlockMenuDetail): IBlockMenuContext 
                 isDocumentBlock: false,
                 isMultiBlock: blocks.length > 1,
                 blocks,
+                protyle,
             }
         }
     }
