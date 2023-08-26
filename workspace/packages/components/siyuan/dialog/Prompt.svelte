@@ -16,8 +16,9 @@
 -->
 
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
-    import type { IPromptEvent } from "./event";
+    import { createEventDispatcher, type ComponentEvents } from "svelte";
+    import type { IDialogEvent, IPromptEvent } from "./event";
+    import Dialog from "./Dialog.svelte";
 
     export let text: string = ""; // 提示文本
     export let value: string = ""; // 输入框默认内容
@@ -34,11 +35,11 @@
 
     const dispatcher = createEventDispatcher<IPromptEvent>();
 
-    function onCancle(event: MouseEvent): void {
-        dispatcher("cancel", { value, event });
+    function onCancle(event: ComponentEvents<Dialog>["cancel"]): void {
+        dispatcher("cancel", { value, event: event.detail.event });
     }
-    function onConfirm(event: MouseEvent): void {
-        dispatcher("confirm", { value, event });
+    function onConfirm(event: ComponentEvents<Dialog>["confirm"]): void {
+        dispatcher("confirm", { value, event: event.detail.event });
     }
     function onChange(event: Event): void {
         dispatcher("change", { value, event });
@@ -48,9 +49,12 @@
     }
 </script>
 
-<div
-    style:user-select={selectable ? "auto" : "none"}
-    class="b3-dialog__content"
+<Dialog
+    {selectable}
+    {cancelButtonText}
+    {confirmButtonText}
+    on:cancel={onCancle}
+    on:confirm={onConfirm}
 >
     <!-- 提示文本 -->
     <slot name="text">
@@ -78,23 +82,4 @@
     <slot name="tips">
         {@html tips}
     </slot>
-</div>
-
-<!-- 按鈕 -->
-<div class="b3-dialog__action">
-    <button
-        bind:this={cancel}
-        on:click={onCancle}
-        class="b3-button b3-button--cancel"
-    >
-        {cancelButtonText}
-    </button>
-    <div class="fn__space" />
-    <button
-        bind:this={confirm}
-        on:click={onConfirm}
-        class="b3-button b3-button--text"
-    >
-        {confirmButtonText}
-    </button>
-</div>
+</Dialog>

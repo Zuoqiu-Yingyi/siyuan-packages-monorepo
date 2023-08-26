@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-08-27
+
+- 添加会话管理面板 | Add session management panel.
+
 ## 2023-08-26
 
 - 添加 `运行`, `会话` 与 `内核` 菜单项 | Add `Run`, `Session` and `Kernel` menu items.

@@ -30,7 +30,7 @@ export type openTabParametersOptionsCustom = openTabParametersOptions.custom;
 
 export interface ISiyuan {
     /* Siyuan */
-    Lute: siyuan.Lute;
+    Lute: typeof siyuan.Lute;
     katex: any;
     siyuan: any;
     pdfjsLib: any;
