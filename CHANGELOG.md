@@ -3,6 +3,8 @@
 ## 2023-08-27
 
 - 添加会话管理面板 | Add session management panel.
+- 实现新建会话与连接会话功能 | Implement the function of creating a new session and connecting to a session.
+- 优化插件卸载时对 Worker 的处理 | Optimize the processing of Worker when the plugin is unloading.
 
 ## 2023-08-26
 
