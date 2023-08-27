@@ -5,6 +5,9 @@
 - 添加会话管理面板 | Add session management panel.
 - 实现新建会话与连接会话功能 | Implement the function of creating a new session and connecting to a session.
 - 优化插件卸载时对 Worker 的处理 | Optimize the processing of Worker when the plugin is unloading.
+- 完善会话管理功能 | Improve session management function.
+- 添加内核管理菜单项 | Add kernel management menu items.
+- 添加打开文档菜单项 | Add open document menu items.
 
 ## 2023-08-26
 

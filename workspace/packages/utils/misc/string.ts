@@ -24,3 +24,22 @@ export function trimPrefix(str: string, prefix: string): string {
 export function trimSuffix(str: string, suffix: string): string {
     return str.endsWith(suffix) ? str.slice(0, -suffix.length) : str;
 }
+
+/**
+ * UTF-32 编码
+ * @param str 字符串
+ * @returns UTF-32 编码的字符串
+ */
+export function utf32Encode(str: string): string {
+    return str.codePointAt(0)?.toString(16) ?? "";
+}
+
+/**
+ * UTF-32 解码
+ * REF: https://zhuanlan.zhihu.com/p/386511092
+ * @param hex UTF-32 编码的字符串
+ * @returns 解码后的字符串
+ */
+export function utf32Decode(hex: string): string {
+    return String.fromCodePoint(parseInt(hex, 16))
+}
