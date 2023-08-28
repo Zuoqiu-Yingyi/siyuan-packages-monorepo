@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-08-28
+
+- 添加内核状态提示 | Add kernel status prompt.
+
 ## 2023-08-27
 
 - 添加会话管理面板 | Add session management panel.
