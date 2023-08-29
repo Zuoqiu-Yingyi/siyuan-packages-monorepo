@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-08-29
+
+- 监听 `loaded-protyle-dynamic` 与 `destroy-protyle` 事件 | Listen for `loaded-protyle-dynamic` and `destroy-protyle` events.
+
 ## 2023-08-28
 
 - 添加内核状态提示 | Add kernel status prompt.

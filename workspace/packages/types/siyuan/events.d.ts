@@ -82,6 +82,15 @@ export interface IOpenSiyuanUrlPluginDetail extends IOpenSiyuanUrlDetail {
 export interface ILoadedProtyleDetail extends IProtyle {
 }
 
+export interface ILoadedProtyleDynamicDetail {
+    protyle: IProtyle;
+    positon: string;
+}
+
+export interface IDestroyProtyleDetail {
+    protyle: IProtyle;
+}
+
 export interface IWebSocketMainEvent extends CustomEvent<IWebSocketMainDetail> {
     // type: "ws-main";
 }
@@ -124,4 +133,12 @@ export interface IOpenSiyuanUrlPluginEvent extends CustomEvent<IOpenSiyuanUrlPlu
 
 export interface ILoadedProtyleEvent extends CustomEvent<ILoadedProtyleDetail> {
     // type: "loaded-protyle";
+}
+
+export interface ILoadedProtyleDynamicEvent extends CustomEvent<ILoadedProtyleDynamicDetail> {
+    // type: "loaded-protyle-dynamic";
+}
+
+export interface IDestroyProtyleEvent extends CustomEvent<IDestroyProtyleDetail> {
+    // type: "destroy-protyle";
 }
