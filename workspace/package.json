@@ -11,7 +11,7 @@
         "format": "prettier --write \"**/*.{ts,tsx,md}\""
     },
     "dependencies": {
-        "@siyuan-community/siyuan-sdk": "^0.2.2",
+        "@siyuan-community/siyuan-sdk": "^0.2.3",
         "@workspace/eslint-config-custom": "workspace:*",
         "@workspace/tsconfig": "workspace:*",
         "@workspace/vite-config-custom": "workspace:*"
@@ -19,7 +19,7 @@
     "devDependencies": {
         "eslint": "^8.47.0",
         "prettier": "^2.8.8",
-        "siyuan": "^0.8.1",
+        "siyuan": "^0.8.2",
         "turbo": "^1.10.12"
     }
 }

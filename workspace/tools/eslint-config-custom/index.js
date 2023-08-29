@@ -10,10 +10,12 @@ module.exports = {
     parser: "@typescript-eslint/parser",
     plugins: [
         "@typescript-eslint",
+        "eslint-plugin-tsdoc",
         "vue",
         "svelte3",
         "prettier",
     ],
     rules: {
+        "tsdoc/syntax": "warn",
     },
 };
