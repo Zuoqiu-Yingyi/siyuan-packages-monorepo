@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-08-30
+
+- 使用 `browser-fs-access` 重构文件/文件夹上传功能 | Refactor files/folder upload function with `browser-fs-access`.
+
 ## 2023-08-29
 
 - 监听 `loaded-protyle-dynamic` 与 `destroy-protyle` 事件 | Listen for `loaded-protyle-dynamic` and `destroy-protyle` events.
