@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type asyncFs from "fs/promises";
+import type asyncFs from "node:fs/promises";
 
 export const cp: typeof asyncFs.cp = (...args: any[]) => {
     return globalThis
-        ?.require("fs/promises")
+        ?.require("node:fs/promises")
         ?.cp(...args);
 }

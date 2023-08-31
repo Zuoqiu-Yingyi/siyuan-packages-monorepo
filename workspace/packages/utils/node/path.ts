@@ -15,16 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type path from "path";
+import type path from "node:path";
 
 export const join: typeof path.join = (...args: any[]) => {
     return globalThis
-        ?.require("path")
+        ?.require("node:path")
         ?.join(...args);
 }
 
 export const parse: typeof path.parse = (...args: any[]) => {
     return globalThis
-        ?.require("path")
+        ?.require("node:path")
         ?.parse(...args);
 }

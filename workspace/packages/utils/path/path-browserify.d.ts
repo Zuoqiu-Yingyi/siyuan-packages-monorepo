@@ -18,6 +18,6 @@
 // REF: https://github.com/SardineFish/zogra-renderer/blob/master/zogra-editor/src/path-browserify.d.ts
 declare module "path-browserify" {
     // export * from "path";
-    import path from "path";
+    import path from "node:path";
     export default path;
 }

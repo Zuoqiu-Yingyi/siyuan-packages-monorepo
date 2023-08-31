@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type os from "os";
+import type os from "node:os";
 
 export const release: typeof os.release = (...args: any[]) => {
     return globalThis
-        ?.require("os")
+        ?.require("node:os")
         ?.release(...args);
 }

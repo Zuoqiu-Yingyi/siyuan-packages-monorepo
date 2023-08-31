@@ -16,15 +16,42 @@
  */
 
 import siyuan from "siyuan";
+import type { ISiyuanGlobal } from "@workspace/types/siyuan";
+
+import { normalize } from "@workspace/utils/path/normalize";
+import { Logger } from "@workspace/utils/logger";
+import {
+    Client,
+    SiyuanFileSystem,
+} from "@siyuan-community/siyuan-sdk";
+
+declare var globalThis: ISiyuanGlobal;
 
 export default class OpenApiPlugin extends siyuan.Plugin {
     private static readonly GLOBAL: Record<string, any> = globalThis;
     private static readonly PROPERTY_NAME: string = "openAPI";
 
+    public readonly logger: InstanceType<typeof Logger>;
+    public readonly client: InstanceType<typeof Client>;
+    public readonly fs: InstanceType<typeof SiyuanFileSystem>;
+
+    constructor(options: any) {
+        super(options);
+
+        this.logger = new Logger(this.name);
+        this.client = new Client(undefined, "fetch");
+        this.fs = new SiyuanFileSystem(
+            normalize(globalThis.siyuan.config.system.workspaceDir),
+            this.client,
+        );
+    }
+
     onload() {
         OpenApiPlugin.GLOBAL[OpenApiPlugin.PROPERTY_NAME] = {
             plugin: this,
             siyuan: siyuan,
+            client: this.client,
+            fs: this.fs,
         };
     }
 

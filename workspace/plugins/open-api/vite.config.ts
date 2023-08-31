@@ -16,15 +16,22 @@
  */
 
 import { defineConfig } from "vite";
-import { resolve } from "path"
+import { resolve } from "node:path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
     base: `./`,
     plugins: [
     ],
+    resolve: {
+        alias: {
+            "~": resolve(__dirname, "./"),
+            "@": resolve(__dirname, "./src"),
+        }
+    },
     build: {
-        minify: false,
+        minify: true,
+        // sourcemap: "inline",
         lib: {
             entry: resolve(__dirname, "src/index.ts"),
             fileName: "index",
@@ -32,7 +39,8 @@ export default defineConfig({
         },
         rollupOptions: {
             external: [
-                'siyuan',
+                "siyuan",
+                /^@electron\/.*$/,
             ],
             output: {
                 entryFileNames: chunkInfo => {
