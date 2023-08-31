@@ -17,7 +17,7 @@
 
 import type { Logger } from "./../../logger";
 import type {
-    THandlers,
+    IHandlers,
     ICallMessageData,
     IReturnMessageData,
     IErrorMessageData,
@@ -30,8 +30,8 @@ export interface PromiseParameter<T = any> {
 }
 
 export class WorkerBridgeBase<
-    LH extends THandlers,
-    RH extends THandlers,
+    LH extends IHandlers,
+    RH extends IHandlers,
     T extends Worker = Worker,
 > {
     protected readonly map = new Map<number, PromiseParameter>();
@@ -88,16 +88,16 @@ export class WorkerBridgeBase<
             case "error": {
                 const promise = this.map.get(data.id);
                 if (promise) {
-                    promise.reject(data.error);
                     this.map.delete(data.id);
+                    promise.reject(data.error);
                 }
                 break;
             }
             case "return": {
                 const promise = this.map.get(data.id);
                 if (promise) {
-                    promise.resolve(data.handler.result);
                     this.map.delete(data.id);
+                    promise.resolve(data.handler.result);
                 }
                 break;
             }

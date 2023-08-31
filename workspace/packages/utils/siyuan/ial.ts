@@ -19,7 +19,7 @@ import { escapeHTML } from "./../misc/html";
 
 /**
  * 创建内联属性表字符串
- * @params ial: 属性表对象
+ * @param ial: 属性表对象
  * @returns IAL token 字符串, 格式： {: key="value" key="value" ...}
  */
 export function createIAL(ial: Record<string, string | null>): string {
@@ -32,10 +32,9 @@ export function createIAL(ial: Record<string, string | null>): string {
     return `{: ${IAL.join(" ")}}`;
 }
 
-
 /**
  * 创建 style 属性表字符串
- * @params styles 属性表对象
+ * @param styles 属性表对象
  * @returns 字符串, 格式： style="key: value; key: value; ..."
  */
 export function createStyle(styles: Record<string, string>): string {
