@@ -3,6 +3,7 @@
 ## 2023-09-01
 
 - 实现代码执行功能 | Implement code execution function.
+- 实现错误输出功能 | Implement error output function.
 
 ## 2023-08-31
 
