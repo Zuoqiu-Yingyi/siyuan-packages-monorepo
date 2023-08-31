@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { buildID } from "../siyuan/id";
+
 /* 迭代器 */
 
 export function* Iterator(items: any[], loop: boolean = false) {
@@ -31,8 +33,19 @@ export function* Iterator(items: any[], loop: boolean = false) {
     }
 }
 
-export function * Counter(start: number = 0) {
+export function* Counter(start: number = 0): Generator<number, number> {
     while (true) {
         yield start++;
+    }
+}
+
+export function* id(
+    date: Date | undefined = new Date(),
+    start: number = 0,
+): Generator<string, string, Date> {
+    const counter = Counter(start);
+    while (true) {
+        date = date ?? new Date();
+        date = yield buildID(date, counter.next().value);
     }
 }

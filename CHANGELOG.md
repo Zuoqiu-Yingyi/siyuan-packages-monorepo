@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-01
+
+- 实现代码执行功能 | Implement code execution function.
+
 ## 2023-08-31
 
 - 添加 `client` 与 `fs` 属性 | Add `client` and `fs` properties.
