@@ -42,6 +42,7 @@ export interface ICallMessageData<
 > {
     type: "call";
     id: number;
+    uuid?: string;
     handler: {
         name: K;
         args: A;

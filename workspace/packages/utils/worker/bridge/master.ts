@@ -17,6 +17,7 @@
 
 import { Logger } from "./../../logger";
 import { WorkerBridgeBase } from "./base";
+import { id } from "../../siyuan/id";
 
 import type {
     IHandlers,
@@ -31,15 +32,17 @@ export class WorkerBridgeMaster<
     RH
 > {
     constructor(
-        public readonly worker: T,
-        protected readonly logger: InstanceType<typeof Logger>, // 日志记录器 
-        protected readonly handlers: LH = {} as LH, // local handlers
+        worker: T,
+        logger: InstanceType<typeof Logger>, // 日志记录器 
+        handlers: LH = {} as LH, // local handlers
+        uuid: string = id(),
     ) {
         super(
             // @ts-ignore
             worker,
-            handlers,
             logger,
+            handlers,
+            uuid,
         );
     }
 

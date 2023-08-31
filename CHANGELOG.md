@@ -6,6 +6,7 @@
 - 实现错误输出功能 | Implement error output function.
 - 实现解析 `display_data`, `update_display_data` 与 `execute_result` 消息的功能 | Implement the function of parsing `display_data`, `update_display_data` and `execute_result` messages.
 - 修复侧边面板初始化时无数据问题 | Fix the issue of no data when the side panel is initialized.
+- 实现输入请求功能 | Implement input request function.
 
 ## 2023-08-31
 

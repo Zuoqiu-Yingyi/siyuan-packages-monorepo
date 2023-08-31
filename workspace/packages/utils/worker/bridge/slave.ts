@@ -17,6 +17,7 @@
 
 import { Logger } from "./../../logger";
 import { WorkerBridgeBase } from "./base";
+import { id } from "../../siyuan/id";
 
 import type {
     IHandlers,
@@ -31,16 +32,19 @@ export class WorkerBridgeSlave<
     RH
 > {
     constructor(
-        public readonly self: T,
-        protected readonly logger: InstanceType<typeof Logger>, // 日志记录器
-        protected readonly handlers: LH = {} as LH, // local handlers
+        self: T,
+        logger: InstanceType<typeof Logger>, // 日志记录器
+        handlers: LH = {} as LH, // local handlers
+        uuid: string = id(),
     ) {
         super(
             // @ts-ignore
             self,
-            handlers,
             logger,
+            handlers,
+            uuid,
         );
+
         this.port.addEventListener("message", this.pingEventListener);
     }
 

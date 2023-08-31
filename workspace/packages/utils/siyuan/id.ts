@@ -17,7 +17,7 @@
 
 import { Counter } from "../misc/iterator";
 
-const counter = Counter();
+const counter = Counter((Math.random() * (36 ** 8 - 1)) | 0);
 
 /* 构造块 ID */
 export function buildID(

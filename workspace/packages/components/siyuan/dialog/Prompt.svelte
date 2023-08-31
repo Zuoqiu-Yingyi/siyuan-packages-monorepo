@@ -30,9 +30,6 @@
     export let cancelButtonText: string = globalThis.siyuan?.languages?.cancel ?? "Cancel"; // 取消按钮文本
     export let confirmButtonText: string = globalThis.siyuan?.languages?.confirm ?? "Confirm"; // 确定按钮文本
 
-    let cancel: HTMLButtonElement; // 取消按钮
-    let confirm: HTMLButtonElement; // 确认按钮
-
     const dispatcher = createEventDispatcher<IPromptEvent>();
 
     function onCancle(event: ComponentEvents<Dialog>["cancel"]): void {

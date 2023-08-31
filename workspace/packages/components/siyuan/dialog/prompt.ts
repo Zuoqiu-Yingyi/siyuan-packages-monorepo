@@ -26,13 +26,14 @@ export type PromptCallback<T> = (
 
 export interface IPromptOptions {
     title: string; // 标题
-    text: string; // 说明文本
+    text?: string; // 说明文本
     value?: string; // 输入框默认文本
     placeholder?: string; // 输入框空白提示文本
     tips?: string; // 提示文本
     width?: string; // 宽度
     height?: string; // 高度
     selectable?: boolean; // 是否可选择
+    autofocus?: boolean; // 是否自动对焦
     input?: PromptCallback<string>; // 返回更新的提示文本
     change?: PromptCallback<string>; // 返回更新的提示文本
     confirm?: PromptCallback<boolean>; // 返回是否关闭
@@ -43,6 +44,27 @@ export interface IPromptReturn {
     id: string; // 对话框元素 ID
     dialog: InstanceType<typeof siyuan.Dialog>; // 对话框实例
     component: InstanceType<typeof Prompt>; // 组件实例
+}
+
+/* 异步提示输入框 */
+export async function asyncPrompt(Dialog: typeof siyuan.Dialog, options: IPromptOptions): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        const confirm = options.confirm;
+        const cancel = options.cancel;
+
+        options.confirm = async (value, ...args) => {
+            const result = await confirm?.call(options, value, ...args) ?? true;
+            if (result) resolve(value);
+            return result;
+        };
+        options.cancel = async (value, ...args) => {
+            const result = await cancel?.call(options, value, ...args) ?? true;
+            if (result) reject(value);
+            return result;
+        };
+
+        prompt(Dialog, options);
+    });
 }
 
 /* 打开提示输入框 */
@@ -65,6 +87,7 @@ export function prompt(Dialog: typeof siyuan.Dialog, options: IPromptOptions): I
             placeholder: options.placeholder,
             tips: options.tips,
             selectable: options.selectable,
+            autofocus: options.autofocus,
         },
     });
 
