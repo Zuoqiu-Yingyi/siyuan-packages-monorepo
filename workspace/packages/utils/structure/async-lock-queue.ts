@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { sleep } from "../misc/sleep";
+
 /* 异步锁队列 */
 export class AsyncLockQueue<T = any> {
     protected readonly items: T[] = [];
@@ -22,6 +24,7 @@ export class AsyncLockQueue<T = any> {
     constructor(
         protected readonly handler: (item: T) => Promise<any> | any, // 消息处理
         protected readonly errorHandler?: (item: T, error: unknown) => Promise<any> | any, // 错误处理
+        protected readonly interval: number = 0, // 调用间隔
     ) { }
 
     public enqueue(item: T) {
@@ -45,6 +48,9 @@ export class AsyncLockQueue<T = any> {
                     if (this.errorHandler) {
                         await this.errorHandler(item, error);
                     }
+                }
+                finally {
+                    await sleep(this.interval);
                 }
             }
 
