@@ -28,7 +28,16 @@ Open the plugin's API to the global variable `globalThis.openAPI` / `window.open
 
 - `openAPI`: Global variable
   - `plugin`: Plugin object
-  - `siyuan`: SiYuan plugin api interface
+  - `siyuan`: SiYuan plugin API interface
+  - `client`: SiYuan kernel API client instance
+    - Please refer to for details
+      - [siyuan-community/siyuan](https://github.com/siyuan-community/siyuan)
+      - [@siyuan-community/siyuan-sdk - npm](https://www.npmjs.com/package/@siyuan-community/siyuan-sdk)
+  - `fs`: SiYuan file system instance
+    - Please refer to for details
+      - [siyuan-community/siyuan](https://github.com/siyuan-community/siyuan)
+      - [@siyuan-community/siyuan-sdk - npm](https://www.npmjs.com/package/@siyuan-community/siyuan-sdk)
+      - [File System Standard](https://fs.spec.whatwg.org/)
 
 ## CHANGELOG
 

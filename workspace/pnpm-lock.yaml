@@ -223,7 +223,7 @@ importers:
         version: 5.1.6
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(less@4.2.0)
+        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
 
   plugins/custom-fonts:
     dependencies:
@@ -263,7 +263,7 @@ importers:
         version: 5.1.6
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(less@4.2.0)
+        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
 
   plugins/jupyter-client:
     dependencies:
@@ -306,7 +306,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(less@4.2.0)
+        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
 
   plugins/monaco-editor:
     dependencies:
@@ -387,12 +387,15 @@ importers:
         specifier: workspace:^
         version: link:../../packages/utils
     devDependencies:
+      '@types/node':
+        specifier: ^20.5.7
+        version: 20.5.7
       typescript:
-        specifier: ^5.1.6
-        version: 5.1.6
+        specifier: ^5.2.2
+        version: 5.2.2
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
+        version: 4.4.9(@types/node@20.5.7)
 
   plugins/opencc:
     dependencies:
@@ -438,7 +441,7 @@ importers:
         version: 5.1.6
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(less@4.2.0)
+        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
 
   plugins/template:
     dependencies:
@@ -478,7 +481,7 @@ importers:
         version: 5.1.6
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(less@4.2.0)
+        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
 
   plugins/wakatime:
     dependencies:
@@ -518,7 +521,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(less@4.2.0)
+        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
 
   plugins/webview:
     dependencies:
@@ -633,7 +636,7 @@ importers:
         version: 4.9.5
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(less@4.2.0)
+        version: 4.4.9(@types/node@20.5.1)(less@4.2.0)
       vue:
         specifier: ^3.3.4
         version: 3.3.4
@@ -1271,7 +1274,7 @@ packages:
       '@sveltejs/vite-plugin-svelte': 2.4.5(svelte@3.59.2)(vite@4.4.9)
       debug: 4.3.4
       svelte: 3.59.2
-      vite: 4.4.9(@types/node@20.5.7)(less@4.2.0)
+      vite: 4.4.9(less@4.2.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -1305,7 +1308,7 @@ packages:
       magic-string: 0.30.3
       svelte: 3.59.2
       svelte-hmr: 0.15.3(svelte@3.59.2)
-      vite: 4.4.9(@types/node@20.5.7)(less@4.2.0)
+      vite: 4.4.9(less@4.2.0)
       vitefu: 0.2.4(vite@4.4.9)
     transitivePeerDependencies:
       - supports-color
@@ -1411,6 +1414,7 @@ packages:
 
   /@types/node@20.5.7:
     resolution: {integrity: sha512-dP7f3LdZIysZnmvP3ANJYTSwg+wLLl8p7RqniVlV7j+oXSXAbt9h0WIBFmJy5inWZoX9wZN6eXx+YXd9Rh3RBA==}
+    dev: true
 
   /@types/opencc-js@1.0.0:
     resolution: {integrity: sha512-vde1AUIJIEC2WvvHuqKWu/7P6WBqbcs4sB/B6zVFTNw/mFIUgSvWlFtYdg+NEEdkxBOeehdSZmEVVheikItS3A==}
@@ -3464,6 +3468,7 @@ packages:
       nanoid: 3.3.6
       picocolors: 1.0.0
       source-map-js: 1.0.2
+    dev: true
 
   /prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
@@ -4463,7 +4468,7 @@ packages:
         optional: true
     dependencies:
       esbuild: 0.18.20
-      postcss: 8.4.29
+      postcss: 8.4.28
       rollup: 3.28.1
     optionalDependencies:
       fsevents: 2.3.3
@@ -4499,7 +4504,7 @@ packages:
       '@types/node': 20.5.1
       esbuild: 0.18.20
       less: 4.2.0
-      postcss: 8.4.29
+      postcss: 8.4.28
       rollup: 3.28.1
     optionalDependencies:
       fsevents: 2.3.3
@@ -4571,10 +4576,11 @@ packages:
       '@types/node': 20.5.7
       esbuild: 0.18.20
       less: 4.2.0
-      postcss: 8.4.29
+      postcss: 8.4.28
       rollup: 3.28.1
     optionalDependencies:
       fsevents: 2.3.3
+    dev: true
 
   /vite@4.4.9(less@4.2.0):
     resolution: {integrity: sha512-2mbUn2LlUmNASWwSCNSJ/EG2HuSRTnVNaydp6vMCm5VIqJsjMfbIWtbH2kDuwUVW5mMUKKZvGPX/rqeqVvv1XA==}
@@ -4619,7 +4625,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.4.9(@types/node@20.5.7)(less@4.2.0)
+      vite: 4.4.9(less@4.2.0)
 
   /vitest@0.32.2:
     resolution: {integrity: sha512-hU8GNNuQfwuQmqTLfiKcqEhZY72Zxb7nnN07koCUNmntNxbKQnVbeIS6sqUgR3eXSlbOpit8+/gr1KpqoMgWCQ==}

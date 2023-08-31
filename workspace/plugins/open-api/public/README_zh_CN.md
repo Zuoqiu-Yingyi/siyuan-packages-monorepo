@@ -29,6 +29,15 @@
 - `openAPI`: 全局变量
   - `plugin`: 插件对象
   - `siyuan`: 思源的插件 API 接口
+  - `client`: 思源的内核 API 客户端实例
+    - 详情请参考
+      - [siyuan-community/siyuan](https://github.com/siyuan-community/siyuan)
+      - [@siyuan-community/siyuan-sdk - npm](https://www.npmjs.com/package/@siyuan-community/siyuan-sdk)
+  - `fs`: 思源文件系统实例
+    - 详情请参考
+      - [siyuan-community/siyuan](https://github.com/siyuan-community/siyuan)
+      - [@siyuan-community/siyuan-sdk - npm](https://www.npmjs.com/package/@siyuan-community/siyuan-sdk)
+      - [File System Standard](https://fs.spec.whatwg.org/)
 
 ## 更改日志
 

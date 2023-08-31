@@ -4,10 +4,12 @@
     "version": "1.0.5",
     "type": "module",
     "scripts": {
-        "build": "tsc && vite build"
+        "build": "vite build",
+        "build:dev": "vite build --sourcemap inline"
     },
     "devDependencies": {
-        "typescript": "^5.1.6",
+        "@types/node": "^20.5.7",
+        "typescript": "^5.2.2",
         "vite": "^4.4.9"
     },
     "dependencies": {

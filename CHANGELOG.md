@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-08-31
+
+- 添加 `client` 与 `fs` 属性 | Add `client` and `fs` properties.
+
 ## 2023-08-30
 
 - 使用 `browser-fs-access` 重构文件/文件夹上传功能 | Refactor files/folder upload function with `browser-fs-access`.
