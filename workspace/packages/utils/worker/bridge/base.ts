@@ -39,8 +39,9 @@ export class WorkerBridgeBase<
 
     constructor(
         protected readonly port: T, // 通信端口
+        protected readonly logger: InstanceType<typeof Logger>, // 日志记录器
         protected readonly handlers: LH, // local handlers
-        protected readonly logger: InstanceType<typeof Logger>, // 日志记录器 
+        protected readonly uuid: string, // UUID
     ) {
         this.port.addEventListener("error", this.errerEventListener);
         this.port.addEventListener("messageerror", this.errerEventListener);
@@ -62,6 +63,9 @@ export class WorkerBridgeBase<
         switch (data.type) {
             case "call": {
                 try {
+                    /* 指定了非本端的 uuid */
+                    if (data.uuid && data.uuid !== this.uuid) break;
+
                     if (data.handler.name in this.handlers) {
                         const handler = this.handlers[data.handler.name];
                         const result = await handler.func.call(handler.this, ...data.handler.args);
@@ -106,6 +110,12 @@ export class WorkerBridgeBase<
         }
     }
 
+    /**
+     * 调用远程函数
+     * @param name 函数名称
+     * @param args 函数参数
+     * @returns 函数返回值
+     */
     public async call<
         H extends IHandler,
         F extends H["func"] = H["func"],
@@ -124,6 +134,42 @@ export class WorkerBridgeBase<
             const message: ICallMessageData<RH, P> = {
                 type: "call",
                 id,
+                handler: {
+                    name,
+                    args,
+                },
+            };
+            this.port.postMessage(message);
+        });
+    }
+
+    /**
+     * 调用指定客户端的远程函数
+     * @param uuid 客户端 UUID
+     * @param name 函数名称
+     * @param args 函数参数
+     * @returns 函数返回值
+     */
+    public async singleCall<
+        H extends IHandler,
+        F extends H["func"] = H["func"],
+        K extends keyof RH = keyof RH,
+        P extends Parameters<F> = Parameters<F>,
+        R extends ReturnType<F> = ReturnType<F>,
+    >(
+        name: K,
+        uuid: string,
+        ...args: P
+    ): Promise<R> {
+        // this.logger.debug(name, args);
+
+        return new Promise<R>((resolve, reject) => {
+            const id = this.counter++;
+            this.map.set(id, { resolve, reject });
+            const message: ICallMessageData<RH, P> = {
+                type: "call",
+                id,
+                uuid,
                 handler: {
                     name,
                     args,
