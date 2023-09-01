@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-02
+
+- 实现输出流解析功能 | Implement output stream parsing function.
+
 ## 2023-09-01
 
 - 实现代码执行功能 | Implement code execution function.

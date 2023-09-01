@@ -15,18 +15,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import type { ISiyuanGlobal } from "@workspace/types/siyuan";
+declare var globalThis: ISiyuanGlobal;
+
 /* 是否为暗色主题 */
 export function isDarkTheme(): boolean {
     const themeMode = globalThis
-        .document
-        .documentElement
-        .dataset
-        .themeMode;
+        ?.document
+        ?.documentElement
+        ?.dataset
+        ?.themeMode;
 
-    if (themeMode) {
-        return themeMode === "dark";
+    switch (themeMode) {
+        case "dark":
+            return true;
+        case "light":
+            return false;
+        default:
+            break;
     }
-    else {
-        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    const mode = globalThis
+        ?.siyuan
+        ?.config
+        ?.appearance
+        ?.mode;
+
+    switch (mode) {
+        case 1:
+            return true;
+        case 0:
+            return false;
+        default:
+            break;
     }
+
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+/* 是否为亮色主题 */
+export function isLightTheme(): boolean {
+    return !isDarkTheme();
 }
