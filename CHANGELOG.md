@@ -3,6 +3,7 @@
 ## 2023-09-02
 
 - 实现输出流解析功能 | Implement output stream parsing function.
+- 修复颜色解析错误问题 | Fix color parsing error.
 
 ## 2023-09-01
 
