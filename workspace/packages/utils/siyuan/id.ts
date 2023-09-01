@@ -17,7 +17,7 @@
 
 import { Counter } from "../misc/iterator";
 
-const counter = Counter((Math.random() * (36 ** 8 - 1)) | 0);
+const counter = Counter(Math.round(Math.random() * (36 ** 8 - 1)));
 
 /* 构造块 ID */
 export function buildID(
@@ -30,7 +30,7 @@ export function buildID(
         }${date.getHours().toString().padStart(2, "0")
         }${date.getMinutes().toString().padStart(2, "0")
         }${date.getSeconds().toString().padStart(2, "0")
-        }-${(noise).toString(36).padStart(7, "0").substring(0, 7)
+        }-${(noise).toString(36).padStart(7, "0").slice(-7)
         }`;
 }
 
