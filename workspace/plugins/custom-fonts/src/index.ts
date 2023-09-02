@@ -69,6 +69,24 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
     }
 
     onload(): void {
+        /**
+         * 注册快捷键命令
+         * 在 onload 结束后即刻解析, 因此不能在回调函数中注册
+         */
+        this.addCommand({
+            langKey: "show-system-fonts",
+            langText: this.i18n.settings.generalSettings.showSystemFonts.title,
+            hotkey: "",
+            callback: () => this.showSystemFonts(),
+        });
+        this.addCommand({
+            langKey: "show-usable-fonts",
+            langText: this.i18n.settings.generalSettings.showUsableFonts.title,
+            hotkey: "",
+            callback: () => this.showUsableFonts(),
+        });
+
+        /* 加载数据 */
         this.loadData(CustomFontsPlugin.GLOBAL_CONFIG_NAME)
             .then(config => {
                 this.config = mergeIgnoreArray(DEFAULT_CONFIG, config || {}) as IConfig;
@@ -78,20 +96,6 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
                 await this.updateStyle();
 
                 this.eventBus.on("click-blockicon", this.blockMenuEventListener);
-
-                /* 注册命令 */
-                this.addCommand({
-                    langKey: "show-system-fonts",
-                    langText: this.i18n.settings.generalSettings.showSystemFonts.title,
-                    hotkey: "",
-                    callback: () => this.showSystemFonts(),
-                });
-                this.addCommand({
-                    langKey: "show-usable-fonts",
-                    langText: this.i18n.settings.generalSettings.showUsableFonts.title,
-                    hotkey: "",
-                    callback: () => this.showUsableFonts(),
-                });
             });
     }
 
