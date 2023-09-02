@@ -16,7 +16,6 @@
  */
 
 import siyuan from "siyuan";
-
 import {
     BlockID,
     SnippetID,
@@ -24,8 +23,11 @@ import {
     HistoryPath,
     HistoryCreated,
     SnapshotID,
+    ISiyuanGlobal,
 } from "@workspace/types/siyuan";
 import regexp from "./../regexp";
+
+declare var globalThis: ISiyuanGlobal;
 
 /**
  * 查询块 ID
@@ -235,4 +237,50 @@ export function updateBlockID(
         .querySelectorAll<HTMLDivElement>("div[data-node-id]")
         ?.forEach(block => block.dataset.nodeId = Lute.NewNodeID());
     return element.innerHTML;
+}
+
+/**
+ * 获取所有选择的块
+ * @return 所有选择的块的 HTML 元素列表
+ */
+export function getSelectedBlocks(): HTMLElement[] {
+    return Array.from(document.querySelectorAll(".protyle-wysiwyg div.protyle-wysiwyg--select[data-node-id]"));
+}
+
+/**
+ * 获取当前光标所在的块
+ * @return 当前光标所在的块的 HTML 元素
+ */
+export function getCurrentBlock(): HTMLElement | null | undefined {
+    const selection = document.getSelection();
+    var element = selection?.focusNode?.parentElement;
+    while (element
+        && !(
+            element.dataset.type
+            &&
+            element.dataset.nodeId
+            &&
+            regexp.id.test(element.dataset.nodeId)
+        )
+    ) {
+        element = element.parentElement;
+    }
+    return element;
+}
+
+/**
+ * 获取活跃的块
+ * 获取所选块或当前块
+ * @return 当前活跃的块的 HTMLElement 列表, 若不存在则
+ */
+export function getActiveBlocks(): HTMLElement[] {
+    const blocks = getSelectedBlocks();
+    if (blocks.length > 0) {
+        return blocks;
+    }
+    else {
+        const block = getCurrentBlock();
+        if (block) return [block];
+        else return [];
+    }
 }
