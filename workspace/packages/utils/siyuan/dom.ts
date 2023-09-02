@@ -240,8 +240,74 @@ export function updateBlockID(
 }
 
 /**
+ * 判断一个元素是否为思源块元素
+ * @param element 元素
+ * @returns 是否为思源块元素
+ */
+export function isSiyuanBlock(element: any): boolean {
+    return !!(element
+        && element instanceof HTMLElement
+        && element.dataset.type
+        && element.dataset.nodeId
+        && regexp.id.test(element.dataset.nodeId)
+    );
+}
+
+/**
+ * 判断一个元素是否为思源文档背景
+ * @param element 元素
+ * @returns 是否为思源文档背景
+ */
+export function isSiyuanDocumentBackground(element: any): boolean {
+    return !!(element
+        && element instanceof HTMLElement
+        && element.classList.contains("protyle-background")
+        && element.dataset.nodeId
+        && regexp.id.test(element.dataset.nodeId)
+    );
+}
+
+/**
+ * 判断一个元素是否为思源文档标题
+ * @param element 元素
+ * @returns 是否为思源文档标题
+ */
+export function isSiyuanDocumentTitle(element: any): boolean {
+    return !!(element
+        && element instanceof HTMLElement
+        && element.classList.contains("protyle-title")
+        && element.dataset.nodeId
+        && regexp.id.test(element.dataset.nodeId)
+    );
+}
+
+/**
+ * 判断一个元素是否为思源文档块元素
+ * @param element 元素
+ * @returns 是否为思源文档块元素
+ */
+export function isSiyuanDocument(element: any): boolean {
+    return !!(element
+        && element instanceof HTMLElement
+        && element.classList.contains("protyle-wysiwyg")
+    );
+}
+
+/**
+ * 判断一个元素是否为思源顶层元素
+ * @param element 元素
+ * @returns 是否为思源文档块元素
+ */
+export function isSiyuanTopBlock(element: any): boolean {
+    return !!(isSiyuanBlock(element)
+        && element instanceof HTMLElement
+        && isSiyuanDocument(element.parentElement)
+    );
+}
+
+/**
  * 获取所有选择的块
- * @return 所有选择的块的 HTML 元素列表
+ * @returns 所有选择的块的 HTML 元素列表
  */
 export function getSelectedBlocks(): HTMLElement[] {
     return Array.from(document.querySelectorAll(".protyle-wysiwyg div.protyle-wysiwyg--select[data-node-id]"));
@@ -249,19 +315,13 @@ export function getSelectedBlocks(): HTMLElement[] {
 
 /**
  * 获取当前光标所在的块
- * @return 当前光标所在的块的 HTML 元素
+ * @returns 当前光标所在的块的 HTML 元素
  */
 export function getCurrentBlock(): HTMLElement | null | undefined {
     const selection = document.getSelection();
     var element = selection?.focusNode?.parentElement;
-    while (element
-        && !(
-            element.dataset.type
-            &&
-            element.dataset.nodeId
-            &&
-            regexp.id.test(element.dataset.nodeId)
-        )
+    while (element // 元素存在
+        && !isSiyuanBlock(element) // 元素非思源块元素
     ) {
         element = element.parentElement;
     }
@@ -269,9 +329,18 @@ export function getCurrentBlock(): HTMLElement | null | undefined {
 }
 
 /**
+ * 获取当前光标所在块的块 ID
+ * @returns 当前光标所在块的块 ID
+ */
+export function getCurrentBlockID(): BlockID | void {
+    const block = getCurrentBlock();
+    return block?.dataset.nodeId;
+}
+
+/**
  * 获取活跃的块
  * 获取所选块或当前块
- * @return 当前活跃的块的 HTMLElement 列表, 若不存在则
+ * @returns 当前活跃的块的 HTMLElement 列表, 若不存在则
  */
 export function getActiveBlocks(): HTMLElement[] {
     const blocks = getSelectedBlocks();
