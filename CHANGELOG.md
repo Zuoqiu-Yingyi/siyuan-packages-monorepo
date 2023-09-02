@@ -5,6 +5,7 @@
 - 实现输出流解析功能 | Implement output stream parsing function.
 - 修复颜色解析错误问题 | Fix color parsing error.
 - 添加命令 `运行所选代码块` | Add command `Run selected cells`.
+- 添加命令 `插入新的代码单元格` | Add command `Insert new cell`.
 
 ## 2023-09-01
 
