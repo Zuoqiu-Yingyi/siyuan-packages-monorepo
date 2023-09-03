@@ -1,11 +1,21 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-04
+
+- 修复无法同时连接到同一个会话的问题 | Fix the issue that cannot connect to the same session at the same time.
+
+## 2023-09-03
+
+- 完善设置面板 | Improve settings panel.
+- 修复在新窗口打开的页面无法获取 Jupyter 资源列表问题 | Fix the issue that the Jupyter resource list cannot be obtained on the page opened in a new window.
+
 ## 2023-09-02
 
 - 实现输出流解析功能 | Implement output stream parsing function.
 - 修复颜色解析错误问题 | Fix color parsing error.
 - 添加命令 `运行所选代码块` | Add command `Run selected cells`.
 - 添加命令 `插入新的代码单元格` | Add command `Insert new cell`.
+- 添加命令 `跳转到下一个代码单元格` | Add command `Goto to next cell`.
 
 ## 2023-09-01
 
