@@ -19,6 +19,16 @@ import { BlockID } from "@workspace/types/siyuan";
 import { EditorType } from ".";
 import regexp from "../regexp";
 
+export interface ISiyuanUrlParams {
+    id: BlockID, // 块 ID
+    focus: boolean, // 是否聚焦
+}
+
+export interface ISiyuanUrlSearchParams {
+    id: BlockID, // 块 ID
+    focus: number, // 是否聚焦
+}
+
 /* 思源各 web 端路径 */
 export enum Pathname {
     window = "/stage/build/app/window.html",
@@ -41,8 +51,8 @@ export function editorType2Pathname(editorEype: EditorType): Pathname {
 }
 
 /**
- * @params pathname: web 端路径
- * @params params: URL 查询参数
+ * @param pathname: web 端路径
+ * @param params: URL 查询参数
  * @return: URL
  */
 export function buildSiyuanWebURL(
@@ -70,13 +80,29 @@ export function buildSiyuanWebURL(
 }
 
 /**
- * 解析思源 URL
- * @params url: URL
+ * 解析思源超链接 URL
+ * @param url: URL
  */
-export function parseSiyuanURL(url: URL) {
-    if (regexp.url.test(url.href)) {
+export function parseSiyuanURL(url: URL): ISiyuanUrlParams | null {
+    if (regexp.url.test(url.href)) { // 思源块超链接 URL
         return {
             id: regexp.url.exec(url.href)![1],
+            focus: url.searchParams.get("focus") === "1",
+        }
+    }
+    else {
+        return null;
+    }
+}
+
+/**
+ * 解析思源超链接 URL
+ * @param url: URL
+ */
+export function parseSiyuanWebURL(url: URL): ISiyuanUrlParams | null {
+    if (regexp.id.test(url.searchParams.get("id")!)) { // 思源页面访问 URL
+        return {
+            id: url.searchParams.get("id")!,
             focus: url.searchParams.get("focus") === "1",
         }
     }

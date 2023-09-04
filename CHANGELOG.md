@@ -3,6 +3,8 @@
 ## 2023-09-04
 
 - 修复无法同时连接到同一个会话的问题 | Fix the issue that cannot connect to the same session at the same time.
+- 裁剪 Jupyter 服务管理类 `ServiceManager` | Trim Jupyter service management class `ServiceManager`.
+- 添加使用原生窗口编辑器打开思源块的功能 | Add the function of opening SiYuan block with native window editor.
 
 ## 2023-09-03
 
