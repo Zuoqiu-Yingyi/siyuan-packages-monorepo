@@ -30,8 +30,12 @@ export function hasNodeProcess(): boolean {
     return !!globalThis.process;
 }
 
+export function hasElectron(): boolean {
+    return !!globalThis.process?.versions?.hasOwnProperty("electron");
+}
+
 export function isElectron(): boolean {
-    return hasNodeProcess() && hasNodeRequire();
+    return hasNodeProcess() && hasNodeRequire() && hasElectron();
 }
 
 export function isIframe(): boolean {
