@@ -6,6 +6,7 @@
 - 裁剪 Jupyter 服务管理类 `ServiceManager` | Trim Jupyter service management class `ServiceManager`.
 - 添加使用原生窗口编辑器打开思源块的功能 | Add the function of opening SiYuan block with native window editor.
 - 修复自动换行功能失效问题 | Fix the issue that the automatic line break function is invalid.
+- 添加打开新标签页功能 | Add the function of opening a new tab.
 
 ## 2023-09-03
 
