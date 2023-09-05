@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@siyuan-community/siyuan-sdk':
-        specifier: ^0.2.3
-        version: 0.2.3(ws@8.13.0)
+        specifier: ^0.3.0
+        version: 0.3.0(ws@8.13.0)
       '@workspace/eslint-config-custom':
         specifier: workspace:*
         version: link:tools/eslint-config-custom
@@ -1233,8 +1233,8 @@ packages:
       react-is: 18.2.0
     dev: true
 
-  /@siyuan-community/siyuan-sdk@0.2.3(ws@8.13.0):
-    resolution: {integrity: sha512-/hbNaUMFsK7c2moO+/+mUijf5XUytQ63sm1idn/Lg4LL0E1awbIFeTtgQxHyLg5HI3xiAZvOmxdPx4x/fmp6WA==}
+  /@siyuan-community/siyuan-sdk@0.3.0(ws@8.13.0):
+    resolution: {integrity: sha512-wFGwFaNNb0aUF33qh4PxdkhOJTTv3wBIjHARYVWLZAzYuIGkNcBvkhYck6HSyV4E4o3fn5Dg/nBpAne2prXsJA==}
     dependencies:
       axios: 1.5.0
       isomorphic-ws: 5.0.0(ws@8.13.0)
