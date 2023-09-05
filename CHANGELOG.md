@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-05
+
+- 修复无法在浏览器中使用的问题 | Fix the issue that cannot be used in the browser.
+
 ## 2023-09-04
 
 - 修复无法同时连接到同一个会话的问题 | Fix the issue that cannot connect to the same session at the same time.
