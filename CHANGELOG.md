@@ -3,6 +3,8 @@
 ## 2023-09-05
 
 - 修复无法在浏览器中使用的问题 | Fix the issue that cannot be used in the browser.
+- 优化运行结果数据解析方案 | Optimize the data parsing scheme of the running result.
+- 更新文档中的徽标 | Update the badge in the document.
 
 ## 2023-09-04
 
