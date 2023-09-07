@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@siyuan-community/siyuan-sdk':
         specifier: ^0.3.0
-        version: 0.3.0(ws@8.13.0)
+        version: 0.3.0(ws@8.14.0)
       '@workspace/eslint-config-custom':
         specifier: workspace:*
         version: link:tools/eslint-config-custom
@@ -213,8 +213,8 @@ importers:
         specifier: ^3.59.2
         version: 3.59.2
       svelte-check:
-        specifier: ^3.5.0
-        version: 3.5.0(less@4.2.0)(svelte@3.59.2)
+        specifier: ^3.5.1
+        version: 3.5.1(less@4.2.0)(svelte@3.59.2)
       svelte-preprocess-less:
         specifier: ^0.4.0
         version: 0.4.0
@@ -222,8 +222,8 @@ importers:
         specifier: ^2.6.2
         version: 2.6.2
       typescript:
-        specifier: ^5.1.6
-        version: 5.1.6
+        specifier: ^5.2.2
+        version: 5.2.2
       vite:
         specifier: ^4.4.9
         version: 4.4.9(@types/node@20.5.9)(less@4.2.0)
@@ -1233,11 +1233,11 @@ packages:
       react-is: 18.2.0
     dev: true
 
-  /@siyuan-community/siyuan-sdk@0.3.0(ws@8.13.0):
+  /@siyuan-community/siyuan-sdk@0.3.0(ws@8.14.0):
     resolution: {integrity: sha512-wFGwFaNNb0aUF33qh4PxdkhOJTTv3wBIjHARYVWLZAzYuIGkNcBvkhYck6HSyV4E4o3fn5Dg/nBpAne2prXsJA==}
     dependencies:
       axios: 1.5.0
-      isomorphic-ws: 5.0.0(ws@8.13.0)
+      isomorphic-ws: 5.0.0(ws@8.14.0)
       ofetch: 1.3.3
     transitivePeerDependencies:
       - debug
@@ -2821,12 +2821,12 @@ packages:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
     dev: true
 
-  /isomorphic-ws@5.0.0(ws@8.13.0):
+  /isomorphic-ws@5.0.0(ws@8.14.0):
     resolution: {integrity: sha512-muId7Zzn9ywDsyXgTIafTry2sV3nySZeUDe6YedVd1Hvuuep5AsIlqK+XefWpYTyJG5e503F2xIuT2lcU6rCSw==}
     peerDependencies:
       ws: '*'
     dependencies:
-      ws: 8.13.0
+      ws: 8.14.0
     dev: false
 
   /isomorphic.js@0.2.5:
@@ -4741,6 +4741,20 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+    dev: true
+
+  /ws@8.14.0:
+    resolution: {integrity: sha512-WR0RJE9Ehsio6U4TuM+LmunEsjQ5ncHlw4sn9ihD6RoJKZrVyH9FWV3dmnwu8B2aNib1OvG2X6adUCyFpQyWcg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dev: false
 
   /xml-js@1.6.11:
     resolution: {integrity: sha512-7rVi2KMfwfWFl+GpPg6m80IVMWXLRjO+PxTq7V2CDhoGak0wzYzFgUY2m4XJ47OGdXd8eLE8EmwfAmdjw7lC1g==}
