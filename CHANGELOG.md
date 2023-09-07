@@ -1,5 +1,11 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-07
+
+- 编辑块样式支持同时设置多个块的块样式 | The block style supports setting the block style of multiple blocks at the same time.
+- 添加 `悬浮显示` 功能 | Add `Floating Display` function.
+- 为代码单元格添加运行按钮 | Add run button to code cell.
+
 ## 2023-09-05
 
 - 修复无法在浏览器中使用的问题 | Fix the issue that cannot be used in the browser.
