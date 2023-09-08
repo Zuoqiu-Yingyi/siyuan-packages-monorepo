@@ -17,7 +17,7 @@
 
 // REF https://github.com/siyuan-note/siyuan/blob/dev/app/src/types/protyle.d.ts
 
-import siyuan from "siyuan";
+import type siyuan from "siyuan";
 
 export interface IProtyle {
     app: any;
@@ -44,9 +44,22 @@ export interface IProtyle {
     element: HTMLElement;
     scroll?: any;
     gutter?: any;
-    breadcrumb?: any;
-    title?: any;
-    background?: any;
+    breadcrumb?: {
+        id: string;
+        element: HTMLElement;
+    };
+    title?: {
+        editElement: HTMLElement;
+        element: HTMLElement;
+    };
+    background?: {
+        element: HTMLElement;
+        ial: Record<string, string>;
+        iconElement: HTMLElement;
+        imgElement: HTMLElement;
+        tagsElement: HTMLElement;
+        transparentData: string;
+    };
     contentElement?: HTMLElement;
     options: any;
     lute?: siyuan.Lute;

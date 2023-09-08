@@ -1,10 +1,16 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-08
+
+- 添加 `Jupyter` 按钮 | Add `Jupyter` button.
+
 ## 2023-09-07
 
 - 编辑块样式支持同时设置多个块的块样式 | The block style supports setting the block style of multiple blocks at the same time.
 - 添加 `悬浮显示` 功能 | Add `Floating Display` function.
 - 为代码单元格添加运行按钮 | Add run button to code cell.
+- 移除导入的 `prompt` 块属性 | Remove imported `prompt` block attributes.
+- 优化数据解析 | Optimize data parsing.
 
 ## 2023-09-05
 
