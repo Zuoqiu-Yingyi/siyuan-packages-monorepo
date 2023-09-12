@@ -1,5 +1,17 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-12
+
+- 调整列表导图视图文本块换行模式 | Adjust the line break mode of the text block in the list mind-map view.
+
+## 2023-09-11
+
+- [#11](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-jupyter-client/issues/11) 兼容输出消息序列顺序不规范的情况 | Compatible with the case where the output message sequence is not standardized.
+
+## 2023-09-09
+
+- 改进事件监听器 | Improve event listener.
+
 ## 2023-09-08
 
 - 添加 `Jupyter` 按钮 | Add `Jupyter` button.
