@@ -3,6 +3,7 @@
 ## 2023-09-15
 
 - 添加附属仓库 `typewriter` 的管理脚本 | Add management scripts for sub-repository `typewriter`.
+- 添加附属仓库 `typewriter` | Add sub-repository `typewriter`.
 
 ## 2023-09-12
 

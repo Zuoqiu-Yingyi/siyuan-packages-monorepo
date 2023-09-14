@@ -36,7 +36,7 @@ import type { IConfig } from "./types/config";
 
 declare var globalThis: ISiyuanGlobal;
 
-export default class TemplatePlugin extends siyuan.Plugin {
+export default class TypewriterPlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "global-config";
 
     declare public readonly i18n: I18N;
@@ -65,7 +65,7 @@ export default class TemplatePlugin extends siyuan.Plugin {
         this.addIcons([
         ].join(""));
 
-        this.loadData(TemplatePlugin.GLOBAL_CONFIG_NAME)
+        this.loadData(TypewriterPlugin.GLOBAL_CONFIG_NAME)
             .then(config => {
                 this.config = mergeIgnoreArray(DEFAULT_CONFIG, config || {}) as IConfig;
             })
@@ -110,6 +110,6 @@ export default class TemplatePlugin extends siyuan.Plugin {
         if (config && config !== this.config) {
             this.config = config;
         }
-        return this.saveData(TemplatePlugin.GLOBAL_CONFIG_NAME, this.config);
+        return this.saveData(TypewriterPlugin.GLOBAL_CONFIG_NAME, this.config);
     }
 };
