@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-15
+
+- 添加附属仓库 `typewriter` 的管理脚本 | Add management scripts for sub-repository `typewriter`.
+
 ## 2023-09-12
 
 - 调整列表导图视图文本块换行模式 | Adjust the line break mode of the text block in the list mind-map view.
