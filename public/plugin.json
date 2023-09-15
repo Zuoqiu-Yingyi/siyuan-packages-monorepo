@@ -3,7 +3,7 @@
     "author": "Zuoqiu Yingyi",
     "url": "https://github.com/Zuoqiu-Yingyi/siyuan-plugin-typewriter",
     "version": "0.0.0",
-    "minAppVersion": "2.9.0",
+    "minAppVersion": "2.9.5",
     "backends": [
         "all"
     ],
@@ -11,14 +11,14 @@
         "all"
     ],
     "displayName": {
-        "default": "",
-        "zh_CN": "",
-        "zh_CHT": ""
+        "default": "Typewriter Mode",
+        "zh_CN": "打字机模式",
+        "zh_CHT": "打字機模式"
     },
     "description": {
-        "default": "",
-        "zh_CN": "",
-        "zh_CHT": ""
+        "default": "Keeps the focused block in the middle of edit area.",
+        "zh_CN": "将焦点所在块保持在编辑区中间。",
+        "zh_CHT": "將焦點所在塊保持在編輯區中間。"
     },
     "readme": {
         "default": "README.md",

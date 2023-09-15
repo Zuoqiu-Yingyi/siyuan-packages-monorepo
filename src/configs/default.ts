@@ -18,4 +18,14 @@
 import type { IConfig } from "@/types/config";
 
 export const DEFAULT_CONFIG: IConfig = {
+    typewriter: {
+        enable: true,
+        timeout: 250,
+        code: {
+            row: true,
+        },
+        table: {
+            row: true,
+        },
+    },
 };
