@@ -294,6 +294,18 @@ export function isSiyuanDocument(element: any): boolean {
 }
 
 /**
+ * 判断一个元素是否为思源编辑器面板
+ * @param element 元素
+ * @returns 是否为思源编辑器面板
+ */
+export function isSiyuanProtyleContent(element: any): boolean {
+    return !!(element
+        && element instanceof HTMLElement
+        && element.classList.contains("protyle-content")
+    );
+}
+
+/**
  * 判断一个元素是否为思源顶层元素
  * @param element 元素
  * @returns 是否为思源文档块元素
@@ -319,9 +331,11 @@ export function getSelectedBlocks(): HTMLElement[] {
  */
 export function getCurrentBlock(): HTMLElement | null | undefined {
     const selection = document.getSelection();
-    var element = selection?.focusNode?.parentElement;
+    var element = selection?.focusNode;
     while (element // 元素存在
-        && !isSiyuanBlock(element) // 元素非思源块元素
+        && (!(element instanceof HTMLElement) // 元素非 HTMLElement
+            || !isSiyuanBlock(element) // 元素非思源块元素
+        )
     ) {
         element = element.parentElement;
     }
@@ -329,7 +343,16 @@ export function getCurrentBlock(): HTMLElement | null | undefined {
 }
 
 /**
- * 获取当前光标所在编辑器
+ * 获取当前光标所在块的块 ID
+ * @returns 当前光标所在块的块 ID
+ */
+export function getCurrentBlockID(): BlockID | void {
+    const block = getCurrentBlock();
+    return block?.dataset.nodeId;
+}
+
+/**
+ * 获取当前光标所在编辑器 (所见即所得)
  * @returns 当前光标所在的编辑器的 HTML 元素
  */
 export function getCurrentProtyleWysiwyg(): HTMLElement | null {
@@ -345,12 +368,14 @@ export function getCurrentProtyleWysiwyg(): HTMLElement | null {
 }
 
 /**
- * 获取当前光标所在块的块 ID
- * @returns 当前光标所在块的块 ID
+ * 获取当前光标所在编辑器的面板
+ * @returns 当前光标所在的编辑器的 HTML 元素
  */
-export function getCurrentBlockID(): BlockID | void {
-    const block = getCurrentBlock();
-    return block?.dataset.nodeId;
+export function getCurrentProtyleContent(): HTMLElement | null | undefined {
+    const wysiwyg = getCurrentProtyleWysiwyg();
+    return isSiyuanProtyleContent(wysiwyg?.parentElement)
+        ? wysiwyg?.parentElement
+        : undefined;
 }
 
 /**

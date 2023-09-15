@@ -34,7 +34,7 @@ import { getEditors } from "@workspace/utils/siyuan/model";
 import { deshake } from "@workspace/utils/misc/deshake";
 import {
     getCurrentBlock,
-    getCurrentProtyleWysiwyg,
+    getCurrentProtyleContent,
 } from "@workspace/utils/siyuan/dom";
 
 import type {
@@ -64,6 +64,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
 
     protected config: IConfig = DEFAULT_CONFIG;
     protected scrollIntoView!: ReturnType<typeof deshake<(element: HTMLElement) => void>>;
+    protected scrollBy!: ReturnType<typeof deshake<(element: HTMLElement, options: ScrollToOptions) => void>>;
     protected currentElement?: Element; // 当前元素
 
     constructor(options: any) {
@@ -200,12 +201,19 @@ export default class TypewriterPlugin extends siyuan.Plugin {
     protected updateScrollFunction(timeout: number = this.config.typewriter.timeout): void {
         this.scrollIntoView = deshake(
             (element: HTMLElement) => {
-                this.logger.debug(element);
+                // this.logger.debug(element);
                 element.scrollIntoView({
                     behavior: "smooth",
                     inline: "center",
                     block: "center",
                 });
+            },
+            timeout,
+        );
+        this.scrollBy = deshake(
+            (element: HTMLElement, options: ScrollToOptions) => {
+                // this.logger.debug(options);
+                element.scrollBy(options);
             },
             timeout,
         );
@@ -249,12 +257,82 @@ export default class TypewriterPlugin extends siyuan.Plugin {
         if (this.config.typewriter.enable) { // 已开启打字机模式
             const block = getCurrentBlock(); // 当前光标所在块
             if (block) {
-                let element = block;
+                let element: HTMLElement | null = block;
 
                 switch (block.dataset.type) {
                     case "NodeCodeBlock":
                         if (this.config.typewriter.code.row) { // 定位到行
+                            const page = getCurrentProtyleContent(); // 当前页面
+                            if (page) {
+                                const selection = globalThis.getSelection();
+                                const focusNode = selection?.focusNode;
 
+                                if (focusNode) {
+                                    let height = 0;
+                                    let bottom = 0;
+
+                                    switch (true) {
+                                        case focusNode instanceof HTMLElement: // 元素为 HTML 元素
+                                            element = focusNode as HTMLElement;
+                                            break;
+                                        case focusNode instanceof Text: // 元素为文本节点
+                                            if (focusNode.parentElement?.localName === "span") { // 文本节点上层为 span-hljs
+                                                element = focusNode.parentElement;
+                                                break;
+                                            }
+                                            else if (focusNode.parentElement?.classList.contains("hljs")) { // 文本节点上层为 hljs
+                                                switch (true) {
+                                                    // @ts-ignore
+                                                    case focusNode.previousElementSibling instanceof HTMLElement: // 文本节点前方存在 span-hljs 节点
+                                                        // @ts-ignore
+                                                        element = focusNode.previousElementSibling;
+                                                        break;
+
+                                                    // @ts-ignore
+                                                    case focusNode.nextElementSibling instanceof HTMLElement: // 文本节点后方存在 span-hljs 节点
+                                                        // @ts-ignore
+                                                        element = focusNode.nextElementSibling;
+                                                        break;
+
+                                                    default: { // 文本节点前后均不存在 span-hljs 节点
+                                                        const focusOffset = selection.focusOffset;
+                                                        const textContent = focusNode.textContent; // 文本内容
+                                                        const linenumber = textContent?.substring(0, focusOffset).split("\n").length ?? 0; // 行数
+
+                                                        element = null;
+                                                        height = parseFloat(globalThis.getComputedStyle(focusNode.parentElement).getPropertyValue("line-height")); // 代码块每一行高度
+                                                        bottom = focusNode.parentElement.getBoundingClientRect().top + height * linenumber; // 当前行底部的坐标
+                                                        break;
+                                                    }
+                                                }
+                                                break;
+                                            }
+                                        default:
+                                            return;
+                                    }
+
+                                    const {
+                                        height: page_height, // 当前页面的高度
+                                        bottom: page_bottom,
+                                    } = page.getBoundingClientRect();
+                                    const {
+                                        height: element_height, // 当前元素的高度
+                                        bottom: element_bottom, // 当前元素的底部
+                                    } = element
+                                            ? element.getBoundingClientRect()
+                                            : {
+                                                height,
+                                                bottom,
+                                            };
+
+                                    this.scrollBy(page, {
+                                        top: -((page_bottom - page_height / 2) - (element_bottom - element_height / 2)),
+                                        left: 0,
+                                        behavior: "smooth",
+                                    });
+                                }
+                            }
+                            return;
                         }
                         break;
                     case "NodeTable":
@@ -288,15 +366,6 @@ export default class TypewriterPlugin extends siyuan.Plugin {
                     this.scrollIntoView(element);
                 }
             }
-
-            // const page = getCurrentProtyleWysiwyg()?.parentElement; // 当前页面
-            // if (page?.classList.contains("protyle-content")) {
-
-            //     let block_height = block.clientHeight; // 当前块的高度
-            //     let block_bottom = block.getBoundingClientRect().bottom; // 当前块的底部
-            //     let page_height = page.clientHeight; // 当前页面的高度
-            //     let page_bottom = page.getBoundingClientRect().bottom; // 当前页面的底部
-            // }
         }
     };
 };
