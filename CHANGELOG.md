@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-16
+
+- 实现打字机模式基础功能 | Implement the basic functions of typewriter mode.
+
 ## 2023-09-15
 
 - 添加附属仓库 `typewriter` 的管理脚本 | Add management scripts for sub-repository `typewriter`.

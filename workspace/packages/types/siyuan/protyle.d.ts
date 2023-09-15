@@ -68,5 +68,9 @@ export interface IProtyle {
     hint?: any;
     upload?: any;
     undo?: any;
-    wysiwyg?: any;
+    wysiwyg?: {
+        element: HTMLDivElement;
+        lastHTMLs: Record<string, string>;
+        preventKeyup: boolean;
+    };
 }
