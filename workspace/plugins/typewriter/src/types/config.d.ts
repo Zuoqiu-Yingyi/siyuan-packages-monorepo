@@ -15,5 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+export interface IBlockConfig {
+    row: boolean; // 是否定位到行
+}
+
+export interface ITypewriter {
+    enable: boolean; // 是否启用
+    timeout: number; // 延时 (ms)
+    code: IBlockConfig; // 代码块
+    table: IBlockConfig; // 表格块
+}
+
 export interface IConfig {
+    typewriter: ITypewriter;
 }

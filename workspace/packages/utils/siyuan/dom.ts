@@ -329,6 +329,22 @@ export function getCurrentBlock(): HTMLElement | null | undefined {
 }
 
 /**
+ * 获取当前光标所在编辑器
+ * @returns 当前光标所在的编辑器的 HTML 元素
+ */
+export function getCurrentProtyleWysiwyg(): HTMLElement | null {
+    var element = globalThis.document.activeElement;
+    while (element // 元素存在
+        && (!(element instanceof HTMLElement) // 元素非 HTMLElement
+            || !isSiyuanDocument(element) // 元素非思源编辑器元素
+        )
+    ) {
+        element = element.parentElement;
+    }
+    return element;
+}
+
+/**
  * 获取当前光标所在块的块 ID
  * @returns 当前光标所在块的块 ID
  */
