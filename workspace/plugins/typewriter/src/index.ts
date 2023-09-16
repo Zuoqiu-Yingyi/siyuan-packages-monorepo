@@ -66,6 +66,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
     protected scrollIntoView!: ReturnType<typeof deshake<(element: HTMLElement) => void>>;
     protected scrollBy!: ReturnType<typeof deshake<(element: HTMLElement, options: ScrollToOptions) => void>>;
     protected currentElement?: Element; // 当前元素
+    protected topBarButton?: HTMLElement; // 顶部菜单栏按钮
 
     constructor(options: any) {
         super(options);
@@ -84,6 +85,18 @@ export default class TypewriterPlugin extends siyuan.Plugin {
         this.addIcons([
         ].join(""));
 
+        /**
+         * 注册快捷键命令
+         * 在 onload 结束后即刻解析, 因此不能在回调函数中注册
+         */
+        this.addCommand({ // 打开/关闭打字机模式
+            langKey: "toggle-typewriter",
+            langText: this.i18n.menu.switch.command.text,
+            hotkey: "⌥⇧T", // 默认快捷键 Ctrl + Enter
+            customHotkey: "⌥⇧T", // 自定义快捷键
+            callback: this.toggleEnableState,
+        });
+
         this.loadData(TypewriterPlugin.GLOBAL_CONFIG_NAME)
             .then(config => {
                 this.config = mergeIgnoreArray(DEFAULT_CONFIG, config || {}) as IConfig;
@@ -96,6 +109,12 @@ export default class TypewriterPlugin extends siyuan.Plugin {
     }
 
     onLayoutReady(): void {
+        this.topBarButton = this.addTopBar({
+            icon: "iconKeymap",
+            title: this.i18n.menu.switch.title,
+            position: "right",
+            callback: this.toggleEnableState,
+        });
     }
 
     onunload(): void {
@@ -105,7 +124,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
     openSetting(): void {
         const that = this;
         const dialog = new siyuan.Dialog({
-            title: `${this.i18n.displayName} <code class="fn__code">${this.name}</code>`,
+            title: `${this.displayName} <code class="fn__code">${this.name}</code>`,
             content: `<div id="${that.SETTINGS_DIALOG_ID}" class="fn__flex-column" />`,
             width: FLAG_MOBILE ? "92vw" : "720px",
             height: FLAG_MOBILE ? undefined : "640px",
@@ -182,6 +201,16 @@ export default class TypewriterPlugin extends siyuan.Plugin {
             }
         }
 
+        if (this.topBarButton) {
+            /* 更改顶部菜单栏按钮文本 */
+            this.topBarButton.ariaLabel = enable
+                ? this.i18n.menu.switch.enabled
+                : this.i18n.menu.switch.disabled;
+
+            /* 更改顶部菜单栏按钮状态 */
+            this.topBarButton.classList.toggle("toolbar__item--active", enable);
+        }
+
         if (enable) {
             this.eventBus.on("loaded-protyle", this.loadedProtyleEventListener);
             this.eventBus.on("destroy-protyle", this.destroyProtyleEventListener);
@@ -218,6 +247,14 @@ export default class TypewriterPlugin extends siyuan.Plugin {
             timeout,
         );
     }
+
+    /**
+     * 切换模式激活状态
+     */
+    protected readonly toggleEnableState = () => {
+        this.config.typewriter.enable = !this.config.typewriter.enable;
+        this.activate(this.config.typewriter.enable);
+    };
 
     /* 编辑器加载事件 */
     protected readonly loadedProtyleEventListener = (e: ILoadedProtyleEvent) => {
