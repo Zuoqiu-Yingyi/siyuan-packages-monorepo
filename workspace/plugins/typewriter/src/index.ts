@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import "./index.less";
+
 import siyuan from "siyuan";
 import type { ISiyuanGlobal } from "@workspace/types/siyuan";
 
@@ -34,8 +36,12 @@ import { getEditors } from "@workspace/utils/siyuan/model";
 import { deshake } from "@workspace/utils/misc/deshake";
 import {
     getCurrentBlock,
+    getCurrentProtyleWysiwyg,
     getCurrentProtyleContent,
 } from "@workspace/utils/siyuan/dom";
+
+import { DEFAULT_CONFIG } from "./configs/default";
+import constants from "./constants";
 
 import type {
     IClickEditorContentEvent,
@@ -44,7 +50,6 @@ import type {
 } from "@workspace/types/siyuan/events";
 import type { IProtyle } from "siyuan/types/protyle";
 
-import { DEFAULT_CONFIG } from "./configs/default";
 import type { I18N } from "./utils/i18n";
 import type { IConfig } from "./types/config";
 
@@ -60,7 +65,8 @@ export default class TypewriterPlugin extends siyuan.Plugin {
     public readonly client: InstanceType<typeof Client>;
 
     protected readonly SETTINGS_DIALOG_ID: string;
-    protected readonly protyles = new WeakSet<IProtyle>();
+    protected readonly protyles = new WeakSet<IProtyle>(); // 已监听的编辑器对象
+    protected readonly focus = new WeakMap<HTMLElement, HTMLElement>(); // 文档 -> 焦点所在块
 
     protected config: IConfig = DEFAULT_CONFIG;
     protected scrollIntoView!: ReturnType<typeof deshake<(element: HTMLElement) => void>>;
@@ -104,7 +110,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
             })
             .catch(error => this.logger.error(error))
             .finally(() => {
-                this.activate(this.config.typewriter.enable);
+                this.activate();
             });
     }
 
@@ -152,7 +158,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
             this.config = config;
         }
 
-        this.activate(this.config.typewriter.enable);
+        this.activate();
         this.updateScrollFunction();
 
         return this.saveData(TypewriterPlugin.GLOBAL_CONFIG_NAME, this.config);
@@ -161,7 +167,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
     /**
      * 切换监听器
      * @param protyle 编辑器
-     * @param enable 是否启用打字机模式
+     * @param enable 是否启用编辑事件监听
      */
     protected toggleEventListener(
         protyle: IProtyle,
@@ -189,10 +195,13 @@ export default class TypewriterPlugin extends siyuan.Plugin {
     }
 
     /**
-     * 激活或禁用打字机模式
-     * @param enable 是否启用打字机模式
+     * 激活或禁用编辑事件监听模式
+     * @param enable 是否启用编辑事件监听
      */
-    protected activate(enable: boolean): void {
+    protected activate(
+        enable: boolean = this.config.focus.enable
+            || this.config.typewriter.enable,
+    ): void {
         const editors = getEditors(); // 获取所有编辑器
         for (const editor of editors) {
             const protyle = editor?.protyle;
@@ -253,7 +262,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
      */
     protected readonly toggleEnableState = () => {
         this.config.typewriter.enable = !this.config.typewriter.enable;
-        this.activate(this.config.typewriter.enable);
+        this.activate();
     };
 
     /* 编辑器加载事件 */
@@ -290,6 +299,60 @@ export default class TypewriterPlugin extends siyuan.Plugin {
     /* 编辑事件监听 */
     protected readonly editorEventListener = (e: Event) => {
         // this.logger.debug(e);
+
+        if (this.config.focus.enable) { // 已开启焦点显示功能
+            const block = getCurrentBlock(); // 当前光标所在块
+            const doc = getCurrentProtyleWysiwyg(); // 当前广播所在文档块
+
+            if (block && doc) {
+                let element: HTMLElement;
+                switch (block.dataset.type) {
+                    case "NodeTable": {
+                        let cell = globalThis.getSelection()?.focusNode;
+                        while (true) {
+                            if (!cell) { // 元素不存在
+                                break;
+                            }
+                            else { // 元素存在
+                                if (cell instanceof HTMLElement) { // 元素为 HTML 元素
+                                    if (cell.localName === "td" || cell.localName === "th") { // 元素为表格单元格
+                                        break;
+                                    }
+                                }
+                            }
+                            cell = cell.parentElement;
+                        }
+                        element = cell ?? block;
+                        break;
+                    }
+                    default:
+                        element = block;
+                        break;
+                }
+
+                /* 更新焦点的 ID */
+                const unique_focus = globalThis.document.getElementById(constants.FOCUS_ELEMENT_UNIQUE_ID);
+                if (element !== unique_focus) {
+                    unique_focus?.removeAttribute("id");
+                    element.id = constants.FOCUS_ELEMENT_UNIQUE_ID;
+                }
+
+                /* 更新焦点的 class */
+                const focus = this.focus.get(doc);
+                if (element !== focus) {
+                    focus?.classList.remove(constants.FOCUS_ELEMENT_CLASS_NAME);
+                    element.classList.toggle(constants.FOCUS_ELEMENT_CLASS_NAME, true);
+                    this.focus.set(doc, element);
+                }
+            }
+            else {
+                /* 删除其他焦点的 id */
+                globalThis.document.getElementById(constants.FOCUS_ELEMENT_UNIQUE_ID)?.removeAttribute("id");
+
+                /* 删除其他焦点的 class */
+                this.focus.get(doc!)?.classList.remove(constants.FOCUS_ELEMENT_CLASS_NAME);
+            }
+        }
 
         if (this.config.typewriter.enable) { // 已开启打字机模式
             const block = getCurrentBlock(); // 当前光标所在块
