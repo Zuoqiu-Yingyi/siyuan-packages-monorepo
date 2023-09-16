@@ -8,10 +8,10 @@
     "devDependencies": {
         "@types/file-saver": "^2.0.5",
         "@types/html-escaper": "^3.0.0",
-        "@types/jstimezonedetect": "^1.0.3",
+        "@types/jstimezonedetect": "^1.0.4",
         "@types/parse-data-url": "^3.0.0",
         "@types/streamsaver": "^2.0.1",
-        "@types/uuid": "^9.0.3",
+        "@types/uuid": "^9.0.4",
         "binary-extensions": "^2.2.0",
         "browser-fs-access": "^0.34.1",
         "buffer": "^6.0.3",
@@ -28,7 +28,7 @@
         "parse-data-url": "^5.0.0",
         "path-browserify": "^1.0.1",
         "text-extensions": "^2.4.0",
-        "uuid": "^9.0.0",
+        "uuid": "^9.0.1",
         "valid-filename": "^4.0.0"
     },
     "dependencies": {
