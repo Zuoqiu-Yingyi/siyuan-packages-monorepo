@@ -54,11 +54,7 @@
 
     enum PanelKey {
         general, // 常规设置
-    }
-
-    enum TabKey {
-        general, // 常规设置
-        service, // 服务设置
+        function, // 打字机设置
     }
 
     let panels_focus_key = PanelKey.general;
@@ -68,6 +64,12 @@
             text: i18n.settings.generalSettings.title,
             name: i18n.settings.generalSettings.title,
             icon: "#iconSettings",
+        },
+        {
+            key: PanelKey.function,
+            text: i18n.settings.functionSettings.title,
+            name: i18n.settings.functionSettings.title,
+            icon: "#iconKeymap",
         },
     ];
 </script>
@@ -90,6 +92,82 @@
                 settingKey="Reset"
                 settingValue={i18n.settings.generalSettings.reset.text}
                 on:clicked={resetOptions}
+            />
+        </Item>
+    </Panel>
+
+    <!-- 功能设置面板 -->
+    <Panel display={panels[1].key === focusPanel}>
+        <!-- 启用打字机模式 -->
+        <Item
+            title={i18n.settings.functionSettings.enable.title}
+            text={i18n.settings.functionSettings.enable.description}
+        >
+            <Input
+                slot="input"
+                type={ItemType.checkbox}
+                settingKey="enable"
+                settingValue={config.typewriter.enable}
+                on:changed={async e => {
+                    config.typewriter.enable = e.detail.value;
+                    await updated();
+                }}
+            />
+        </Item>
+
+        <!-- 代码块焦点跟随行 -->
+        <Item
+            title={i18n.settings.functionSettings.code.title}
+            text={i18n.settings.functionSettings.code.description}
+        >
+            <Input
+                slot="input"
+                type={ItemType.checkbox}
+                settingKey="code"
+                settingValue={config.typewriter.code.row}
+                on:changed={async e => {
+                    config.typewriter.code.row = e.detail.value;
+                    await updated();
+                }}
+            />
+        </Item>
+
+        <!-- 表格块焦点跟随单元格 -->
+        <Item
+            title={i18n.settings.functionSettings.table.title}
+            text={i18n.settings.functionSettings.table.description}
+        >
+            <Input
+                slot="input"
+                type={ItemType.checkbox}
+                settingKey="table"
+                settingValue={config.typewriter.table.row}
+                on:changed={async e => {
+                    config.typewriter.table.row = e.detail.value;
+                    await updated();
+                }}
+            />
+        </Item>
+
+        <!-- 滚动延时时间 -->
+        <Item
+            title={i18n.settings.functionSettings.timeout.title}
+            text={i18n.settings.functionSettings.timeout.description}
+        >
+            <Input
+                slot="input"
+                type={ItemType.number}
+                settingKey="timeout"
+                settingValue={config.typewriter.timeout}
+                limits={{
+                    min: 0,
+                    max: Infinity,
+                    step: 25,
+                }}
+                on:changed={async e => {
+                    config.typewriter.timeout = e.detail.value;
+                    await updated();
+                }}
             />
         </Item>
     </Panel>
