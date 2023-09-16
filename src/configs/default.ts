@@ -28,4 +28,7 @@ export const DEFAULT_CONFIG: IConfig = {
             row: true,
         },
     },
+    focus: {
+        enable: true,
+    },
 };

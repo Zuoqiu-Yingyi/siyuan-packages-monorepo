@@ -15,22 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export interface IBlockConfig {
-    row: boolean; // 是否定位到行
-}
-
-export interface ITypewriter {
-    enable: boolean; // 是否启用
-    timeout: number; // 延时 (ms)
-    code: IBlockConfig; // 代码块
-    table: IBlockConfig; // 表格块
-}
-
-export interface IFocus {
-    enable: boolean; // 是否启用
-}
-
-export interface IConfig {
-    typewriter: ITypewriter;
-    focus: IFocus;
-}
+export default {
+    FOCUS_ELEMENT_UNIQUE_ID: "plugin-focus-unique-id", // 整个界面中焦点所在元素的 id 名称
+    FOCUS_ELEMENT_CLASS_NAME: "plugin-focus-classname", // 每个编辑器中焦点所在元素的 class 名称
+};
