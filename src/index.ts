@@ -115,12 +115,14 @@ export default class TypewriterPlugin extends siyuan.Plugin {
     }
 
     onLayoutReady(): void {
+        /* 添加打字机模式功能开关 */
         this.topBarButton = this.addTopBar({
             icon: "iconKeymap",
             title: this.i18n.menu.switch.title,
             position: "right",
             callback: this.toggleEnableState,
         });
+        this.updateTopBarButtonState();
     }
 
     onunload(): void {
@@ -202,6 +204,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
         enable: boolean = this.config.focus.enable
             || this.config.typewriter.enable,
     ): void {
+        /* 更新所有编辑器的编辑事件监听器 */
         const editors = getEditors(); // 获取所有编辑器
         for (const editor of editors) {
             const protyle = editor?.protyle;
@@ -210,14 +213,20 @@ export default class TypewriterPlugin extends siyuan.Plugin {
             }
         }
 
-        if (this.topBarButton) {
-            /* 更改顶部菜单栏按钮文本 */
-            this.topBarButton.ariaLabel = enable
-                ? this.i18n.menu.switch.enabled
-                : this.i18n.menu.switch.disabled;
+        /* 更新顶部菜单栏按钮状态 */
+        this.updateTopBarButtonState();
 
-            /* 更改顶部菜单栏按钮状态 */
-            this.topBarButton.classList.toggle("toolbar__item--active", enable);
+        if (!this.config.focus.enable) {
+            /* 关闭焦点显示 */
+            globalThis.document.getElementById(constants.FOCUS_ELEMENT_UNIQUE_ID)?.removeAttribute("id");
+            globalThis.document.querySelectorAll(`[${constants.FOCUS_ELEMENT_ATTR_NAME}]`).forEach(element => {
+                if (element instanceof HTMLElement) {
+                    delete element.dataset[constants.FOCUS_ELEMENT_DATA_NAME];
+                }
+                else {
+                    element.removeAttribute(constants.FOCUS_ELEMENT_ATTR_NAME);
+                }
+            });
         }
 
         if (enable) {
@@ -229,6 +238,23 @@ export default class TypewriterPlugin extends siyuan.Plugin {
             this.eventBus.off("loaded-protyle", this.loadedProtyleEventListener);
             this.eventBus.off("destroy-protyle", this.destroyProtyleEventListener);
             this.eventBus.off("click-editorcontent", this.clickEditorContentEventListener);
+        }
+    }
+
+    /**
+     * 更新顶部菜单栏按钮状态
+     */
+    protected updateTopBarButtonState(): void {
+        if (this.topBarButton) {
+            const typewriter_enable = this.config.typewriter.enable;
+
+            /* 更改顶部菜单栏按钮文本 */
+            this.topBarButton.ariaLabel = typewriter_enable
+                ? this.i18n.menu.switch.enabled
+                : this.i18n.menu.switch.disabled;
+
+            /* 更改顶部菜单栏按钮状态 */
+            this.topBarButton.classList.toggle("toolbar__item--active", typewriter_enable);
         }
     }
 
@@ -297,7 +323,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
     };
 
     /* 编辑事件监听 */
-    protected readonly editorEventListener = (e: Event) => {
+    protected readonly editorEventListener = async (e: Event) => {
         // this.logger.debug(e);
 
         if (this.config.focus.enable) { // 已开启焦点显示功能
@@ -337,11 +363,11 @@ export default class TypewriterPlugin extends siyuan.Plugin {
                     element.id = constants.FOCUS_ELEMENT_UNIQUE_ID;
                 }
 
-                /* 更新焦点的 class */
+                /* 更新焦点的属性 */
                 const focus = this.focus.get(doc);
                 if (element !== focus) {
-                    focus?.classList.remove(constants.FOCUS_ELEMENT_CLASS_NAME);
-                    element.classList.toggle(constants.FOCUS_ELEMENT_CLASS_NAME, true);
+                    delete focus?.dataset[constants.FOCUS_ELEMENT_DATA_NAME];
+                    element.dataset[constants.FOCUS_ELEMENT_DATA_NAME] = String(true);
                     this.focus.set(doc, element);
                 }
             }
@@ -349,8 +375,8 @@ export default class TypewriterPlugin extends siyuan.Plugin {
                 /* 删除其他焦点的 id */
                 globalThis.document.getElementById(constants.FOCUS_ELEMENT_UNIQUE_ID)?.removeAttribute("id");
 
-                /* 删除其他焦点的 class */
-                this.focus.get(doc!)?.classList.remove(constants.FOCUS_ELEMENT_CLASS_NAME);
+                /* 删除其他焦点的属性 */
+                delete this.focus.get(doc!)?.dataset[constants.FOCUS_ELEMENT_DATA_NAME];
             }
         }
 
@@ -361,6 +387,10 @@ export default class TypewriterPlugin extends siyuan.Plugin {
 
                 switch (block.dataset.type) {
                     case "NodeCodeBlock":
+                        if (block.classList.contains("render-node")) { // 能够渲染的代码块
+                            break;
+                        }
+
                         if (this.config.typewriter.code.row) { // 定位到行
                             const page = getCurrentProtyleContent(); // 当前页面
                             if (page) {
