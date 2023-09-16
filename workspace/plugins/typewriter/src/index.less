@@ -27,7 +27,7 @@
 
 .protyle-wysiwyg {
     [data-node-id] {
-        &.plugin-focus-classname {
+        &[data-plugin-focus=true] {
             // 焦点所在块
             box-shadow: 0 0 var(--custom-focus-shadow-blur) 0 var(--custom-focus-shadow-color) inset;
         }
@@ -41,15 +41,15 @@
             table {
                 tr {
 
-                    &:has(th.plugin-focus-classname),
-                    &:has(td.plugin-focus-classname) {
+                    &:has(th[data-plugin-focus=true]),
+                    &:has(td[data-plugin-focus=true]) {
                         // 焦点所在表格行
                         outline: var(--custom-focus-table-row-outline-width) solid var(--custom-focus-table-row-outline-color);
                     }
 
                     th,
                     td {
-                        &.plugin-focus-classname {
+                        &[data-plugin-focus=true] {
                             // 焦点所在单元格
                             box-shadow: 0 0 var(--custom-focus-table-cell-shadow-blur) 0 var(--custom-focus-shadow-color) inset;
                         }

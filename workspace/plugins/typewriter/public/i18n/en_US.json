@@ -36,7 +36,7 @@
             },
             "table": {
                 "description": "Scroll cell by cell when focus is inside a table block",
-                "title": "Table Cell Focus"
+                "title": "Table Block Cell Focus"
             },
             "timeout": {
                 "description": "Set the time interval between edit actions and the start of scrolling.<br/>Unit: milliseconds",
