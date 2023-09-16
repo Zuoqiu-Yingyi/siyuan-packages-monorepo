@@ -17,20 +17,97 @@
 ---
 </div>
 
-# SiYuan Plubin Template
+# Typewriter Mode Plugin for SiYuan
 
-## PREVIEW
+This is a plug-in for [SiYuan Note](https://github.com/siyuan-note/siyuan) that can highlight the currently edited block and automatically scroll it to the center of the editing area.
 
-![preview image](https://cdn.jsdelivr.net/gh/Zuoqiu-Yingyi/siyuan-plugin-typewriter/public/preview.png)
+## Preview
 
-## Q & A
+![Preview Image](https://cdn.jsdelivr.net/gh/Zuoqiu-Yingyi/siyuan-plugin-typewriter/public/preview.png)
 
-## INTRODUCTION
+## Frequently Asked Questions
 
-### Features Introduction
+## Introduction
 
-### Settings Introduction
+### Features
 
-## CHANGELOG
+* `Focus Display`
+
+  * Show the currently edited block (block where the cursor is located) in the editor
+
+    * Each currently edited block (cell in a table) in the editor will have the attribute `data-plugin-focus="true"`
+    * The currently edited block (cell where the cursor is located) will have the `id` attribute `plugin-focus-unique-id`
+  * `CSS` style variables can be modified in <kbd>SiYuan Settings &gt; Appearance &gt; Code Snippet</kbd>
+
+    * ```css
+      :root {
+          /* Focus shadow blur radius */
+          --custom-focus-shadow-blur: 0.25em;
+          /* Focus shadow color */
+          --custom-focus-shadow-color: var(--b3-theme-secondary);
+
+          /* Global unique focus shadow color */
+          --custom-focus-unique-shadow-color: var(--b3-theme-primary);
+
+          /* Outline width of the table row with focus */
+          --custom-focus-table-row-outline-width: 1px;
+          /* Outline color of the table row with focus */
+          --custom-focus-table-row-outline-color: var(--b3-theme-on-surface);
+
+          /* Shadow blur radius of the table cell with focus */
+          --custom-focus-table-cell-shadow-blur: 0.25em;
+      }
+      ```
+* `Typewriter Mode`
+
+  * Keep the currently edited block (block where the cursor is located) in the middle of the editor
+
+    * If the cursor is in a table block, the cell where the cursor is located can be kept in the middle of the editor
+    * If the cursor is in a code block, the line where the cursor is located can be kept in the middle of the editor
+  * This mode can be enabled/disabled in the following ways
+
+    * <kbd>This Plugin Settings Panel &gt; Typewriter Settings &gt; Enable Typewriter Mode</kbd>
+    * `Typewriter Mode` button in the top-right corner of the menu bar
+    * Shortcut key <kbd>Shift + Alt + T</kbd>
+    * Command Palette option `Toggle Typewriter Mode`
+
+### Settings
+
+* General Settings
+
+  * `Reset Settings`
+
+    * This button will reset all settings to their default values
+    * The page will be refreshed after resetting
+* Focus Settings
+
+  * `Display Current Focus`
+
+    * When enabled, the currently edited block will be highlighted in the editor (outline will be added to the currently edited block)
+
+      * The element of the currently edited block will have attributes `data-plugin-focus="true"` and `id="plugin-focus-unique-id"`
+    * When disabled, the currently edited block will no longer be highlighted
+
+      * All attributes `data-plugin-focus="true"` and `id="plugin-focus-unique-id"` will be removed
+    * This option does not apply the features of Typewriter Mode
+* Typewriter Settings
+
+  * `Enable Typewriter Mode`
+
+    * When enabled, the block where the cursor is located will automatically scroll to the middle of the editor while editing
+  * `Code Block Focus Follows Line`
+
+    * When enabled, the line of code where the cursor is located will be scrolled to the middle of the editor while editing a code block
+    * When disabled, the code block will be scrolled to the middle of the editor while editing a code block
+  * `Table Block Focus Follows Cell`
+
+    * When enabled, the table cell where the cursor is located will be scrolled to the middle of the editor while editing a table block
+    * When disabled, the table block will be scrolled to the middle of the editor while editing a table block
+  * `Scroll Delay`
+
+    * After the cursor moves to another block, the block where the cursor is located will scroll to the middle of the editor after a certain delay
+    * Unit: Milliseconds
+
+## Changelog
 
 [CHANGELOG.md](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-typewriter/blob/main/CHANGELOG.md)
