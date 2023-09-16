@@ -6,8 +6,8 @@
         "access": "public"
     },
     "dependencies": {
-        "@sveltejs/vite-plugin-svelte": "^2.4.5",
-        "@vitejs/plugin-vue": "^4.3.2",
+        "@sveltejs/vite-plugin-svelte": "^2.4.6",
+        "@vitejs/plugin-vue": "^4.3.4",
         "vite": "^4.4.9"
     }
 }

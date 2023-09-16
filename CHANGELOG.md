@@ -4,6 +4,7 @@
 
 - 使用 `data-plugin-focus="true"` 替换 `class="plugin-focus-classname"`
 - 完善文档 | Improve documentation.
+- 更新依赖项 | Update dependencies.
 
 ## 2023-09-16
 
