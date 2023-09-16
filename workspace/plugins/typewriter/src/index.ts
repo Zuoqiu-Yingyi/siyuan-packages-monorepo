@@ -88,8 +88,8 @@ export default class TypewriterPlugin extends siyuan.Plugin {
         // this.logger.debug(this);
 
         /* 注册图标 */
-        this.addIcons([
-        ].join(""));
+        // this.addIcons([
+        // ].join(""));
 
         /**
          * 注册快捷键命令
