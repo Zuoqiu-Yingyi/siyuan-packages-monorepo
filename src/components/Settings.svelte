@@ -54,7 +54,8 @@
 
     enum PanelKey {
         general, // 常规设置
-        function, // 打字机设置
+        focus, // 焦点设置
+        typewriter, // 打字机设置
     }
 
     let panels_focus_key = PanelKey.general;
@@ -66,9 +67,15 @@
             icon: "#iconSettings",
         },
         {
-            key: PanelKey.function,
-            text: i18n.settings.functionSettings.title,
-            name: i18n.settings.functionSettings.title,
+            key: PanelKey.focus,
+            text: i18n.settings.focusSettings.title,
+            name: i18n.settings.focusSettings.title,
+            icon: "#iconFocus",
+        },
+        {
+            key: PanelKey.typewriter,
+            text: i18n.settings.typewriterSettings.title,
+            name: i18n.settings.typewriterSettings.title,
             icon: "#iconKeymap",
         },
     ];
@@ -96,12 +103,32 @@
         </Item>
     </Panel>
 
-    <!-- 功能设置面板 -->
+    <!-- 焦点设置面板 -->
     <Panel display={panels[1].key === focusPanel}>
+        <!-- 启用焦点模式 -->
+        <Item
+            title={i18n.settings.focusSettings.enable.title}
+            text={i18n.settings.focusSettings.enable.description}
+        >
+            <Input
+                slot="input"
+                type={ItemType.checkbox}
+                settingKey="enable"
+                settingValue={config.focus.enable}
+                on:changed={async e => {
+                    config.focus.enable = e.detail.value;
+                    await updated();
+                }}
+            />
+        </Item>
+    </Panel>
+
+    <!-- 打字机设置面板 -->
+    <Panel display={panels[2].key === focusPanel}>
         <!-- 启用打字机模式 -->
         <Item
-            title={i18n.settings.functionSettings.enable.title}
-            text={i18n.settings.functionSettings.enable.description}
+            title={i18n.settings.typewriterSettings.enable.title}
+            text={i18n.settings.typewriterSettings.enable.description}
         >
             <Input
                 slot="input"
@@ -117,8 +144,8 @@
 
         <!-- 代码块焦点跟随行 -->
         <Item
-            title={i18n.settings.functionSettings.code.title}
-            text={i18n.settings.functionSettings.code.description}
+            title={i18n.settings.typewriterSettings.code.title}
+            text={i18n.settings.typewriterSettings.code.description}
         >
             <Input
                 slot="input"
@@ -134,8 +161,8 @@
 
         <!-- 表格块焦点跟随单元格 -->
         <Item
-            title={i18n.settings.functionSettings.table.title}
-            text={i18n.settings.functionSettings.table.description}
+            title={i18n.settings.typewriterSettings.table.title}
+            text={i18n.settings.typewriterSettings.table.description}
         >
             <Input
                 slot="input"
@@ -151,8 +178,8 @@
 
         <!-- 滚动延时时间 -->
         <Item
-            title={i18n.settings.functionSettings.timeout.title}
-            text={i18n.settings.functionSettings.timeout.description}
+            title={i18n.settings.typewriterSettings.timeout.title}
+            text={i18n.settings.typewriterSettings.timeout.description}
         >
             <Input
                 slot="input"

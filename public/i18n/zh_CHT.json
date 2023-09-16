@@ -10,7 +10,22 @@
         }
     },
     "settings": {
-        "functionSettings": {
+        "focusSettings": {
+            "enable": {
+                "description": "開啟後在編輯器中顯示當前正在編輯的塊",
+                "title": "顯示當前焦點"
+            },
+            "title": "焦點設置"
+        },
+        "generalSettings": {
+            "reset": {
+                "description": "重置所有設置選項為默認選項（重置後將刷新頁面）",
+                "text": "重置",
+                "title": "重置設置選項"
+            },
+            "title": "常規設置"
+        },
+        "typewriterSettings": {
             "code": {
                 "description": "焦點位於代碼塊內部時以行為單位進行滾動",
                 "title": "代碼塊焦點跟隨行"
@@ -27,15 +42,7 @@
                 "description": "設置編輯操作與開始滾動之間的時間間隔<br/>單位：毫秒",
                 "title": "滾動延時時間"
             },
-            "title": "功能設置"
-        },
-        "generalSettings": {
-            "reset": {
-                "description": "重置所有設置選項為默認選項（重置後將刷新頁面）",
-                "text": "重置",
-                "title": "重置設置選項"
-            },
-            "title": "常規設置"
+            "title": "打字機設置"
         }
     }
 }
