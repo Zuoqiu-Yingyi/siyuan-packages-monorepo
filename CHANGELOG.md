@@ -1,9 +1,17 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-17
+
+- 使用 `data-plugin-focus="true"` 替换 `class="plugin-focus-classname"`
+- 完善文档 | Improve documentation.
+
 ## 2023-09-16
 
 - 实现打字机模式基础功能 | Implement the basic functions of typewriter mode.
 - 实现打字机在代码块中跟随行功能 | Implement the function of typewriter following the line in the code block.
+- 完善设置面板 | Improve settings panel.
+- 添加快捷键、命令与顶部菜单栏按钮 | Add keyboard shortcuts, commands and top menu bar button.
+- 显示当前编辑焦点 | Show current editing focus.
 
 ## 2023-09-15
 
