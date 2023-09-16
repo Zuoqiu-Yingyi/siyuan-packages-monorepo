@@ -1,7 +1,7 @@
 {
     "name": "typewriter",
     "private": true,
-    "version": "0.0.0",
+    "version": "0.1.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
@@ -11,7 +11,7 @@
         "check": "svelte-check --tsconfig ./tsconfig.json"
     },
     "devDependencies": {
-        "@sveltejs/vite-plugin-svelte": "^2.4.5",
+        "@sveltejs/vite-plugin-svelte": "^2.4.6",
         "@tsconfig/svelte": "^5.0.2",
         "less": "^4.2.0",
         "svelte": "^4.2.0",
