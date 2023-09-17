@@ -5,6 +5,7 @@
 - 使用 `data-plugin-focus="true"` 替换 `class="plugin-focus-classname"`
 - 完善文档 | Improve documentation.
 - 更新依赖项 | Update dependencies.
+- 优化代码块跟随行滚动功能 | Optimize the function of code block following the line scrolling.
 
 ## 2023-09-16
 
