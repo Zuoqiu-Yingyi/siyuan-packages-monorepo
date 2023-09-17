@@ -258,7 +258,7 @@ export function isSiyuanBlock(element: any): boolean {
  * @param element 元素
  * @returns 是否为思源文档背景
  */
-export function isSiyuanDocumentBackground(element: any): boolean {
+export function isSiyuanProtyleBackground(element: any): boolean {
     return !!(element
         && element instanceof HTMLElement
         && element.classList.contains("protyle-background")
@@ -266,13 +266,17 @@ export function isSiyuanDocumentBackground(element: any): boolean {
         && regexp.id.test(element.dataset.nodeId)
     );
 }
+/**
+ * @see {@link isSiyuanProtyleBackground}
+ */
+export const isSiyuanDocumentBackground = isSiyuanProtyleBackground;
 
 /**
  * 判断一个元素是否为思源文档标题
  * @param element 元素
  * @returns 是否为思源文档标题
  */
-export function isSiyuanDocumentTitle(element: any): boolean {
+export function isSiyuanProtyleTitle(element: any): boolean {
     return !!(element
         && element instanceof HTMLElement
         && element.classList.contains("protyle-title")
@@ -280,18 +284,26 @@ export function isSiyuanDocumentTitle(element: any): boolean {
         && regexp.id.test(element.dataset.nodeId)
     );
 }
+/**
+ * @see {@link isSiyuanProtyleTitle}
+ */
+export const isSiyuanDocumentTitle = isSiyuanProtyleTitle;
 
 /**
  * 判断一个元素是否为思源文档块元素
  * @param element 元素
  * @returns 是否为思源文档块元素
  */
-export function isSiyuanDocument(element: any): boolean {
+export function isSiyuanProtyleWysiwyg(element: any): boolean {
     return !!(element
         && element instanceof HTMLElement
         && element.classList.contains("protyle-wysiwyg")
     );
 }
+/**
+ * @see {@link isSiyuanProtyleWysiwyg}
+ */
+export const isSiyuanDocument = isSiyuanProtyleWysiwyg;
 
 /**
  * 判断一个元素是否为思源编辑器面板
@@ -341,6 +353,10 @@ export function getCurrentBlock(): HTMLElement | null | undefined {
     }
     return element;
 }
+
+/**
+ * 获取当前光标所在的文档
+ */
 
 /**
  * 获取当前光标所在块的块 ID

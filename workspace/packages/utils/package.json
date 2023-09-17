@@ -27,6 +27,7 @@
         "normalize-path": "^3.0.0",
         "parse-data-url": "^5.0.0",
         "path-browserify": "^1.0.1",
+        "selection-range": "^1.1.0",
         "text-extensions": "^2.4.0",
         "uuid": "^9.0.1",
         "valid-filename": "^4.0.0"

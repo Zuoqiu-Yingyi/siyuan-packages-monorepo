@@ -178,6 +178,9 @@ importers:
       path-browserify:
         specifier: ^1.0.1
         version: 1.0.1
+      selection-range:
+        specifier: ^1.1.0
+        version: 1.1.0
       text-extensions:
         specifier: ^2.4.0
         version: 2.4.0
@@ -1327,7 +1330,7 @@ packages:
       '@sveltejs/vite-plugin-svelte': 2.4.6(svelte@4.2.0)(vite@4.4.9)
       debug: 4.3.4
       svelte: 4.2.0
-      vite: 4.4.9
+      vite: 4.4.9(less@4.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -1385,7 +1388,7 @@ packages:
       magic-string: 0.30.3
       svelte: 4.2.0
       svelte-hmr: 0.15.3(svelte@4.2.0)
-      vite: 4.4.9
+      vite: 4.4.9(less@4.2.0)
       vitefu: 0.2.4(vite@4.4.9)
     transitivePeerDependencies:
       - supports-color
@@ -2153,6 +2156,14 @@ packages:
       delayed-stream: 1.0.0
     dev: false
 
+  /component-props@1.1.1:
+    resolution: {integrity: sha512-69pIRJs9fCCHRqCz3390YF2LV1Lu6iEMZ5zuVqqUn+G20V9BNXlMs0cWawWeW9g4Ynmg29JmkG6R7/lUJoGd1Q==}
+    dev: true
+
+  /component-xor@0.0.3:
+    resolution: {integrity: sha512-ph2AwOGBeRMYbZjQHArllugRxUNtpFXEFJyRbhEaT2ibWD/eGtlO5KNazjxLrd2ZEUk2H5K9dOrJcNJis9dCmA==}
+    dev: true
+
   /compute-gcd@1.2.1:
     resolution: {integrity: sha512-TwMbxBNz0l71+8Sc4czv13h4kEqnchV9igQZBi6QUaz09dnz13juGnnaWWJTRsP3brxOoxeB4SA2WELLw1hCtg==}
     dependencies:
@@ -2332,6 +2343,13 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       esutils: 2.0.3
+    dev: true
+
+  /dom-iterator@0.3.0:
+    resolution: {integrity: sha512-Zdtw+xxxeyPNHJn7m6wsamMEbW5bvBgBiTCw8piKK5jdWu/lpZG3HyjhgsAuXyEJeq/asd17yiny6oux8nydkQ==}
+    dependencies:
+      component-props: 1.1.1
+      component-xor: 0.0.3
     dev: true
 
   /dotenv@16.0.3:
@@ -3626,7 +3644,6 @@ packages:
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.3
-    dev: true
 
   /rollup@3.29.2:
     resolution: {integrity: sha512-CJouHoZ27v6siztc21eEQGo0kIcE5D1gVPA571ez0mMYb25LGYGKnVNXpEj5MGlepmDWGXNjDB5q7uNiPHC11A==}
@@ -3680,6 +3697,12 @@ packages:
     resolution: {integrity: sha512-dGCXy99wZQivjmjIqihaBQNjryrz5rueJY7eHfTdyWEiR4ttYpsajb14rn9s5d4DY4EcY6+4+U/maARBXJedkA==}
     dependencies:
       compute-scroll-into-view: 1.0.20
+    dev: true
+
+  /selection-range@1.1.0:
+    resolution: {integrity: sha512-u0rsk8eBj0FlZsgEvQ4tUmzBoII1Upzv9P55zo7eNH2OcHVbdmVdnzyZQrxK0otu2/vZT4VNYaBzPt7P7Z+y/w==}
+    dependencies:
+      dom-iterator: 0.3.0
     dev: true
 
   /semver@5.7.2:
@@ -4556,6 +4579,7 @@ packages:
       rollup: 3.29.2
     optionalDependencies:
       fsevents: 2.3.3
+    dev: false
 
   /vite@4.4.9(@types/node@20.5.7):
     resolution: {integrity: sha512-2mbUn2LlUmNASWwSCNSJ/EG2HuSRTnVNaydp6vMCm5VIqJsjMfbIWtbH2kDuwUVW5mMUKKZvGPX/rqeqVvv1XA==}
@@ -4699,7 +4723,6 @@ packages:
       rollup: 3.29.0
     optionalDependencies:
       fsevents: 2.3.3
-    dev: true
 
   /vitefu@0.2.4(vite@4.4.9):
     resolution: {integrity: sha512-fanAXjSaf9xXtOOeno8wZXIhgia+CZury481LsDaV++lSvcU2R9Ch2bPh3PYFyoHW+w9LqAeYRISVQjUIew14g==}
@@ -4709,7 +4732,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.4.9
+      vite: 4.4.9(less@4.2.0)
 
   /vitest@0.32.2:
     resolution: {integrity: sha512-hU8GNNuQfwuQmqTLfiKcqEhZY72Zxb7nnN07koCUNmntNxbKQnVbeIS6sqUgR3eXSlbOpit8+/gr1KpqoMgWCQ==}

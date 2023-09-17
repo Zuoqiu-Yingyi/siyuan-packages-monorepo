@@ -1,5 +1,10 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-18
+
+- 添加上下文帮助面板 | Add context help panel.
+- 添加编辑事件监听器 | Add edit event listener.
+
 ## 2023-09-17
 
 - 使用 `data-plugin-focus="true"` 替换 `class="plugin-focus-classname"`
