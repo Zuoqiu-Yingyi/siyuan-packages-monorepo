@@ -394,3 +394,118 @@ export function getActiveBlocks(): HTMLElement[] {
         else return [];
     }
 }
+
+export interface ICodeBlockCursorPosition {
+    code: string; // 代码
+
+    row: number; // 行号
+    column: number; // 列号
+    offset: number; // 偏移量
+
+    container: HTMLElement; // 代码块容器
+    selection: Selection; // 光标所在的 Selection
+    order: boolean; // 划选顺序是否为从前往后
+
+    before: Range; // 划选前的 Range
+    current: Range; // 划选的 Range
+    after: Range; // 划选后的 Range
+
+    prefix: Range; // 光标所在位置前的 Range
+    suffix: Range; // 光标所在位置后的 Range
+}
+
+/**
+ * 获取代码块容器元素
+ * @param element 代码块内的元素
+ * @returns 代码块容器元素
+ */
+export function getCodeBlockContainer(element = globalThis.document.getSelection()?.focusNode): HTMLElement | null | undefined {
+    while (element // 元素存在
+        && (!(element instanceof HTMLElement) // 元素非 HTMLElement
+            || !element.classList.contains("hljs") // 元素非代码块容器
+        )
+    ) {
+        element = element.parentElement;
+    }
+    return element;
+}
+
+/**
+ * 获取代码块光标所在位置
+ * @returns 光标位置
+ */
+export function getCodeBlockCursorPosition(): ICodeBlockCursorPosition | void {
+    const selection = globalThis.document.getSelection(); // 获取光标
+    if (selection?.rangeCount === 1) { // 存在光标
+        const current = selection.getRangeAt(0); // 获取光标选择内容
+        const container = getCodeBlockContainer(current.commonAncestorContainer);
+        if (container) { // 光标所选内容位于代码块内
+            const code = container.textContent ?? ""; // 代码块内容
+            const before = globalThis.document.createRange(); // 光标选择前的范围
+            const after = globalThis.document.createRange(); // 光标选择后的范围
+            const prefix = globalThis.document.createRange(); // 光标所在位置之前的范围
+            const suffix = globalThis.document.createRange(); // 光标所在位置之后的范围
+
+            const {
+                anchorNode,
+                anchorOffset,
+                focusNode,
+                focusOffset,
+            } = selection;
+            if (anchorNode && focusNode && container.firstChild && container.lastChild) { // 光标选择的起点与终点存在, 代码块容器起点与终点存在
+                /**
+                 * 判断起点与终点的顺序
+                 * - `true`: 起点在终点之前
+                 * - `false`: 起点在终点之后
+                 * REF: https://developer.mozilla.org/zh-CN/docs/Web/API/Node/compareDocumentPosition
+                 */
+                const order = anchorNode === focusNode // 位于同一个元素内, 等价于 anchorNode.compareDocumentPosition(focusNode) === 0
+                    ? anchorOffset <= focusOffset // 根据 offset 判断光标起点与终点的顺序
+                    : (anchorNode.compareDocumentPosition(focusNode) & Node.DOCUMENT_POSITION_FOLLOWING // 判断 focusNode 是否在 anchorNode 之后
+                        ? true
+                        : false
+                    );
+
+                before.setStartBefore(container.firstChild)
+                after.setEndAfter(container.lastChild);
+
+                prefix.setStartBefore(container.firstChild)
+                suffix.setEndAfter(container.lastChild);
+                if (order) { // 起点在终点之前
+                    before.setEnd(anchorNode, anchorOffset); // 设置光标选择范围 前方的终点
+                    after.setStart(focusNode, focusOffset); // 设置光标选择范围 后方的起点
+                }
+                else { // 起点在终点之后
+                    before.setEnd(focusNode, focusOffset); // 设置光标选择范围 前方的终点
+                    after.setStart(anchorNode, anchorOffset); // 设置光标选择范围 后方的起点
+                }
+
+                prefix.setEnd(focusNode, focusOffset); // 设置光标选择范围 前方的终点
+                suffix.setStart(focusNode, focusOffset); // 设置光标选择范围 后方的起点
+
+                const prefix_code = prefix.toString(); // 光标所在位置之前的代码
+                const lines = prefix_code.split("\n"); // 光标所在位置之前的代码的行
+                const line = lines.at(-1)!; // 光标所在位置之前 (当前行) 代码
+
+                const row = lines.length; // 光标所在位置的代码的行数
+                const column = line.length; // 光标所在位置的代码的列数
+                const offset = prefix_code.length; // 光标所在位置的代码的偏移量
+
+                return {
+                    code,
+                    row,
+                    column,
+                    offset,
+                    container,
+                    selection,
+                    order,
+                    before,
+                    current,
+                    after,
+                    prefix,
+                    suffix,
+                };
+            }
+        }
+    }
+}
