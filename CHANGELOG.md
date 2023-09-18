@@ -6,6 +6,7 @@
 - 添加编辑事件监听器 | Add edit event listener.
 - 修复关闭打字机模式后显示焦点功能失效问题 | Fix the issue that the function of displaying focus is invalid after closing the typewriter mode.
 - 实现自动补全功能 | Implement auto-completion function.
+- 完善设置面板 | Improve settings panel.
 
 ## 2023-09-17
 
