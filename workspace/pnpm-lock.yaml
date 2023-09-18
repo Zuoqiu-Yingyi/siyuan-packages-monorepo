@@ -283,9 +283,15 @@ importers:
         specifier: workspace:^
         version: link:../../packages/utils
     devDependencies:
+      '@jupyter-lsp/theme-vscode':
+        specifier: 3.0.0-rc.0
+        version: 3.0.0-rc.0
       '@jupyterlab/services':
         specifier: ^7.0.5
         version: 7.0.5(react@18.2.0)
+      '@jupyterlab/ui-components':
+        specifier: ^4.0.6
+        version: 4.0.6(react@18.2.0)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^2.4.5
         version: 2.4.5(svelte@4.2.0)(vite@4.4.9)
@@ -1085,6 +1091,16 @@ packages:
     resolution: {integrity: sha512-4JQNk+3mVzK3xh2rqd6RB4J46qUR19azEHBneZyTZM+c456qOrbbM/5xcR8huNCCcbVt7+UmizG6GuUvPvKUYg==}
     dev: true
 
+  /@jupyter-lsp/completion-theme@4.0.0-rc.0:
+    resolution: {integrity: sha512-VkOWxoWYq9AET1O/1nwvHG70XF7wtHxh5y+h6mwwOfoKlABK5iAzQyT0vxFaP1YAy3QmOJMfyfblmF68UeDjzA==}
+    dev: true
+
+  /@jupyter-lsp/theme-vscode@3.0.0-rc.0:
+    resolution: {integrity: sha512-XsJ7GRsfPA8y6Yv1JRpmlBJlJbSC6FZgjX+1aMdPyQ1C26EaASmNCqYveWex6Mt5uSdnmVjnCqAuVj51jgVjJQ==}
+    dependencies:
+      '@jupyter-lsp/completion-theme': 4.0.0-rc.0
+    dev: true
+
   /@jupyter/ydoc@1.0.2:
     resolution: {integrity: sha512-0zG/5FcntGXtCC3BQYWHZlGJpRIdeV0sF7q0i3ZtS7AdhMZdyILObQGwbHpybEPENdv1HRKW/J+CGhNSriG+KQ==}
     dependencies:
@@ -1107,10 +1123,44 @@ packages:
       url-parse: 1.5.10
     dev: true
 
+  /@jupyterlab/coreutils@6.0.6:
+    resolution: {integrity: sha512-riQ6hXa3uU9GyhkcYPo+F2SC7DumgdDlkmewtu5wxUTDO0x+ZVhEC++pA7+nUszqouRvLk1lb05bfrmKgyYA4Q==}
+    dependencies:
+      '@lumino/coreutils': 2.1.2
+      '@lumino/disposable': 2.1.2
+      '@lumino/signaling': 2.1.2
+      minimist: 1.2.8
+      path-browserify: 1.0.1
+      url-parse: 1.5.10
+    dev: true
+
   /@jupyterlab/nbformat@4.0.5:
     resolution: {integrity: sha512-NrXxkOMN+PFitT73WQufmBJLW2gRMRdpIzq7lM4cg3ExfpGtp/RZ0c2No6tjyDOwr7gLMrlLah36K/Ea1zuRIQ==}
     dependencies:
       '@lumino/coreutils': 2.1.2
+    dev: true
+
+  /@jupyterlab/nbformat@4.0.6:
+    resolution: {integrity: sha512-bfpNKosc+Ayx8rdY8cSJJCmhw8x3e8nqkv865VremsMtwLTv3KvXvzz8xNW3dxp/V9Led+dfGKm8uyds7V4tEg==}
+    dependencies:
+      '@lumino/coreutils': 2.1.2
+    dev: true
+
+  /@jupyterlab/observables@5.0.6:
+    resolution: {integrity: sha512-NWAyP9PEQS9QlSz2/sNwuA+BaZ0quEJjHCM9hpY9MMkBNMIBz7Wp8+iwsvzxwef2oiWOx6dSXrAFfkBLeNEIqg==}
+    dependencies:
+      '@lumino/algorithm': 2.0.1
+      '@lumino/coreutils': 2.1.2
+      '@lumino/disposable': 2.1.2
+      '@lumino/messaging': 2.0.1
+      '@lumino/signaling': 2.1.2
+    dev: true
+
+  /@jupyterlab/rendermime-interfaces@3.8.6:
+    resolution: {integrity: sha512-GPtyTwIiQH3jh9rT0LnjcPay6MQmUvMAbEHv42TksZ6dX98038ohuHt7cP1SZqHhQ8YdPcw0s8K7MjxEl2y/Ig==}
+    dependencies:
+      '@lumino/coreutils': 2.1.2
+      '@lumino/widgets': 2.3.0
     dev: true
 
   /@jupyterlab/services@7.0.5(react@18.2.0):
@@ -1127,6 +1177,26 @@ packages:
       '@lumino/properties': 2.0.1
       '@lumino/signaling': 2.1.2
       ws: 8.14.0
+    transitivePeerDependencies:
+      - bufferutil
+      - react
+      - utf-8-validate
+    dev: true
+
+  /@jupyterlab/services@7.0.6(react@18.2.0):
+    resolution: {integrity: sha512-RRDCjpisHiAF30RxpGENUz8eJXNt5TDt8M9ftTojy5eUKWkI1MAA9CvM9E5kc4JCX9RgqXUCvi9Vb+mvw+sCTg==}
+    dependencies:
+      '@jupyter/ydoc': 1.0.2
+      '@jupyterlab/coreutils': 6.0.6
+      '@jupyterlab/nbformat': 4.0.6
+      '@jupyterlab/settingregistry': 4.0.6(react@18.2.0)
+      '@jupyterlab/statedb': 4.0.6
+      '@lumino/coreutils': 2.1.2
+      '@lumino/disposable': 2.1.2
+      '@lumino/polling': 2.1.2
+      '@lumino/properties': 2.0.1
+      '@lumino/signaling': 2.1.2
+      ws: 8.14.1
     transitivePeerDependencies:
       - bufferutil
       - react
@@ -1150,6 +1220,23 @@ packages:
       react: 18.2.0
     dev: true
 
+  /@jupyterlab/settingregistry@4.0.6(react@18.2.0):
+    resolution: {integrity: sha512-GGLqDYd9M8E8QwxgCw/Bcc+hJkDkPxaBTMu5gUvRWgnDUlrtO+pmRNcf6VTfq1s/Z7WMtdDLMn98OBVd7ZMx5g==}
+    peerDependencies:
+      react: '>=16'
+    dependencies:
+      '@jupyterlab/nbformat': 4.0.6
+      '@jupyterlab/statedb': 4.0.6
+      '@lumino/commands': 2.1.3
+      '@lumino/coreutils': 2.1.2
+      '@lumino/disposable': 2.1.2
+      '@lumino/signaling': 2.1.2
+      '@rjsf/utils': 5.12.1(react@18.2.0)
+      ajv: 8.12.0
+      json5: 2.2.3
+      react: 18.2.0
+    dev: true
+
   /@jupyterlab/statedb@4.0.5:
     resolution: {integrity: sha512-hPtbCwFEfa7VO40i862oz4CU7UnvpF0Tn4IwBI5BRNSkKcp/NJ7oCkG88O0QEdfBGP8Y0x+slrGtSZhsFQLAyQ==}
     dependencies:
@@ -1160,8 +1247,67 @@ packages:
       '@lumino/signaling': 2.1.2
     dev: true
 
+  /@jupyterlab/statedb@4.0.6:
+    resolution: {integrity: sha512-KYEh+sH5CKS9h7Zze22IWH6n266xz8jaWzHY3nrykQTwxwZpeAA+p9asiorttR7qdl97Oi3BmWGiQ+HVb2HR0Q==}
+    dependencies:
+      '@lumino/commands': 2.1.3
+      '@lumino/coreutils': 2.1.2
+      '@lumino/disposable': 2.1.2
+      '@lumino/properties': 2.0.1
+      '@lumino/signaling': 2.1.2
+    dev: true
+
+  /@jupyterlab/translation@4.0.6(react@18.2.0):
+    resolution: {integrity: sha512-KhdEET60Q0HQAiJ6HYOdj2VgcQHpk7TgorBlIQVMVC0Cfy80KLXZiZPAw856m2ObYYlMsehMnKCu4jKak9K/sQ==}
+    dependencies:
+      '@jupyterlab/coreutils': 6.0.6
+      '@jupyterlab/rendermime-interfaces': 3.8.6
+      '@jupyterlab/services': 7.0.6(react@18.2.0)
+      '@jupyterlab/statedb': 4.0.6
+      '@lumino/coreutils': 2.1.2
+    transitivePeerDependencies:
+      - bufferutil
+      - react
+      - utf-8-validate
+    dev: true
+
+  /@jupyterlab/ui-components@4.0.6(react@18.2.0):
+    resolution: {integrity: sha512-Pr5CVByxYfZhpF6VqJ7GXbGNN0xru7dd+P9BCqknH9t2Mxd+snIDu8QElnUotdee8+O9ArzUgqOMH+MwsFJfeA==}
+    peerDependencies:
+      react: ^18.2.0
+    dependencies:
+      '@jupyterlab/coreutils': 6.0.6
+      '@jupyterlab/observables': 5.0.6
+      '@jupyterlab/rendermime-interfaces': 3.8.6
+      '@jupyterlab/translation': 4.0.6(react@18.2.0)
+      '@lumino/algorithm': 2.0.1
+      '@lumino/commands': 2.1.3
+      '@lumino/coreutils': 2.1.2
+      '@lumino/disposable': 2.1.2
+      '@lumino/messaging': 2.0.1
+      '@lumino/polling': 2.1.2
+      '@lumino/properties': 2.0.1
+      '@lumino/signaling': 2.1.2
+      '@lumino/virtualdom': 2.0.1
+      '@lumino/widgets': 2.3.0
+      '@rjsf/core': 5.13.0(@rjsf/utils@5.12.1)(react@18.2.0)
+      '@rjsf/utils': 5.12.1(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      typestyle: 2.4.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
+
   /@lumino/algorithm@2.0.1:
     resolution: {integrity: sha512-iA+uuvA7DeNFB0/cQpIWNgO1c6z4pOSigifjstLy+rxf1U5ZzxIq+xudnEuTbWgKSTviG02j4cKwCyx1PO6rzA==}
+    dev: true
+
+  /@lumino/collections@2.0.1:
+    resolution: {integrity: sha512-8TbAU/48XVPKc/FOhGHLuugf2Gmx6vhVEx867KGG5fLwDOI8EW4gTno78yJUk8G0QpgNa+sdpB/LwbJFNIratg==}
+    dependencies:
+      '@lumino/algorithm': 2.0.1
     dev: true
 
   /@lumino/commands@2.1.3:
@@ -1190,8 +1336,22 @@ packages:
     resolution: {integrity: sha512-tbcfhsdKH04AMjSgYAYGD2xE80YcjrqKnfMTeU2NHt4J294Hzxs1GvEmSMk5qJ3Bbgwx6Z4BbQ7apnFg8Gc6cA==}
     dev: true
 
+  /@lumino/dragdrop@2.1.3:
+    resolution: {integrity: sha512-lETk7lu+8pMfufxWGL76Dfz8kO/44CgHua0zzaLMh/eK+sRQxghMAxqKAMrEw+6eDy7EsM59R3xuynhkLrxa2A==}
+    dependencies:
+      '@lumino/coreutils': 2.1.2
+      '@lumino/disposable': 2.1.2
+    dev: true
+
   /@lumino/keyboard@2.0.1:
     resolution: {integrity: sha512-R2mrH9HCEcv/0MSAl7bEUbjCNOnhrg49nXZBEVckg//TEG+sdayCsyrbJNMPcZ07asIPKc6mq3v7DpAmDKqh+w==}
+    dev: true
+
+  /@lumino/messaging@2.0.1:
+    resolution: {integrity: sha512-Z1b9Sq7i2yw7BN/u9ezoBUMYK06CsQXO7BqpczSnEO0PfwFf9dWi7y9VcIySOBz9uogsT1uczZMIMtLefk+xPQ==}
+    dependencies:
+      '@lumino/algorithm': 2.0.1
+      '@lumino/collections': 2.0.1
     dev: true
 
   /@lumino/polling@2.1.2:
@@ -1217,6 +1377,22 @@ packages:
     resolution: {integrity: sha512-WNM+uUZX7vORhlDRN9NmhEE04Tz1plDjtbwsX+i/51pQj2N2r7+gsVPY/gR4w+I5apmC3zG8/BojjJYIwi8ogA==}
     dependencies:
       '@lumino/algorithm': 2.0.1
+    dev: true
+
+  /@lumino/widgets@2.3.0:
+    resolution: {integrity: sha512-82vvNHmi1r5MzLEybq3ImJ7vAkaVxHZyw6/H+3ZlhXYasOwOIlYy7le71VsW8O4EtLLjuf/A/Wme9vsxH7Wp0w==}
+    dependencies:
+      '@lumino/algorithm': 2.0.1
+      '@lumino/commands': 2.1.3
+      '@lumino/coreutils': 2.1.2
+      '@lumino/disposable': 2.1.2
+      '@lumino/domutils': 2.0.1
+      '@lumino/dragdrop': 2.1.3
+      '@lumino/keyboard': 2.0.1
+      '@lumino/messaging': 2.0.1
+      '@lumino/properties': 2.0.1
+      '@lumino/signaling': 2.1.2
+      '@lumino/virtualdom': 2.0.1
     dev: true
 
   /@microsoft/tsdoc-config@0.16.2:
@@ -1260,6 +1436,22 @@ packages:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
+    dev: true
+
+  /@rjsf/core@5.13.0(@rjsf/utils@5.12.1)(react@18.2.0):
+    resolution: {integrity: sha512-rCpJGR0yPP/ip9LKcr3SmDMkbLx4QIaRA+ag0rcalSw1XLXBSzh53SpfgaB2HN++1xhUvWtIUERRHpWjQp1E7w==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@rjsf/utils': ^5.12.x
+      react: ^16.14.0 || >=17
+    dependencies:
+      '@rjsf/utils': 5.12.1(react@18.2.0)
+      lodash: 4.17.21
+      lodash-es: 4.17.21
+      markdown-to-jsx: 7.3.2(react@18.2.0)
+      nanoid: 3.3.6
+      prop-types: 15.8.1
+      react: 18.2.0
     dev: true
 
   /@rjsf/utils@5.12.1(react@18.2.0):
@@ -2240,6 +2432,10 @@ packages:
     hasBin: true
     dev: true
 
+  /csstype@3.0.10:
+    resolution: {integrity: sha512-2u44ZG2OcNUO9HDp/Jl8C07x6pU/eTR3ncV91SiK3dhG9TWvRVsCoJw14Ckx5DgWkzGA3waZWO3d7pgqpUI/XA==}
+    dev: true
+
   /csstype@3.1.2:
     resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==}
 
@@ -2707,6 +2903,10 @@ packages:
       combined-stream: 1.0.8
       mime-types: 2.1.35
     dev: false
+
+  /free-style@3.1.0:
+    resolution: {integrity: sha512-vJujYSIyT30iDoaoeigNAxX4yB1RUrh+N2ZMhIElMr3BvCuGXOw7XNJMEEJkDUeamK2Rnb/IKFGKRKlTWIGRWA==}
+    dev: true
 
   /fs-extra@11.1.1:
     resolution: {integrity: sha512-MGIE4HOvQCeUCzmlHs0vXpih4ysz4wg9qiSAu6cd42lVwPbTM1TjV7RusoyQqMmk/95gdQZX72u+YW+c3eEpFQ==}
@@ -3191,6 +3391,15 @@ packages:
     resolution: {integrity: sha512-f+NBjJJY4T3dHtlEz1wCG7YFlkODEjFIYlxDdLIDMNpkSksqTt+l/d4rjuwItxuzkuMFvPyrjzV2lxRM4ePcIA==}
     dev: true
 
+  /markdown-to-jsx@7.3.2(react@18.2.0):
+    resolution: {integrity: sha512-B+28F5ucp83aQm+OxNrPkS8z0tMKaeHiy0lHJs3LqCyDQFtWuenaIrkaVTgAm1pf1AU85LXltva86hlaT17i8Q==}
+    engines: {node: '>= 10'}
+    peerDependencies:
+      react: '>= 0.14.0'
+    dependencies:
+      react: 18.2.0
+    dev: true
+
   /material-icon-theme@4.30.1:
     resolution: {integrity: sha512-jzj7laKbjqXxHwe9VioCiwnPa2QDqCecA9gH2asvOX5ZtIUXZvgoUEk5uVIF4sImZYLJfAe2a7Ql0j/iXR5V3Q==}
     engines: {vscode: ^1.51.0}
@@ -3550,6 +3759,14 @@ packages:
       react-is: 17.0.2
     dev: true
 
+  /prop-types@15.8.1:
+    resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      react-is: 16.13.1
+    dev: true
+
   /proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
     dev: false
@@ -3570,6 +3787,20 @@ packages:
 
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+    dev: true
+
+  /react-dom@18.2.0(react@18.2.0):
+    resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
+    peerDependencies:
+      react: ^18.2.0
+    dependencies:
+      loose-envify: 1.4.0
+      react: 18.2.0
+      scheduler: 0.23.0
+    dev: true
+
+  /react-is@16.13.1:
+    resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
     dev: true
 
   /react-is@17.0.2:
@@ -3692,6 +3923,12 @@ packages:
   /sax@1.2.4:
     resolution: {integrity: sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==}
     requiresBuild: true
+
+  /scheduler@0.23.0:
+    resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
+    dependencies:
+      loose-envify: 1.4.0
+    dev: true
 
   /scroll-into-view-if-needed@2.2.31:
     resolution: {integrity: sha512-dGCXy99wZQivjmjIqihaBQNjryrz5rueJY7eHfTdyWEiR4ttYpsajb14rn9s5d4DY4EcY6+4+U/maARBXJedkA==}
@@ -4435,6 +4672,13 @@ packages:
     hasBin: true
     dev: true
 
+  /typestyle@2.4.0:
+    resolution: {integrity: sha512-/d1BL6Qi+YlMLEydnUEB8KL/CAjAN8cyt3/UyGnOyBrWf7bLGcR/6yhmsaUstO2IcYwZfagjE7AIzuI2vUW9mg==}
+    dependencies:
+      csstype: 3.0.10
+      free-style: 3.1.0
+    dev: true
+
   /ufo@1.2.0:
     resolution: {integrity: sha512-RsPyTbqORDNDxqAdQPQBpgqhWle1VcTSou/FraClYlHf6TZnQcGslpLcAphNR+sQW4q5lLWLbOsRlh9j24baQg==}
     dev: true
@@ -4909,7 +5153,6 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
-    dev: false
 
   /xml-js@1.6.11:
     resolution: {integrity: sha512-7rVi2KMfwfWFl+GpPg6m80IVMWXLRjO+PxTq7V2CDhoGak0wzYzFgUY2m4XJ47OGdXd8eLE8EmwfAmdjw7lC1g==}

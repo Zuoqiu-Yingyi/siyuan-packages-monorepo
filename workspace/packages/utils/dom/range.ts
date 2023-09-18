@@ -49,3 +49,13 @@ export function replaceRangeWithHTML(range: Range, html: string): void {
     range.deleteContents();
     range.insertNode(fragment);
 }
+
+/**
+ * 使用 Text 文本替换 Range 范围中的内容
+ * @param range Range 对象
+ * @param html HTML 文本
+ */
+export function replaceRangeWithText(range: Range, text: string): void {
+    range.deleteContents();
+    range.insertNode(document.createTextNode(text));
+}
