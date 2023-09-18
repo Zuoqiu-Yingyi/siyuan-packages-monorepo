@@ -56,10 +56,12 @@ export interface IFunctionKeysStatus {
     shiftKey: boolean;
 }
 
+export type TChecker<T> = T | Set<T> | ((value: T) => boolean);
+
 /* 事件类型状态 */
 export interface ITypeStatus extends IFunctionKeysStatus {
     // REF [event.type - Web API 接口参考 | MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Event/type)
-    type: string;
+    type: TChecker<string>;
 }
 
 /**
@@ -68,7 +70,7 @@ export interface ITypeStatus extends IFunctionKeysStatus {
  */
 export interface IKeyboardStatus extends ITypeStatus {
     // REF [KeyboardEvent.key - Web API 接口参考 | MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/KeyboardEvent/key)
-    key: string;
+    key: TChecker<string>;
 }
 
 /**
@@ -77,5 +79,5 @@ export interface IKeyboardStatus extends ITypeStatus {
  */
 export interface IMouseStatus extends ITypeStatus {
     // REF [MouseEvent.button - Web API 接口参考 | MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/MouseEvent/button)
-    button: MouseButton;
+    button: TChecker<MouseButton>;
 }

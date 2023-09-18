@@ -15,15 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {
+import type {
     IKeyboardStatus,
     IMouseStatus,
     ITypeStatus,
+    TChecker,
 } from ".";
 
+/**
+ * 判断是否为预期的值
+ */
+export function isMathced<T>(value: T, checker: TChecker<T>): boolean {
+    switch (true) {
+        case (checker instanceof Set):
+            return (checker as Set<T>).has(value);
+
+        case (checker instanceof Function):
+            return (checker as (value: T) => boolean)(value);
+
+        default:
+            return value === checker;
+    }
+}
+
 /* 判断是否为预期的键盘事件 */
-export function isMatchedKeyboardEvent(e: KeyboardEvent, status: IKeyboardStatus) {
-    return e.key === status.key
+export function isMatchedKeyboardEvent(
+    e: KeyboardEvent,
+    status: IKeyboardStatus,
+) {
+    return isMathced(e.key, status.key)
         && e.type === status.type
         && e.altKey === status.altKey
         && e.ctrlKey === status.ctrlKey
@@ -32,8 +52,11 @@ export function isMatchedKeyboardEvent(e: KeyboardEvent, status: IKeyboardStatus
 }
 
 /* 判断是否为预期的鼠标事件 */
-export function isMatchedMouseEvent(e: MouseEvent, status: IMouseStatus) {
-    return e.button === status.button
+export function isMatchedMouseEvent(
+    e: MouseEvent,
+    status: IMouseStatus,
+) {
+    return isMathced(e.button, status.button)
         && e.type === status.type
         && e.altKey === status.altKey
         && e.ctrlKey === status.ctrlKey
@@ -42,8 +65,11 @@ export function isMatchedMouseEvent(e: MouseEvent, status: IMouseStatus) {
 }
 
 /* 判断是否为预期的类型事件 */
-export function isMatchedTypeEvent(e: KeyboardEvent | MouseEvent, status: ITypeStatus) {
-    return e.type === status.type
+export function isMatchedTypeEvent(
+    e: KeyboardEvent | MouseEvent,
+    status: ITypeStatus,
+) {
+    return isMathced(e.type, status.type)
         && e.altKey === status.altKey
         && e.ctrlKey === status.ctrlKey
         && e.metaKey === status.metaKey
