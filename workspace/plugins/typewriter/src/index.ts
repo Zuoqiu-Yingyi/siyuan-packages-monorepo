@@ -167,6 +167,13 @@ export default class TypewriterPlugin extends siyuan.Plugin {
         return this.saveData(TypewriterPlugin.GLOBAL_CONFIG_NAME, this.config);
     }
 
+    /* 是否开启编辑器监听 */
+    public get enable(): boolean {
+        return this.config.typewriter.enable
+            || this.config.focus.enable;
+    }
+
+
     /**
      * 切换监听器
      * @param protyle 编辑器
@@ -202,8 +209,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
      * @param enable 是否启用编辑事件监听
      */
     protected activate(
-        enable: boolean = this.config.focus.enable
-            || this.config.typewriter.enable,
+        enable: boolean = this.enable,
     ): void {
         /* 更新所有编辑器的编辑事件监听器 */
         const editors = getEditors(); // 获取所有编辑器
@@ -297,7 +303,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
         // this.logger.debug(e);
 
         /* 若开启打字机模式, 添加编辑事件监听器 */
-        if (this.config.typewriter.enable) {
+        if (this.enable) {
             const protyle = e.detail;
             this.toggleEventListener(protyle, true);
         }
@@ -317,7 +323,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
         // this.logger.debug(e);
 
         /* 若开启打字机模式, 派发编辑事件 */
-        if (this.config.typewriter.enable) {
+        if (this.enable) {
             const event = e.detail.event;
             this.editorEventListener(event);
         }

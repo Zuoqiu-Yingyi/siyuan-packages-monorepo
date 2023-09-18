@@ -20,6 +20,10 @@ declare module "selection-range" {
      * REF: https://www.npmjs.com/package/selection-range
      * 
      * REF: https://github.com/bmcmahen/selection-range/blob/master/index.js
+     * 
+     * @param element 可编辑的容器
+     * @param position 光标位置
+     * @returns 所选择的区域
      */
     export default function (
         element: HTMLElement,
