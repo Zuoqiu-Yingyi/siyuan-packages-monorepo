@@ -37,3 +37,10 @@ export const openPath: Electron.Shell["openPath"] = (path: string) => {
         ?.shell
         ?.openPath(path);
 }
+
+export const openExternal: Electron.Shell["openExternal"] = (url: string, options?: Electron.OpenExternalOptions) => {
+    return globalThis
+        ?.require("electron")
+        ?.shell
+        ?.openExternal(url, options);
+}
