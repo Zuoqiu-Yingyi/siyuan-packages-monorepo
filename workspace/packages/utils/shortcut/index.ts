@@ -59,25 +59,25 @@ export interface IFunctionKeysStatus {
 export type TChecker<T> = T | Set<T> | ((value: T) => boolean);
 
 /* 事件类型状态 */
-export interface ITypeStatus extends IFunctionKeysStatus {
+export interface ITypeStatus<T = TChecker<string>> extends IFunctionKeysStatus {
     // REF [event.type - Web API 接口参考 | MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Event/type)
-    type: TChecker<string>;
+    type: T;
 }
 
 /**
  * 键盘状态
  * REF: [KeyboardEvent - Web API 接口参考 | MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/KeyboardEvent)
  */
-export interface IKeyboardStatus extends ITypeStatus {
+export interface IKeyboardStatus<T = TChecker<string>> extends ITypeStatus<string> {
     // REF [KeyboardEvent.key - Web API 接口参考 | MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/KeyboardEvent/key)
-    key: TChecker<string>;
+    key: T;
 }
 
 /**
  * 鼠标状态
  * REF: [鼠标事件 - Web API 接口参考 | MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/MouseEvent)
  */
-export interface IMouseStatus extends ITypeStatus {
+export interface IMouseStatus<T = TChecker<MouseButton>> extends ITypeStatus<string> {
     // REF [MouseEvent.button - Web API 接口参考 | MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/MouseEvent/button)
-    button: TChecker<MouseButton>;
+    button: T;
 }

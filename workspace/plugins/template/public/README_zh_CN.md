@@ -7,6 +7,7 @@
 [![GitHub 许可证](https://img.shields.io/github/license/Zuoqiu-Yingyi/siyuan-plugin-template?style=flat-square)](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-template/blob/main/LICENSE)
 [![GitHub 最后一次提交时间](https://img.shields.io/github/last-commit/Zuoqiu-Yingyi/siyuan-plugin-template?style=flat-square)](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-template/commits/main)
 ![GitHub 仓库大小](https://img.shields.io/github/repo-size/Zuoqiu-Yingyi/siyuan-plugin-template?style=flat-square)
+![GitHub 代码大小](https://img.shields.io/github/languages/code-size/Zuoqiu-Yingyi/siyuan-plugin-template.svg?style=flat-square)
 ![查看次数](https://hits.b3log.org/Zuoqiu-Yingyi/siyuan-plugin-template.svg)
 <!-- ![jsDelivr 查看次數 (GitHub)](https://img.shields.io/jsdelivr/gh/hy/Zuoqiu-Yingyi/siyuan-packages-template?style=flat-square) -->
 [![GitHub 发行版本下载次数](https://img.shields.io/github/downloads/Zuoqiu-Yingyi/siyuan-plugin-template/total?style=flat-square)](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-template/releases)

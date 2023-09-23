@@ -23,7 +23,6 @@ import type { IProtyle } from "@workspace/types/siyuan/protyle";
 
 // import { BlockType } from "./../block";
 import * as sdk from "@siyuan-community/siyuan-sdk";
-import { IOpenMenuContentDetail } from "@workspace/types/siyuan/events";
 
 /* 块菜单上下文 */
 export interface IBlockMenuDetail {
@@ -94,7 +93,7 @@ export function getBlockMenuContext(detail: BlockMenuDetail): IBlockMenuContext 
 
     if (data) { // 文档块
         const context: IBlockContext = {
-            element: protyle.wysiwyg.element,
+            element: protyle.wysiwyg!.element,
             id: data.id,
             type: sdk.siyuan.NodeType.NodeDocument,
         };
@@ -132,7 +131,7 @@ export function getBlockMenuContext(detail: BlockMenuDetail): IBlockMenuContext 
 }
 
 /* 划选菜单上下文 */
-export function getSelectedMenuContext(detail: IOpenMenuContentDetail): ISelectedMenuContext | null {
+export function getSelectedMenuContext(detail: siyuan.IEventBusMap["open-menu-content"]): ISelectedMenuContext | null {
     const { element, range } = detail;
 
     if (element && range) {

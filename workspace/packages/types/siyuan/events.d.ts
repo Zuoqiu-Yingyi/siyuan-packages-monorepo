@@ -19,126 +19,54 @@ import siyuan from "siyuan";
 import type { IProtyle } from "./protyle";
 import type { ITransaction } from "./transaction";
 
-import type {
-    IDocumentBlockMenuDetail,
-    IOtherBlockMenuDetail,
-} from "@workspace/utils/siyuan/menu/block";
-
-export interface IWebSocketMainDetail {
-    cmd?: string
-    callback?: string
-    data?: any
-    msg: string
-    code: number
-    sid?: string
-}
-
-export interface IWebSocketTransactionsDetail extends IWebSocketMainDetail {
-    cmd: "transactions"
-    data: ITransaction[]
-}
-
-export interface IClickEditorContentDetail {
-    event: PointerEvent;
-    protyle: IProtyle;
-}
-
-/* 菜单事件详情 */
-export interface IMenuBaseDetail {
-    element: HTMLElement;
-    menu: InstanceType<typeof siyuan.Menu>;
-    protyle: IProtyle;
-}
-
-/* 超链接右键菜单事件详情 */
-export interface IOpenMenuLinkDetail extends IMenuBaseDetail {
-    element: HTMLSpanElement;
-}
-
-/* 块引用右键菜单事件详情 */
-export interface IOpenMenuBlockRefDetail extends IMenuBaseDetail {
-    element: HTMLSpanElement,
-}
-
-/* 划选文本右键菜单事件详情 */
-export interface IOpenMenuContentDetail extends IMenuBaseDetail {
-    element: HTMLDivElement,
-    range: Range;
-}
-
-export interface IOpenSiyuanUrlDetail {
-    url: string;
-}
-
-export interface IOpenSiyuanUrlBlockDetail extends IOpenSiyuanUrlDetail {
-    id: string;
-    focus: boolean;
-    exist: boolean;
-}
-
-export interface IOpenSiyuanUrlPluginDetail extends IOpenSiyuanUrlDetail {
-}
-
-export interface ILoadedProtyleDetail extends IProtyle {
-}
-
-export interface ILoadedProtyleDynamicDetail {
-    protyle: IProtyle;
-    positon: string;
-}
-
-export interface IDestroyProtyleDetail {
-    protyle: IProtyle;
-}
-
-export interface IWebSocketMainEvent extends CustomEvent<IWebSocketMainDetail> {
+export interface IWebSocketMainEvent extends CustomEvent<siyuan.IEventBusMap["ws-main"]> {
     // type: "ws-main";
 }
 
-export interface IClickBlockIconEvent extends CustomEvent<IOtherBlockMenuDetail> {
+export interface IClickBlockIconEvent extends CustomEvent<siyuan.IEventBusMap["click-blockicon"]> {
     // type: "click-blockicon";
 }
 
-export interface IClickEditorTitleIconEvent extends CustomEvent<IDocumentBlockMenuDetail> {
+export interface IClickEditorTitleIconEvent extends CustomEvent<siyuan.IEventBusMap["click-editortitleicon"]> {
     // type: "click-editorcontent";
 }
 
-export interface IClickEditorContentEvent extends CustomEvent<IClickEditorContentDetail> {
+export interface IClickEditorContentEvent extends CustomEvent<siyuan.IEventBusMap["click-editorcontent"]> {
     // type: "click-editorcontent";
 }
 
-export interface IOpenMenuLinkEvent extends CustomEvent<IOpenMenuLinkDetail> {
+export interface IOpenMenuLinkEvent extends CustomEvent<siyuan.IEventBusMap["open-menu-link"]> {
     // type: "open-menu-link";
 }
 
-export interface IOpenMenuBlockRefEvent extends CustomEvent<IOpenMenuBlockRefDetail> {
+export interface IOpenMenuBlockRefEvent extends CustomEvent<siyuan.IEventBusMap["open-menu-blockref"]> {
     // type: "open-menu-blockref";
 }
 
-export interface IOpenMenuContentEvent extends CustomEvent<IOpenMenuContentDetail> {
+export interface IOpenMenuContentEvent extends CustomEvent<siyuan.IEventBusMap["open-menu-content"]> {
     // type: "open-menu-content";
 }
 
-export interface IOpenSiyuanUrlEvent extends CustomEvent<IOpenSiyuanUrlDetail> {
+export interface IOpenSiyuanUrlEvent extends CustomEvent<siyuan.IEventBusMap["open-siyuan-url"]> {
     // type: "open-siyuan-url";
 }
 
-export interface IOpenSiyuanUrlBlockEvent extends CustomEvent<IOpenSiyuanUrlBlockDetail> {
+export interface IOpenSiyuanUrlBlockEvent extends CustomEvent<siyuan.IEventBusMap["open-siyuan-url-block"]> {
     // type: "open-siyuan-url-block";
 }
 
-export interface IOpenSiyuanUrlPluginEvent extends CustomEvent<IOpenSiyuanUrlPluginDetail> {
+export interface IOpenSiyuanUrlPluginEvent extends CustomEvent<siyuan.IEventBusMap["open-siyuan-url-plugin"]> {
     // type: "open-siyuan-url-plugin";
 }
 
-export interface ILoadedProtyleEvent extends CustomEvent<ILoadedProtyleDetail> {
+export interface ILoadedProtyleEvent extends CustomEvent<siyuan.IEventBusMap["loaded-protyle"]> {
     // type: "loaded-protyle";
 }
 
-export interface ILoadedProtyleDynamicEvent extends CustomEvent<ILoadedProtyleDynamicDetail> {
+export interface ILoadedProtyleDynamicEvent extends CustomEvent<siyuan.IEventBusMap["loaded-protyle-dynamic"]> {
     // type: "loaded-protyle-dynamic";
 }
 
-export interface IDestroyProtyleEvent extends CustomEvent<IDestroyProtyleDetail> {
+export interface IDestroyProtyleEvent extends CustomEvent<siyuan.IEventBusMap["destroy-protyle"]> {
     // type: "destroy-protyle";
 }

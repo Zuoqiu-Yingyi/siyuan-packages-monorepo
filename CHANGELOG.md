@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-24
+
+- 解耦 `monaco-editor` 与 `BridgeMaster` / `BridgeSlave` | Decouple `monaco-editor` and `BridgeMaster` / `BridgeSlave`.
+
 ## 2023-09-18
 
 - 添加上下文帮助面板 | Add context help panel.
