@@ -1,14 +1,15 @@
 {
     "alias": "Alias",
     "attributes": {
-        "add": "Add Custom Attribute",
+        "add": "Add Attribute",
+        "attrview": "Database Attributes",
         "basic": "Basic Attributes",
         "custom": "Custom Attributes",
         "del": "Delete Custom Attribute",
         "name": "Attribute Name",
         "other": "Other Attributes",
-        "value": "Attribute Value",
-        "parser": "Attribute Value Parser"
+        "parser": "Attribute Value Parser",
+        "value": "Attribute Value"
     },
     "bookmark": "Bookmark",
     "collapse": "Collapse",

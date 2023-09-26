@@ -21,8 +21,9 @@ import { I18n, VueI18nTranslation } from "vue-i18n";
 import moment from "moment";
 
 import { Client } from "@siyuan-community/siyuan-sdk";
+import { trimPrefix } from "@workspace/utils/misc/string";
 import { notify } from "@/utils/notify";
-import { tokenSplit, isCustomAttrKey } from "@/utils/string";
+import { tokenSplit, isCustomAttrKey, isAttrViewKey } from "@/utils/string";
 
 import { IForm, IAttr } from "@/types/form";
 import { IData } from "@/types/data";
@@ -86,6 +87,7 @@ const form = reactive(
                 memo: "",
             },
             customs: [],
+            attrview: [],
             others: {
                 id: "",
                 icon: "",
@@ -123,15 +125,27 @@ const form = reactive(
 
                 default:
                     switch (true) {
+                        /* 属性视图属性 */
+                        case isAttrViewKey(key): {
+                            const _key = trimPrefix(key, "custom-av-key-");
+                            form.attrview.push({
+                                _key,
+                                key: _key,
+                                value: value,
+                            });
+                            break;
+                        }
+
                         /* 自定义属性 */
-                        case isCustomAttrKey(key):
-                            const _key = key.replace(/^custom-/, "");
+                        case isCustomAttrKey(key): {
+                            const _key = trimPrefix(key, "custom-");
                             form.customs.push({
                                 _key,
                                 key: _key,
                                 value: value,
                             });
                             break;
+                        }
 
                         /* 未知属性 */
                         default:
@@ -225,15 +239,29 @@ function updateNativeAttr(key: string, value: string | string[]): void {
     }
 }
 
+/* 自定义属性类型 */
+enum CustomAttrType {
+    attrview,
+    custom,
+}
+
 /* 添加自定义属性 */
-function onclickAdd(_: MouseEvent): void {
-    form.customs.unshift(
-        shallowReactive<IAttr>({
-            key: "",
-            _key: "",
-            value: "",
-        }),
-    );
+function onclickAdd(attrType: CustomAttrType): void {
+    const attr = shallowReactive<IAttr>({
+        key: "",
+        _key: "",
+        value: "",
+    });
+    switch (attrType) {
+        case CustomAttrType.attrview:
+            form.attrview.unshift(attr);
+            break;
+
+        case CustomAttrType.custom:
+        default:
+            form.customs.unshift(attr);
+            break;
+    }
 }
 
 /* 判断自定义属性名是否有效 */
@@ -242,11 +270,47 @@ function isCustomAttrKeyValid(key: string): boolean {
     return valid;
 }
 
+function getCustomAttr(index: number, attrType: CustomAttrType): { attr: IAttr; key: string; _key: string } {
+    switch (attrType) {
+        case CustomAttrType.attrview: {
+            const attr = form.attrview[index];
+            return {
+                attr,
+                key: `custom-av-key-${attr.key}`,
+                _key: `custom-av-key-${attr._key}`,
+            };
+        }
+
+        case CustomAttrType.custom:
+        default: {
+            const attr = form.customs[index];
+            return {
+                attr,
+                key: `custom-${attr.key}`,
+                _key: `custom-${attr._key}`,
+            };
+        }
+    }
+}
+
+function spliceCustomAttr(index: number, attrType: CustomAttrType): void {
+    switch (attrType) {
+        case CustomAttrType.attrview:
+            form.attrview.splice(index, 1);
+            break;
+
+        case CustomAttrType.custom:
+        default:
+            form.customs.splice(index, 1);
+            break;
+    }
+}
+
 /* 删除自定义属性 */
-function onclickDel(index: number): void {
-    const custom = form.customs[index];
-    const key = `custom-${custom.key}`;
-    if (isCustomAttrKeyValid(custom.key)) {
+function onclickDel(index: number, attrType: CustomAttrType = CustomAttrType.custom): void {
+    const { attr, key } = getCustomAttr(index, attrType);
+
+    if (isCustomAttrKeyValid(attr.key)) {
         props.client
             .setBlockAttrs({
                 id: props.data.doc_id,
@@ -259,27 +323,25 @@ function onclickDel(index: number): void {
                     console.log(`Form.onclickDel ${key}`);
                 }
                 delete props.data.ial[key];
-                form.customs.splice(index, 1);
+                spliceCustomAttr(index, attrType);
             })
             .catch(error => {
                 notify(error.toString());
             });
     } else {
-        form.customs.splice(index, 1);
+        spliceCustomAttr(index, attrType);
     }
 }
 
 /* 更新指定自定义属性名 */
-async function updateCustomAttrKey(index: number): Promise<void> {
-    const custom = form.customs[index];
-    const _key = `custom-${custom._key}`;
-    const key = `custom-${custom.key}`;
+async function updateCustomAttrKey(index: number, attrType: CustomAttrType = CustomAttrType.custom): Promise<void> {
+    const { attr, _key, key } = getCustomAttr(index, attrType);
 
     try {
         /* 自定义属性名是否发生更改 */
-        if (custom.key !== custom._key) {
+        if (attr.key !== attr._key) {
             /* 原自定义属性名有效 */
-            if (isCustomAttrKeyValid(custom._key)) {
+            if (isCustomAttrKeyValid(attr._key)) {
                 await props.client.setBlockAttrs({
                     id: props.data.doc_id,
                     attrs: {
@@ -289,15 +351,15 @@ async function updateCustomAttrKey(index: number): Promise<void> {
                 delete props.data.ial[_key];
 
                 /* 更新属性名 */
-                custom._key = "";
+                attr._key = "";
             }
 
             /* 新自定义属性名有效 */
-            if (isCustomAttrKeyValid(custom.key)) {
+            if (isCustomAttrKeyValid(attr.key)) {
                 await props.client.setBlockAttrs({
                     id: props.data.doc_id,
                     attrs: {
-                        [key]: custom.value,
+                        [key]: attr.value,
                     },
                 });
 
@@ -305,10 +367,10 @@ async function updateCustomAttrKey(index: number): Promise<void> {
                     console.log(`Form.updateCustomAttrKey ${_key} => ${key}`);
                 }
                 /* 设置该属性 */
-                props.data.ial[key] = custom.value;
+                props.data.ial[key] = attr.value;
 
                 /* 更新属性名 */
-                custom._key = toRaw(custom.key);
+                attr._key = toRaw(attr.key);
             } else {
                 notify(t("notification.attribute-key-invalid"), "W");
             }
@@ -319,22 +381,22 @@ async function updateCustomAttrKey(index: number): Promise<void> {
 }
 
 /* 更新指定自定义属性值 */
-function updateCustomAttrValue(index: number): void {
-    const custom = form.customs[index];
-    const key = `custom-${custom.key}`;
-    if (custom.key.length > 0 && custom.value !== props.data.ial[key]) {
+function updateCustomAttrValue(index: number, attrType: CustomAttrType = CustomAttrType.custom): void {
+    const { attr, key } = getCustomAttr(index, attrType);
+
+    if (attr.key.length > 0 && attr.value !== props.data.ial[key]) {
         props.client
             .setBlockAttrs({
                 id: props.data.doc_id,
                 attrs: {
-                    [key]: custom.value,
+                    [key]: attr.value,
                 },
             })
             .then(() => {
                 if (import.meta.env.DEV) {
-                    console.log(`Form.updateCustomAttrValue ${key}=${custom.value}`);
+                    console.log(`Form.updateCustomAttrValue ${key}=${attr.value}`);
                 }
-                props.data.ial[key] = custom.value;
+                props.data.ial[key] = attr.value;
             })
             .catch(error => {
                 notify(error.toString());
@@ -616,7 +678,7 @@ onUpdated(() => {
             >
                 <template #extra>
                     <a-button
-                        @click.stop="onclickAdd"
+                        @click.stop="onclickAdd(CustomAttrType.custom)"
                         :disabled="!editable"
                         :title="$t('attributes.add')"
                         size="mini"
@@ -644,7 +706,7 @@ onUpdated(() => {
                         >
                             <template #label>
                                 <a-button
-                                    @click="onclickDel(index)"
+                                    @click="onclickDel(index, CustomAttrType.custom)"
                                     :title="$t('attributes.del')"
                                     type="outline"
                                     status="warning"
@@ -658,7 +720,7 @@ onUpdated(() => {
                             <template #help>
                                 <a-input
                                     v-model:model-value="attr.key"
-                                    @change="updateCustomAttrKey(index)"
+                                    @change="updateCustomAttrKey(index, CustomAttrType.custom)"
                                     allow-clear
                                 >
                                     <template #prepend>custom-</template>
@@ -671,7 +733,79 @@ onUpdated(() => {
 
                             <a-textarea
                                 v-model:model-value="attr.value"
-                                @change="updateCustomAttrValue(index)"
+                                @change="updateCustomAttrValue(index, CustomAttrType.custom)"
+                                class="textarea"
+                                auto-size
+                            />
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+            </a-collapse-item>
+
+            <!-- 属性视图属性 -->
+            <a-collapse-item
+                class="collapse-item"
+                :header="$t('attributes.attrview')"
+                :key="3"
+            >
+                <template #extra>
+                    <a-button
+                        @click.stop="onclickAdd(CustomAttrType.attrview)"
+                        :disabled="!editable"
+                        :title="$t('attributes.add')"
+                        size="mini"
+                        type="outline"
+                    >
+                        <template #icon>
+                            <icon-plus />
+                        </template>
+                    </a-button>
+                </template>
+
+                <a-row :gutter="8">
+                    <a-col
+                        v-for="(attr, index) of form.attrview"
+                        :span="24"
+                    >
+                        <a-divider
+                            v-if="index !== 0"
+                            class="divider"
+                            margin="0.5em"
+                        />
+                        <a-form-item
+                            class="form-item-custom-av-key"
+                            :field="`custom-av-key-${attr.key}`"
+                        >
+                            <template #label>
+                                <a-button
+                                    @click="onclickDel(index, CustomAttrType.attrview)"
+                                    :title="$t('attributes.del')"
+                                    type="outline"
+                                    status="warning"
+                                >
+                                    <template #icon>
+                                        <icon-delete />
+                                    </template>
+                                </a-button>
+                            </template>
+
+                            <template #help>
+                                <a-input
+                                    v-model:model-value="attr.key"
+                                    @change="updateCustomAttrKey(index, CustomAttrType.attrview)"
+                                    allow-clear
+                                >
+                                    <template #prepend>custom-av-key-</template>
+                                </a-input>
+                                <a-divider
+                                    class="divider"
+                                    margin="0.5em"
+                                />
+                            </template>
+
+                            <a-textarea
+                                v-model:model-value="attr.value"
+                                @change="updateCustomAttrValue(index, CustomAttrType.attrview)"
                                 class="textarea"
                                 auto-size
                             />
@@ -684,7 +818,7 @@ onUpdated(() => {
             <a-collapse-item
                 class="collapse-item"
                 :header="$t('attributes.other')"
-                :key="3"
+                :key="4"
             >
                 <a-row :gutter="8">
                     <a-col
@@ -827,12 +961,19 @@ onUpdated(() => {
                 color: var(--color-text-4);
             }
 
-            .form-item-custom {
+            .form-item-custom,
+            .form-item-custom-av-key {
                 // 自定义属性输入框框倒置
                 :deep(.arco-form-item-wrapper-col) {
                     flex-direction: column-reverse;
                 }
+
+                // 自定义属性名输入框宽度
+                :deep(.arco-form-item-message-help) {
+                    width: 100%;
+                }
             }
+
             .divider {
             }
 

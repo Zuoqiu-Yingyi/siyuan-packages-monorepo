@@ -52,6 +52,8 @@ export interface IForm {
 
     customs: IAttr[];
 
+    attrview: IAttr[];
+
     others: IOtherAttrs;
 
     unknowns: IUnknownsAttrs;
