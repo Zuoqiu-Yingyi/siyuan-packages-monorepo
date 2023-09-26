@@ -23,6 +23,10 @@ export function tokenSplit(token: string): string[] {
         .map(t => t.replaceAll("\n", ","));
 }
 
+export function isAttrViewKey(key: string): boolean {
+    return key.startsWith("custom-av-key-");
+}
+
 export function isCustomAttrKey(key: string): boolean {
     return key.startsWith("custom-");
 }

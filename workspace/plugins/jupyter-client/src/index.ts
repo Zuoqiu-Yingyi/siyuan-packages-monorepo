@@ -787,12 +787,12 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
 
         const pathname = (() => {
             switch (true) {
-                case "logo-svg" in spec.resources:
-                    return spec.resources["logo-svg"];
-                case "logo-32x32" in spec.resources:
-                    return spec.resources["logo-32x32"];
                 case "logo-64x64" in spec.resources:
                     return spec.resources["logo-64x64"];
+                case "logo-32x32" in spec.resources:
+                    return spec.resources["logo-32x32"];
+                case "logo-svg" in spec.resources:
+                    return spec.resources["logo-svg"];
                 default:
                     if (Object.keys(spec.resources).length > 0) {
                         return Object.values(spec.resources)[0];
@@ -1592,8 +1592,8 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
 
                         const menu = new siyuan.Menu(message.header.msg_id, () => {
                             this.complating = false;
-                            if (menu.menu.element.lastElementChild instanceof HTMLElement) {
-                                menu.menu.element.lastElementChild.style.maxHeight = "";
+                            if (menu.element.lastElementChild instanceof HTMLElement) {
+                                menu.element.lastElementChild.style.maxHeight = "";
                             }
                         });
 
@@ -1605,9 +1605,9 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
                         menu.open(options);
 
                         /* 调整菜单位置 */
-                        const menu_rect = menu.menu.element.getBoundingClientRect();
+                        const menu_rect = menu.element.getBoundingClientRect();
                         if (menu_rect.y !== options.y) {
-                            const items_element = menu.menu.element.lastElementChild;
+                            const items_element = menu.element.lastElementChild;
                             if (items_element instanceof HTMLElement) {
                                 const max_height = globalThis.innerHeight - options.y - 32;
 

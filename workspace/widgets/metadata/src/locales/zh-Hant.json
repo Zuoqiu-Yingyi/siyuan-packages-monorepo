@@ -1,14 +1,16 @@
 {
     "alias": "別名",
     "attributes": {
-        "add": "添加自定義屬性",
+        "add": "添加屬性",
+        "attrview": "數據庫屬性",
         "basic": "基本屬性",
         "custom": "自定義屬性",
         "del": "刪除自定義屬性",
+        "key": "匯出屬性名",
         "name": "屬性名",
         "other": "其他屬性",
-        "value": "屬性值",
-        "parser": "屬性值解析器"
+        "parser": "屬性值解析器",
+        "value": "屬性值"
     },
     "bookmark": "文檔書籤",
     "collapse": "摺疊",

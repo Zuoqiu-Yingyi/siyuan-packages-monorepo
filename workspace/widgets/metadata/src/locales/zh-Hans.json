@@ -1,15 +1,16 @@
 {
     "alias": "别名",
     "attributes": {
-        "add": "添加自定义属性",
+        "add": "添加属性",
+        "attrview": "数据库属性",
         "basic": "基本属性",
         "custom": "自定义属性",
         "del": "删除自定义属性",
         "key": "导出属性名",
         "name": "属性名",
         "other": "其他属性",
-        "value": "属性值",
-        "parser": "属性值解析器"
+        "parser": "属性值解析器",
+        "value": "属性值"
     },
     "bookmark": "书签",
     "collapse": "折叠",

@@ -1,8 +1,13 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-26
+
+- 添加用于编辑 `属性视图` 相关属性的列表 | Add a list for editing properties related to the `Attributes View`
+
 ## 2023-09-24
 
 - 解耦 `monaco-editor` 与 `BridgeMaster` / `BridgeSlave` | Decouple `monaco-editor` and `BridgeMaster` / `BridgeSlave`.
+- 实现 `Vditor` 编辑器组件 | Implement `Vditor` editor component.
 
 ## 2023-09-18
 
