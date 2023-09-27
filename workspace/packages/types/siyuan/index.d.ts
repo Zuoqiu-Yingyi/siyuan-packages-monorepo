@@ -29,11 +29,22 @@ export type openTabParametersOptions = openTabParameters[0];
 export type openTabParametersOptionsCustom = openTabParametersOptions.custom;
 
 export interface ISiyuan {
+}
+
+export interface ISiyuanVariable {
     /* Siyuan */
     Lute: typeof siyuan.Lute;
-    katex: any;
     siyuan: any;
-    pdfjsLib: any;
+    pdfjsLib: typeof import("pdfjs-dist");
+
+    ABCJS?: typeof import("abcjs");
+    Viewer?: typeof import("viewerjs").default;
+    Viz?: typeof import("viz.js");
+    echarts?: typeof import("echarts");
+    hljs?: import("highlight.js").HLJSApi;
+    katex?: typeof import("katex");
+    mermaid?: typeof import("mermaid").default;
+    plantumlEncoder?: typeof import("plantuml-encoder");
 }
 
 export interface ISiyuanElectron {
@@ -48,7 +59,7 @@ export interface ISiyuanElectron {
     module: NodeModule;
 }
 
-export interface ISiyuanExtends extends ISiyuan, Partial<ISiyuanElectron> { }
+export interface ISiyuanExtends extends ISiyuanVariable, Partial<ISiyuanElectron> { }
 
 export interface ISiyuanGlobal extends ISiyuanExtends, Window { }
 

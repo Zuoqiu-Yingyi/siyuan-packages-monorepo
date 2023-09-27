@@ -30,6 +30,29 @@ import regexp from "./../regexp";
 declare var globalThis: ISiyuanGlobal;
 
 /**
+ * 查询块节点 ID
+ * @param e: 事件
+ * @return: ID
+ */
+export function getNodeID(e: Event): BlockID | void {
+    const path = e.composedPath();
+    for (let i = 0; i < path.length; ++i) {
+        const electron = path[i] as HTMLElement;
+        const dataset = electron.dataset;
+        if (dataset) {
+            switch (true) {
+                case isSiyuanBlock(electron):
+                    return dataset.nodeId;
+
+                default:
+                    break
+            }
+        }
+    }
+    return;
+}
+
+/**
  * 查询块 ID
  * @param e: 事件
  * @return: 块 ID
@@ -46,6 +69,10 @@ export function getBlockID(e: Event): BlockID | void {
                     return dataset.id;
                 case dataset.oid && regexp.id.test(dataset.oid):
                     return dataset.oid;
+                case dataset.avId && regexp.id.test(dataset.avId):
+                    return dataset.avId;
+                case dataset.colId && regexp.id.test(dataset.colId):
+                    return dataset.colId;
                 case dataset.rootId && regexp.id.test(dataset.rootId):
                     return dataset.rootId;
 

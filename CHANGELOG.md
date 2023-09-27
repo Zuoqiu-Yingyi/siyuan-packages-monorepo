@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-28
+
+- 添加全局变量的类型定义 | Add type definitions for global variables.
+
 ## 2023-09-26
 
 - 添加用于编辑 `属性视图` 相关属性的列表 | Add a list for editing properties related to the `Attributes View`
