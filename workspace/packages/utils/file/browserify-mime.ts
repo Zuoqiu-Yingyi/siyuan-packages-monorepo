@@ -15,9 +15,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export {
-    escape,
-    unescape,
-    escape as escapeHTML,
-    unescape as unescapeHTML,
-} from "html-escaper";
+export * from "mrmime";

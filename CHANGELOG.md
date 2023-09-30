@@ -1,8 +1,18 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-09-30
+
+- 添加文件上传功能 | Add file upload function.
+- 插入上传的文件 | Insert uploaded file.
+
+## 2023-09-29
+
+- 实现资源文件目标重定向 | Implement resource file target redirection.
+
 ## 2023-09-28
 
 - 添加全局变量的类型定义 | Add type definitions for global variables.
+- 修复菜单项打开移动端窗口问题 | Fix the issue that the menu item opens the mobile window.
 
 ## 2023-09-26
 

@@ -16,8 +16,14 @@
  */
 
 export {
-    escape,
-    unescape,
-    escape as escapeHTML,
-    unescape as unescapeHTML,
-} from "html-escaper";
+    escapeMark as escape,
+    unescapeMark as unescape,
+}
+
+export function escapeMark(text: string): string {
+    return text.replaceAll(/([\<\>\{\}\[\]\(\)\`\~\#\$\^\*\_\=\|\:\-\\])/g, "\\$1")
+}
+
+export function unescapeMark(text: string): string {
+    return text.replaceAll(/(?:\\)([\<\>\{\}\[\]\(\)\`\~\#\$\^\*\_\=\|\:\-\\])/g, "$1")
+}
