@@ -1,5 +1,25 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-10-06
+
+- 完善 Vditor 设置面板 | Improve Vditor settings panel.
+
+## 2023-10-05
+
+- 处理 Vditor 中超链接点击事件 | Handle hyperlink click event in Vditor.
+
+## 2023-10-04
+
+- 添加 Vditor 菜单项 | Add Vditor menu item.
+
+## 2023-10-03
+
+- 新增文件上传至相对路径目录与绝对路径目录功能 | Add the function of uploading files to relative path directory and absolute path directory.
+
+## 2023-10-02
+
+- 派遣内容更改用保存事件 | Dispatch content change with save event.
+
 ## 2023-09-30
 
 - 添加文件上传功能 | Add file upload function.
