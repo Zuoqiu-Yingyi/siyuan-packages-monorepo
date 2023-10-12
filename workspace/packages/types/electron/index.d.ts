@@ -1,4 +1,4 @@
-// Type definitions for Electron 26.1.0
+// Type definitions for Electron 26.3.0
 // Project: http://electronjs.org/
 // Definitions by: The Electron Team <https://github.com/electron/electron>
 // Definitions: https://github.com/electron/typescript-definitions
@@ -4257,7 +4257,12 @@ export declare namespace Electron {
     /**
      * A promise which resolves when the cookie store has been flushed
      *
-     * Writes any unwritten cookies data to disk.
+     * Writes any unwritten cookies data to disk
+     *
+     * Cookies written by any method will not be written to disk immediately, but will
+     * be written every 30 seconds or 512 operations
+     *
+     * Calling this method can cause the cookie to be written to disk immediately.
      */
     flushStore(): Promise<void>;
     /**
@@ -8628,12 +8633,12 @@ export declare namespace Electron {
      */
     getCacheSize(): Promise<number>;
     /**
-     * | `null` - The loaded extension with the given ID.
+     * The loaded extension with the given ID.
      *
      * **Note:** This API cannot be called before the `ready` event of the `app` module
      * is emitted.
      */
-    getExtension(extensionId: string): Extension;
+    getExtension(extensionId: string): (Extension) | (null);
     /**
      * an array of paths to preload scripts that have been registered.
      */
@@ -12314,7 +12319,7 @@ export declare namespace Electron {
      * Initiates a download of the resource at `url` without navigating. The
      * `will-download` event of `session` will be triggered.
      */
-    downloadURL(url: string): void;
+    downloadURL(url: string, options?: DownloadURLOptions): void;
     /**
      * Enable device emulation with the given parameters.
      */
@@ -13981,7 +13986,7 @@ export declare namespace Electron {
     /**
      * Initiates a download of the resource at `url` without navigating.
      */
-    downloadURL(url: string): void;
+    downloadURL(url: string, options?: DownloadURLOptions): void;
     /**
      * A promise that resolves with the result of the executed code or is rejected if
      * the result of the code is a rejected promise.
@@ -17096,6 +17101,27 @@ export declare namespace Electron {
   }
 
   interface TitleBarOverlay {
+    /**
+     * The CSS color of the Window Controls Overlay when enabled. Default is the system
+     * color.
+     *
+     * @platform win32
+     */
+    color?: string;
+    /**
+     * The CSS color of the symbols on the Window Controls Overlay when enabled.
+     * Default is the system color.
+     *
+     * @platform win32
+     */
+    symbolColor?: string;
+    /**
+     * The height of the title bar and Window Controls Overlay in pixels. Default is
+     * system height.
+     *
+     * @platform darwin,win32
+     */
+    height?: number;
   }
 
   interface TitleBarOverlayOptions {
