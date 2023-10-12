@@ -76,7 +76,7 @@ export interface IOtherBlockMenuContext extends IBaseBlockMenuContext {
 export interface IDocumentBlockMenuContext extends IBaseBlockMenuContext {
     isDocumentBlock: true; // 是否为文档块
     isMultiBlock: false; // 是否为多个块
-    data: IDocumentData; // 文档数据
+    data: siyuan.IGetDocInfo; // 文档数据
 }
 
 export type IBlockMenuContext = IOtherBlockMenuContext | IDocumentBlockMenuContext;

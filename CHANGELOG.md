@@ -1,5 +1,17 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-10-12
+
+- 添加文档树菜单 | Add document tree menu.
+
+## 2023-10-11
+
+- 移除重复的分割线 | Remove duplicate separator.
+
+## 2023-10-07
+
+- [Issue #13 · Zuoqiu-Yingyi/siyuan-plugin-monaco-editor](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-monaco-editor/issues/13) 修复资源管理器侧边面板开关失效问题 | Fix the issue that the resource manager side panel switch is invalid.
+
 ## 2023-10-06
 
 - 完善 Vditor 设置面板 | Improve Vditor settings panel.
