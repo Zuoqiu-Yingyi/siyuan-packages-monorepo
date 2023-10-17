@@ -15,8 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type sdk from "@siyuan-community/siyuan-sdk";
 import zh_Hans from "./i18n/zh-Hans.json";
+import type sdk from "@siyuan-community/siyuan-sdk";
+import type { SiyuanStorage } from "./storage";
 
 export type I18N = typeof zh_Hans;
 
@@ -46,9 +47,12 @@ export type TSetting = ITextSetting
     | ICheckboxSetting;
 
 export interface IContext {
+    path: string;
     client: InstanceType<typeof sdk.Client>;
+    baseURL: string;
+    defaultPath: string; // 默认文件存放目录
+    storage?: InstanceType<typeof SiyuanStorage>;
     lang?: string;
     i18n?: I18N;
-    baseURL?: string;
     settings?: TSetting[];
 }

@@ -2,5 +2,6 @@
     "siyuan": "SiYuan",
     "siyuanBaseURL": "Base URL for SiYuan serve",
     "siyuanToken": "Token for SiYuan serve",
+    "siyuanPath": "Default *.kdbx file storage directory",
     "siyuanTokenPlaceholder": "This field needs to be configured only when you are not logged in SiYuan serve"
 }
