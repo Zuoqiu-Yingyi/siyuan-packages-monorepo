@@ -1,3 +1,7 @@
+# Custom
+/keys
+**.js.map
+
 # Logs
 logs
 *.log

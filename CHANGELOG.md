@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-10-18
+
+- 添加附属仓库 `keepass` | Add sub-repository `keepass`.
+
 ## 2023-10-17
 
 - 添加附属仓库 `keepass` 的管理脚本 | Add management scripts for sub-repository `keepass`.

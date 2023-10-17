@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export function mapLang(lang: string, preset: string[] = []): string {
+export function mapLang(lang: string = globalThis.navigator.language, preset: string[] = []): string {
     lang = lang
         .replaceAll("_", "-")
         .toLowerCase();

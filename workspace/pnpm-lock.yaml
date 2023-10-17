@@ -365,6 +365,49 @@ importers:
         specifier: ^0.7.0
         version: 0.7.0(xterm@5.3.0)
 
+  plugins/keepass:
+    dependencies:
+      '@workspace/components':
+        specifier: workspace:^
+        version: link:../../packages/components
+      '@workspace/types':
+        specifier: workspace:^
+        version: link:../../packages/types
+      '@workspace/utils':
+        specifier: workspace:^
+        version: link:../../packages/utils
+    devDependencies:
+      '@sveltejs/vite-plugin-svelte':
+        specifier: ^2.4.6
+        version: 2.4.6(svelte@4.2.1)(vite@4.4.11)
+      '@tsconfig/svelte':
+        specifier: ^5.0.2
+        version: 5.0.2
+      keeweb-plugin:
+        specifier: ^0.1.12
+        version: 0.1.12
+      less:
+        specifier: ^4.2.0
+        version: 4.2.0
+      svelte:
+        specifier: ^4.2.1
+        version: 4.2.1
+      svelte-check:
+        specifier: ^3.5.2
+        version: 3.5.2(less@4.2.0)(svelte@4.2.1)
+      svelte-preprocess-less:
+        specifier: ^0.4.0
+        version: 0.4.0
+      tslib:
+        specifier: ^2.6.2
+        version: 2.6.2
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
+      vite:
+        specifier: ^4.4.11
+        version: 4.4.11(@types/node@20.8.4)(less@4.2.0)
+
   plugins/monaco-editor:
     dependencies:
       '@workspace/components':
@@ -1613,11 +1656,11 @@ packages:
       debug: 4.3.4
       deepmerge: 4.3.1
       kleur: 4.1.5
-      magic-string: 0.30.4
+      magic-string: 0.30.5
       svelte: 3.59.2
       svelte-hmr: 0.15.3(svelte@3.59.2)
       vite: 4.4.11(@types/node@20.8.4)(less@4.2.0)
-      vitefu: 0.2.4(vite@4.4.11)
+      vitefu: 0.2.5(vite@4.4.11)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -3928,6 +3971,11 @@ packages:
     resolution: {integrity: sha512-ARADHortktl9IZ1tr4GHwGPIAzgz3mLNCbR/YjWtRtc/O0o634O3NeFlpLjv95EvuDA5dc8z6yfgbS8nUc4zcQ==}
     dev: true
 
+  /keeweb-plugin@0.1.12:
+    resolution: {integrity: sha512-leohBuMEpb/y35Ny9tLOwLmGizzmOS4RHL27u1I5S/11WwZNv+NAnYym235k5Ey8TZvzbFEuLaTkc9Xgn7FTcg==}
+    hasBin: true
+    dev: true
+
   /keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
     dependencies:
@@ -4061,13 +4109,6 @@ packages:
 
   /magic-string@0.30.3:
     resolution: {integrity: sha512-B7xGbll2fG/VjP+SWg4sX3JynwIU0mjoTc6MPpKNuIvftk6u6vqhDnk1R80b8C2GBR6ywqy+1DcKBrevBg+bmw==}
-    engines: {node: '>=12'}
-    dependencies:
-      '@jridgewell/sourcemap-codec': 1.4.15
-    dev: true
-
-  /magic-string@0.30.4:
-    resolution: {integrity: sha512-Q/TKtsC5BPm0kGqgBIF9oXAs/xEf2vRKiIB4wCRQTJOQIByZ1d+NnUOotvJOvNpi5RNIgVOMC3pOuaP1ZTDlVg==}
     engines: {node: '>=12'}
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.15
@@ -5284,8 +5325,8 @@ packages:
       picocolors: 1.0.0
       sade: 1.8.1
       svelte: 4.2.0
-      svelte-preprocess: 5.0.4(less@4.2.0)(svelte@4.2.0)(typescript@5.2.2)
-      typescript: 5.2.2
+      svelte-preprocess: 5.0.4(less@4.2.0)(svelte@4.2.0)(typescript@5.1.6)
+      typescript: 5.1.6
     transitivePeerDependencies:
       - '@babel/core'
       - coffeescript
@@ -5536,7 +5577,7 @@ packages:
       typescript: 5.2.2
     dev: true
 
-  /svelte-preprocess@5.0.4(less@4.2.0)(svelte@4.2.0)(typescript@5.2.2):
+  /svelte-preprocess@5.0.4(less@4.2.0)(svelte@4.2.0)(typescript@5.1.6):
     resolution: {integrity: sha512-ABia2QegosxOGsVlsSBJvoWeXy1wUKSfF7SWJdTjLAbx/Y3SrVevvvbFNQqrSJw89+lNSsM58SipmZJ5SRi5iw==}
     engines: {node: '>= 14.10.0'}
     requiresBuild: true
@@ -5581,7 +5622,7 @@ packages:
       sorcery: 0.11.0
       strip-indent: 3.0.0
       svelte: 4.2.0
-      typescript: 5.2.2
+      typescript: 5.1.6
     dev: true
 
   /svelte-preprocess@5.0.4(less@4.2.0)(svelte@4.2.1)(typescript@5.2.2):
@@ -6167,17 +6208,6 @@ packages:
       rollup: 3.29.2
     optionalDependencies:
       fsevents: 2.3.3
-    dev: true
-
-  /vitefu@0.2.4(vite@4.4.11):
-    resolution: {integrity: sha512-fanAXjSaf9xXtOOeno8wZXIhgia+CZury481LsDaV++lSvcU2R9Ch2bPh3PYFyoHW+w9LqAeYRISVQjUIew14g==}
-    peerDependencies:
-      vite: ^3.0.0 || ^4.0.0
-    peerDependenciesMeta:
-      vite:
-        optional: true
-    dependencies:
-      vite: 4.4.11(@types/node@20.8.4)(less@4.2.0)
     dev: true
 
   /vitefu@0.2.4(vite@4.4.9):
