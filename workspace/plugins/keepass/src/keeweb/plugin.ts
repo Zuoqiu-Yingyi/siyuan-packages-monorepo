@@ -20,23 +20,57 @@
  * @author Zuoqiu Yingyi
  * @license AGPL-3.0-or-later
  */
+import * as sdk from "@siyuan-community/siyuan-sdk";
 
+import * as locale from "./locale";
 import * as storage from "./storage";
+import * as settings from "./settings";
+
+import type { IContext } from "~/src/keeweb";
+
+const context: IContext = {
+    client: new sdk.Client(undefined, "fetch"),
+};
 
 async function install() {
-    await storage.install();
+    await locale.install(context);
+    await storage.install(context);
+    await settings.install(context);
 
     console.log("Siyuan plugin installed");
 }
 
 async function uninstall() {
-    await storage.uninstall();
+    await settings.uninstall(context);
+    await storage.uninstall(context);
+    await locale.uninstall(context);
 
     console.log("Siyuan plugin uninstalled");
+}
+
+function getSettings() {
+    // console.debug("plugin:siyuan:getSettings");
+    return context.settings;
+}
+
+interface IConfig {
+    baseURL: string;
+    token: string;
+}
+
+function setSettings(config: IConfig) {
+    // console.debug("plugin:siyuan:setSettings", arguments);
+
+    if (!config.baseURL) {
+        config.baseURL = context.baseURL!;
+    }
+    context.client = new sdk.Client(config, "fetch");
 }
 
 install();
 
 export default {
+    getSettings,
+    setSettings,
     uninstall,
 };
