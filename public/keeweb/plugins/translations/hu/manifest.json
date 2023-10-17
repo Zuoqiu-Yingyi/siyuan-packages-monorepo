@@ -1,0 +1,22 @@
+{
+  "version": "1.32.0",
+  "manifestVersion": "0.1.0",
+  "name": "language-hungarian",
+  "description": "Hungarian language",
+  "author": {
+    "name": "KeeWeb",
+    "email": "antelle.net@gmail.com",
+    "url": "https://keeweb.info"
+  },
+  "license": "MIT",
+  "url": "https://plugins.keeweb.info/translations?lang=hu",
+  "resources": {
+    "loc": "JURF2kaThRmQJZixJIOuptBq1DU3H1eG8C4XUyNpk5HwYRdY/ChTYhUSoKb5X8GBPRlIdR/e1c2JWwAwS4GxEwhlS663gXF2jwhH2jOScCPOrf25UCZYrpp2RZxHqjOCxjKJPKEgNVwvz58mhaURVa71gSxaUJdn2p9O0mgBz/SJWcb1QP68urqsDk/L9a0FuYQk9l4HIZ/xbFt7/Vhns+zs2lytqAbfBEufPB6yxh/+GNa2iYoVk2Q7it2lVHL4Z3OOyqohJ10jnsz6wfjBff5UMWMS3PYbH71tiLDhffh5wen7GunphQBh4DLRGu00MgnMPOCapJ/6jFz1JMrf9Q=="
+  },
+  "locale": {
+    "name": "hu",
+    "title": "Magyar",
+    "flag": "🇭🇺"
+  },
+  "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnRq2k3TTx0ewTe6wDr6QVeB5diwiIWzsJD+ApfZu1KNPedcAgslAfjpNsYF1if6cYsPMJH70xJ2np6RQBl1VPdwShOuxkD7m0BD5Hw/Aar8Hdp5cvAdOOMdBO+0DbGeUMy+z66s+oUCJmqVp19T6PkkxbhN08rgtT7v+aFvrbqbO/vlsskbJpH2K2io+e1XmRGPnSr9q4KSqfGbTfe5gLwDIOFd66Z4mb5Utb5wWpsy6Gjh06Yf257AccGD3A1bkTNOyeeX0tqciYBePWMk0icP/aZ6hnErfhnUKf3tOgPLppSHiGcaSKekhChZ2xLUs3U64JwrXSmwHj+TzdO3S0QIDAQAB"
+}
