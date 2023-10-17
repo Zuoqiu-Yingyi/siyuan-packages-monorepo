@@ -43,3 +43,32 @@ export function utf32Encode(str: string): string {
 export function utf32Decode(hex: string): string {
     return String.fromCodePoint(parseInt(hex, 16))
 }
+
+/**
+ * 首字母大写
+ * @param str 字符串
+ * @returns 首字母大写的字符串
+ */
+export function capitalize(str: string): string {
+    return str
+        ? `${str.at(0)?.toUpperCase()}${str.substring(1)}`
+        : str;
+}
+
+/**
+ * 驼峰命名法
+ * @param str 字符串
+ * @returns 驼峰命名法的字符串
+ */
+export function camelCase(str: string): string {
+    return str.replace(/-+./g, match => match.at(-1)!.toUpperCase());
+}
+
+/**
+ * 帕斯卡命名法
+ * @param str 字符串
+ * @returns 帕斯卡命名法的字符串
+ */
+export function pascalCase(str: string): string {
+    return capitalize(camelCase(str));
+}

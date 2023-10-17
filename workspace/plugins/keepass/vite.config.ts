@@ -15,13 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { defineConfig } from "vite";
+import {
+    defineConfig,
+    type BuildOptions,
+} from "vite";
 import { resolve } from "node:path";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { less } from "svelte-preprocess-less";
 
+type ExternalOption = BuildOptions["rollupOptions"]["external"];
+
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(async env => ({
     base: `./`,
     plugins: [
         svelte({
@@ -45,16 +50,15 @@ export default defineConfig({
             formats: ["cjs"],
         },
         rollupOptions: {
-            external: [
-                "siyuan",
-                /^@electron\/.*$/,
-            ],
+            external: external(env.mode),
             output: {
                 entryFileNames: chunkInfo => {
                     // console.log(chunkInfo);
                     switch (chunkInfo.name) {
                         case "index":
                             return "[name].js";
+                        case "plugin":
+                            return "keeweb/plugins/siyuan/plugin.js";
 
                         default:
                             return "assets/[name]-[hash].js";
@@ -73,5 +77,63 @@ export default defineConfig({
                 },
             },
         },
+        ...build(env.mode),
     },
-});
+}));
+
+function external(mode: string): ExternalOption {
+    switch (mode) {
+        default:
+        case "siyuan-plugin":
+            return [
+                "siyuan",
+                /^@electron\/.*$/,
+            ];
+
+        case "keeweb-plugin":
+            return [
+                "hbs",
+                "kdbxweb",
+                "pikaday",
+                "qrcode",
+                /^auto-type\/.*$/,
+                /^collections\/.*$/,
+                /^comp\/.*$/,
+                /^const\/.*$/,
+                /^framework\/.*$/,
+                /^hbs-helpers\/.*$/,
+                /^locales\/.*$/,
+                /^models\/.*$/,
+                /^plugins\/.*$/,
+                /^presenters\/.*$/,
+                /^storage\/.*$/,
+                /^util\/.*$/,
+                /^views\/.*$/,
+            ];
+    }
+}
+
+function build(mode: string): BuildOptions {
+    switch (mode) {
+        default:
+        case "siyuan-plugin":
+            return {
+                emptyOutDir: true,
+                lib: {
+                    entry: resolve(__dirname, "src/index.ts"),
+                    fileName: "index",
+                    formats: ["cjs"],
+                }
+            };
+
+        case "keeweb-plugin":
+            return {
+                emptyOutDir: false,
+                lib: {
+                    entry: resolve(__dirname, "src/keeweb/plugin.ts"),
+                    fileName: "plugin",
+                    formats: ["cjs"],
+                }
+            };
+    }
+}
