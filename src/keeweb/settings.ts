@@ -15,13 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// @ts-ignore
-import BaseLocale from "util/formatting/string-format";
-
+/**
+ * REF: https://github.com/keeweb/keeweb/blob/develop/plugins/examples/settings/plugin.js
+ */
 import { camelCase } from "@workspace/utils/misc/string";
+import type { IContext } from ".";
 
 export interface IAppSettings {
-    local?: string;
+    locale?: string;
 }
 
 export enum LocalStorageKey {
@@ -34,7 +35,7 @@ export enum LocalStorageKey {
 }
 export function getLocalStorage(key: LocalStorageKey.app_settings): IAppSettings | null;
 export function getLocalStorage(key: LocalStorageKey): any | null {
-    const value = globalThis.localStorage.getItem(`siyuan-keepass-${key}`)
+    const value = globalThis.localStorage.getItem(`plugin-keepass-${key}`)
         ?? globalThis.localStorage.getItem(camelCase(key));
 
     if (value) {
@@ -43,4 +44,32 @@ export function getLocalStorage(key: LocalStorageKey): any | null {
     else {
         return null;
     }
+}
+
+export function install(context: IContext) {
+    // this._logger.debug("plugin:siyuan:settings-install");
+
+    const baseURL = globalThis.document.baseURI.replace(/\/plugins\/keepass\/keeweb\/.*$/, "/");
+    context.baseURL = baseURL;
+    context.settings = [
+        {
+            name: "baseURL",
+            label: context.i18n!.siyuanBaseURL,
+            type: "text",
+            placeholder: baseURL,
+            value: baseURL,
+        },
+        {
+            name: "token",
+            label: context.i18n!.siyuanToken,
+            type: "text",
+            placeholder: context.i18n!.siyuanTokenPlaceholder,
+            value: "",
+        },
+    ];
+}
+
+
+export function uninstall(context: IContext) {
+    // this._logger.debug("plugin:siyuan:settings-install");
 }
