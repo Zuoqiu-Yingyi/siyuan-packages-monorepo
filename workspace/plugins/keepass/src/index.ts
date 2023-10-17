@@ -67,7 +67,13 @@ export default class TemplatePlugin extends siyuan.Plugin {
 
         this.loadData(TemplatePlugin.GLOBAL_CONFIG_NAME)
             .then(config => {
-                this.config = mergeIgnoreArray(DEFAULT_CONFIG, config || {}) as IConfig;
+                if (config) {
+                    this.config = mergeIgnoreArray(DEFAULT_CONFIG, config) as IConfig;
+                }
+                else {
+                    this.config = mergeIgnoreArray(DEFAULT_CONFIG);
+                    this.updateConfig();
+                }
             })
             .catch(error => this.logger.error(error))
             .finally(() => {

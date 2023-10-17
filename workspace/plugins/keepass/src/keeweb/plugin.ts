@@ -28,8 +28,13 @@ import * as settings from "./settings";
 
 import type { IContext } from "~/src/keeweb";
 
+const defaultPath = "/data/storage/petal/keepass/";
+const baseURL = globalThis.document.baseURI.replace(/\/plugins\/keepass\/keeweb\/.*$/, "/");
 const context: IContext = {
-    client: new sdk.Client(undefined, "fetch"),
+    path: defaultPath,
+    client: new sdk.Client({ baseURL }, "fetch"),
+    baseURL,
+    defaultPath,
 };
 
 async function install() {
@@ -56,15 +61,21 @@ function getSettings() {
 interface IConfig {
     baseURL: string;
     token: string;
+    path: string;
 }
 
 function setSettings(config: IConfig) {
     // console.debug("plugin:siyuan:setSettings", arguments);
 
-    if (!config.baseURL) {
-        config.baseURL = context.baseURL!;
-    }
-    context.client = new sdk.Client(config, "fetch");
+    config.baseURL = config.baseURL || context.baseURL;
+    config.path = config.path || context.defaultPath;
+
+    context.client = new sdk.Client({
+        baseURL: config.baseURL,
+        token: config.token,
+    }, "fetch");
+    context.storage?.updateEnabled();
+    context.path = config.path;
 }
 
 install();

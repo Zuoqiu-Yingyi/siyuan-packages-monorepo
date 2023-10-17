@@ -4,6 +4,7 @@
 
 - 添加附属仓库 `keepass` | Add sub-repository `keepass`.
 - 添加设置选项 | Add setting options.
+- 实现数据库文件管理功能 | Implement database file management function.
 
 ## 2023-10-17
 

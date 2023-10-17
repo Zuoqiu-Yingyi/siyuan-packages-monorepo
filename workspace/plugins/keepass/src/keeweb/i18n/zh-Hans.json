@@ -2,5 +2,6 @@
     "siyuan": "思源笔记",
     "siyuanBaseURL": "思源服务 URL 地址",
     "siyuanToken": "思源服务 Token",
-    "siyuanTokenPlaceholder": "仅在未登录思源服务状态下需要配置该字段"
+    "siyuanPath": "默认 *.kdbx 文件存放目录",
+    "siyuanTokenPlaceholder": "仅在未登录思源服务状态下配置该字段"
 }
