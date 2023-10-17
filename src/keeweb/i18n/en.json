@@ -1,0 +1,6 @@
+{
+    "siyuan": "SiYuan",
+    "siyuanBaseURL": "Base URL for SiYuan serve",
+    "siyuanToken": "Token for SiYuan serve",
+    "siyuanTokenPlaceholder": "This field needs to be configured only when you are not logged in SiYuan serve"
+}

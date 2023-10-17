@@ -1,0 +1,6 @@
+{
+    "siyuan": "思源筆記",
+    "siyuanBaseURL": "思源服務 URL 地址",
+    "siyuanToken": "思源服務 Token",
+    "siyuanTokenPlaceholder": "僅在未登錄思源服務狀態下需要配置該字段"
+}
