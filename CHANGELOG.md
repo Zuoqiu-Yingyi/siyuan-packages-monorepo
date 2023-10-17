@@ -3,6 +3,7 @@
 ## 2023-10-18
 
 - 添加附属仓库 `keepass` | Add sub-repository `keepass`.
+- 添加设置选项 | Add setting options.
 
 ## 2023-10-17
 

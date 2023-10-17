@@ -16,21 +16,16 @@
  */
 
 // @ts-ignore
-import BaseLocale from "locales/base";
-// @ts-ignore
 import { Storage } from "storage/index";
 // @ts-ignore
 import { StorageBase } from "storage/storage-base";
 
-import { mapLang } from "@workspace/utils/locale/language";
-import { LocalStorageKey, getLocalStorage } from "./settings";
+import type { IContext } from "~/src/keeweb";
 
 export {
-    BaseLocale,
     Storage,
     StorageBase,
 };
-
 
 export interface IStat {
     rev: string; // 文件修改时间
@@ -46,9 +41,15 @@ export interface IEntry {
 export type IError = void | any;
 
 export class SiyuanStorage extends StorageBase {
-    public name: string = "siyuanStorage";
+    public name: string = "siyuan";
     public icon: string = "siyuan";
     public uipos = -10;
+
+    constructor(
+        protected _context: IContext,
+    ) {
+        super();
+    }
 
     public get _logger(): Console {
         return super.logger || globalThis.console;
@@ -203,30 +204,13 @@ export class SiyuanStorage extends StorageBase {
     }
 }
 
-export function install() {
+export function install(context: IContext) {
     // this._logger.debug("plugin:siyuan:storage-install");
-
-    const local = getLocalStorage(LocalStorageKey.app_settings)?.local
-        ?? globalThis.navigator.language;
-    BaseLocale.siyuanStorage = (() => {
-        switch (mapLang(local)) {
-            case "zh-Hans":
-                return "思源笔记";
-            case "zh-Hant":
-                return "思源筆記";
-            default:
-                return "SiYuan";
-        }
-    })();
-
-    Storage.siyuanStorage = new SiyuanStorage();
-
+    Storage.siyuanStorage = new SiyuanStorage(context);
 }
 
 
-export function uninstall() {
+export function uninstall(context: IContext) {
     // this._logger.debug("plugin:siyuan:storage-install");
-
-    delete BaseLocale.siyuanStorage;
     delete Storage.siyuanStorage;
 }
