@@ -1,0 +1,22 @@
+{
+  "version": "1.25.0",
+  "manifestVersion": "0.1.0",
+  "name": "language-german",
+  "description": "German language",
+  "author": {
+    "name": "KeeWeb",
+    "email": "antelle.net@gmail.com",
+    "url": "https://keeweb.info"
+  },
+  "license": "MIT",
+  "url": "https://plugins.keeweb.info/translations?lang=de-DE",
+  "resources": {
+    "loc": "CIx3AEJG6nemrgNUOQLX8GXnjoh+wa9ZWbCdHP4TuDOLsWCejuobKTFHimpoiUKK7ShFnSkbp6Zkl0SZLL7TbZ8ZYtB4mq2D65F0nwtVPvrckBM0G3cJSMX6T3DzZrtGTWSsP3eXFWL1TKFqEX8VtEtY0gQ2lAq0lmjuB2rqQ3MGQBIxNqsRY93TZWUdD7gDGh/F2u4K1t5I1dzNgsqUuiDKOr9CFx08vjg0YgJyAB3miQfXurobH8ESwTzxypMfhFKS9R77JaWsymeHhwMRnrZDyqKIwpih4u5ugOSLPXHZ4f41+sOd1KQBEvoUnY9gHb/P4GQ9v7yYbfLWRBwRVA=="
+  },
+  "locale": {
+    "name": "de-DE",
+    "title": "Deutsch",
+    "flag": "🇩🇪"
+  },
+  "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnRq2k3TTx0ewTe6wDr6QVeB5diwiIWzsJD+ApfZu1KNPedcAgslAfjpNsYF1if6cYsPMJH70xJ2np6RQBl1VPdwShOuxkD7m0BD5Hw/Aar8Hdp5cvAdOOMdBO+0DbGeUMy+z66s+oUCJmqVp19T6PkkxbhN08rgtT7v+aFvrbqbO/vlsskbJpH2K2io+e1XmRGPnSr9q4KSqfGbTfe5gLwDIOFd66Z4mb5Utb5wWpsy6Gjh06Yf257AccGD3A1bkTNOyeeX0tqciYBePWMk0icP/aZ6hnErfhnUKf3tOgPLppSHiGcaSKekhChZ2xLUs3U64JwrXSmwHj+TzdO3S0QIDAQAB"
+}

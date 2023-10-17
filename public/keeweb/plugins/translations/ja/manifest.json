@@ -1,0 +1,22 @@
+{
+  "version": "1.15.0",
+  "manifestVersion": "0.1.0",
+  "name": "language-japanese",
+  "description": "Japanese language",
+  "author": {
+    "name": "KeeWeb",
+    "email": "antelle.net@gmail.com",
+    "url": "https://keeweb.info"
+  },
+  "license": "MIT",
+  "url": "https://plugins.keeweb.info/translations?lang=ja",
+  "resources": {
+    "loc": "FOqn8osvBbZJYo4NaPrX3AYwOJ/FVT6y+8NKQhbFTyp4zlxB1b6Q7KNezLFNE1iSgOForf0/ewIG10TIXPzKOVgzPgHYnnmD3KkxXOPKkNHb6/fz916ebnXjtMpcvsIJJAnsTHFySpmszdFddiAYiErUFk4DHkZWY/iboV/6mpU8ia8Zm6/2HQo+AlcItqRKSFMihTF19QP0iY0ZXIkOoVdP4qcgcQymL/cDS47Xa/lTQsSoo+YRLuxdNLH55/QPL7vR9nL/fgOXnih+s3CpwFhK7GVJqeJk3PhIfEPtyvJXzkUMo4kOcGTJru7B6OzL8Prj+vIljr5/Hva5IXv2KA=="
+  },
+  "locale": {
+    "name": "ja",
+    "title": "日本語",
+    "flag": "🇯🇵"
+  },
+  "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnRq2k3TTx0ewTe6wDr6QVeB5diwiIWzsJD+ApfZu1KNPedcAgslAfjpNsYF1if6cYsPMJH70xJ2np6RQBl1VPdwShOuxkD7m0BD5Hw/Aar8Hdp5cvAdOOMdBO+0DbGeUMy+z66s+oUCJmqVp19T6PkkxbhN08rgtT7v+aFvrbqbO/vlsskbJpH2K2io+e1XmRGPnSr9q4KSqfGbTfe5gLwDIOFd66Z4mb5Utb5wWpsy6Gjh06Yf257AccGD3A1bkTNOyeeX0tqciYBePWMk0icP/aZ6hnErfhnUKf3tOgPLppSHiGcaSKekhChZ2xLUs3U64JwrXSmwHj+TzdO3S0QIDAQAB"
+}
