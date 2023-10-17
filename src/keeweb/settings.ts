@@ -49,15 +49,13 @@ export function getLocalStorage(key: LocalStorageKey): any | null {
 export function install(context: IContext) {
     // this._logger.debug("plugin:siyuan:settings-install");
 
-    const baseURL = globalThis.document.baseURI.replace(/\/plugins\/keepass\/keeweb\/.*$/, "/");
-    context.baseURL = baseURL;
     context.settings = [
         {
             name: "baseURL",
             label: context.i18n!.siyuanBaseURL,
             type: "text",
-            placeholder: baseURL,
-            value: baseURL,
+            placeholder: context.baseURL,
+            value: context.baseURL,
         },
         {
             name: "token",
@@ -65,6 +63,13 @@ export function install(context: IContext) {
             type: "text",
             placeholder: context.i18n!.siyuanTokenPlaceholder,
             value: "",
+        },
+        {
+            name: "path",
+            label: context.i18n!.siyuanPath,
+            type: "text",
+            placeholder: context.defaultPath,
+            value: context.defaultPath,
         },
     ];
 }
