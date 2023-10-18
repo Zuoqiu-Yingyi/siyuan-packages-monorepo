@@ -232,7 +232,7 @@ export class SiyuanStorage extends StorageBase {
     ) {
         // this._logger.debug("storage-list", arguments);
         try {
-            const path = dir ?? this._context.path;
+            const path = dir ?? this._context.fileOpenPath;
             const response = await this._context.client.readDir({ path });
             callback?.(null, response.data.map(entry => ({
                 name: entry.name,

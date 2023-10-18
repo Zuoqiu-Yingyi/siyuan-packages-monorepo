@@ -26,7 +26,7 @@ import * as locale from "./locale";
 import * as storage from "./storage";
 import * as settings from "./settings";
 
-import type { IContext } from "~/src/keeweb";
+import type { IContext, TFileOpenSchema } from "~/src/keeweb";
 
 const defaultPath = "/data/storage/petal/keepass/";
 const baseURL = globalThis.document.baseURI.replace(/\/plugins\/keepass\/keeweb\/.*$/, "/");
@@ -35,6 +35,7 @@ const context: IContext = {
     client: new sdk.Client({ baseURL }, "fetch"),
     baseURL,
     defaultPath,
+    fileOpenPath: defaultPath,
 };
 
 async function install() {
@@ -62,6 +63,7 @@ interface IConfig {
     baseURL: string;
     token: string;
     path: string;
+    fileOpenSchema: TFileOpenSchema;
 }
 
 function setSettings(config: IConfig) {
@@ -76,6 +78,15 @@ function setSettings(config: IConfig) {
     }, "fetch");
     context.storage?.updateEnabled();
     context.path = config.path;
+
+    switch (config.fileOpenSchema) {
+        case "path":
+            context.fileOpenPath = context.path;
+            break;
+        case "root":
+            context.fileOpenPath = "/";
+            break;
+    }
 }
 
 install();
