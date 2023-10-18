@@ -46,11 +46,14 @@ export type TSetting = ITextSetting
     | ISelectSetting
     | ICheckboxSetting;
 
+export type TFileOpenSchema = "path" | "root";
+
 export interface IContext {
     path: string;
     client: InstanceType<typeof sdk.Client>;
     baseURL: string;
     defaultPath: string; // 默认文件存放目录
+    fileOpenPath: string; // 文件打开路径
     storage?: InstanceType<typeof SiyuanStorage>;
     lang?: string;
     i18n?: I18N;
