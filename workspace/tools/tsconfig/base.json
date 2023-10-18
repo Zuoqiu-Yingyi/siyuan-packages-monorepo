@@ -17,7 +17,8 @@
         "noUnusedParameters": false,
         "preserveWatchOutput": true,
         "skipLibCheck": true,
-        "strict": true
+        "strict": true,
+        "target": "ESNext"
     },
     "display": "Default",
     "exclude": [

@@ -37,7 +37,7 @@ import type { IConfig } from "./types/config";
 declare var globalThis: ISiyuanGlobal;
 
 export default class TemplatePlugin extends siyuan.Plugin {
-    static readonly GLOBAL_CONFIG_NAME = "global-config";
+    public static readonly GLOBAL_CONFIG_NAME = "config.json";
 
     declare public readonly i18n: I18N;
 
@@ -47,7 +47,7 @@ export default class TemplatePlugin extends siyuan.Plugin {
 
     protected readonly SETTINGS_DIALOG_ID: string;
 
-    protected config: IConfig = DEFAULT_CONFIG;
+    protected config: IConfig = mergeIgnoreArray(DEFAULT_CONFIG);
 
     constructor(options: any) {
         super(options);
@@ -116,6 +116,6 @@ export default class TemplatePlugin extends siyuan.Plugin {
         if (config && config !== this.config) {
             this.config = config;
         }
-        return this.saveData(TemplatePlugin.GLOBAL_CONFIG_NAME, this.config);
+        return this.saveData(TemplatePlugin.GLOBAL_CONFIG_NAME, JSON.stringify(this.config, undefined, 4));
     }
 };
