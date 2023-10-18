@@ -71,6 +71,22 @@ export function install(context: IContext) {
             placeholder: context.defaultPath,
             value: context.defaultPath,
         },
+        {
+            name: "fileOpenSchema",
+            label: context.i18n!.siyuanFileOpenDefaultPath,
+            type: "select",
+            options: [
+                {
+                    value: "path",
+                    get label(): string { return `${context.i18n!.siyuanPath} [${context.path}]` },
+                },
+                {
+                    value: "root",
+                    get label(): string { return `${context.i18n!.siyuanWorkspaceRootDirectory} [/]` },
+                },
+            ],
+            value: "path",
+        },
     ];
 }
 
