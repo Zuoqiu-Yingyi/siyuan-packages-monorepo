@@ -15,14 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { IConfig } from "@/types/config";
+import type { DBSchema } from "idb";
 
-export const DEFAULT_CONFIG: IConfig = {
-    keeweb: {
-        plugin: {
-            siyuan: {
-                enable: true,
-            },
-        },
-    },
-};
+// REF: https://www.npmjs.com/package/idb#typescript
+export interface IDBStores {
+    files: {
+        name: "files",
+    };
+}
+export interface IDBDatabase<T> {
+    name: T;
+    stores: IDBStores;
+}
+export interface IDBSchema {
+    FilesCache: IDBDatabase<"FilesCache">;
+    PluginFiles: IDBDatabase<"PluginFiles">;
+}
+
+export type TDBDatabaseName = keyof IDBSchema;
+export type TDBStoreName = keyof IDBStores;
+
+export interface IDBSchemaFiles extends DBSchema {
+    files: {
+        key: string;
+        value: ArrayBuffer;
+    }
+}
