@@ -1,10 +1,16 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-10-19
+
+- 添加安装/卸载 KeeWeb 插件功能 | Add install/uninstall KeeWeb plugin function.
+
 ## 2023-10-18
 
 - 添加附属仓库 `keepass` | Add sub-repository `keepass`.
 - 添加设置选项 | Add setting options.
 - 实现数据库文件管理功能 | Implement database file management function.
+- 实现 `localStorage` 数据加载与保存功能 | Implement `localStorage` data loading and saving function.
+- 添加默认文件打开目录配置项 | Add default file open directory configuration item.
 
 ## 2023-10-17
 

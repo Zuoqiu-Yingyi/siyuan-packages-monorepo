@@ -221,3 +221,13 @@ export function workspacePath2StaticPathname(path: string): string {
             throw new Error(`'${path}' is not a valid workspace path`);
     }
 }
+
+/**
+ * 获取思源服务的基础路径
+ */
+export function getSiyuanBasePathname(baseURL: string = globalThis.document.baseURI): string {
+    const url = new URL(baseURL);
+    return url.pathname;
+}
+
+export const BASE_PATHNAME = getSiyuanBasePathname();
