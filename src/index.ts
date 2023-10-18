@@ -36,8 +36,13 @@ import type { IConfig } from "./types/config";
 
 declare var globalThis: ISiyuanGlobal;
 
-export default class TemplatePlugin extends siyuan.Plugin {
-    static readonly GLOBAL_CONFIG_NAME = "global-config";
+export type TLocal = Record<string, any>;
+
+export default class KeepassPlugin extends siyuan.Plugin {
+    public static readonly GLOBAL_CONFIG_NAME = "global-config";
+    public static readonly LOCAL_STORAGE_NAME = "local.json";
+
+    public static readonly LOCAL_STORAGE_KEY_PREFIX = "plugin-keepass-";
 
     declare public readonly i18n: I18N;
 
@@ -47,7 +52,8 @@ export default class TemplatePlugin extends siyuan.Plugin {
 
     protected readonly SETTINGS_DIALOG_ID: string;
 
-    protected config: IConfig = DEFAULT_CONFIG;
+    protected config: IConfig = mergeIgnoreArray(DEFAULT_CONFIG);
+    protected local: TLocal = {};
 
     constructor(options: any) {
         super(options);
@@ -65,7 +71,7 @@ export default class TemplatePlugin extends siyuan.Plugin {
         this.addIcons([
         ].join(""));
 
-        this.loadData(TemplatePlugin.GLOBAL_CONFIG_NAME)
+        this.loadData(KeepassPlugin.GLOBAL_CONFIG_NAME)
             .then(config => {
                 if (config) {
                     this.config = mergeIgnoreArray(DEFAULT_CONFIG, config) as IConfig;
@@ -78,12 +84,17 @@ export default class TemplatePlugin extends siyuan.Plugin {
             .catch(error => this.logger.error(error))
             .finally(() => {
             });
+
+        this.loadLocalStorage();
+        globalThis.addEventListener("storage", this.storageEventListener);
     }
 
     onLayoutReady(): void {
     }
 
     onunload(): void {
+        globalThis.removeEventListener("storage", this.storageEventListener);
+        this.saveLocalStorage();
     }
 
     openSetting(): void {
@@ -116,6 +127,135 @@ export default class TemplatePlugin extends siyuan.Plugin {
         if (config && config !== this.config) {
             this.config = config;
         }
-        return this.saveData(TemplatePlugin.GLOBAL_CONFIG_NAME, this.config);
+        return this.saveData(KeepassPlugin.GLOBAL_CONFIG_NAME, this.config);
+    }
+
+    /**
+     * 加载 localStorage
+     * @returns
+     * - `this.local`: 加载成功
+     * - `undefined`: 加载失败
+     */
+    public async loadLocalStorage(): Promise<TLocal | void> {
+        const local = await this.loadLocal();
+        if (local) {
+            this.setLocalStoragItems(local);
+        }
+        return local;
+    }
+
+    /**
+     * 保存 localStorage
+     * @returns
+     * - `true`: 保存成功
+     * - `false`: 保存失败
+     */
+    public async saveLocalStorage(): Promise<boolean> {
+        const local = this.getLocalStorageItems();
+        return this.saveLocal(local);
+    }
+
+    /**
+     * 加载 local
+     * @retruns
+     * - `this.local`: 加载成功
+     * - `undefined`: 加载失败
+     */
+    public async loadLocal(): Promise<TLocal | void> {
+        try {
+            const local = await this.loadData(KeepassPlugin.LOCAL_STORAGE_NAME);
+            if (local) {
+                this.local = local;
+                return this.local;
+            }
+        }
+        catch (error) {
+            this.logger.error(error);
+        }
+    }
+
+    /**
+     * 保存 local
+     * @returns
+     * - `true`: 保存成功
+     * - `false`: 保存失败
+     */
+    public async saveLocal(local: TLocal = this.local): Promise<boolean> {
+        try {
+            await this.saveData(
+                KeepassPlugin.LOCAL_STORAGE_NAME,
+                JSON.stringify(local, undefined, 4),
+            );
+            return true;
+        }
+        catch (error) {
+            this.logger.error(error);
+            return false;
+        }
+    }
+
+    /**
+     * 设置 localStorage 项
+     */
+    public setLocalStoragItems(local: TLocal = this.local): void {
+        for (const [key, value] of Object.entries(local)) {
+            globalThis.localStorage.setItem(key, JSON.stringify(value));
+        }
+    }
+
+    /**
+     * 获取 localStorage 项
+     * @param prefix 键名前缀
+     */
+    public getLocalStorageItems(): TLocal {
+        this.local = {};
+        for (const [key, value] of Object.entries(globalThis.localStorage)) {
+            if (this.isLocalStorageKey(key)) {
+                this.local[key] = JSON.parse(value);
+            }
+        }
+        return this.local;
+    }
+
+    /**
+     * 判断一个 localStorage 键是否为本插件的配置项
+     * @param key 键名
+     * @param prefix 键名前缀
+     * @returns 是否为本插件的配置项
+     */
+    public isLocalStorageKey(
+        key: string,
+        prefix: string = KeepassPlugin.LOCAL_STORAGE_KEY_PREFIX,
+    ): boolean {
+        return key.startsWith(prefix);
+    }
+
+    /**
+     * 储存变更事件监听器
+     * REF: https://developer.mozilla.org/zh-CN/docs/Web/API/StorageEvent
+     */
+    public readonly storageEventListener = async (e: StorageEvent) => {
+        // this.logger.debug(e);
+        if (e.storageArea === globalThis.localStorage) {
+            let save = false; // 是否需要保存
+            if (e.key === null) { // 使用了 clear() 方法
+                this.local = {};
+                save = true;
+            }
+            else if (this.isLocalStorageKey(e.key)) {
+                if (e.newValue === null) { // 使用了 removeItem() 方法
+                    delete this.local[e.key];
+                    save = true;
+                }
+                else {
+                    this.local[e.key] = JSON.parse(e.newValue);
+                    save = true;
+                }
+            }
+
+            if (save) {
+                await this.saveLocal();
+            }
+        }
     }
 };
