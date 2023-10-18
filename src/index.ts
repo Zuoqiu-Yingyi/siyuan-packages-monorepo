@@ -16,6 +16,11 @@
  */
 
 import siyuan from "siyuan";
+import {
+    openDB,
+    type IDBPDatabase,
+    type OpenDBCallbacks,
+} from "idb";
 import type { ISiyuanGlobal } from "@workspace/types/siyuan";
 
 import {
@@ -30,19 +35,74 @@ import {
 } from "@workspace/utils/env/front-end";
 import { Logger } from "@workspace/utils/logger";
 import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
+import { join } from "@workspace/utils/path/browserify";
+import { sync1 } from "@workspace/utils/misc/sync";
 import { DEFAULT_CONFIG } from "./configs/default";
 import type { I18N } from "./utils/i18n";
 import type { IConfig } from "./types/config";
+import type {
+    ILocalStoragePlugins,
+    ILocalStoragePlugin,
+    ILocalStoragePluginManifest,
+} from "./types/keeweb";
+import type {
+    IDBSchema,
+    IDBSchemaFiles,
+    TDBDatabaseName,
+    TDBStoreName,
+} from "./types/idb-schema";
 
 declare var globalThis: ISiyuanGlobal;
 
 export type TLocal = Record<string, any>;
+export interface IDB {
+    FilesCache: IDBPDatabase<IDBSchemaFiles>;
+    PluginFiles: IDBPDatabase<IDBSchemaFiles>;
+}
 
 export default class KeepassPlugin extends siyuan.Plugin {
-    public static readonly GLOBAL_CONFIG_NAME = "global-config";
+    /**
+     * 遍历所有的 indexedDB 数据库
+     */
+    protected static iterateIDB(schema: IDBSchema = KeepassPlugin.IDB_SCHEMA): { db: TDBDatabaseName, store: TDBStoreName }[] {
+        const result: { db: TDBDatabaseName, store: TDBStoreName }[] = [];
+        for (const [db_name, db] of Object.entries(schema)) {
+            for (const store_name of Object.keys(db.stores)) {
+                result.push({
+                    db: db_name as TDBDatabaseName,
+                    store: store_name as TDBStoreName,
+                });
+            }
+        }
+        return result;
+    }
+
+    public static readonly GLOBAL_CONFIG_NAME = "config.json";
     public static readonly LOCAL_STORAGE_NAME = "local.json";
 
     public static readonly LOCAL_STORAGE_KEY_PREFIX = "plugin-keepass-";
+    public static readonly LOCAL_STORAGE_KEY_PLUGINS = `${KeepassPlugin.LOCAL_STORAGE_KEY_PREFIX}plugins`;
+    public static readonly LOCAL_STORAGE_KEY_FILE_INFO = `${KeepassPlugin.LOCAL_STORAGE_KEY_PREFIX}file-info`;
+
+    public static readonly IDB_SCHEMA: IDBSchema = {
+        FilesCache: {
+            name: "FilesCache",
+            stores: {
+                files: {
+                    name: "files",
+                } as const,
+            } as const,
+        } as const,
+        PluginFiles: {
+            name: "PluginFiles",
+            stores: {
+                files: {
+                    name: "files"
+                } as const,
+            } as const,
+        } as const,
+    } as const;
+    public static readonly IDB_ENTRIES = KeepassPlugin.iterateIDB();
 
     declare public readonly i18n: I18N;
 
@@ -51,17 +111,28 @@ export default class KeepassPlugin extends siyuan.Plugin {
     public readonly client: InstanceType<typeof Client>;
 
     protected readonly SETTINGS_DIALOG_ID: string;
+    protected readonly KEEWEB_PLUGIN_URL: string;
+    protected readonly PLUGIN_INSTALL_PATH: string;
+    protected readonly PLUGIN_STORAGE_PATH: string;
+    protected readonly PLUGIN_STORAGE_IDB_PATH: string;
 
+    protected manifest!: ILocalStoragePluginManifest;
     protected config: IConfig = mergeIgnoreArray(DEFAULT_CONFIG);
     protected local: TLocal = {};
+    protected idb!: IDB;
 
     constructor(options: any) {
         super(options);
+        const baseURL = new URL(globalThis.document.baseURI);
 
         this.logger = new Logger(this.name);
         this.client = new Client(undefined, "fetch");
 
         this.SETTINGS_DIALOG_ID = `${this.name}-settings-dialog`;
+        this.KEEWEB_PLUGIN_URL = join(baseURL.pathname, "plugins", this.name, "keeweb/plugins/siyuan");
+        this.PLUGIN_INSTALL_PATH = `/data/plugins/${this.name}`;
+        this.PLUGIN_STORAGE_PATH = `/data/storage/petal/${this.name}`;
+        this.PLUGIN_STORAGE_IDB_PATH = join(this.PLUGIN_STORAGE_PATH, "idb");
     }
 
     onload(): void {
@@ -82,11 +153,15 @@ export default class KeepassPlugin extends siyuan.Plugin {
                 }
             })
             .catch(error => this.logger.error(error))
-            .finally(() => {
-            });
+            .finally(async () => {
+                await this.initIDB();
+                await this.initFiles();
 
-        this.loadLocalStorage();
-        globalThis.addEventListener("storage", this.storageEventListener);
+                await this.loadIDB();
+                await this.loadLocalStorage();
+                await this.updateKeeWebPluginStatus();
+                globalThis.addEventListener("storage", this.storageEventListener);
+            });
     }
 
     onLayoutReady(): void {
@@ -95,6 +170,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
     onunload(): void {
         globalThis.removeEventListener("storage", this.storageEventListener);
         this.saveLocalStorage();
+        this.saveIDB();
     }
 
     openSetting(): void {
@@ -117,6 +193,40 @@ export default class KeepassPlugin extends siyuan.Plugin {
         }
     }
 
+    /**
+     * 初始化 indexedDB
+     */
+    protected async initIDB(): Promise<void> {
+        this.idb = {
+            FilesCache: await openDB<IDBSchemaFiles>(
+                KeepassPlugin.IDB_SCHEMA.FilesCache.name,
+                undefined,
+                this.createOpenDBCallbacks(KeepassPlugin.IDB_SCHEMA.FilesCache.name),
+            ),
+            PluginFiles: await openDB<IDBSchemaFiles>(
+                KeepassPlugin.IDB_SCHEMA.PluginFiles.name,
+                undefined,
+                this.createOpenDBCallbacks(KeepassPlugin.IDB_SCHEMA.PluginFiles.name),
+            ),
+        };
+    }
+
+    /**
+     * 初始化文件存储目录
+     */
+    protected async initFiles() {
+        /* 创建目录 */
+        await Promise.allSettled(KeepassPlugin.IDB_ENTRIES.map(
+            ({ db, store }) => this.client.putFile({
+                path: join(this.PLUGIN_STORAGE_IDB_PATH, db, store),
+                isDir: true,
+            }),
+        ));
+
+        /* 初始化文件 */
+        await this.loadKeeWebPluginManifest();
+    }
+
     /* 重置插件配置 */
     public async resetConfig(): Promise<void> {
         return this.updateConfig(mergeIgnoreArray(DEFAULT_CONFIG) as IConfig);
@@ -127,7 +237,21 @@ export default class KeepassPlugin extends siyuan.Plugin {
         if (config && config !== this.config) {
             this.config = config;
         }
-        return this.saveData(KeepassPlugin.GLOBAL_CONFIG_NAME, this.config);
+        await this.updateKeeWebPluginStatus();
+        return this.saveData(KeepassPlugin.GLOBAL_CONFIG_NAME, JSON.stringify(this.config, undefined, 4));
+    }
+
+    /* 更新 keeweb 插件状态 */
+    public async updateKeeWebPluginStatus(): Promise<void> {
+        switch (true) {
+            case !this.isKeeWebSiyuanPluginInstalled && this.config.keeweb.plugin.siyuan.enable: // 需要安装插件
+                await this.installKeeWebPlugin();
+                break;
+
+            case this.isKeeWebSiyuanPluginInstalled && !this.config.keeweb.plugin.siyuan.enable: // 需要卸载插件
+                await this.uninstallKeeWebPlugin();
+                break;
+        }
     }
 
     /**
@@ -139,7 +263,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
     public async loadLocalStorage(): Promise<TLocal | void> {
         const local = await this.loadLocal();
         if (local) {
-            this.setLocalStoragItems(local);
+            this.setLocalStorageItems(local);
         }
         return local;
     }
@@ -197,14 +321,31 @@ export default class KeepassPlugin extends siyuan.Plugin {
     /**
      * 设置 localStorage 项
      */
-    public setLocalStoragItems(local: TLocal = this.local): void {
+    public setLocalStorageItem(key: string, value: any): void {
+        globalThis.localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    /**
+     * 设置 KeeWeb 相关的 localStorage 项
+     */
+    public setLocalStorageItems(local: TLocal = this.local): void {
         for (const [key, value] of Object.entries(local)) {
-            globalThis.localStorage.setItem(key, JSON.stringify(value));
+            this.setLocalStorageItem(key, value);
         }
     }
 
     /**
-     * 获取 localStorage 项
+     * 设置 localStorage 项
+     */
+    public getLocalStorageItem(key: string): any {
+        const value = globalThis.localStorage.getItem(key);
+        return value === null
+            ? value
+            : JSON.parse(value);
+    }
+
+    /**
+     * 获取 KeeWeb 相关的 localStorage 项
      * @param prefix 键名前缀
      */
     public getLocalStorageItems(): TLocal {
@@ -218,6 +359,86 @@ export default class KeepassPlugin extends siyuan.Plugin {
     }
 
     /**
+     * 加载 indexedDB
+     */
+    public async loadIDB() {
+        for (const entry of KeepassPlugin.IDB_ENTRIES) {
+            try {
+                const path = join(this.PLUGIN_STORAGE_IDB_PATH, entry.db, entry.store);
+                const response = await this.client.readDir({ path });
+                const file_names_siyuan = response.data
+                    .filter(entry => !entry.isDir)
+                    .map(entry => entry.name);
+                const file_names_idb = await this.idb[entry.db].getAllKeys(entry.store);
+
+                const entries = sync1<string>(file_names_siyuan, file_names_idb);
+                const transaction = this.idb[entry.db].transaction(entry.store, "readwrite");
+                const store = transaction.objectStore(entry.store);
+                const results = await Promise.allSettled([
+                    ...[...entries.delete].map(file_name => store.delete(file_name)),
+                    ...file_names_siyuan.map(file_name => (async () => {
+                        const file = await this.client.getFile({ path: join(path, file_name) }, "arraybuffer");
+                        await this.idb[entry.db].put(entry.store, file, file_name);
+                    })()),
+                    transaction.done,
+                ]);
+
+                results.forEach(result => {
+                    if (result.status === "rejected") {
+                        this.logger.warn(result.reason);
+                    }
+                });
+            } catch (error) {
+                this.logger.warn(error);
+            }
+        }
+    }
+
+    /**
+     * 保存 indexedDB
+     * @param names 需要保存的数据库名, 默认保存所有数据库
+     */
+    public async saveIDB(...names: TDBDatabaseName[]) {
+        const db_name_set = new Set(names);
+        const entries = db_name_set.size > 0
+            ? KeepassPlugin.IDB_ENTRIES.filter(entry => db_name_set.has(entry.db))
+            : KeepassPlugin.IDB_ENTRIES;
+
+        for (const entry of entries) {
+            try {
+                const path = join(this.PLUGIN_STORAGE_IDB_PATH, entry.db, entry.store);
+                const response = await this.client.readDir({ path });
+                const file_names_siyuan = response.data
+                    .filter(entry => !entry.isDir)
+                    .map(entry => entry.name);
+                const file_names_idb = await this.idb[entry.db].getAllKeys(entry.store);
+
+                const entries = sync1<string>(file_names_idb, file_names_siyuan);
+                const transaction = this.idb[entry.db].transaction(entry.store);
+                const store = transaction.objectStore(entry.store);
+                const results = await Promise.allSettled([
+                    ...[...entries.delete].map(file_name => this.client.removeFile({ path: join(path, file_name) })),
+                    ...file_names_idb.map(file_name => (async () => {
+                        const file = await store.get(file_name);
+                        return file
+                            ? this.client.putFile({ path: join(path, file_name), file })
+                            : undefined;
+                    })()),
+                    transaction.done,
+                ]);
+
+                results.forEach(result => {
+                    if (result.status === "rejected") {
+                        this.logger.warn(result.reason);
+                    }
+                });
+            } catch (error) {
+                this.logger.warn(error);
+            }
+        }
+    }
+
+    /**
      * 判断一个 localStorage 键是否为本插件的配置项
      * @param key 键名
      * @param prefix 键名前缀
@@ -228,6 +449,188 @@ export default class KeepassPlugin extends siyuan.Plugin {
         prefix: string = KeepassPlugin.LOCAL_STORAGE_KEY_PREFIX,
     ): boolean {
         return key.startsWith(prefix);
+    }
+
+    /**
+     * 创建 indexedDB 数据库的回调函数集
+     * @param name 数据库名
+     * @returns 回调函数集
+     */
+    protected createOpenDBCallbacks(name: TDBDatabaseName): OpenDBCallbacks<IDBSchemaFiles> {
+        return {
+            upgrade(db) {
+                for (const [key, store] of Object.entries(KeepassPlugin.IDB_SCHEMA[name].stores)) {
+                    db.createObjectStore(store.name);
+                }
+            },
+        }
+    }
+
+    /**
+     * 复制 keeweb 插件文件
+     * @param type 文件类型
+     */
+    protected async copyKeeWebPluginFile(type: "js" | "css") {
+        const file_name = `plugin.${type}`;
+        const file_path = join(this.PLUGIN_INSTALL_PATH, "keeweb/plugins/siyuan", file_name);
+        const file = await this.client.getFile({ path: file_path }, "blob");
+        return this.client.putFile({
+            path: join(
+                this.PLUGIN_STORAGE_IDB_PATH,
+                KeepassPlugin.IDB_SCHEMA.PluginFiles.name,
+                KeepassPlugin.IDB_SCHEMA.PluginFiles.stores.files.name,
+                `siyuan_${file_name}`,
+            ),
+            file,
+        });
+    }
+
+    /**
+     * 添加 keeweb 插件文件
+     * @param type 文件类型
+     */
+    protected async putKeeWebPluginFile(type: "js" | "css") {
+        const file_name = `plugin.${type}`;
+        const idb_key = `${this.manifest.name}_${file_name}`;
+        const file_path = join(this.PLUGIN_INSTALL_PATH, "keeweb/plugins/siyuan", file_name);
+        const file = await this.client.getFile({ path: file_path }, "arraybuffer");
+        await this.idb.PluginFiles.put(KeepassPlugin.IDB_SCHEMA.PluginFiles.stores.files.name, file, idb_key);
+    }
+
+    /**
+     * 删除 keeweb 插件文件
+     * @param type 文件类型
+     */
+    protected async deleteKeeWebPluginFile(type: "js" | "css") {
+        const idb_key = `${this.manifest.name}_plugin.${type}`;
+        await this.idb.PluginFiles.delete(KeepassPlugin.IDB_SCHEMA.PluginFiles.stores.files.name, idb_key);
+    }
+
+    /**
+     * 加载 keeweb 思源插件的配置清单文件
+     */
+    protected async loadKeeWebPluginManifest(): Promise<ILocalStoragePluginManifest> {
+        if (!this.manifest) {
+            this.manifest = await this.client.getFile({
+                path: join(
+                    this.PLUGIN_INSTALL_PATH,
+                    "keeweb/plugins/siyuan",
+                    "manifest.json",
+                ),
+            }, "json") as ILocalStoragePluginManifest;
+        }
+        return this.manifest;
+    }
+
+    /**
+     * 保存 keeweb 思源插件的配置
+     * keeweb -> 思源
+     * 在 localStorage 变更时调用
+     */
+    protected saveKeeWebPluginConfig(): void {
+        const plugins: ILocalStoragePlugins | undefined = this.local[KeepassPlugin.LOCAL_STORAGE_KEY_PLUGINS];
+        const plugin: ILocalStoragePlugin | undefined = plugins?.plugins?.find(plugin => plugin?.manifest?.name === this.manifest.name);
+
+        if (plugin) { // 存在插件配置 (插件已安装)
+            this.config.keeweb.plugin.siyuan.enable = true;
+        }
+        else { // 不存在插件配置 (插件已卸载)
+            this.config.keeweb.plugin.siyuan.enable = false;
+        }
+    }
+
+    /* 获取 keeweb 中思源插件的状态 */
+    protected getKeeWebSiyuanPlugin(): {
+        plugins: ILocalStoragePlugins,
+        plugin: ILocalStoragePlugin | undefined,
+    } {
+        var plugins: ILocalStoragePlugins | undefined = this.local[KeepassPlugin.LOCAL_STORAGE_KEY_PLUGINS];
+        var plugin: ILocalStoragePlugin | undefined;
+        if (plugins) { // 插件配置存在
+            if (Array.isArray(plugins.plugins)) {
+                plugin = plugins.plugins.find(plugin => plugin?.manifest?.name === this.manifest.name)
+            }
+            else {
+                plugins.plugins = [];
+            }
+        }
+        else { // 插件配置不存在, 初始化插件配置
+            plugins = {
+                autoUpdateDate: null,
+                autoUpdateAppVersion: null,
+                plugins: [],
+            };
+            this.local[KeepassPlugin.LOCAL_STORAGE_KEY_PLUGINS] = plugins;
+        }
+        return {
+            plugins,
+            plugin,
+        };
+    }
+
+    public get isKeeWebSiyuanPluginInstalled(): boolean {
+        const { plugin } = this.getKeeWebSiyuanPlugin();
+        return !!plugin;
+    }
+
+    /**
+     * 安装 keeweb 插件
+     */
+    public async installKeeWebPlugin(): Promise<void> {
+        var { plugins, plugin } = this.getKeeWebSiyuanPlugin();
+
+        /* 更新 this.local 与 this.config  */
+        if (!plugin) { // 不存在插件配置 (插件未安装)
+            plugins.plugins.push({
+                manifest: this.manifest,
+                url: this.KEEWEB_PLUGIN_URL,
+                enabled: true,
+                autoUpdate: true,
+            });
+        }
+        this.config.keeweb.plugin.siyuan.enable = true;
+        this.setLocalStorageItem(KeepassPlugin.LOCAL_STORAGE_KEY_PLUGINS, plugins);
+
+        /* 添加插件文件到 idb */
+        await Promise.allSettled([
+            this.putKeeWebPluginFile("js"),
+            this.putKeeWebPluginFile("css"),
+        ]);
+
+        /* 保存配置 */
+        await Promise.allSettled([
+            this.saveIDB(KeepassPlugin.IDB_SCHEMA.PluginFiles.name), // 保存 IDB "PluginFiles"
+            this.saveLocal(), // 保存 local
+            this.updateConfig(), // 保存 config
+        ]);
+    }
+
+    /**
+     * 卸载 keeweb 插件
+     */
+    public async uninstallKeeWebPlugin(): Promise<void> {
+        const { plugins, plugin } = this.getKeeWebSiyuanPlugin();
+
+        /* 更新 this.local 与 this.config  */
+        if (plugin) { // 存在插件配置 (插件已安装)
+            const index = plugins.plugins.indexOf(plugin);
+            plugins.plugins.splice(index, 1);
+        }
+        this.config.keeweb.plugin.siyuan.enable = false;
+        this.setLocalStorageItem(KeepassPlugin.LOCAL_STORAGE_KEY_PLUGINS, plugins);
+
+        /* 添加插件文件到 idb */
+        await Promise.allSettled([
+            this.deleteKeeWebPluginFile("js"),
+            this.deleteKeeWebPluginFile("css"),
+        ]);
+
+        /* 保存配置 */
+        await Promise.allSettled([
+            this.saveIDB(KeepassPlugin.IDB_SCHEMA.PluginFiles.name), // 保存 IDB "PluginFiles"
+            this.saveLocal(), // 保存 local
+            this.updateConfig(), // 保存 config
+        ]);
     }
 
     /**
@@ -250,6 +653,20 @@ export default class KeepassPlugin extends siyuan.Plugin {
                 else {
                     this.local[e.key] = JSON.parse(e.newValue);
                     save = true;
+                }
+
+                switch (e.key) {
+                    case KeepassPlugin.LOCAL_STORAGE_KEY_PLUGINS:
+                        this.saveKeeWebPluginConfig();
+                        await this.saveIDB(KeepassPlugin.IDB_SCHEMA.PluginFiles.name);
+                        break;
+
+                    case KeepassPlugin.LOCAL_STORAGE_KEY_FILE_INFO:
+                        await this.saveIDB(KeepassPlugin.IDB_SCHEMA.FilesCache.name);
+                        break;
+
+                    default:
+                        break;
                 }
             }
 
