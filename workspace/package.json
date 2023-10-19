@@ -19,7 +19,7 @@
     "devDependencies": {
         "eslint": "^8.51.0",
         "prettier": "^2.8.8",
-        "siyuan": "^0.8.5",
+        "siyuan": "^0.8.6",
         "turbo": "^1.10.15"
     }
 }

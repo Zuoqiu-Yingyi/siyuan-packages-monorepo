@@ -18,10 +18,7 @@
 import siyuan from "siyuan";
 import type { ISiyuanGlobal } from "@workspace/types/siyuan";
 
-import {
-    Client,
-    type types,
-} from "@siyuan-community/siyuan-sdk";
+import * as sdk from "@siyuan-community/siyuan-sdk";
 
 import Settings from "./components/Settings.svelte";
 
@@ -43,7 +40,7 @@ export default class TemplatePlugin extends siyuan.Plugin {
 
     public readonly siyuan = siyuan;
     public readonly logger: InstanceType<typeof Logger>;
-    public readonly client: InstanceType<typeof Client>;
+    public readonly client: InstanceType<typeof sdk.Client>;
 
     protected readonly SETTINGS_DIALOG_ID: string;
 
@@ -53,7 +50,7 @@ export default class TemplatePlugin extends siyuan.Plugin {
         super(options);
 
         this.logger = new Logger(this.name);
-        this.client = new Client(undefined, "fetch");
+        this.client = new sdk.Client(undefined, "fetch");
 
         this.SETTINGS_DIALOG_ID = `${this.name}-settings-dialog`;
     }

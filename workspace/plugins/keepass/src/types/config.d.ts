@@ -27,6 +27,14 @@ export interface IKeeWeb {
     plugin: IKeeWebPlugin;
 }
 
+export interface IWindow {
+    width: number;
+    height: number;
+    center: boolean;
+    alwaysOnTop: boolean;
+}
+
 export interface IConfig {
     keeweb: IKeeWeb;
+    window: IWindow;
 }

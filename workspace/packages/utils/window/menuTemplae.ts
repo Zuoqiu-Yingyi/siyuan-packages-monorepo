@@ -24,9 +24,9 @@ import type { Electron } from "@workspace/types/electron";
  * REF [菜单项 | Electron](https://www.electronjs.org/zh/docs/latest/api/menu-item)
  * REF [Menu | Electron](https://www.electronjs.org/zh/docs/latest/api/menu#示例)
  */
-export function createMenuTemplate(
-    isMacOS: boolean, // 是否为 macOS 系统
+export function buildMenuTemplate(
     top: boolean = true, // 是否置顶
+    isMacOS: boolean = globalThis.process?.platform === "darwin", // 是否为 macOS 系统
 ): Array<(Electron.MenuItemConstructorOptions) | (Electron.MenuItem)> {
     const appMenu: Array<Electron.MenuItemConstructorOptions> = [ // 应用菜单
         { role: "about" }, // 关于

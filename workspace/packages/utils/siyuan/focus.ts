@@ -15,20 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { IConfig } from "@/types/config";
+import { FLAG_ELECTRON } from "../env/native-front-end";
 
-export const DEFAULT_CONFIG: IConfig = {
-    keeweb: {
-        plugin: {
-            siyuan: {
-                enable: true,
-            },
-        },
-    },
-    window: {
-        width: 800,
-        height: 600,
-        center: false,
-        alwaysOnTop: true,
-    },
-};
+var FLAG_WINDOW_FOCUSED = false;
+
+globalThis.document.documentElement.addEventListener("blur", () => (FLAG_WINDOW_FOCUSED = false));
+globalThis.document.documentElement.addEventListener("focus", () => (FLAG_WINDOW_FOCUSED = true));
+
+/**
+ * 判断当前页面是否处于焦点状态
+ */
+export function isWindowFocused(): boolean {
+    return FLAG_ELECTRON
+        ? !globalThis.document.body.classList.contains("body--blur")
+        : FLAG_WINDOW_FOCUSED;
+}

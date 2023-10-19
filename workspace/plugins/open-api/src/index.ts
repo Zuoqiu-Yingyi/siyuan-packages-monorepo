@@ -48,14 +48,13 @@ export default class OpenApiPlugin extends siyuan.Plugin {
 
     onload() {
         OpenApiPlugin.GLOBAL[OpenApiPlugin.PROPERTY_NAME] = {
+            siyuan,
             plugin: this,
             client: this.client,
             fs: this.fs,
 
             require,
             exports,
-            global,
-            siyuan,
             module,
         };
     }

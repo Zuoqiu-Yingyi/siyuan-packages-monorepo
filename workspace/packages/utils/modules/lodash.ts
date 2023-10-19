@@ -15,20 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { IConfig } from "@/types/config";
+/**
+ * REF: https://www.lodashjs.com/
+ * REF: https://lodash.com/docs/
+ * REF: https://www.npmjs.com/package/lodash
+ */
+import _ from "lodash";
 
-export const DEFAULT_CONFIG: IConfig = {
-    keeweb: {
-        plugin: {
-            siyuan: {
-                enable: true,
-            },
-        },
-    },
-    window: {
-        width: 800,
-        height: 600,
-        center: false,
-        alwaysOnTop: true,
-    },
+export default _;
+export {
+    _,
+    _ as lodash,
 };
