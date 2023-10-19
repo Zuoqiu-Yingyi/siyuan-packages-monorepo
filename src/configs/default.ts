@@ -25,4 +25,10 @@ export const DEFAULT_CONFIG: IConfig = {
             },
         },
     },
+    window: {
+        width: 800,
+        height: 600,
+        center: false,
+        alwaysOnTop: true,
+    },
 };

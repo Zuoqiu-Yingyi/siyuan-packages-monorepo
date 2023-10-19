@@ -16,6 +16,7 @@
  */
 
 import siyuan from "siyuan";
+import manifest from "~/public/plugin.json";
 import {
     openDB,
     type IDBPDatabase,
@@ -23,12 +24,13 @@ import {
 } from "idb";
 import type { ISiyuanGlobal } from "@workspace/types/siyuan";
 
-import {
-    Client,
-    type types,
-} from "@siyuan-community/siyuan-sdk";
+import * as sdk from "@siyuan-community/siyuan-sdk";
+
+import icon_keepass_keeweb from "./assets/symbols/icon-keepass-keeweb.symbol?raw";
+import icon_keepass_slash from "./assets/symbols/icon-keepass-slash.symbol?raw";
 
 import Settings from "./components/Settings.svelte";
+import KeeWebTab from "@workspace/components/siyuan/tab/IframeTab.svelte";
 
 import {
     FLAG_MOBILE,
@@ -37,6 +39,8 @@ import { Logger } from "@workspace/utils/logger";
 import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
 import { join } from "@workspace/utils/path/browserify";
 import { sync1 } from "@workspace/utils/misc/sync";
+import { openWindow } from "@workspace/utils/window/open";
+import { isWindowFocused } from "@workspace/utils/siyuan/focus";
 import { DEFAULT_CONFIG } from "./configs/default";
 import type { I18N } from "./utils/i18n";
 import type { IConfig } from "./types/config";
@@ -51,6 +55,7 @@ import type {
     TDBDatabaseName,
     TDBStoreName,
 } from "./types/idb-schema";
+import { src2url } from "@workspace/utils/misc/url";
 
 declare var globalThis: ISiyuanGlobal;
 
@@ -58,6 +63,9 @@ export type TLocal = Record<string, any>;
 export interface IDB {
     FilesCache: IDBPDatabase<IDBSchemaFiles>;
     PluginFiles: IDBPDatabase<IDBSchemaFiles>;
+}
+export interface IKeeWebTab extends siyuan.ITabModel {
+    component?: InstanceType<typeof KeeWebTab>;
 }
 
 export default class KeepassPlugin extends siyuan.Plugin {
@@ -84,6 +92,8 @@ export default class KeepassPlugin extends siyuan.Plugin {
     public static readonly LOCAL_STORAGE_KEY_PLUGINS = `${KeepassPlugin.LOCAL_STORAGE_KEY_PREFIX}plugins`;
     public static readonly LOCAL_STORAGE_KEY_FILE_INFO = `${KeepassPlugin.LOCAL_STORAGE_KEY_PREFIX}file-info`;
 
+    public static readonly CUSTOM_TAB_TYPE_KEEWEB = "-keeweb-tab";
+
     public static readonly IDB_SCHEMA: IDBSchema = {
         FilesCache: {
             name: "FilesCache",
@@ -108,31 +118,72 @@ export default class KeepassPlugin extends siyuan.Plugin {
 
     public readonly siyuan = siyuan;
     public readonly logger: InstanceType<typeof Logger>;
-    public readonly client: InstanceType<typeof Client>;
+    public readonly client: InstanceType<typeof sdk.Client>;
 
     protected readonly SETTINGS_DIALOG_ID: string;
-    protected readonly KEEWEB_PLUGIN_URL: string;
+    protected readonly TOP_BAR_MENU_ID: string;
+
+    protected readonly KEEWEB_BASE_PATHNAME: string;
+    protected readonly KEEWEB_INDEX_PATHNAME: string;
+    protected readonly KEEWEB_PLUGIN_PATHANEM: string;
+    protected readonly KEEWEB_INDEX_URL: URL;
+
     protected readonly PLUGIN_INSTALL_PATH: string;
     protected readonly PLUGIN_STORAGE_PATH: string;
     protected readonly PLUGIN_STORAGE_IDB_PATH: string;
+
+    protected readonly CUSTOM_TAB_ID_KEEWEB: string;
+
+    protected readonly keewebTab: ReturnType<siyuan.Plugin["addTab"]>;
 
     protected manifest!: ILocalStoragePluginManifest;
     protected config: IConfig = mergeIgnoreArray(DEFAULT_CONFIG);
     protected local: TLocal = {};
     protected idb!: IDB;
+    protected topBarButton?: HTMLElement; // 顶部菜单栏按钮
 
     constructor(options: any) {
         super(options);
         const baseURL = new URL(globalThis.document.baseURI);
 
         this.logger = new Logger(this.name);
-        this.client = new Client(undefined, "fetch");
+        this.client = new sdk.Client(undefined, "fetch");
 
         this.SETTINGS_DIALOG_ID = `${this.name}-settings-dialog`;
-        this.KEEWEB_PLUGIN_URL = join(baseURL.pathname, "plugins", this.name, "keeweb/plugins/siyuan");
+        this.TOP_BAR_MENU_ID = `${this.name}-top-bar-menu`;
+
+        this.KEEWEB_BASE_PATHNAME = join(baseURL.pathname, "plugins", this.name, "keeweb");
+        this.KEEWEB_INDEX_PATHNAME = join(this.KEEWEB_BASE_PATHNAME, "app");
+        this.KEEWEB_PLUGIN_PATHANEM = join(this.KEEWEB_BASE_PATHNAME, "plugins/siyuan");
+        this.KEEWEB_INDEX_URL = src2url(`${this.KEEWEB_INDEX_PATHNAME}/?v=${manifest.version}`);
+
         this.PLUGIN_INSTALL_PATH = `/data/plugins/${this.name}`;
         this.PLUGIN_STORAGE_PATH = `/data/storage/petal/${this.name}`;
         this.PLUGIN_STORAGE_IDB_PATH = join(this.PLUGIN_STORAGE_PATH, "idb");
+
+        this.CUSTOM_TAB_ID_KEEWEB = `${this.name}${KeepassPlugin.CUSTOM_TAB_TYPE_KEEWEB}`;
+
+        this.keewebTab = this.addTab({
+            type: KeepassPlugin.CUSTOM_TAB_TYPE_KEEWEB,
+            init() {
+                // plugin.logger.debug("tab-init");
+                // plugin.logger.debug(this);
+
+                const tab: IKeeWebTab = this;
+                tab.component = new KeeWebTab({
+                    target: tab.element,
+                    props: {
+                        ...tab.data,
+                    },
+                });
+            },
+            destroy() {
+                // plugin.logger.debug("tab-destroy");
+
+                const tab: IKeeWebTab = this;
+                tab.component?.$destroy();
+            },
+        });
     }
 
     onload(): void {
@@ -140,7 +191,58 @@ export default class KeepassPlugin extends siyuan.Plugin {
 
         /* 注册图标 */
         this.addIcons([
+            icon_keepass_keeweb,
+            icon_keepass_slash,
         ].join(""));
+
+        /**
+         * 注册快捷键命令
+         * 在 onload 结束后即刻解析, 因此不能在回调函数中注册
+         */
+        this.addCommand({ // 在新页签中打开 KeeWeb
+            langKey: "open-keeweb-tab",
+            langText: this.i18n.menu.command.openKeeWebTab.text,
+            hotkey: "⌥⌘K", // 默认快捷键 Ctrl + Alt + K
+            customHotkey: "", // 自定义快捷键
+            callback: this.openKeeWebTab,
+        });
+        this.addCommand({ // 在浏览器中打开 KeeWeb
+            langKey: "open-keeweb-browser",
+            langText: this.i18n.menu.command.openKeeWebBrowser.text,
+            hotkey: "", // 默认快捷键
+            customHotkey: "", // 自定义快捷键
+            callback: this.openKeeWebBrowser,
+        });
+        this.addCommand({ // 在新窗口中打开 KeeWeb
+            langKey: "open-keeweb-window",
+            langText: this.i18n.menu.command.openKeeWebWindow.text,
+            hotkey: "⌥⇧K", // Ctrl + Shift + Alt + K 无法触发, 使用 Shift + Alt + K 代替
+            customHotkey: "",
+            // callback: () => {
+            //     /* 设置其他回调函数后, 本函数不会被调用 */
+            // },
+            globalCallback: () => {
+                /**
+                 * 设置后无论焦点是否在窗口内部, 都仅调用本函数
+                 * 其他函数不会被调用
+                 */
+                this.openKeeWebWindow();
+            },
+        });
+        // this.addCommand({ // 在新窗口中打开 KeeWeb
+        //     langKey: "open-keeweb-window",
+        //     langText: this.i18n.menu.command.openKeeWebWindow.text,
+        //     hotkey: "⌥⇧⌘K",
+        //     customHotkey: "⌥⇧⌘K",
+        //     callback: () => this.openKeeWebWindow(false),
+        // });
+        // this.addCommand({ // 在新窗口中打开 KeeWeb (全局快捷键)
+        //     langKey: "open-keeweb-window",
+        //     langText: this.i18n.menu.command.openKeeWebWindow.text,
+        //     hotkey: "⌥⇧⌘K", // 默认快捷键 Ctrl + Shift + Alt + K
+        //     customHotkey: "⌥⇧⌘K", // 自定义快捷键
+        //     globalCallback: () => this.openKeeWebWindow(true),
+        // });
 
         this.loadData(KeepassPlugin.GLOBAL_CONFIG_NAME)
             .then(config => {
@@ -165,6 +267,35 @@ export default class KeepassPlugin extends siyuan.Plugin {
     }
 
     onLayoutReady(): void {
+        /* 添加菜单项 */
+        this.topBarButton = this.addTopBar({
+            icon: "icon-keepass-keeweb",
+            title: this.displayName,
+            position: "right",
+            callback: e => {
+                const menu = new siyuan.Menu(this.TOP_BAR_MENU_ID);
+                menu.addItem({
+                    icon: "iconLayout",
+                    label: this.i18n.menu.command.openKeeWebTab.text,
+                    click: this.openKeeWebTab,
+                });
+                menu.addItem({
+                    icon: "iconLanguage",
+                    label: this.i18n.menu.command.openKeeWebBrowser.text,
+                    click: this.openKeeWebBrowser,
+                });
+                menu.addItem({
+                    icon: "iconOpenWindow",
+                    label: this.i18n.menu.command.openKeeWebWindow.text,
+                    click: () => this.openKeeWebWindow(false),
+                });
+                menu.open({
+                    x: globalThis.siyuan.coordinates.pageX,
+                    y: globalThis.siyuan.coordinates.pageY,
+                    isLeft: true,
+                });
+            },
+        });
     }
 
     onunload(): void {
@@ -583,7 +714,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
         if (!plugin) { // 不存在插件配置 (插件未安装)
             plugins.plugins.push({
                 manifest: this.manifest,
-                url: this.KEEWEB_PLUGIN_URL,
+                url: this.KEEWEB_PLUGIN_PATHANEM,
                 enabled: true,
                 autoUpdate: true,
             });
@@ -674,5 +805,52 @@ export default class KeepassPlugin extends siyuan.Plugin {
                 await this.saveLocal();
             }
         }
-    }
+    };
+
+    /**
+     * 在新页签中打开 KeeWeb
+     */
+    protected readonly openKeeWebTab = async () => {
+        siyuan.openTab({
+            app: this.app,
+            custom: {
+                icon: "icon-keepass-keeweb",
+                title: "KeeWeb",
+                id: this.CUSTOM_TAB_ID_KEEWEB,
+                data: {
+                    src: this.KEEWEB_INDEX_URL.href,
+                    title: "KeeWeb",
+                },
+            },
+            keepCursor: false,
+            removeCurrentTab: false,
+        });
+    };
+
+    /**
+     * 在浏览器中打开 KeeWeb
+     */
+    protected readonly openKeeWebBrowser = async () => {
+        globalThis.open(this.KEEWEB_INDEX_URL.href);
+    };
+
+    /**
+     * 在新窗口中打开 KeeWeb
+     */
+    protected readonly openKeeWebWindow = async (global: boolean = !isWindowFocused()) => {
+        openWindow({
+            url: this.KEEWEB_INDEX_URL,
+            base: {
+                center: global || this.config.window.center,
+                width: this.config.window.width,
+                height: this.config.window.height,
+                alwaysOnTop: this.config.window.alwaysOnTop,
+                x: globalThis.siyuan.coordinates?.screenX ?? 0,
+                y: globalThis.siyuan.coordinates?.screenY ?? 0,
+            },
+            extra: {
+                enableMenuBar: true,
+            },
+        });
+    };
 };
