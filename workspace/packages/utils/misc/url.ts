@@ -25,3 +25,17 @@ export function uri2path(uri: string): string {
         return url.pathname;
     }
 }
+
+
+/**
+ * 将 src 转换为 URL 对象
+ * @param src 目标资源
+ * - `/foo`: 绝对路径
+ * - `./bar`: 相对于 baseURL 的相对路径
+ * @returns URL 对象
+ */
+export function src2url(src: string): URL {
+    const a = globalThis.document.createElement("a");
+    a.href = src;
+    return new URL(a.href);
+}

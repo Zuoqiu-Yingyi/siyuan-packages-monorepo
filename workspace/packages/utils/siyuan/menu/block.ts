@@ -26,7 +26,7 @@ import * as sdk from "@siyuan-community/siyuan-sdk";
 
 /* 块菜单上下文 */
 export interface IBlockMenuDetail {
-    menu: InstanceType<typeof siyuan.Menu>;
+    menu: InstanceType<typeof siyuan.EventMenu>;
     protyle: IProtyle;
     data?: IDocumentData;
     blockElements?: HTMLElement[];

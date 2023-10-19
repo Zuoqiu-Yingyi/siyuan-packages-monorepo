@@ -18,6 +18,7 @@
 import { BlockID } from "@workspace/types/siyuan";
 import { EditorType } from ".";
 import regexp from "../regexp";
+import { functions } from "lodash";
 
 export interface ISiyuanUrlParams {
     id: BlockID, // 块 ID

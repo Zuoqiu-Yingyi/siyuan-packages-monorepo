@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-10-20
+
+- 添加打开 KeeWeb 的方案 | Add the scheme of opening KeeWeb.
+
 ## 2023-10-19
 
 - 添加安装/卸载 KeeWeb 插件功能 | Add install/uninstall KeeWeb plugin function.
