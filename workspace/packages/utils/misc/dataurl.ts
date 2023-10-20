@@ -39,11 +39,18 @@ export function dataURL2blob(dataURL: string): Blob | undefined {
     return;
 }
 
+export function base64ToDataURL(
+    base64: string,
+    mime: string,
+): string {
+    return `data:${mime};base64,${base64}`;
+}
+
 export function base64ToBlob(
     base64: string,
     mime: string,
 ): Blob | undefined {
-    const data_url = `data:${mime};base64,${base64}`;
+    const data_url = base64ToDataURL(base64, mime);
     return dataURL2blob(data_url);
 }
 

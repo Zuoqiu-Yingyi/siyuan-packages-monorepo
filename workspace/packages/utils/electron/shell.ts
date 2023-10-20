@@ -18,10 +18,17 @@
 import type { Electron } from "@workspace/types/electron";
 import { normalize } from "./../node/path";
 
-const shell = globalThis
+export const shell: Electron.Shell = globalThis
     ?.require
     ?.("electron")
     ?.shell;
+
+export default shell;
+
+export const beep = shell?.beep?.bind?.(shell);
+export const openExternal = shell?.openExternal?.bind?.(shell);
+export const openPath = shell?.openPath?.bind?.(shell);
+export const readShortcutLink = shell?.readShortcutLink?.bind?.(shell);
 
 /**
  * @inheritdoc {@link Electron.Shell.showItemInFolder}
@@ -35,56 +42,5 @@ export const showItemInFolder: Electron.Shell["showItemInFolder"] = (fullPath: s
     }
 }
 
-/**
- * @inheritdoc {@link Electron.Shell.openPath}
- */
-export const openPath: Electron.Shell["openPath"] = (...args: any[]) => {
-    return shell
-        ?.openPath
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Shell.openExternal}
- */
-export const openExternal: Electron.Shell["openExternal"] = (...args: any[]) => {
-    return shell
-        ?.openExternal
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Shell.trashItem}
- */
-export const trashItem: Electron.Shell["trashItem"] = (...args: any[]) => {
-    return shell
-        ?.trashItem
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Shell.beep}
- */
-export const beep: Electron.Shell["beep"] = (...args: any[]) => {
-    return shell
-        ?.beep
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Shell.writeShortcutLink}
- */
-export const writeShortcutLink: Electron.Shell["writeShortcutLink"] = (...args: any[]) => {
-    return shell
-        ?.writeShortcutLink
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Shell.readShortcutLink}
- */
-export const readShortcutLink: Electron.Shell["readShortcutLink"] = (...args: any[]) => {
-    return shell
-        ?.readShortcutLink
-        ?.(...args);
-}
+export const trashItem = shell?.trashItem?.bind?.(shell);
+export const writeShortcutLink = shell?.writeShortcutLink?.bind?.(shell);

@@ -17,178 +17,29 @@
 
 import type { Electron } from "@workspace/types/electron";
 
-const clipboard = globalThis
+export const clipboard: Electron.Clipboard = globalThis
     ?.require
     ?.("electron")
     ?.clipboard;
 
-/**
- * @inheritdoc {@link Electron.Clipboard.availableFormats}
- */
-export const availableFormats: Electron.Clipboard["availableFormats"] = (...args: any[]) => {
-    return clipboard
-        ?.availableFormats
-        ?.(...args);
-}
+export default clipboard;
 
-/**
- * @inheritdoc {@link Electron.Clipboard.has}
- */
-export const has: Electron.Clipboard["has"] = (...args: any[]) => {
-    return clipboard
-        ?.has
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.read}
- */
-export const read: Electron.Clipboard["read"] = (...args: any[]) => {
-    return clipboard
-        ?.read
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.write}
- */
-export const write: Electron.Clipboard["write"] = (...args: any[]) => {
-    return clipboard
-        ?.write
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.readText}
- */
-export const readText: Electron.Clipboard["readText"] = (...args: any[]) => {
-    return clipboard
-        ?.readText
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.writeText}
- */
-export const writeText: Electron.Clipboard["writeText"] = (...args: any[]) => {
-    return clipboard
-        ?.writeText
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.readRTF}
- */
-export const readRTF: Electron.Clipboard["readRTF"] = (...args: any[]) => {
-    return clipboard
-        ?.readRTF
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.writeRTF}
- */
-export const writeRTF: Electron.Clipboard["writeRTF"] = (...args: any[]) => {
-    return clipboard
-        ?.writeRTF
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.readHTML}
- */
-export const readHTML: Electron.Clipboard["readHTML"] = (...args: any[]) => {
-    return clipboard
-        ?.readHTML
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.writeHTML}
- */
-export const writeHTML: Electron.Clipboard["writeHTML"] = (...args: any[]) => {
-    return clipboard
-        ?.writeHTML
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.readBookmark}
- */
-export const readBookmark: Electron.Clipboard["readBookmark"] = (...args: any[]) => {
-    return clipboard
-        ?.readBookmark
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.writeBookmark}
- */
-export const writeBookmark: Electron.Clipboard["writeBookmark"] = (...args: any[]) => {
-    return clipboard
-        ?.writeBookmark
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.readImage}
- */
-export const readImage: Electron.Clipboard["readImage"] = (...args: any[]) => {
-    return clipboard
-        ?.readImage
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.writeImage}
- */
-export const writeImage: Electron.Clipboard["writeImage"] = (...args: any[]) => {
-    return clipboard
-        ?.writeImage
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.readFindText}
- */
-export const readFindText: Electron.Clipboard["readFindText"] = (...args: any[]) => {
-    return clipboard
-        ?.readFindText
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.writeFindText}
- */
-export const writeFindText: Electron.Clipboard["writeFindText"] = (...args: any[]) => {
-    return clipboard
-        ?.writeFindText
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.readBuffer}
- */
-export const readBuffer: Electron.Clipboard["readBuffer"] = (...args: any[]) => {
-    return clipboard
-        ?.readBuffer
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.writeBuffer}
- */
-export const writeBuffer: Electron.Clipboard["writeBuffer"] = (...args: any[]) => {
-    return clipboard
-        ?.writeBuffer
-        ?.(...args);
-}
-
-/**
- * @inheritdoc {@link Electron.Clipboard.clear}
- */
-export const clear: Electron.Clipboard["clear"] = (...args: any[]) => {
-    return clipboard
-        ?.clear
-        ?.(...args);
-}
+export const availableFormats = clipboard?.availableFormats?.bind?.(clipboard);
+export const clear = clipboard?.clear?.bind?.(clipboard);
+export const has = clipboard?.has?.bind?.(clipboard);
+export const read = clipboard?.read?.bind?.(clipboard);
+export const readBookmark = clipboard?.readBookmark?.bind?.(clipboard);
+export const readBuffer = clipboard?.readBuffer?.bind?.(clipboard);
+export const readFindText = clipboard?.readFindText?.bind?.(clipboard);
+export const readHTML = clipboard?.readHTML?.bind?.(clipboard);
+export const readImage = clipboard?.readImage?.bind?.(clipboard);
+export const readRTF = clipboard?.readRTF?.bind?.(clipboard);
+export const readText = clipboard?.readText?.bind?.(clipboard);
+export const write = clipboard?.write?.bind?.(clipboard);
+export const writeBookmark = clipboard?.writeBookmark?.bind?.(clipboard);
+export const writeBuffer = clipboard?.writeBuffer?.bind?.(clipboard);
+export const writeFindText = clipboard?.writeFindText?.bind?.(clipboard);
+export const writeHTML = clipboard?.writeHTML?.bind?.(clipboard);
+export const writeImage = clipboard?.writeImage?.bind?.(clipboard);
+export const writeRTF = clipboard?.writeRTF?.bind?.(clipboard);
+export const writeText = clipboard?.writeText?.bind?.(clipboard);
