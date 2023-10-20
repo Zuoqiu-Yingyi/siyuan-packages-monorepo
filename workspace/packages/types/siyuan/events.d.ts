@@ -35,6 +35,10 @@ export interface IClickEditorContentEvent extends CustomEvent<siyuan.IEventBusMa
     // type: "click-editorcontent";
 }
 
+export interface IOpenMenuFileAnnotationRefEvent extends CustomEvent<siyuan.IEventBusMap["open-menu-fileannotationref"]> {
+    // type: "open-menu-fileannotationref";
+}
+
 export interface IOpenMenuImageEvent extends CustomEvent<siyuan.IEventBusMap["open-menu-image"]> {
     // type: "open-menu-image";
 }
