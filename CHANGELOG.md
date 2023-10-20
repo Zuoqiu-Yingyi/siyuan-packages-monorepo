@@ -3,6 +3,7 @@
 ## 2023-10-20
 
 - 添加打开 KeeWeb 的方案 | Add the scheme of opening KeeWeb.
+- 添加网页页面中的上下文菜单 | Add context-menu in webview.
 
 ## 2023-10-19
 
