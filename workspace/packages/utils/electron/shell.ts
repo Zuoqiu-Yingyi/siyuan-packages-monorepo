@@ -15,32 +15,76 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Electron } from "@workspace/types/electron";
+import type { Electron } from "@workspace/types/electron";
+import { normalize } from "./../node/path";
 
+const shell = globalThis
+    ?.require
+    ?.("electron")
+    ?.shell;
+
+/**
+ * @inheritdoc {@link Electron.Shell.showItemInFolder}
+ */
 export const showItemInFolder: Electron.Shell["showItemInFolder"] = (fullPath: string) => {
-    const normalized_fullPath = globalThis
-        ?.require("path")
-        ?.normalize(fullPath);
+    const normalized_fullPath = normalize(fullPath);
     if (normalized_fullPath) {
-        globalThis
-            ?.require
-            ?.("electron")
-            ?.shell
+        return shell
             ?.showItemInFolder
             ?.(normalized_fullPath);
     }
 }
 
-export const openPath: Electron.Shell["openPath"] = (path: string) => {
-    return globalThis
-        ?.require("electron")
-        ?.shell
-        ?.openPath(path);
+/**
+ * @inheritdoc {@link Electron.Shell.openPath}
+ */
+export const openPath: Electron.Shell["openPath"] = (...args: any[]) => {
+    return shell
+        ?.openPath
+        ?.(...args);
 }
 
-export const openExternal: Electron.Shell["openExternal"] = (url: string, options?: Electron.OpenExternalOptions) => {
-    return globalThis
-        ?.require("electron")
-        ?.shell
-        ?.openExternal(url, options);
+/**
+ * @inheritdoc {@link Electron.Shell.openExternal}
+ */
+export const openExternal: Electron.Shell["openExternal"] = (...args: any[]) => {
+    return shell
+        ?.openExternal
+        ?.(...args);
+}
+
+/**
+ * @inheritdoc {@link Electron.Shell.trashItem}
+ */
+export const trashItem: Electron.Shell["trashItem"] = (...args: any[]) => {
+    return shell
+        ?.trashItem
+        ?.(...args);
+}
+
+/**
+ * @inheritdoc {@link Electron.Shell.beep}
+ */
+export const beep: Electron.Shell["beep"] = (...args: any[]) => {
+    return shell
+        ?.beep
+        ?.(...args);
+}
+
+/**
+ * @inheritdoc {@link Electron.Shell.writeShortcutLink}
+ */
+export const writeShortcutLink: Electron.Shell["writeShortcutLink"] = (...args: any[]) => {
+    return shell
+        ?.writeShortcutLink
+        ?.(...args);
+}
+
+/**
+ * @inheritdoc {@link Electron.Shell.readShortcutLink}
+ */
+export const readShortcutLink: Electron.Shell["readShortcutLink"] = (...args: any[]) => {
+    return shell
+        ?.readShortcutLink
+        ?.(...args);
 }

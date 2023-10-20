@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Electron } from "@workspace/types/electron";
+import type { Electron } from "@workspace/types/electron";
 
 export const showOpenDialog: Electron.Dialog["showOpenDialog"] = (...args: any[]) => {
     return globalThis
