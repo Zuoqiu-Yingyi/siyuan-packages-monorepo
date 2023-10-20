@@ -5,6 +5,7 @@
 - 添加打开 KeeWeb 的方案 | Add the scheme of opening KeeWeb.
 - 添加网页页面中的上下文菜单 | Add context-menu in webview.
 - 添加块资源打开菜单项 | Add block resource open menu items.
+- 添加图片菜单 | Add image menu.
 
 ## 2023-10-19
 
