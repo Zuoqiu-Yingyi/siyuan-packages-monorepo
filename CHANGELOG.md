@@ -7,6 +7,7 @@
 - 添加块资源打开菜单项 | Add block resource open menu items.
 - 添加图片菜单 | Add image menu.
 - 添加资源文件菜单 | Add resource file menu.
+- 添加复制图片功能 | Add copy image function.
 
 ## 2023-10-19
 
