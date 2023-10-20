@@ -6,6 +6,7 @@
 - 添加网页页面中的上下文菜单 | Add context-menu in webview.
 - 添加块资源打开菜单项 | Add block resource open menu items.
 - 添加图片菜单 | Add image menu.
+- 添加资源文件菜单 | Add resource file menu.
 
 ## 2023-10-19
 
