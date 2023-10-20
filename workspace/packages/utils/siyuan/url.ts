@@ -54,7 +54,7 @@ export function editorType2Pathname(editorEype: EditorType): Pathname {
 /**
  * @param pathname: web 端路径
  * @param params: URL 查询参数
- * @return: URL
+ * @returns URL
  */
 export function buildSiyuanWebURL(
     pathname: Pathname,
@@ -172,7 +172,7 @@ export function isStaticWebFileServicePath(path: string): boolean {
 /**
  * 思源静态 web 文件路径 👉 相对于工作空间的路径
  * @param pathname: 思源静态 web 文件路径
- * @return: 工作空间路径
+ * @returns 工作空间路径
  */
 export function staticPathname2WorkspacePath(pathname: string): string {
     if (pathname.startsWith("/")) pathname = pathname.substring(1);
@@ -196,11 +196,10 @@ export function staticPathname2WorkspacePath(pathname: string): string {
     }
 }
 
-
 /**
  * 相对于工作空间目录的路径 👉 思源静态 web 文件路径
  * @param pathname: 思源静态 web 文件路径
- * @return: 工作空间路径
+ * @returns 工作空间路径
  */
 export function workspacePath2StaticPathname(path: string): string {
     switch (true) {
