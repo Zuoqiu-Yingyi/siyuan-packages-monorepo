@@ -5,7 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "sign:dist": "cd ./dist/keeweb/plugins && keeweb-plugin sign siyuan --private-key=./../../../keys/keeweb-plugin-sign-private-key.pem",
+        "sign:dist": "cd ./dist/keeweb/plugins && keeweb-plugin sign siyuan --private-key=./../../../keys/keeweb-plugin-sign.pem.key",
         "build": "npm run build:siyuan-plugin && npm run build:keeweb-plugin",
         "build:siyuan-plugin": "vite build --mode siyuan-plugin",
         "build:keeweb-plugin": "vite build --mode keeweb-plugin && npm run sign:dist",
