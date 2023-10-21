@@ -23,7 +23,7 @@
 </script>
 
 <script lang="ts">
-    import type { ComponentProps } from "svelte";
+    import type { ComponentProps, ComponentEvents } from "svelte";
     import { get } from "svelte/store";
 
     import Tab from "./Tab.svelte";
@@ -31,11 +31,13 @@
     import { TooltipsDirection } from "./../misc/tooltips";
     import { src2url } from "@workspace/utils/misc/url";
     import { copyText } from "@workspace/utils/misc/copy";
+    import { path2icon } from "@workspace/utils/siyuan/icon";
 
     export let src: ComponentProps<Iframe>["src"]; // iframe 资源
     export let title: ComponentProps<Iframe>["title"]; // iframe 标题
 
     /* 响应式数据 */
+    let iframe: HTMLIFrameElement | undefined;
     let fullscreen = false;
     let breadcrumb: ComponentProps<Tab>["breadcrumb"] = true;
     let breadcrumbItems: ComponentProps<Tab>["breadcrumbItems"] = [];
@@ -47,6 +49,19 @@
             tooltipsDirection: TooltipsDirection.sw,
             onClick(_e, _element, _props) {
                 copyText(url.href);
+            },
+        },
+        {
+            icon: "#iconRefresh",
+            type: "refresh",
+            ariaLabel: globalThis.siyuan?.languages?.refresh,
+            tooltipsDirection: TooltipsDirection.sw,
+            onClick(_e, _element, _props) {
+                if (iframe?.contentWindow?.location?.reload) {
+                    iframe.contentWindow.location.reload();
+                } else {
+                    src = src;
+                }
             },
         },
         {
@@ -74,6 +89,7 @@
     function updateBreadCrumb(url: URL): void {
         const paths: string[] = [];
         const items: ComponentProps<Tab>["breadcrumbItems"] = [];
+        const flag_location = url.origin === location.origin;
 
         /* 协议 */
         paths.push(`${url.protocol}//`);
@@ -108,7 +124,7 @@
         items.push({
             type: "item",
             get icon(): string {
-                return url.origin === location.origin //
+                return flag_location //
                     ? "#iconSiYuan"
                     : "#iconLanguage";
             },
@@ -129,37 +145,7 @@
                     },
                     {
                         type: "item",
-                        icon:
-                            index !== 1
-                                ? undefined
-                                : (() => {
-                                      switch (path) {
-                                          case "stage":
-                                              return "#iconFolder";
-                                          case "appearance":
-                                              return "#iconTheme";
-                                          case "export":
-                                              return "#iconUpload";
-                                          case "history":
-                                              return "#iconHistory";
-                                          case "assets":
-                                              return "#iconImage";
-                                          case "emojies":
-                                              return "#iconEmoji";
-                                          case "plugins":
-                                              return "#iconPlugin";
-                                          case "public":
-                                              return "#iconOpenWindow";
-                                          case "snippets":
-                                              return "#iconCode";
-                                          case "templates":
-                                              return "#iconMarkdown";
-                                          case "widgets":
-                                              return "#iconBoth";
-                                          default:
-                                              return "#iconHelp";
-                                      }
-                                  })(),
+                        icon: index === 1 && flag_location ? `#${path2icon(path)}` : undefined,
                         text: path,
                         textTitle: paths.join(""),
                         textEllipsis: false,
@@ -206,7 +192,15 @@
         breadcrumbItems = items;
     }
 
-    $: url = src2url(src);
+    function oncreate(e: ComponentEvents<Iframe>["create"]): void {
+        iframe = e.detail.iframe;
+    }
+
+    function ondestroy(e: ComponentEvents<Iframe>["destroy"]): void {
+        iframe = undefined;
+    }
+
+    $: url = src2url(src as string);
     $: updateBreadCrumb(url);
 </script>
 
@@ -219,6 +213,8 @@
     <Iframe
         {src}
         {title}
+        on:create={oncreate}
+        on:destroy={ondestroy}
         slot="content"
     />
 </Tab>

@@ -1,8 +1,8 @@
 {
-  "version": "0.0.1",
+  "version": "0.1.0",
   "manifestVersion": "0.1.0",
   "name": "siyuan",
-  "description": "Connect KeeWeb to SiYuan (storage, etc.)",
+  "description": "Establish a connection between KeeWeb and SiYuan",
   "author": {
     "name": "Zuoqiu Yingyi",
     "email": "49649786+Zuoqiu-Yingyi@users.noreply.github.com",
