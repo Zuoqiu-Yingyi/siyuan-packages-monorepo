@@ -4,6 +4,8 @@
 
 - 完善文档树菜单 | Improve document tree menu.
 - 完善用户文档 | Improve user documentation.
+- 优化 CD 配置 | Optimize CD configuration.
+- 重新添加附属仓库 `keepass` | Re-add sub-repository `keepass`.
 
 ## 2023-10-20
 
