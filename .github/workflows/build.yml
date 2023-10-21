@@ -76,7 +76,9 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           cd $PACKAGE_PATH
+          echo ${{ secrets.KEEWEB_PLUGIN_SIGNATURE_PRIVATE_KEY }} >> ./keys/keeweb-plugin-sign-private-key.pem
           pnpm build
+          rm ./keys/keeweb-plugin-sign-private-key.pem
 
       # Deploy to publish branch
       # REF https://github.com/marketplace/actions/github-pages
