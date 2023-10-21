@@ -2,7 +2,7 @@
     "name": "keepass",
     "author": "Zuoqiu Yingyi",
     "url": "https://github.com/Zuoqiu-Yingyi/siyuan-plugin-keepass",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "minAppVersion": "2.10.3",
     "backends": [
         "all"
