@@ -1,5 +1,5 @@
 # Custom
-/keys
+/keys/**.key
 **.js.map
 
 # Logs
