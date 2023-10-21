@@ -55,7 +55,7 @@ export function install(context: IContext) {
             label: context.i18n!.siyuanBaseURL,
             type: "text",
             placeholder: context.baseURL,
-            value: context.baseURL,
+            value: "",
         },
         {
             name: "token",
