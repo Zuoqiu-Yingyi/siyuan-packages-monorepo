@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-10-22
+
+- 添加附属仓库管理脚本 | Add management scripts for sub-repository.
+
 ## 2023-10-21
 
 - 完善文档树菜单 | Improve document tree menu.
