@@ -1,0 +1,9 @@
+{
+    "siyuan": "思源笔记",
+    "siyuanBaseURL": "思源服务 URL 地址",
+    "siyuanFileOpenDefaultPath": "默认的文件打开目录",
+    "siyuanPath": "默认 *.kdbx 文件存放目录",
+    "siyuanToken": "思源服务 Token",
+    "siyuanTokenPlaceholder": "仅在未登录思源服务状态下配置该字段",
+    "siyuanWorkspaceRootDirectory": "思源工作空间的根目录"
+}
