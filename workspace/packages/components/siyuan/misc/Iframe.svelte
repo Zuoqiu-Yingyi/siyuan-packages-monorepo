@@ -16,49 +16,80 @@
 -->
 
 <script lang="ts">
-    export let src: string = undefined; // iframe 资源路径
-    export let title: string = undefined; // iframe 标题路径
+    import { createEventDispatcher } from "svelte";
+    import type { Action } from "svelte/action";
+    export let src: string | undefined = undefined; // iframe 资源路径
+    export let title: string | undefined = undefined; // iframe 标题路径
+
+    interface IEvent {
+        iframe: HTMLIFrameElement;
+    }
+    const dispatcher = createEventDispatcher<{
+        create: IEvent;
+        update: IEvent;
+        destroy: null;
+    }>();
+
+    let iframe: HTMLIFrameElement;
 
     /**
      * 控制 iframe 的权限策略
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#allow allow - MDN}
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Permissions_Policy 权限策略 - MDN}
      */
-    export let allow: string = undefined;
+    export let allow: string | undefined = undefined;
     /**
      * 控制 iframe 的内容安全策略
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#csp csp - MDN}
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CSP 内容安全策略 - MDN}
      */
-    export let csp: string = undefined;
+    export let csp: string | undefined = undefined;
     /**
      * 控制 iframe 内容加载优先级
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#importance importance - MDN}
      */
-    export let importance: "auto" | "high" | "low" = undefined;
+    export let importance: "auto" | "high" | "low" | undefined = undefined;
     /**
      * 嵌入的浏览上下文的名称
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#name name - MDN}
      */
-    export let name: string = undefined;
+    export let name: string | undefined = undefined;
     /**
      * 获取 iframe 资源时如何发送 referrer 首部
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#referrerpolicy referrerpolicy - MDN}
      */
-    export let referrerpolicy: ReferrerPolicy = undefined;
+    export let referrerpolicy: ReferrerPolicy | undefined = undefined;
     /**
      * 控制应用于嵌入在 <iframe> 中的内容的限制
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#sandbox sandbox - MDN}
      */
-    export let sandbox: string = undefined;
+    export let sandbox: string | undefined = undefined;
     /**
      * 需要渲染的 HTML 代码
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#srcdoc srcdoc - MDN}
      */
-    export let srcdoc: string = undefined; // iframe 资源路径
+    export let srcdoc: string | undefined = undefined; // iframe 资源路径
+
+    /**
+     * 在 iframe 元素创建时调用
+     * https://svelte.dev/docs/element-directives#use-action
+     */
+    const action: Action<HTMLIFrameElement> = node => {
+        dispatcher("create", { iframe: node });
+        return {
+            update(parameter) {
+                dispatcher("update", { iframe });
+            },
+            destroy() {
+                dispatcher("destroy");
+            },
+        };
+    };
 </script>
 
 <iframe
+    bind:this={iframe}
+    use:action
     {src}
     {title}
     {allow}

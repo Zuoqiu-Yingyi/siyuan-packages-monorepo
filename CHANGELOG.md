@@ -1,5 +1,10 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-10-21
+
+- 完善文档树菜单 | Improve document tree menu.
+- 完善用户文档 | Improve user documentation.
+
 ## 2023-10-20
 
 - 添加打开 KeeWeb 的方案 | Add the scheme of opening KeeWeb.
@@ -8,6 +13,8 @@
 - 添加图片菜单 | Add image menu.
 - 添加资源文件菜单 | Add resource file menu.
 - 添加复制图片功能 | Add copy image function.
+- 添加在当前页签中打开功能 | Add open in current tab function.
+- 修复 Markdown 超链接格式问题 | Fix Markdown hyperlink format issue.
 
 ## 2023-10-19
 
