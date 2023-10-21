@@ -1,0 +1,18 @@
+{
+  "version": "0.1.0",
+  "manifestVersion": "0.1.0",
+  "name": "siyuan",
+  "description": "Establish a connection between KeeWeb and SiYuan",
+  "author": {
+    "name": "Zuoqiu Yingyi",
+    "email": "49649786+Zuoqiu-Yingyi@users.noreply.github.com",
+    "url": "https://github.com/Zuoqiu-Yingyi"
+  },
+  "resources": {
+    "js": true,
+    "css": true
+  },
+  "license": "AGPL-3.0-or-later",
+  "url": "https://raw.githubusercontent.com/Zuoqiu-Yingyi/siyuan-plugin-keepass/publish/keeweb/plugins/siyuan",
+  "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn+U+elZ7WlBe2T6syMBDrFT0WPzBSDwrZVR/wKoH9xpZGtL9m+eGA2w7Ep/AqwoHwT3WLJile5lBlEkyAR51Tc3jHNiMNWBPIKSutnI+KQsjfwsG6C4DH0v0+NEr4ckQmm2JR5vIazf5LSPhh8icoVF3FN4UAtCOoGL4tX4kAPuKTk44kX0NtlymEcgoMU2GnHXuknlaEXVxB/C2nNwZxoaZG48tBpm7IzKRGsj1Vp+lSrX6bAnvJksM7owf/Edx3Nq3yDq1FgiO0cVAcDx9hKGTXpXefQuohg2F3yHm4ZTLnGPhZcRkUSxkVbiJE5TdEVyXuMQ2rFBQv6pL7pQJ4QIDAQAB"
+}

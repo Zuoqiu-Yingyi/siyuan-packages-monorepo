@@ -1,0 +1,54 @@
+{
+    "menu": {
+        "command": {
+            "openKeeWebBrowser": {
+                "text": "在浏览器中打开 KeeWeb"
+            },
+            "openKeeWebTab": {
+                "text": "在新页签中打开 KeeWeb"
+            },
+            "openKeeWebWindow": {
+                "text": "在新窗口中打开 KeeWeb"
+            }
+        }
+    },
+    "settings": {
+        "generalSettings": {
+            "reset": {
+                "description": "重置所有设置选项为默认选项（重置后将刷新页面）",
+                "text": "重置",
+                "title": "重置设置选项"
+            },
+            "title": "常规设置"
+        },
+        "keewebSettings": {
+            "pluginTab": {
+                "siyuan": {
+                    "description": "开启 KeeWeb 的思源笔记支持<br/>- 从思源笔记工作空间加载密码数据库文件 <code class='fn__code'>*.kdbx</code><br/>- 保存密码数据库文件 <code class='fn__code'>*.kdbx</code> 至思源笔记工作空间<br/>- 同步 KeeWeb 用户配置",
+                    "title": "KeeWeb 插件：<code class='fn__code'>siyuan</code>"
+                },
+                "title": "插件设置"
+            },
+            "title": "KeeWeb 设置",
+            "windowTab": {
+                "center": {
+                    "description": "在屏幕中央显示新窗口",
+                    "title": "窗口居中"
+                },
+                "height": {
+                    "description": "新窗口的默认高度",
+                    "title": "窗口高度"
+                },
+                "title": "窗口设置",
+                "top": {
+                    "description": "打开的新窗口是否默认置顶",
+                    "title": "窗口置顶"
+                },
+                "width": {
+                    "description": "新窗口的默认宽度",
+                    "title": "窗口宽度"
+                }
+            }
+        }
+    }
+}

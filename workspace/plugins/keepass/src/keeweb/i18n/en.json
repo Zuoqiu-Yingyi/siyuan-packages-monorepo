@@ -1,0 +1,9 @@
+{
+    "siyuan": "SiYuan",
+    "siyuanBaseURL": "SiYuan service base URL",
+    "siyuanFileOpenDefaultPath": "Default file open directory",
+    "siyuanPath": "Default *.kdbx file storage directory",
+    "siyuanToken": "SiYuan service token",
+    "siyuanTokenPlaceholder": "This field needs to be configured only when you are not logged in SiYuan service",
+    "siyuanWorkspaceRootDirectory": "Root directory of SiYuan workspace"
+}
