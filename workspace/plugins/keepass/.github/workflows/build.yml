@@ -76,7 +76,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           cd $PACKAGE_PATH
-          echo ${{ secrets.KEEWEB_PLUGIN_SIGNATURE_PRIVATE_KEY }} >> ./keys/keeweb-plugin-sign.pem.key
+          echo "${{ secrets.KEEWEB_PLUGIN_SIGNATURE_PRIVATE_KEY }}" > ./keys/keeweb-plugin-sign.pem.key
           pnpm build
           rm ./keys/keeweb-plugin-sign.pem.key
 
