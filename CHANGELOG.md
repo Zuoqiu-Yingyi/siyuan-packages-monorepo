@@ -3,6 +3,9 @@
 ## 2023-10-22
 
 - 添加附属仓库管理脚本 | Add management scripts for sub-repository.
+- 修复初始化时无法显示的问题 | Fix the issue that cannot be displayed when initializing.
+- 添加设置项 `删除 KeeWeb 用户配置` | Add setting item `Delete KeeWeb User Configuration`.
+- 修复 KeeWeb 插件资源签名问题 | Fix the issue of KeeWeb plugin resource signature.
 
 ## 2023-10-21
 
