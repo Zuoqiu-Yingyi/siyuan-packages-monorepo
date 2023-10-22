@@ -15,9 +15,14 @@
     "settings": {
         "generalSettings": {
             "reset": {
-                "description": "重置所有设置选项为默认选项（重置后将刷新页面）",
+                "description": "重置本插件所有设置选项为默认选项（重置后将刷新页面）",
                 "text": "重置",
                 "title": "重置设置选项"
+            },
+            "deleteKeeWebConfig": {
+                "description": "刪除所有 KeeWeb 用户配置（初始化 KeeWeb 应用）",
+                "text": "删除",
+                "title": "删除 KeeWeb 用户配置"
             },
             "title": "常规设置"
         },
