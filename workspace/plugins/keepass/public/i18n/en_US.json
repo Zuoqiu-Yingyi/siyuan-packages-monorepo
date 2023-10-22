@@ -15,9 +15,14 @@
     "settings": {
         "generalSettings": {
             "reset": {
-                "description": "Reset all settings options to default (page will refresh after reset)",
+                "description": "Reset all settings options of this plugin to default (page will refresh after reset)",
                 "text": "Reset",
                 "title": "Reset Settings"
+            },
+            "deleteKeeWebConfig": {
+                "description": "Delete all KeeWeb user configurations (initialize KeeWeb app)",
+                "text": "Deletem",
+                "title": "Delete KeeWeb User Configuration"
             },
             "title": "General Settings"
         },
