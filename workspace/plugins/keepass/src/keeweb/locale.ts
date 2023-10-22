@@ -16,6 +16,8 @@
  */
 // @ts-ignore
 import BaseLocale from "locales/base";
+// @ts-ignore
+import { AppSettingsModel } from "models/app-settings-model";
 
 import { mapLang } from "@workspace/utils/locale/language";
 import type {
@@ -23,39 +25,45 @@ import type {
     I18N,
 } from ".";
 
-import {
-    LocalStorageKey,
-    getLocalStorage,
-} from "./settings";
 
 import zh_Hans from "./i18n/zh-Hans.json";
 import zh_Hant from "./i18n/zh-Hant.json";
 import en from "./i18n/en.json";
 
+export {
+    BaseLocale,
+    AppSettingsModel,
+}
+
+export function localize(context: IContext): void {
+    const lang = mapLang(AppSettingsModel?.locale ?? "en");
+    console.debug("localize", lang);
+    if (lang !== context.lang) {
+        var i18n: I18N;
+        switch (lang) {
+            case "zh-Hans":
+                i18n = zh_Hans;
+                break;
+            case "zh-Hant":
+                i18n = zh_Hant;
+                break;
+            default:
+                i18n = en;
+                break;
+        }
+
+        context.lang = lang;
+        context.i18n = i18n;
+
+        Object.assign(BaseLocale, i18n);
+    }
+}
+
 export function install(context: IContext) {
     // this._logger.debug("plugin:siyuan:locale-install");
 
-    const lang = mapLang(
-        getLocalStorage(LocalStorageKey.app_settings)?.locale ?? "en"
-    );
-
-    var i18n: I18N;
-    switch (lang) {
-        case "zh-Hans":
-            i18n = zh_Hans;
-            break;
-        case "zh-Hant":
-            i18n = zh_Hant;
-            break;
-        default:
-            i18n = en;
-            break;
-    }
-
-    context.lang = lang;
-    context.i18n = i18n;
-
-    Object.assign(BaseLocale, i18n);
+    localize(context);
+    AppSettingsModel.on("change", () => localize(context));
 }
 
 export function uninstall(context: IContext) {

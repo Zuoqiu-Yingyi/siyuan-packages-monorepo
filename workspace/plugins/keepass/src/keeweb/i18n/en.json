@@ -1,9 +1,12 @@
 {
-    "siyuan": "SiYuan",
-    "siyuanBaseURL": "SiYuan service base URL",
+    "siyuan": "SiYuan Note",
+    "siyuanBaseURL": "SiYuan Note service base URL",
     "siyuanFileOpenDefaultPath": "Default file open directory",
     "siyuanPath": "Default *.kdbx file storage directory",
-    "siyuanToken": "SiYuan service token",
-    "siyuanTokenPlaceholder": "This field needs to be configured only when you are not logged in SiYuan service",
-    "siyuanWorkspaceRootDirectory": "Root directory of SiYuan workspace"
+    "siyuanStorageDesc": "SiYuan Note storage settings",
+    "siyuanStorageDescAuthorize": "Access authorization to SiYuan Note service is not obtained. Please correctly set the token of the SiYuan Note service.",
+    "siyuanStorageDescConnect": "Unable to access the SiYuan Note service. Please correctly set the base URL of the SiYuan Note service.",
+    "siyuanToken": "SiYuan Note service token",
+    "siyuanTokenPlaceholder": "This field needs to be configured only when you are not logged in SiYuan Note service",
+    "siyuanWorkspaceRootDirectory": "Root directory of SiYuan Note workspace"
 }

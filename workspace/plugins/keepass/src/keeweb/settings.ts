@@ -25,56 +25,35 @@ export interface IAppSettings {
     locale?: string;
 }
 
-export enum LocalStorageKey {
-    app_settings = 'app-settings',
-    file_info = 'file-info',
-    plugin_gallery = 'plugin-gallery',
-    plugins = 'plugins',
-    runtime_data = 'runtime-data',
-    update_info = 'update-info',
-}
-export function getLocalStorage(key: LocalStorageKey.app_settings): IAppSettings | null;
-export function getLocalStorage(key: LocalStorageKey): any | null {
-    const value = globalThis.localStorage.getItem(`plugin-keepass-${key}`)
-        ?? globalThis.localStorage.getItem(camelCase(key));
-
-    if (value) {
-        return JSON.parse(value);
-    }
-    else {
-        return null;
-    }
-}
-
 export function install(context: IContext) {
     // this._logger.debug("plugin:siyuan:settings-install");
 
     context.settings = [
         {
             name: "baseURL",
-            label: context.i18n!.siyuanBaseURL,
             type: "text",
+            label: context.i18n!.siyuanBaseURL,
             placeholder: context.baseURL,
             value: "",
         },
         {
             name: "token",
-            label: context.i18n!.siyuanToken,
             type: "text",
+            label: context.i18n!.siyuanToken,
             placeholder: context.i18n!.siyuanTokenPlaceholder,
             value: "",
         },
         {
             name: "path",
-            label: context.i18n!.siyuanPath,
             type: "text",
+            label: context.i18n!.siyuanPath,
             placeholder: context.defaultPath,
             value: context.defaultPath,
         },
         {
             name: "fileOpenSchema",
-            label: context.i18n!.siyuanFileOpenDefaultPath,
             type: "select",
+            label: context.i18n!.siyuanFileOpenDefaultPath,
             options: [
                 {
                     value: "path",
