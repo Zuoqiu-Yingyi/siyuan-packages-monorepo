@@ -24,7 +24,11 @@ import {
     join,
     parse,
 } from "@workspace/utils/path/browserify";
-import type { IContext } from "~/src/keeweb";
+import type {
+    IContext,
+    IStorageOpenConfig,
+    IStorageSettingsConfig,
+} from ".";
 
 export {
     Storage,
@@ -39,7 +43,7 @@ export interface IEntry {
     name: string; // 条目名
     path: string; // 条目路径
     rev: string; // 条目最后修改时间
-    dir: boolean; // 是否为目录
+    dir: string | boolean; // 是否为目录
 }
 
 export type TError<T = any> = T | null | undefined;
@@ -48,17 +52,27 @@ export interface IStatError {
     msg?: string;
 };
 
-export class SiyuanStorage extends StorageBase {
-    public name: string = "siyuan";
-    public icon: string = "siyuan";
-    public uipos = -10;
 
-    public enabled: boolean = true;
+export class SiyuanStorage extends StorageBase {
+    public readonly name: string;
+    public readonly icon: string;
+    public readonly prefix: string;
+    public readonly uipos = -10;
+
+    public declare appSettings: any;
+    public declare enabled: boolean;
+
+    protected connected: boolean = false; // 是否可访问思源服务
+    protected authorized: boolean = false; // 是否通过思源服务的认证
 
     constructor(
         protected _context: IContext,
     ) {
         super();
+        this.name = this._context.manifest.name;
+        this.icon = this.name;
+        this.prefix = `plugin:${this.name}`;
+        this.enabled = true;
     }
 
     public get _logger(): Console {
@@ -68,27 +82,28 @@ export class SiyuanStorage extends StorageBase {
     public init() {
         // this._logger.debug("storage-inited", arguments);
         super.init();
-
-        this.setEnabled(this.enabled);
-        this.updateEnabled();
+        this.updateServiceStatus();
     }
 
-    public async updateEnabled() {
+    /**
+     * 更新思源服务状态
+     */
+    public async updateServiceStatus(): Promise<void> {
         try {
             await this._context.client.version();
-            this.enabled = true;
+            this.connected = true;
+            try {
+                await this._context.client.readDir({ path: "" });
+                this.authorized = true;
+            }
+            catch (error) {
+                this.authorized = false;
+            }
         }
         catch (error) {
-            this.enabled = false;
+            this.connected = false;
+            this.authorized = false;
         }
-        finally {
-            this.setEnabled(this.enabled)
-        }
-    }
-
-    public setEnabled(enabled: boolean) {
-        // this._logger.debug("storage-setEnabled", arguments);
-        super.setEnabled(enabled);
     }
 
     /**
@@ -230,16 +245,16 @@ export class SiyuanStorage extends StorageBase {
             entries?: IEntry[],
         ) => void,
     ) {
-        // this._logger.debug("storage-list", arguments);
+        this._logger.debug("storage-list", arguments);
         try {
-            const path = dir ?? this._context.fileOpenPath;
+            const path = dir || this._context.fileOpenPath;
             const response = await this._context.client.readDir({ path });
             callback?.(null, response.data.map(entry => ({
                 name: entry.name,
                 path: join(path, entry.name),
                 dir: entry.isDir,
                 rev: String(entry.updated),
-            })))
+            })));
         } catch (error) {
             callback?.(error);
         }
@@ -267,17 +282,118 @@ export class SiyuanStorage extends StorageBase {
     }
 
     /**
-     * 应用设置项
+     * 在打开文件时是否需要显示配置对话框
+     * 在未连接至思源服务时显示
+     */
+    public needShowOpenConfig(): boolean {
+        // this._logger.debug("storage-needShowOpenConfig", arguments);
+        return !this.connected || !this.authorized;
+    }
+
+    /**
+     * 打开文件时显示的配置对话框内容
+     */
+    public getOpenConfig(): IStorageOpenConfig {
+        // this._logger.debug("storage-getOpenConfig", arguments);
+        switch (false) {
+            default:
+            case this.connected:
+                return {
+                    desc: "siyuanStorageDescConnect",
+                    fields: [
+                        {
+                            id: "baseURL",
+                            type: "url",
+                            title: "siyuanBaseURL",
+                            placeholder: "http[s]://host[:port]/[pathname]",
+                            required: true,
+                            pattern: "^https?://.*$"
+                        },
+                    ],
+                };
+
+            case this.authorized:
+                return {
+                    desc: "siyuanStorageDescAuthorize",
+                    fields: [
+                        {
+                            id: "token",
+                            type: "text",
+                            title: "siyuanToken",
+                            required: true,
+                        },
+                    ],
+                };
+        }
+    }
+
+    /**
+     * 打开文件对话框的确认按钮回调
+     */
+    public async applyConfig(
+        config: {
+            baseURL?: string,
+            token?: string,
+        },
+        callback: (
+            err?: TError,
+        ) => void,
+    ): Promise<void> {
+        // this._logger.debug("storage-applyConfig", arguments);
+        this._context.client._updateOptions({ ...config }, this._context.type);
+        await this.updateServiceStatus();
+        switch (true) {
+            case ("baseURL" in config):
+                if (this.connected) {
+                    this.appSettings[`${this.prefix}:baseURL`] = config.baseURL;
+                    this.appSettings.save();
+                    callback();
+                }
+                else {
+                    callback(this._context.i18n!.siyuanStorageDescConnect);
+                }
+                break;
+
+            case ("token" in config):
+                if (this.authorized) {
+                    this.appSettings[`${this.prefix}:token`] = config.token;
+                    this.appSettings.save();
+                    callback();
+                }
+                else {
+                    callback(this._context.i18n!.siyuanStorageDescAuthorize);
+                }
+                break;
+
+            default:
+                callback();
+                break;
+        }
+    }
+
+    /**
+     * getSettingsConfig
+     */
+    // public getSettingsConfig(): IStorageSettingsConfig {
+    //     this._logger.debug("storage-getSettingsConfig", arguments);
+    //     return {
+    //         desc: "siyuanStorageDesc",
+    //         fields: [
+    //         ]
+    //     }
+    // }
+
+    /**
+     * 更改设置项 (设置 > 通用 > 储存)
      * @param key 设置项键
      * @param value 设置项值
      */
-    public applySetting(
-        key: string,
-        value: any,
-    ) {
-        this._logger.debug("storage-applySetting", arguments);
-        // TODO: applySetting
-    }
+    // public applySetting(
+    //     key: string,
+    //     value: any,
+    // ) {
+    //     this._logger.debug("storage-applySetting", arguments);
+    // }
 
     /**
      * 注销登录
