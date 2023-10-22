@@ -1,9 +1,12 @@
 {
     "siyuan": "思源筆記",
-    "siyuanBaseURL": "思源服務 URL 地址",
+    "siyuanBaseURL": "思源筆記服務 URL 地址  (base URL)",
     "siyuanFileOpenDefaultPath": "默認的文件打開目錄",
     "siyuanPath": "默認 *.kdbx 文件存放目錄",
-    "siyuanToken": "思源服務 Token",
-    "siyuanTokenPlaceholder": "僅在未登錄思源服務狀態下配置該字段",
-    "siyuanWorkspaceRootDirectory": "思源工作空間的根目錄"
+    "siyuanStorageDesc": "思源筆記存儲設置",
+    "siyuanStorageDescAuthorize": "未獲得思源筆記服務的訪問授權，請正確設置思源筆記服務的令牌 (Token)",
+    "siyuanStorageDescConnect": "無法訪問思源筆記服務，請正確設置思源筆記服務的地址 (base URL)",
+    "siyuanToken": "思源筆記服務 Token",
+    "siyuanTokenPlaceholder": "僅在未登錄思源筆記服務狀態下配置該字段",
+    "siyuanWorkspaceRootDirectory": "思源筆記工作空間的根目錄"
 }
