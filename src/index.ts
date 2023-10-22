@@ -251,7 +251,6 @@ export default class KeepassPlugin extends siyuan.Plugin {
                 }
                 else {
                     this.config = mergeIgnoreArray(DEFAULT_CONFIG);
-                    this.updateConfig();
                 }
             })
             .catch(error => this.logger.error(error))
