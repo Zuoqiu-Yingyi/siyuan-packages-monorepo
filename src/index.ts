@@ -371,6 +371,27 @@ export default class KeepassPlugin extends siyuan.Plugin {
         return this.saveData(KeepassPlugin.GLOBAL_CONFIG_NAME, JSON.stringify(this.config, undefined, 4));
     }
 
+    /* 删除 KeeWeb 用户配置 */
+    public async deleteKeeWebUserConfig(): Promise<void> {
+        /* 删除 localStorage 相关的内容 */
+        this.removeLocalStorageItems();
+
+        await Promise.allSettled([
+            /* 删除 indexedDB 文件 */
+            this.idb.FilesCache.clear(KeepassPlugin.IDB_SCHEMA.FilesCache.stores.files.name),
+            this.idb.PluginFiles.clear(KeepassPlugin.IDB_SCHEMA.PluginFiles.stores.files.name),
+        ]);
+        
+        /* 同步删除插件对应的数据 */
+        await Promise.allSettled([
+            this.saveLocalStorage(),
+            this.saveIDB(),
+        ]);
+
+        /* 更新 KeeWeb 插件状态 */
+        await this.updateKeeWebPluginStatus();
+    }
+
     /* 更新 keeweb 插件状态 */
     public async updateKeeWebPluginStatus(): Promise<void> {
         switch (true) {
@@ -476,7 +497,6 @@ export default class KeepassPlugin extends siyuan.Plugin {
 
     /**
      * 获取 KeeWeb 相关的 localStorage 项
-     * @param prefix 键名前缀
      */
     public getLocalStorageItems(): TLocal {
         this.local = {};
@@ -486,6 +506,17 @@ export default class KeepassPlugin extends siyuan.Plugin {
             }
         }
         return this.local;
+    }
+
+    /**
+     * 删除 KeeWeb 相关的 localStorage 项
+     */
+    public removeLocalStorageItems(): void {
+        for (const key of Object.keys(globalThis.localStorage)) {
+            if (this.isLocalStorageKey(key)) {
+                globalThis.localStorage.removeItem(key);
+            }
+        }
     }
 
     /**
@@ -525,8 +556,9 @@ export default class KeepassPlugin extends siyuan.Plugin {
     }
 
     /**
-     * 保存 indexedDB
-     * @param names 需要保存的数据库名, 默认保存所有数据库
+     * 保存 indexedDB 中 KeeWeb 相关的数据  
+     * 完整同步 `indexedDB` -> `data/storage/petal/keepass/idb`
+     * @param names 需要保存的数据库名列表, 默认保存所有数据库
      */
     public async saveIDB(...names: TDBDatabaseName[]) {
         const db_name_set = new Set(names);
