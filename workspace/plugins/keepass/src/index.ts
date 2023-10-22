@@ -47,7 +47,7 @@ import type { IConfig } from "./types/config";
 import type {
     ILocalStoragePlugins,
     ILocalStoragePlugin,
-    ILocalStoragePluginManifest,
+    IPluginManifest,
 } from "./types/keeweb";
 import type {
     IDBSchema,
@@ -136,7 +136,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
 
     protected readonly keewebTab: ReturnType<siyuan.Plugin["addTab"]>;
 
-    protected manifest!: ILocalStoragePluginManifest;
+    protected manifest!: IPluginManifest;
     protected config: IConfig = mergeIgnoreArray(DEFAULT_CONFIG);
     protected local: TLocal = {};
     protected idb!: IDB;
@@ -381,7 +381,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
             this.idb.FilesCache.clear(KeepassPlugin.IDB_SCHEMA.FilesCache.stores.files.name),
             this.idb.PluginFiles.clear(KeepassPlugin.IDB_SCHEMA.PluginFiles.stores.files.name),
         ]);
-        
+
         /* 同步删除插件对应的数据 */
         await Promise.allSettled([
             this.saveLocalStorage(),
@@ -411,12 +411,18 @@ export default class KeepassPlugin extends siyuan.Plugin {
      * - `this.local`: 加载成功
      * - `undefined`: 加载失败
      */
-    public async loadLocalStorage(): Promise<TLocal | void> {
-        const local = await this.loadLocal();
-        if (local) {
-            this.setLocalStorageItems(local);
-        }
-        return local;
+    public async loadLocalStorage(): Promise<TLocal> {
+        const local_siyuan = await this.loadLocal();
+        const local_storage = this.getLocalStorageItems();
+
+        const local_siyuan_keys = Object.keys(local_siyuan);
+        const local_storage_keys = Object.keys(local_storage);
+
+        const entries = sync1<string>(local_siyuan_keys, local_storage_keys);
+        this.logger.debug(entries);
+        entries.delete.forEach(entry => globalThis.localStorage.removeItem(entry));
+        this.setLocalStorageItems(this.local);
+        return local_siyuan;
     }
 
     /**
@@ -426,8 +432,8 @@ export default class KeepassPlugin extends siyuan.Plugin {
      * - `false`: 保存失败
      */
     public async saveLocalStorage(): Promise<boolean> {
-        const local = this.getLocalStorageItems();
-        return this.saveLocal(local);
+        this.local = this.getLocalStorageItems();
+        return this.saveLocal(this.local);
     }
 
     /**
@@ -436,16 +442,17 @@ export default class KeepassPlugin extends siyuan.Plugin {
      * - `this.local`: 加载成功
      * - `undefined`: 加载失败
      */
-    public async loadLocal(): Promise<TLocal | void> {
+    public async loadLocal(): Promise<TLocal> {
         try {
             const local = await this.loadData(KeepassPlugin.LOCAL_STORAGE_NAME);
-            if (local) {
-                this.local = local;
-                return this.local;
-            }
+            this.local = (local instanceof Object)
+                ? local
+                : {};
+            return this.local;
         }
         catch (error) {
             this.logger.error(error);
+            throw error;
         }
     }
 
@@ -499,13 +506,13 @@ export default class KeepassPlugin extends siyuan.Plugin {
      * 获取 KeeWeb 相关的 localStorage 项
      */
     public getLocalStorageItems(): TLocal {
-        this.local = {};
+        const local: TLocal = {};
         for (const [key, value] of Object.entries(globalThis.localStorage)) {
             if (this.isLocalStorageKey(key)) {
-                this.local[key] = JSON.parse(value);
+                local[key] = JSON.parse(value);
             }
         }
-        return this.local;
+        return local;
     }
 
     /**
@@ -671,7 +678,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
     /**
      * 加载 keeweb 思源插件的配置清单文件
      */
-    protected async loadKeeWebPluginManifest(): Promise<ILocalStoragePluginManifest> {
+    protected async loadKeeWebPluginManifest(): Promise<IPluginManifest> {
         if (!this.manifest) {
             this.manifest = await this.client.getFile({
                 path: join(
@@ -679,7 +686,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
                     "keeweb/plugins/siyuan",
                     "manifest.json",
                 ),
-            }, "json") as ILocalStoragePluginManifest;
+            }, "json") as IPluginManifest;
         }
         return this.manifest;
     }
