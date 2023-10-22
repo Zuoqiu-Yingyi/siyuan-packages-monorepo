@@ -111,8 +111,14 @@ This is a plugin for [SiYuan](https://github.com/siyuan-note/siyuan), developed 
 
   * `Reset Settings`
 
-    * Resets all settings options to their default values.
+    * This is a button.
+    * Resets all settings options of this plugin to their default values.
     * Refreshes the page after resetting.
+  * `Delete KeeWeb User Configuration`
+
+    * This is a button.
+    * Delete all KeeWeb user configurations.
+    * If the KeeWeb app does not load properly, you can use this button to initialize the Keeweb app.
 * `KeeWeb Settings`
 
   * `Plugins`

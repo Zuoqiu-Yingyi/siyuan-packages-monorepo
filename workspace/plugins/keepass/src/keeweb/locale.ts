@@ -36,8 +36,7 @@ export function install(context: IContext) {
     // this._logger.debug("plugin:siyuan:locale-install");
 
     const lang = mapLang(
-        getLocalStorage(LocalStorageKey.app_settings)?.locale
-        ?? globalThis.navigator.language
+        getLocalStorage(LocalStorageKey.app_settings)?.locale ?? "en"
     );
 
     var i18n: I18N;

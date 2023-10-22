@@ -52,6 +52,16 @@
         );
     }
 
+    function deleteKeeWebConfig() {
+        plugin.siyuan.confirm(
+            i18n.settings.generalSettings.deleteKeeWebConfig.title, // 标题
+            i18n.settings.generalSettings.deleteKeeWebConfig.description, // 文本
+            async () => {
+                await plugin.deleteKeeWebUserConfig(); // 删除 KeeWeb 用户配置
+            }, // 确认按钮回调
+        );
+    }
+
     enum PanelKey {
         general, // 常规设置
         keeweb, // KeeWeb 设置
@@ -112,9 +122,23 @@
             <Input
                 slot="input"
                 type={ItemType.button}
-                settingKey="Reset"
+                settingKey="reset"
                 settingValue={i18n.settings.generalSettings.reset.text}
                 on:clicked={resetOptions}
+            />
+        </Item>
+
+        <!-- 删除 KeeWeb 用户配置 -->
+        <Item
+            title={i18n.settings.generalSettings.deleteKeeWebConfig.title}
+            text={i18n.settings.generalSettings.deleteKeeWebConfig.description}
+        >
+            <Input
+                slot="input"
+                type={ItemType.button}
+                settingKey="deleteKeeWebConfig"
+                settingValue={i18n.settings.generalSettings.deleteKeeWebConfig.text}
+                on:clicked={deleteKeeWebConfig}
             />
         </Item>
     </Panel>
