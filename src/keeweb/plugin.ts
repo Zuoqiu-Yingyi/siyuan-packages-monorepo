@@ -20,6 +20,7 @@
  * @author Zuoqiu Yingyi
  * @license AGPL-3.0-or-later
  */
+import manifest from "~/public/keeweb/plugins/siyuan/manifest.json";
 import * as sdk from "@siyuan-community/siyuan-sdk";
 
 import * as locale from "./locale";
@@ -28,12 +29,15 @@ import * as settings from "./settings";
 
 import type { IContext, TFileOpenSchema } from "~/src/keeweb";
 
+const CLIENT_TYPE: sdk.ClientType = "fetch";
 const defaultPath = "/data/storage/petal/keepass/";
 const baseURL = globalThis.document.baseURI.replace(/\/plugins\/keepass\/keeweb\/.*$/, "/");
 const context: IContext = {
+    type: CLIENT_TYPE,
     path: defaultPath,
-    client: new sdk.Client({ baseURL }, "fetch"),
+    client: new sdk.Client({ baseURL }, CLIENT_TYPE),
     baseURL,
+    manifest,
     defaultPath,
     fileOpenPath: defaultPath,
 };
@@ -72,12 +76,12 @@ function setSettings(config: IConfig) {
     config.baseURL = config.baseURL || context.baseURL;
     config.path = config.path || context.defaultPath;
 
-    context.client = new sdk.Client({
+    context.client._updateOptions({
         baseURL: config.baseURL,
         token: config.token,
-    }, "fetch");
-    context.storage?.updateEnabled();
-    context.path = config.path;
+    }, context.type);
+    context.storage?.updateServiceStatus();
+    context.path = config.path.startsWith("/") ? config.path : `/${config.path}`;
 
     switch (config.fileOpenSchema) {
         case "path":
