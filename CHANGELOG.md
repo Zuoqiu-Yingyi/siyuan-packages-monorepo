@@ -1,5 +1,11 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-10-23
+
+- 修复文件管理器返回上层目录问题 | Fix the issue of file manager returning to the upper directory.
+- 添加 `localStorage` 单向同步功能 | Add `localStorage` one-way synchronization function.
+- 添加一个用于在导出时启用/禁用样式的菜单项 | Add a menu item for enabling/disabling styles when exporting.
+
 ## 2023-10-22
 
 - 添加附属仓库管理脚本 | Add management scripts for sub-repository.
