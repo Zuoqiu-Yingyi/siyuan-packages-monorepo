@@ -419,7 +419,8 @@ export default class KeepassPlugin extends siyuan.Plugin {
         const local_storage_keys = Object.keys(local_storage);
 
         const entries = sync1<string>(local_siyuan_keys, local_storage_keys);
-        this.logger.debug(entries);
+        // this.logger.debug(entries);
+
         entries.delete.forEach(entry => globalThis.localStorage.removeItem(entry));
         this.setLocalStorageItems(this.local);
         return local_siyuan;
