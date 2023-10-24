@@ -8,6 +8,6 @@
     "dependencies": {
         "@sveltejs/vite-plugin-svelte": "^2.4.6",
         "@vitejs/plugin-vue": "^4.4.0",
-        "vite": "^4.4.11"
+        "vite": "^4.5.0"
     }
 }

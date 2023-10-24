@@ -114,7 +114,7 @@ import type {
     IClickEditorContentEvent,
     IClickEditorTitleIconEvent,
     IDestroyProtyleEvent,
-    ILoadedProtyleEvent,
+    ILoadedProtyleStaticEvent,
 } from "@workspace/types/siyuan/events";
 import type { THandlersWrapper } from "@workspace/utils/worker/bridge";
 import type { WorkerHandlers } from "./workers/jupyter";
@@ -461,7 +461,7 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
                 this.eventBus.on("click-editortitleicon", this.blockMenuEventListener);
                 this.eventBus.on("click-blockicon", this.blockMenuEventListener);
                 this.eventBus.on("click-editorcontent", this.clickEditorContentEventListener);
-                this.eventBus.on("loaded-protyle", this.loadedProtyleEventListener);
+                this.eventBus.on("loaded-protyle-static", this.loadedProtyleStaticEventListener);
                 this.eventBus.off("destroy-protyle", this.destroyProtyleEventListener);
             });
     }
@@ -473,7 +473,7 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
         this.eventBus.off("click-editortitleicon", this.blockMenuEventListener);
         this.eventBus.off("click-blockicon", this.blockMenuEventListener);
         this.eventBus.off("click-editorcontent", this.clickEditorContentEventListener);
-        this.eventBus.off("loaded-protyle", this.loadedProtyleEventListener);
+        this.eventBus.off("loaded-protyle-static", this.loadedProtyleStaticEventListener);
         this.eventBus.off("destroy-protyle", this.destroyProtyleEventListener);
 
         for (const objectURL of this.kernelName2logoObjectURL.values()) {
@@ -2072,9 +2072,9 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
     }
 
     /* 编辑器加载事件监听器 */
-    protected readonly loadedProtyleEventListener = async (e: ILoadedProtyleEvent) => {
+    protected readonly loadedProtyleStaticEventListener = async (e: ILoadedProtyleStaticEvent) => {
         // this.logger.debug(e);
-        const protyle = e.detail;
+        const protyle = e.detail.protyle;
 
         /* 更新内核状态 */
         if (!this.doc2session.has(protyle.block.rootID!)) { // 当前文档未连接会话
