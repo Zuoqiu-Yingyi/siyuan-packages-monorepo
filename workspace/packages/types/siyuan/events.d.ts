@@ -71,7 +71,7 @@ export interface IOpenSiyuanUrlPluginEvent extends CustomEvent<siyuan.IEventBusM
     // type: "open-siyuan-url-plugin";
 }
 
-export interface ILoadedProtyleEvent extends CustomEvent<siyuan.IEventBusMap["loaded-protyle"]> {
+export interface ILoadedProtyleStaticEvent extends CustomEvent<siyuan.IEventBusMap["loaded-protyle-static"]> {
     // type: "loaded-protyle";
 }
 

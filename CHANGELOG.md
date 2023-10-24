@@ -5,6 +5,8 @@
 - 修复文件管理器返回上层目录问题 | Fix the issue of file manager returning to the upper directory.
 - 添加 `localStorage` 单向同步功能 | Add `localStorage` one-way synchronization function.
 - 添加一个用于在导出时启用/禁用样式的菜单项 | Add a menu item for enabling/disabling styles when exporting.
+- 兼容移动端菜单 | Compatible with mobile menu.
+- 兼容事件总线 `loaded-protyle-static` | Compatible with event bus `loaded-protyle-static`.
 
 ## 2023-10-22
 
