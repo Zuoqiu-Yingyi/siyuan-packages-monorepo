@@ -1,5 +1,13 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-10-26
+
+- 添加打开 Jupyter 页面功能 | Add the function of opening Jupyter page.
+
+## 2023-10-25
+
+- 适配属性视图 | Adapt to the attribute view.
+
 ## 2023-10-23
 
 - 修复文件管理器返回上层目录问题 | Fix the issue of file manager returning to the upper directory.

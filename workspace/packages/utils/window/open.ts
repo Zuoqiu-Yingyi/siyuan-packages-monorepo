@@ -26,8 +26,8 @@ export interface IOpenWindowOptins {
 }
 
 export interface IOpenWindowBaseOptions extends Electron.BrowserWindowConstructorOptions {
-    width: number, // 窗口宽度/高度
-    height: number, // 窗口宽度/高度
+    width?: number, // 窗口宽度/高度
+    height?: number, // 窗口宽度/高度
 
     x?: number, // 窗口横坐标
     y?: number, // 窗口纵坐标
@@ -106,18 +106,22 @@ export function openBrowserWindow(options: IOpenWindowOptins): Electron.BrowserW
  */
 export function openPopupWindow(options: IOpenWindowOptins): null | Window {
     if (options.base.center) {
-        options.base.x = (globalThis.screen.width - options.base.width) / 2;
-        options.base.y = (globalThis.screen.height - options.base.height) / 2;
+        if (options.base.width) {
+            options.base.x = (globalThis.screen.width - options.base.width) / 2;
+        }
+        if (options.base.height) {
+            options.base.y = (globalThis.screen.height - options.base.height) / 2;
+        }
     }
 
     const features: string[] = [
         `popup = true`,
-        `width = ${options.base.width}`,
-        `height = ${options.base.height}`,
     ];
 
     (options.base.x !== undefined) && features.push(`left = ${options.base.x}`);
     (options.base.y !== undefined) && features.push(`top = ${options.base.y}`);
+    (options.base.width !== undefined) && features.push(`width = ${options.base.width}`);
+    (options.base.height !== undefined) && features.push(`height = ${options.base.height}`);
     (options.extra?.noopener !== undefined) && features.push(`noopener = ${options.extra.noopener}`);
     (options.extra?.noreferrer !== undefined) && features.push(`noreferrer = ${options.extra.noreferrer}`);
 

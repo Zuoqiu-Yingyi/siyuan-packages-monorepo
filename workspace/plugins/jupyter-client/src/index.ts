@@ -47,6 +47,7 @@ import icon_jupyter_client_session_notebook from "./assets/symbols/icon-jupyter-
 import * as sdk from "@siyuan-community/siyuan-sdk";
 
 import Item from "@workspace/components/siyuan/menu/Item.svelte"
+import JupyterTab from "@workspace/components/siyuan/tab/IframeTab.svelte";
 import Settings from "./components/Settings.svelte";
 import JupyterDock from "./components/JupyterDock.svelte";
 import JupyterInspectDock from "./components/JupyterInspectDock.svelte";
@@ -80,6 +81,7 @@ import { toUint8Array } from "@workspace/utils/misc/base64";
 import { encode } from "@workspace/utils/misc/base64";
 import { select } from "@workspace/utils/dom/selection";
 import { replaceRangeWithText } from "@workspace/utils/dom/range";
+import { openWindow } from "@workspace/utils/window/open";
 import uuid from "@workspace/utils/misc/uuid";
 
 import CONSTANTS from "./constants";
@@ -134,9 +136,14 @@ export type TMenuContext = IBlockMenuContext | {
     isMultiBlock: false,
     id: BlockID,
 };
+export interface IJupyterTab extends siyuan.ITabModel {
+    component?: InstanceType<typeof JupyterTab>;
+}
 
 export default class JupyterClientPlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "global-config";
+    public static readonly CUSTOM_TAB_TYPE_JUPYTER = "-jupyter-tab";
+
     static readonly EDIT_KEYBOARD_EVENT_STATUS_INSPECT: IKeyboardStatus = {
         type: "keyup",
         altKey: false,
@@ -160,7 +167,12 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
     public readonly logger: InstanceType<typeof Logger>;
     public readonly client: InstanceType<typeof sdk.Client>;
 
+    protected readonly TOP_BAR_MENU_ID: string;
     protected readonly SETTINGS_DIALOG_ID: string;
+    protected readonly CUSTOM_TAB_ID_JUPYTER: string;
+
+    protected readonly jupyterTab: ReturnType<siyuan.Plugin["addTab"]>;
+    protected topBarButton?: HTMLElement; // 顶部菜单栏按钮
 
     public config: IConfig = DEFAULT_CONFIG;
     protected worker?: InstanceType<typeof Worker>; // worker
@@ -207,7 +219,10 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
         this.logger = new Logger(this.name);
         this.client = new sdk.Client(undefined, "fetch");
 
+        this.TOP_BAR_MENU_ID = `${this.name}-top-bar-menu`;
         this.SETTINGS_DIALOG_ID = `${this.name}-settings-dialog`;
+        this.CUSTOM_TAB_ID_JUPYTER = `${this.name}${JupyterClientPlugin.CUSTOM_TAB_TYPE_JUPYTER}`;
+
         this.handlers = {
             gotoBlock: {
                 this: this,
@@ -237,6 +252,29 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
                 func: this.updateSessions,
             },
         } as const;
+
+        /* 注册页签 */
+        this.jupyterTab = this.addTab({
+            type: JupyterClientPlugin.CUSTOM_TAB_TYPE_JUPYTER,
+            init() {
+                // plugin.logger.debug("tab-init");
+                // plugin.logger.debug(this);
+
+                const tab: IJupyterTab = this;
+                tab.component = new JupyterTab({
+                    target: tab.element,
+                    props: {
+                        ...tab.data,
+                    },
+                });
+            },
+            destroy() {
+                // plugin.logger.debug("tab-destroy");
+
+                const tab: IJupyterTab = this;
+                tab.component?.$destroy();
+            },
+        });
 
         /**
          * 注册自定义 HTMLElement 组件
@@ -426,6 +464,28 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
             },
         });
 
+        this.addCommand({ // 在新页签中打开 Jupyter
+            langKey: "open-jupyter-tab",
+            langText: this.i18n.commands.openJupyterTab.text,
+            hotkey: "", // 默认快捷键
+            customHotkey: "", // 自定义快捷键
+            callback: this.openJupyterTab,
+        });
+        this.addCommand({ // 在浏览器中打开 Jupyter
+            langKey: "open-jupyter-browser",
+            langText: this.i18n.commands.openJupyterBrowser.text,
+            hotkey: "", // 默认快捷键
+            customHotkey: "", // 自定义快捷键
+            callback: this.openJupyterBrowser,
+        });
+        this.addCommand({ // 在新窗口中打开 Jupyter
+            langKey: "open-jupyter-window",
+            langText: this.i18n.commands.openJupyterWindow.text,
+            hotkey: "", // 默认快捷键
+            customHotkey: "", // 自定义快捷键
+            callback: this.openJupyterWindow,
+        });
+
         /* 加载数据 */
         this.loadData(JupyterClientPlugin.GLOBAL_CONFIG_NAME)
             .then(config => {
@@ -467,6 +527,40 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
     }
 
     onLayoutReady(): void {
+        /* 添加菜单项 */
+        this.topBarButton = this.addTopBar({
+            icon: "icon-jupyter-client",
+            title: this.displayName,
+            position: "right",
+            callback: e => {
+                const menu = new siyuan.Menu(this.TOP_BAR_MENU_ID);
+                menu.addItem({
+                    icon: "iconLayout",
+                    label: this.i18n.commands.openJupyterTab.text,
+                    click: this.openJupyterTab,
+                });
+                menu.addItem({
+                    icon: "iconOpen",
+                    label: this.i18n.commands.openJupyterBrowser.text,
+                    click: this.openJupyterBrowser,
+                });
+                menu.addItem({
+                    icon: "iconOpenWindow",
+                    label: this.i18n.commands.openJupyterWindow.text,
+                    click: this.openJupyterWindow,
+                });
+                if (FLAG_MOBILE) {
+                    menu.fullscreen();
+                }
+                else {
+                    menu.open({
+                        x: globalThis.siyuan?.coordinates?.pageX ?? 0,
+                        y: globalThis.siyuan?.coordinates?.pageY ?? 0,
+                        isLeft: true,
+                    });
+                }
+            },
+        });
     }
 
     onunload(): void {
@@ -2256,4 +2350,46 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
             sessions,
         });
     }
+
+    /**
+     * 在新页签中打开 Jupyter
+     */
+    protected readonly openJupyterTab = async () => {
+        siyuan.openTab({
+            app: this.app,
+            custom: {
+                icon: "icon-jupyter-client",
+                title: "Jupyter",
+                id: this.CUSTOM_TAB_ID_JUPYTER,
+                data: {
+                    src: this.baseUrl,
+                    title: "Jupyter",
+                },
+            },
+            keepCursor: false,
+            removeCurrentTab: false,
+        });
+    };
+
+    /**
+     * 在浏览器中打开 Jupyter
+     */
+    protected readonly openJupyterBrowser = async () => {
+        globalThis.open(this.baseUrl);
+    };
+
+    /**
+     * 在新窗口中打开 Jupyter
+     */
+    protected readonly openJupyterWindow = async () => {
+        openWindow({
+            url: this.baseUrl,
+            base: {
+                center: true,
+            },
+            extra: {
+                enableMenuBar: true,
+            },
+        });
+    };
 };
