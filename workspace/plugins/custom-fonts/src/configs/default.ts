@@ -49,6 +49,11 @@ export const DEFAULT_CONFIG: IConfig = {
                 "EmojiSymbols",
             ],
         },
+        editor: {
+            enable: true,
+            list: [
+            ],
+        },
         code: {
             enable: false,
             list: [

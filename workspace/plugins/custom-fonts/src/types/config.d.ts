@@ -30,6 +30,7 @@ export interface IFont {
 /* 字体设置 */
 export interface IFonts {
     base: IFont, // 基础字体列表
+    editor: IFont, // 编辑器字体列表
     code: IFont, // 代码字体列表
     graph: IFont, // 关系图字体列表
     math: IFont, // 数学公式字体列表
