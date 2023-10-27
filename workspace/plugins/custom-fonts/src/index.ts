@@ -125,7 +125,7 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
         const dialog = new siyuan.Dialog({
             title: `${this.i18n.displayName} <code class="fn__code">${this.name}</code>`,
             content: `<div id="${that.SETTINGS_DIALOG_ID}" class="fn__flex-column" />`,
-            width: FLAG_MOBILE ? "92vw" : "768px",
+            width: FLAG_MOBILE ? "92vw" : "960px",
             height: FLAG_MOBILE ? undefined : "640px",
         });
         const settings = new Settings({
@@ -150,6 +150,7 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
             this.config.css.enable ? this.config.css.code : undefined,
             fontFamilyStyle({
                 base: this.config.fonts.base.enable ? this.config.fonts.base.list : undefined,
+                editor: this.config.fonts.editor.enable ? this.config.fonts.editor.list : undefined,
                 code: this.config.fonts.code.enable ? this.config.fonts.code.list : undefined,
                 graph: this.config.fonts.graph.enable ? this.config.fonts.graph.list : undefined,
                 math: this.config.fonts.math.enable ? this.config.fonts.math.list : undefined,
