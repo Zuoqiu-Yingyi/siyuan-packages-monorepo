@@ -4,6 +4,8 @@
     "url": "https://github.com/Zuoqiu-Yingyi/siyuan-plugin-template",
     "version": "0.0.0",
     "minAppVersion": "2.9.0",
+    "keywords": [
+    ],
     "backends": [
         "all"
     ],

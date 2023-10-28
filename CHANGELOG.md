@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-10-28
+
+- 监听 `switch-protyle` 事件 | Listen for `switch-protyle` event.
+
 ## 2023-10-27
 
 - 新增自定义编辑器字体列表功能 | Add custom editor font list function.

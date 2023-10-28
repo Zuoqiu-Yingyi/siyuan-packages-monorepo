@@ -79,6 +79,10 @@ export interface ILoadedProtyleDynamicEvent extends CustomEvent<siyuan.IEventBus
     // type: "loaded-protyle-dynamic";
 }
 
+export interface ISwitchProtyleEvent extends CustomEvent<siyuan.IEventBusMap["switch-protyle"]> {
+    // type: "switch-protyle";
+}
+
 export interface IDestroyProtyleEvent extends CustomEvent<siyuan.IEventBusMap["destroy-protyle"]> {
     // type: "destroy-protyle";
 }
