@@ -101,6 +101,11 @@
         },
         "title": "數學字型"
       },
+      "preview": {
+        "description": "預覽字型樣式",
+        "placeholder": "請在這裡輸入需要預覽的文字",
+        "title": "字型預覽"
+      },
       "title": "字型設定"
     },
     "generalSettings": {

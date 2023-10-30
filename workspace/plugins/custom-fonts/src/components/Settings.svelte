@@ -39,6 +39,13 @@
 
     const i18n = plugin.i18n as unknown as I18N;
 
+    const base_font_family = "var(--b3-font-family)";
+    const editor_font_family = "var(--b3-font-family-protyle)";
+    const code_font_family = "var(--b3-font-family-code)";
+    const graph_font_family = "var(--b3-font-family-graph)";
+    const math_font_family = "var(--b3-font-family-math)";
+    const emoji_font_family = "var(--b3-font-family-emoji)";
+
     function updated() {
         plugin.updateConfig(config);
     }
@@ -261,6 +268,27 @@
                     />
                 </Item>
 
+                <!-- 字体样式预览 -->
+                <Item
+                    block={true}
+                    title={i18n.settings.fontsSettings.preview.title}
+                    text={i18n.settings.fontsSettings.preview.description}
+                >
+                    <Input
+                        slot="input"
+                        block={true}
+                        type={ItemType.textarea}
+                        fontFamily={base_font_family}
+                        settingKey="preview"
+                        settingValue={config.fonts.base.preview}
+                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                        on:changed={e => {
+                            config.fonts.base.preview = e.detail.value;
+                            updated();
+                        }}
+                    />
+                </Item>
+
                 <!-- 自定义字体列表 -->
                 <Item
                     block={true}
@@ -304,6 +332,27 @@
                         settingValue={config.fonts.editor.enable}
                         on:changed={e => {
                             config.fonts.editor.enable = e.detail.value;
+                            updated();
+                        }}
+                    />
+                </Item>
+
+                <!-- 字体样式预览 -->
+                <Item
+                    block={true}
+                    title={i18n.settings.fontsSettings.preview.title}
+                    text={i18n.settings.fontsSettings.preview.description}
+                >
+                    <Input
+                        slot="input"
+                        block={true}
+                        type={ItemType.textarea}
+                        fontFamily={editor_font_family}
+                        settingKey="preview"
+                        settingValue={config.fonts.editor.preview}
+                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                        on:changed={e => {
+                            config.fonts.editor.preview = e.detail.value;
                             updated();
                         }}
                     />
@@ -357,6 +406,27 @@
                     />
                 </Item>
 
+                <!-- 字体样式预览 -->
+                <Item
+                    block={true}
+                    title={i18n.settings.fontsSettings.preview.title}
+                    text={i18n.settings.fontsSettings.preview.description}
+                >
+                    <Input
+                        slot="input"
+                        block={true}
+                        type={ItemType.textarea}
+                        fontFamily={code_font_family}
+                        settingKey="preview"
+                        settingValue={config.fonts.code.preview}
+                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                        on:changed={e => {
+                            config.fonts.code.preview = e.detail.value;
+                            updated();
+                        }}
+                    />
+                </Item>
+
                 <!-- 自定义字体列表 -->
                 <Item
                     block={true}
@@ -400,6 +470,27 @@
                         settingValue={config.fonts.graph.enable}
                         on:changed={e => {
                             config.fonts.graph.enable = e.detail.value;
+                            updated();
+                        }}
+                    />
+                </Item>
+
+                <!-- 字体样式预览 -->
+                <Item
+                    block={true}
+                    title={i18n.settings.fontsSettings.preview.title}
+                    text={i18n.settings.fontsSettings.preview.description}
+                >
+                    <Input
+                        slot="input"
+                        block={true}
+                        type={ItemType.textarea}
+                        fontFamily={graph_font_family}
+                        settingKey="preview"
+                        settingValue={config.fonts.graph.preview}
+                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                        on:changed={e => {
+                            config.fonts.graph.preview = e.detail.value;
                             updated();
                         }}
                     />
@@ -453,6 +544,27 @@
                     />
                 </Item>
 
+                <!-- 字体样式预览 -->
+                <Item
+                    block={true}
+                    title={i18n.settings.fontsSettings.preview.title}
+                    text={i18n.settings.fontsSettings.preview.description}
+                >
+                    <Input
+                        slot="input"
+                        block={true}
+                        type={ItemType.textarea}
+                        fontFamily={math_font_family}
+                        settingKey="preview"
+                        settingValue={config.fonts.math.preview}
+                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                        on:changed={e => {
+                            config.fonts.math.preview = e.detail.value;
+                            updated();
+                        }}
+                    />
+                </Item>
+
                 <!-- 自定义字体列表 -->
                 <Item
                     block={true}
@@ -496,6 +608,27 @@
                         settingValue={config.fonts.emoji.enable}
                         on:changed={e => {
                             config.fonts.emoji.enable = e.detail.value;
+                            updated();
+                        }}
+                    />
+                </Item>
+
+                <!-- 字体样式预览 -->
+                <Item
+                    block={true}
+                    title={i18n.settings.fontsSettings.preview.title}
+                    text={i18n.settings.fontsSettings.preview.description}
+                >
+                    <Input
+                        slot="input"
+                        block={true}
+                        type={ItemType.textarea}
+                        fontFamily={emoji_font_family}
+                        settingKey="preview"
+                        settingValue={config.fonts.emoji.preview}
+                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                        on:changed={e => {
+                            config.fonts.emoji.preview = e.detail.value;
                             updated();
                         }}
                     />

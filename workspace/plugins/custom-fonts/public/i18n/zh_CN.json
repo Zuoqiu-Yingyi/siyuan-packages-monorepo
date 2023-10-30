@@ -101,6 +101,11 @@
         },
         "title": "数学字体"
       },
+      "preview": {
+        "description": "预览字体样式",
+        "placeholder": "请在这里输入需要预览的文本",
+        "title": "字体预览"
+      },
       "title": "字体设置"
     },
     "generalSettings": {

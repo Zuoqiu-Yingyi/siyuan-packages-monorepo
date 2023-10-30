@@ -126,7 +126,7 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
             title: `${this.i18n.displayName} <code class="fn__code">${this.name}</code>`,
             content: `<div id="${that.SETTINGS_DIALOG_ID}" class="fn__flex-column" />`,
             width: FLAG_MOBILE ? "92vw" : "960px",
-            height: FLAG_MOBILE ? undefined : "640px",
+            height: FLAG_MOBILE ? undefined : "720px",
         });
         const settings = new Settings({
             target: dialog.element.querySelector(`#${that.SETTINGS_DIALOG_ID}`),
@@ -145,7 +145,7 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
             enabled: 2,
         });
         const snippets = response.data.snippets;
-        const snippet = snippets.find(s => s.name === this.STYLE_SNIPPET_NAME && s.type === "css")
+        var snippet = snippets.find(s => s.name === this.STYLE_SNIPPET_NAME && s.type === "css")
         const content = [
             this.config.css.enable ? this.config.css.code : undefined,
             fontFamilyStyle({
@@ -163,18 +163,20 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
             snippet.content = content;
         }
         else {
-            snippets.push({
+            snippet = {
                 id: globalThis.Lute.NewNodeID(),
                 type: "css",
                 name: this.STYLE_SNIPPET_NAME,
                 memo: "",
                 content,
                 enabled: true,
-            });
+            };
+            snippets.push(snippet);
         }
         await this.client.setSnippet({
             snippets,
         });
+        siyuan.renderSnippets([snippet]);
     }
 
     /* 重置插件配置 */
