@@ -1,5 +1,10 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-10-30
+
+- 添加开源许可证 | Add open source license.
+- 添加字体样式预览功能 | Add font style preview function.
+
 ## 2023-10-28
 
 - 监听 `switch-protyle` 事件 | Listen for `switch-protyle` event.

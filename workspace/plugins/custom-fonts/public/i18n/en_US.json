@@ -101,6 +101,11 @@
         },
         "title": "Math Font"
       },
+      "preview": {
+        "description": "Preview Font Styles",
+        "placeholder": "Please enter the text to preview here",
+        "title": "Font Preview"
+      },
       "title": "Font Settings"
     },
     "generalSettings": {

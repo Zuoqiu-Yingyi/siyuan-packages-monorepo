@@ -24,6 +24,7 @@ export interface ICSS {
 /* 字体列表 */
 export interface IFont {
     enable: boolean, // 是否启用
+    preview: string, // 预览文本内容
     list: string[], // 字体列表
 }
 
@@ -38,7 +39,7 @@ export interface IFonts {
 }
 
 export interface IMenu {
-    block: IFont, // 自定义块字体
+    block: Omit<IFont, "preview">, // 自定义块字体
 }
 
 export interface IConfig {
