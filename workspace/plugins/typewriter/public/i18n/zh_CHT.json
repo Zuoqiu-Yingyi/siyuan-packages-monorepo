@@ -1,0 +1,48 @@
+{
+    "menu": {
+        "switch": {
+            "command": {
+                "text": "開啟/關閉打字機模式"
+            },
+            "disabled": "打字機模式 🚫",
+            "enabled": "打字機模式 ✅",
+            "title": "打字機模式"
+        }
+    },
+    "settings": {
+        "focusSettings": {
+            "enable": {
+                "description": "開啟後在編輯器中顯示當前正在編輯的塊",
+                "title": "顯示當前焦點"
+            },
+            "title": "焦點設置"
+        },
+        "generalSettings": {
+            "reset": {
+                "description": "重置所有設置選項為默認選項（重置後將刷新頁面）",
+                "text": "重置",
+                "title": "重置設置選項"
+            },
+            "title": "常規設置"
+        },
+        "typewriterSettings": {
+            "code": {
+                "description": "焦點位於代碼塊內部時以行為單位進行滾動",
+                "title": "代碼塊焦點跟隨行"
+            },
+            "enable": {
+                "description": "開啟打字機模式後，編輯時焦點所在塊將自動滾動至編輯區中間",
+                "title": "啟用打字機模式"
+            },
+            "table": {
+                "description": "焦點位於表格塊內部時以單元格為單位進行滾動",
+                "title": "表格塊焦點跟隨單元格"
+            },
+            "timeout": {
+                "description": "設置編輯操作與開始滾動之間的時間間隔<br/>單位：毫秒",
+                "title": "滾動延時時間"
+            },
+            "title": "打字機設置"
+        }
+    }
+}
