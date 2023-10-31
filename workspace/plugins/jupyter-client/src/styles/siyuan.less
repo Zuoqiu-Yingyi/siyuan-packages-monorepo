@@ -1,0 +1,141 @@
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+/* 思源样式 */
+
+:root {
+    // jupyter 主题色
+    --jupyter-client-jupyter-theme-color: #F37726;
+}
+
+/* 👇代码块与输出块样式👇 */
+.protyle-wysiwyg {
+
+    // 文档提示
+    // &[custom-prompt],
+    &[custom-jupyter-kernel-language],
+    &[custom-jupyter-kernel-name],
+    &[custom-jupyter-kernel-display-name],
+    &[custom-jupyter-kernel-connection-status],
+    &[custom-jupyter-kernel-status] {
+
+        &::after {
+            content: "#️⃣" attr(custom-jupyter-kernel-language) // 内核语言
+                " ⚛" attr(custom-jupyter-kernel-name) // 内核名称
+                " ℹ" attr(custom-jupyter-kernel-display-name) // 内核描述
+                " 📶" attr(custom-jupyter-kernel-connection-status) // 连接状态
+                " 💡" attr(custom-jupyter-kernel-status) // 内核状态
+                "";
+            position: absolute;
+            bottom: 0.5em;
+            right: 1em;
+            z-index: 1;
+
+            font-size: 0.75em;
+            padding: 3px;
+            outline: 1px solid var(--jupyter-client-jupyter-theme-color);
+        }
+    }
+
+    [data-node-id][custom-jupyter-block-type] {
+        &::before {
+            /* 运行序号 */
+            content: "[" attr(custom-jupyter-index) "]:";
+            position: sticky;
+
+            top: 0.25em;
+            z-index: 1;
+
+            line-height: 1em;
+            font-size: 75%;
+            font-weight: bolder;
+        }
+
+        // 代码块
+        &[custom-jupyter-block-type=code] {
+
+            &::before {
+                /* 运行完成 */
+                // color: var(--b3-card-success-color);
+                position: absolute;
+
+                top: 0.5em;
+                left: 0.25em;
+            }
+
+            &::after {
+                /* 运行时间 */
+                content: attr(custom-jupyter-time);
+                font-size: 85%;
+                position: absolute;
+                bottom: 0;
+                left: 3.75em;
+                z-index: 1;
+                color: var(--b3-theme-on-surface);
+            }
+
+            &[linenumber="true"]::after {
+                /* 运行时间-显示行号 */
+                left: 3.75em;
+            }
+
+            &[linenumber="false"]::after {
+                /* 运行时间-不显示行号 */
+                left: 0.25em;
+            }
+        }
+
+        // 输出块
+        &[custom-jupyter-block-type=output] {
+            font-family: var(--b3-font-family-code); // 输出内容使用等宽字体
+
+            &::before {
+                /* 运行结果 */
+                color: var(--b3-card-info-color);
+            }
+
+            &[custom-jupyter-index="E"]::before {
+                /* 运行结果有误 */
+                color: var(--b3-card-error-color);
+            }
+
+            // 分割线
+            >.hr[data-node-id] {
+                margin-top: 0;
+                margin-bottom: 0;
+
+                padding-top: 0;
+                padding-bottom: 0;
+
+                >div {
+                    height: 1em;
+
+                    &::after {
+                        top: 0.5em;
+                    }
+                }
+            }
+        }
+
+        // 发生中断
+        &[custom-jupyter-index=" "],
+        // 正在运行
+        &[custom-jupyter-index="*"] {
+            &::before {
+                color: var(--b3-card-warning-color);
+            }
+        }
+    }
+}

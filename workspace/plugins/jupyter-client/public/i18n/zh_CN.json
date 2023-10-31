@@ -1,0 +1,313 @@
+{
+    "commands": {
+        "runSelectedCells": {
+            "text": "运行所选代码块"
+        },
+        "runSelectedCellsAndGotoNext": {
+            "text": "运行所选代码块并跳转到下一个代码块"
+        },
+        "runSelectedCellsAndInsertBelow": {
+            "text": "运行所选代码块并在下方插入新代码块"
+        }
+    },
+    "displayName": "Jupyter 客户端",
+    "dock": {
+        "kernels": {
+            "text": "运行的内核"
+        },
+        "kernelspecs": {
+            "text": "已安装内核"
+        },
+        "menu": {
+            "shutdownAllKernels": {
+                "label": "关闭所有内核"
+            },
+            "shutdownAllSessions": {
+                "label": "关闭所有会话"
+            },
+            "shutdownKernel": {
+                "label": "关闭内核"
+            },
+            "shutdownSession": {
+                "label": "关闭会话"
+            }
+        },
+        "refresh": {
+            "ariaLabel": "刷新",
+            "label": "刷新"
+        },
+        "resources": {
+            "text": "Jupyter 资源列表"
+        },
+        "sessions": {
+            "text": "运行的会话"
+        },
+        "title": "Jupyter"
+    },
+    "inspectDock": {
+        "title": "Jupyter 上下文帮助"
+    },
+    "menu": {
+        "import": {
+            "accelerator": "*.ipynb",
+            "label": "导入文件",
+            "submenu": {
+                "append": {
+                    "label": "追加到当前文档末尾"
+                },
+                "override": {
+                    "label": "覆盖当前文档"
+                }
+            }
+        },
+        "kernel": {
+            "label": "内核",
+            "submenu": {
+                "info": {
+                    "label": "内核&emsp;ID: ${1}<br/>内核名称: ${2}<br/>内核语言: ${3}<br/>内核备注: ${4}"
+                },
+                "interrupt": {
+                    "label": "中断内核"
+                },
+                "reconnect": {
+                    "label": "重新连接"
+                },
+                "restart": {
+                    "label": "重启内核"
+                },
+                "shutdown": {
+                    "label": "关闭内核"
+                }
+            }
+        },
+        "open": {
+            "label": "打开"
+        },
+        "openTab": {
+            "label": "在新页签中打开"
+        },
+        "openTabBackground": {
+            "label": "在后台页签中打开"
+        },
+        "openTabBottom": {
+            "label": "在页签下侧打开"
+        },
+        "openTabRight": {
+            "label": "在页签右侧打开"
+        },
+        "run": {
+            "label": "运行",
+            "submenu": {
+                "all": {
+                    "label": "运行所有单元格"
+                },
+                "cntrl": {
+                    "disable": {
+                        "accelerator": "纯文本",
+                        "label": "忽略控制字符"
+                    },
+                    "enable": {
+                        "accelerator": "富文本",
+                        "label": "解析控制字符"
+                    }
+                },
+                "custom": {
+                    "label": "使用自定义配置项运行"
+                },
+                "escape": {
+                    "disable": {
+                        "accelerator": "渲染符号",
+                        "label": "输出原始文本"
+                    },
+                    "enable": {
+                        "accelerator": "转义符号",
+                        "label": "输出转义文本"
+                    }
+                },
+                "restart": {
+                    "accelerator": "重启内核",
+                    "label": "运行所有单元格"
+                },
+                "terminal": {
+                    "label": "输出内容至终端"
+                }
+            }
+        },
+        "session": {
+            "label": "会话",
+            "submenu": {
+                "info": {
+                    "label": "会话&emsp;ID: ${1}<br/>会话名称: ${2}<br/>会话路径: ${3}<br/>会话类型: ${4}"
+                },
+                "settings": {
+                    "label": "会话设置"
+                },
+                "shutdown": {
+                    "label": "关闭会话"
+                }
+            }
+        }
+    },
+    "messages": {
+        "inputRequest": {
+            "title": "输入请求"
+        },
+        "lastRunTime": {
+            "text": "上次执行"
+        },
+        "noValidBlockSelected": {
+            "text": "未选择有效的块"
+        },
+        "runtime": {
+            "text": "用时"
+        },
+        "sessionNotConnected": {
+            "text": "当前文档未连接会话"
+        },
+        "sessionOccupied": {
+            "text": "该会话已被占用"
+        },
+        "uninitialized": {
+            "text": "Jupyter 客户端未初始化"
+        }
+    },
+    "settings": {
+        "generalSettings": {
+            "reset": {
+                "description": "重置所有设置选项为默认选项（重置后将刷新页面）",
+                "text": "重置",
+                "title": "重置设置选项"
+            },
+            "title": "常规设置"
+        },
+        "jupyterSettings": {
+            "executeTab": {
+                "executeGoto": {
+                    "description": "运行时是否自动跳转到当前执行的代码块",
+                    "title": "运行时跳转"
+                },
+                "inputGoto": {
+                    "description": "请求用户输入文本时是否自动跳转到当前执行的代码块",
+                    "title": "输入时跳转"
+                },
+                "stopOnError": {
+                    "description": "运行代码时是否在遇到未捕获的异常后中止执行",
+                    "title": "错误中断"
+                },
+                "title": "代码运行"
+            },
+            "globalTab": {
+                "enable": {
+                    "description": "开启后将尝试与 Jupyter 服务建立连接",
+                    "title": "启用 Jupyter 客户端"
+                },
+                "delay": {
+                    "description": "调用 Jupyter 内核语言服务获取上下文帮助与代码建议时的延时时间<br/>单位：毫秒",
+                    "title": "语言服务调用延时"
+                },
+                "title": "全局"
+            },
+            "importTab": {
+                "cntrl": {
+                    "description": "是否解析使用控制字符 <code class='fn__code'>\\e</code> 设置的富文本样式<br/>仅在使用思源段落块显示内容时生效，仅应用于所导入文件中代码单元格的文本输出<br/>开启后将渲染输出文本的富文本样式<br/>关闭后将移除输出文本的富文本样式",
+                    "title": "解析控制字符"
+                },
+                "escaped": {
+                    "description": "是否转义 Markdown 标志符号<br/>仅在使用思源段落块显示内容时生效，仅应用于所导入文件中代码单元格的文本输出<br/>开启后将显示输出文本的原始文本内容（转义所有的 Markdown 标志符号）<br/>关闭后将输出文本的内容视为 Markdown 文本以进行渲染",
+                    "title": "转义标志符号"
+                },
+                "title": "导入",
+                "xterm": {
+                    "description": "是否使用 <a href='https://xtermjs.org/'>xterm.js</a> 渲染代码单元格输出的内容<br/>开启后将忽略 <code class='fn__code'>转义标志符号</code> 与 <code class='fn__code'>解析控制字符</code> 设置项<br/>关闭后将使用思源段落块显示导入文件中单元格输出的内容",
+                    "title": "使用 Xterm 渲染输出内容"
+                }
+            },
+            "outputTab": {
+                "cntrl": {
+                    "description": "是否解析使用控制字符 <code class='fn__code'>\\e</code> 设置的富文本样式<br/>仅在使用思源段落块显示输出内容时生效<br/>开启后将渲染输出内容的富文本样式<br/>关闭后将移除输出内容的富文本样式",
+                    "title": "解析控制字符"
+                },
+                "escaped": {
+                    "description": "是否转义 Markdown 标志符号<br/>仅在使用思源段落块显示输出内容时生效<br/>开启后将显示输出文本的原始文本内容（转义所有的 Markdown 标志符号）<br/>关闭后将输出文本的内容视为 Markdown 文本以进行渲染",
+                    "title": "转义标志符号"
+                },
+                "title": "输出",
+                "xterm": {
+                    "description": "是否使用 <a href='https://xtermjs.org/'>xterm.js</a> 渲染程序运行时输出的内容<br/>开启后将忽略 <code class='fn__code'>转义标志符号</code> 与 <code class='fn__code'>解析控制字符</code> 设置项<br/>关闭后将使用思源段落块显示输出的内容",
+                    "title": "使用 Xterm 渲染输出内容"
+                }
+            },
+            "serviceTab": {
+                "appUrl": {
+                    "description": "Jupyter 服务的 URL 路径",
+                    "title": "Jupyter 服务路径"
+                },
+                "baseUrl": {
+                    "description": "Jupyter 服务的基址 URL",
+                    "title": "Jupyter 服务 URL"
+                },
+                "title": "服务",
+                "token": {
+                    "description": "Jupyter 服务访问 Token",
+                    "title": "Jupyter Token"
+                },
+                "wsUrl": {
+                    "description": "用于与 Jupyter 内核交互的 WebSocket URL",
+                    "title": "内核 WebSocket URL"
+                }
+            },
+            "title": "Jupyter 设置"
+        },
+        "sessionSettings": {
+            "confirm": {
+                "connect": "连接",
+                "new": "新建",
+                "update": "更新"
+            },
+            "connect": {
+                "description": "新建一个会话或选择一个当前活跃的会话",
+                "options": {
+                    "new": {
+                        "text": "新建会话"
+                    }
+                },
+                "title": "会话选择"
+            },
+            "kernel": {
+                "description": "选择会话所使用的内核，可以使用无内核、新内核或正在运行的内核<br/><code class='fn__code'>⏹ 禁用内核</code>：不使用内核<br/><code class='fn__code'>▶ 启动内核 [语言名称] 内核名称: 内核描述</code>：创建一个新内核<br/><code class='fn__code'>♻ 复用内核 [语言名称] 内核名称: 会话名称</code>：使用其他会话的内核",
+                "options": {
+                    "new": {
+                        "text": "启动内核"
+                    },
+                    "no": {
+                        "text": "禁用内核"
+                    },
+                    "use": {
+                        "text": "复用内核"
+                    }
+                },
+                "title": "内核选择"
+            },
+            "name": {
+                "description": "自定义会话名称",
+                "title": "会话名称"
+            },
+            "path": {
+                "description": "文件在 Jupyter 工作空间中的路径，对应的目录也是内核运行时的工作目录",
+                "title": "会话路径"
+            },
+            "title": "会话设置",
+            "type": {
+                "description": "<code class='fn__code'>console</code>：Jupyter 控制台，交互式运行环境<br/><code class='fn__code'>notebook</code>：Jupyter 笔记本，<code class='fn__code'>*.ipynb</code> 文件",
+                "title": "会话类型"
+            }
+        },
+        "xtermSettings": {
+            "fontFamily": {
+                "description": "使用 <a href='https://xtermjs.org/'>xterm.js</a> 显示输出内容时所使用的字体",
+                "title": "字体"
+            },
+            "title": "Xterm 设置"
+        }
+    }
+}
