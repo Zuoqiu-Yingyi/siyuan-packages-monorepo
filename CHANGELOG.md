@@ -4,6 +4,7 @@
 
 - 优化字体样式预览功能 | Optimize font style preview function.
 - 重新添加附属仓库 `custom-fonts` | Re-add sub-repository `custom-fonts`.
+- 重新添加附属仓库 `jupyter-client` | Re-add sub-repository `jupyter-client`.
 
 ## 2023-10-30
 
