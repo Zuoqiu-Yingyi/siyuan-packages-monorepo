@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-10-31
+
+- 优化字体样式预览功能 | Optimize font style preview function.
+
 ## 2023-10-30
 
 - 添加开源许可证 | Add open source license.

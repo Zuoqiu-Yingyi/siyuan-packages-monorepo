@@ -29,6 +29,7 @@ import List from "@workspace/components/siyuan/list/List.svelte"
 
 import { fontData2CssFontStyle } from "@workspace/utils/font/css";
 import { getBlockMenuContext } from "@workspace/utils/siyuan/menu/block";
+import { renderSnippets } from "@workspace/utils/siyuan/snippet";
 
 import Settings from "./components/Settings.svelte";
 
@@ -176,7 +177,7 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
         await this.client.setSnippet({
             snippets,
         });
-        siyuan.renderSnippets([snippet]);
+        renderSnippets([snippet]);
     }
 
     /* 重置插件配置 */
