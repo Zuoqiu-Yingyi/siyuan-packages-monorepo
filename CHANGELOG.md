@@ -3,6 +3,7 @@
 ## 2023-10-31
 
 - 优化字体样式预览功能 | Optimize font style preview function.
+- 重新添加附属仓库 `custom-fonts` | Re-add sub-repository `custom-fonts`.
 
 ## 2023-10-30
 
