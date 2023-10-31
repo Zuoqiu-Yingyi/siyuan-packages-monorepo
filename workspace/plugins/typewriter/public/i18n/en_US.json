@@ -1,0 +1,48 @@
+{
+    "menu": {
+        "switch": {
+            "command": {
+                "text": "Toggle Typewriter Mode"
+            },
+            "disabled": "Typewriter Mode 🚫",
+            "enabled": "Typewriter Mode ✅",
+            "title": "Typewriter Mode"
+        }
+    },
+    "settings": {
+        "focusSettings": {
+            "enable": {
+                "description": "Enable to display the currently edited block in the editor",
+                "title": "Display current focus"
+            },
+            "title": "Focus"
+        },
+        "generalSettings": {
+            "reset": {
+                "description": "Reset all settings options to default options (refresh page after reset)",
+                "text": "Reset",
+                "title": "Reset settings options"
+            },
+            "title": "General"
+        },
+        "typewriterSettings": {
+            "code": {
+                "description": "Scroll line by line when focus is inside a code block",
+                "title": "Code Block Line Focus"
+            },
+            "enable": {
+                "description": "When Typewriter Mode is enabled, the block with focus will automatically scroll to the middle of the editing area",
+                "title": "Enable Typewriter Mode"
+            },
+            "table": {
+                "description": "Scroll cell by cell when focus is inside a table block",
+                "title": "Table Block Cell Focus"
+            },
+            "timeout": {
+                "description": "Set the time interval between edit actions and the start of scrolling.<br/>Unit: milliseconds",
+                "title": "Scroll Delay Time"
+            },
+            "title": "Typewriter"
+        }
+    }
+}
