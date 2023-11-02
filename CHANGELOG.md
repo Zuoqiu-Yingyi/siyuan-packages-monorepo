@@ -1,5 +1,10 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-11-02
+
+- 块只读模式 | Block read-only mode.
+  - [Zuoqiu-Yingyi/siyuan-plugin-custom-block#18](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-custom-fonts/issues/12)
+
 ## 2023-10-31
 
 - 优化字体样式预览功能 | Optimize font style preview function.
