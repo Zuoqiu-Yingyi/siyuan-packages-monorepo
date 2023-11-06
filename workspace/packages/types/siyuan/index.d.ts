@@ -61,13 +61,15 @@ export interface ISiyuanElectron {
 
 export interface ISiyuanExtends extends ISiyuanVariable, Partial<ISiyuanElectron> { }
 
-export interface ISiyuanGlobal extends ISiyuanExtends, Window { }
+export type TWindow = typeof window;
+export type TGlobal = typeof global;
 
-declare var globalThis: ISiyuanGlobal;
+export interface ISiyuanGlobal extends ISiyuanExtends, TWindow, TGlobal { }
 
 declare global {
     interface Window extends ISiyuanExtends {
     }
-    interface globalThis extends ISiyuanExtends {
+
+    interface globalThis extends ISiyuanGlobal {
     }
 }

@@ -1,5 +1,14 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-11-06
+
+- 修复超链接转义问题 | Fix hyperlink escape issue.
+
+## 2023-11-04
+
+- 修复列表脑图视图样式 | Fix list mind-map view style.
+- 调整列表脑图视图样式 | Adjust list mind-map view style.
+
 ## 2023-11-02
 
 - 块只读模式 | Block read-only mode.
