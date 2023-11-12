@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-11-12
+
+- 添加文本字符集检测工具 | Add text character set detection tool.
+
 ## 2023-11-07
 
 - 添加文本编码转换工具 | Add text encoding conversion tool.
