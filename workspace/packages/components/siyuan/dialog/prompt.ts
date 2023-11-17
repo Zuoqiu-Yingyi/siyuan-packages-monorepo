@@ -32,6 +32,8 @@ export interface IPromptOptions {
     tips?: string; // 提示文本
     width?: string; // 宽度
     height?: string; // 高度
+    listID?: string; // 数据列表 ID
+    datalist?: string[]; // 输入框数据列表
     selectable?: boolean; // 是否可选择
     autofocus?: boolean; // 是否自动对焦
     input?: PromptCallback<string>; // 返回更新的提示文本
@@ -86,6 +88,8 @@ export function prompt(Dialog: typeof siyuan.Dialog, options: IPromptOptions): I
             value: options.value,
             placeholder: options.placeholder,
             tips: options.tips,
+            listID: options.listID,
+            datalist: options.datalist,
             selectable: options.selectable,
             autofocus: options.autofocus,
         },

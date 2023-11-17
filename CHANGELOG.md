@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-11-18
+
+- 优化使用指定字符集打开文件功能 | Optimize the function of opening files using the specified character set.
+
 ## 2023-11-17
 
 - 支持使用自定义字符集打开文件 | Support opening files using custom character sets.

@@ -24,6 +24,8 @@
     export let value: string = ""; // 输入框默认内容
     export let placeholder: string = ""; // 输入框空白提示内容
     export let tips: string = ""; // 输入框提示内容
+    export let listID: string = Math.random().toString(36).slice(2); // 数据列表 ID
+    export let datalist: string[] = []; // 输入框数据列表
     export let selectable: boolean = true; // 是否可选择
     export let autofocus: boolean = true; // 是否自动聚焦
 
@@ -71,8 +73,17 @@
             on:change={onChange}
             {autofocus}
             {placeholder}
+            list={listID}
             class="b3-text-field fn__block"
         />
+        <!-- REF: https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/datalist -->
+        {#if datalist.length > 0}
+            <datalist id={listID}>
+                {#each datalist as value}
+                    <option {value} />
+                {/each}
+            </datalist>
+        {/if}
     </slot>
 
     <!-- 内容提示 -->

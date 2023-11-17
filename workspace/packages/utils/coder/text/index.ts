@@ -110,6 +110,8 @@ export const CHAR_SET = new Set<TLabel>([
     "replacement", "iso-2022-cn", "iso-2022-cn-ext",
 ]);
 
+export const CHAR_SET_LIST = Array.from(CHAR_SET).sort();
+
 export const UTF8_CHAR_SET = new Set<TLabel>([
     "utf-8",
     "unicode-1-1-utf-8",
