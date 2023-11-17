@@ -11,13 +11,13 @@
         "format": "prettier --write \"**/*.{ts,tsx,md}\""
     },
     "dependencies": {
-        "@siyuan-community/siyuan-sdk": "^0.3.3",
+        "@siyuan-community/siyuan-sdk": "^0.3.4",
         "@workspace/eslint-config-custom": "workspace:*",
         "@workspace/tsconfig": "workspace:*",
         "@workspace/vite-config-custom": "workspace:*"
     },
     "devDependencies": {
-        "eslint": "^8.52.0",
+        "eslint": "^8.53.0",
         "prettier": "^2.8.8",
         "siyuan": "^0.8.8",
         "turbo": "^1.10.16"

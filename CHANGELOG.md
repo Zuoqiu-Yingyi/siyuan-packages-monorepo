@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-11-17
+
+- 支持使用自定义字符集打开文件 | Support opening files using custom character sets.
+
 ## 2023-11-12
 
 - 添加文本字符集检测工具 | Add text character set detection tool.

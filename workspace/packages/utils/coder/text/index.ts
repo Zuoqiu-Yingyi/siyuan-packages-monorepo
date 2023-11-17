@@ -109,3 +109,10 @@ export const CHAR_SET = new Set<TLabel>([
     "x-user-defined", "x-user-defined",
     "replacement", "iso-2022-cn", "iso-2022-cn-ext",
 ]);
+
+export const UTF8_CHAR_SET = new Set<TLabel>([
+    "utf-8",
+    "unicode-1-1-utf-8",
+    "utf-8",
+    "utf8",
+]);
