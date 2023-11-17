@@ -33,9 +33,9 @@ export function detectContentType(contentType: string): TLabel | false {
     }
 }
 
-export function detectBuffer(buffer: Buffer | string): TLabel | false {
+export function detectBuffer(buffer: BufferSource | string): TLabel | false {
     try {
-        const encoding = chardet(buffer).encoding.toLowerCase() as TLabel;
+        const encoding = chardet(buffer as Buffer).encoding.toLowerCase() as TLabel;
         return CHAR_SET.has(encoding)
             ? encoding
             : false;
@@ -44,6 +44,6 @@ export function detectBuffer(buffer: Buffer | string): TLabel | false {
     }
 }
 
-export function detect(contentType: string, buffer?: Buffer | string): TLabel | false {
+export function detect(contentType: string, buffer?: BufferSource | string): TLabel | false {
     return detectContentType(contentType) || detectBuffer(buffer || "");
 }

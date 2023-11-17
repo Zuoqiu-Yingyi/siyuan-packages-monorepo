@@ -23,29 +23,26 @@ import {
 import { type TLabel } from ".";
 
 export class TextTranscoder {
-    protected _source!: TLabel;
-    protected _target!: TLabel;
+    protected _label!: TLabel;
     protected encoder!: TextEncoder;
     protected decoder!: TextDecoder;
     constructor(
-        source: TLabel,
-        target: TLabel = "utf-8",
+        label: TLabel
     ) {
-        this.source = source;
-        this.target = target;
+        this.label = label;
     }
 
-    public set source(label: TLabel) {
-        this._source = label;
-        this.encoder = new TextEncoder(this._source);
+    public set label(label: TLabel) {
+        this._label = label;
+        this.encoder = new TextEncoder(this._label);
+        this.decoder = new TextDecoder(this._label);
     }
 
-    public set target(label: TLabel) {
-        this._target = label;
-        this.decoder = new TextDecoder(this._target);
+    public encode(text: string): BufferSource {
+        return this.encoder.encode(text);
     }
 
-    public transform(text: string): string {
-        return this.decoder.decode(this.encoder.encode(text));
+    public decode(buffer: BufferSource): string {
+        return this.decoder.decode(buffer);
     }
 }
