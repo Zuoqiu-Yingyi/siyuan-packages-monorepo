@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-11-19
+
+- 添加附属仓库 `inbox` 的管理脚本 | Add management scripts for sub-repository `inbox`.
+
 ## 2023-11-18
 
 - 优化使用指定字符集打开文件功能 | Optimize the function of opening files using the specified character set.
