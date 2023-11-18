@@ -1,0 +1,12 @@
+{
+    "settings": {
+        "generalSettings": {
+            "reset": {
+                "description": "Reset all settings options to default options (refresh page after reset)",
+                "text": "Reset",
+                "title": "Reset settings options"
+            },
+            "title": "General"
+        }
+    }
+}
