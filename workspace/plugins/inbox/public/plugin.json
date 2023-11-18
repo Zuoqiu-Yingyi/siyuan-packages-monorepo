@@ -1,7 +1,7 @@
 {
-    "name": "template",
+    "name": "inbox",
     "author": "Zuoqiu Yingyi",
-    "url": "https://github.com/Zuoqiu-Yingyi/siyuan-plugin-template",
+    "url": "https://github.com/Zuoqiu-Yingyi/siyuan-plugin-inbox",
     "version": "0.0.0",
     "minAppVersion": "2.9.0",
     "backends": [
@@ -11,9 +11,9 @@
         "all"
     ],
     "displayName": {
-        "default": "",
-        "zh_CN": "",
-        "zh_CHT": ""
+        "default": "Inbox",
+        "zh_CN": "收集箱",
+        "zh_CHT": "收集箱"
     },
     "description": {
         "default": "",

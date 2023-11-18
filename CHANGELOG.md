@@ -3,6 +3,7 @@
 ## 2023-11-19
 
 - 添加附属仓库 `inbox` 的管理脚本 | Add management scripts for sub-repository `inbox`.
+- 初始化附属仓库 `inbox` | Initialize sub-repository `inbox`.
 
 ## 2023-11-18
 
