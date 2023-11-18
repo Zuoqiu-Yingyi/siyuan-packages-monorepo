@@ -3,6 +3,7 @@
 ## 2023-11-18
 
 - 优化使用指定字符集打开文件功能 | Optimize the function of opening files using the specified character set.
+- 修复 `Vditor` 编辑器重复加载资源文件问题 | Fix the issue of `Vditor` editor repeatedly loading resource files.
 
 ## 2023-11-17
 
