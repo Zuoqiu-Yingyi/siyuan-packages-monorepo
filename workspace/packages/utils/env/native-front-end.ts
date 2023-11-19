@@ -15,6 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import type { ISiyuanGlobal } from "@workspace/types/siyuan";
+declare var globalThis: ISiyuanGlobal;
+
 export const FLAG_ELECTRON = isElectron();
 export const FLAG_IFRAME = isIframe();
 export const FLAG_POPUP = isPopup();
@@ -47,11 +50,39 @@ export function isPopup(): boolean {
 }
 
 export function isLight(): boolean {
-    return (globalThis as any).siyuan?.config?.appearance?.mode === 0
-        ?? window.matchMedia('(prefers-color-scheme: light)').matches;
+    const themeMode = globalThis
+        ?.document
+        ?.documentElement
+        ?.dataset
+        ?.themeMode;
+
+    switch (themeMode) {
+        case "light":
+            return true;
+        case "dark":
+            return false;
+        default:
+            break;
+    }
+
+    const mode = globalThis
+        ?.siyuan
+        ?.config
+        ?.appearance
+        ?.mode;
+
+    switch (mode) {
+        case 0:
+            return true;
+        case 1:
+            return false;
+        default:
+            break;
+    }
+
+    return window.matchMedia('(prefers-color-scheme: light)').matches;
 }
 
 export function isDark(): boolean {
-    return (globalThis as any).siyuan?.config?.appearance?.mode === 1
-        ?? window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return !isLight();
 }
