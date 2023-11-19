@@ -3,6 +3,7 @@
 ## 2023-11-19
 
 - 添加附属仓库 `inbox` 的管理脚本 | Add management scripts for sub-repository `inbox`.
+- 支持使用新页签/新窗口打开资源文件超链接 | support opening assets files hyperlinks in new tabs/windows
 - 初始化附属仓库 `inbox` | Initialize sub-repository `inbox`.
 
 ## 2023-11-18
