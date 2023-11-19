@@ -28,6 +28,7 @@
         "src/**/*.d.ts",
         "src/**/*.ts",
         "src/**/*.js",
+        "src/**/*.vue",
         "src/**/*.svelte",
     ],
     "references": [

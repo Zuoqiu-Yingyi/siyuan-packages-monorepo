@@ -5,21 +5,35 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build",
-        "build:dev": "vite build --sourcemap inline",
+        "build:dev": "npm run build:dev:plugin && npm run build:dev:apps",
+        "build:dev:plugin": "vite build --mode plugin --sourcemap inline ",
+        "build:dev:apps": "vite build --mode apps --sourcemap inline ",
+        "build": "npm run build:icons && npm run build:plugin && npm run build:apps",
+        "build:plugin": "vite build --mode plugin",
+        "build:apps": "vite build --mode apps",
         "preview": "vite preview",
         "check": "svelte-check --tsconfig ./tsconfig.json"
     },
     "devDependencies": {
         "@sveltejs/vite-plugin-svelte": "^3.0.0",
         "@tsconfig/svelte": "^5.0.2",
+        "@types/recordrtc": "^5.6.14",
+        "@vitejs/plugin-vue": "^4.5.0",
+        "deepmerge": "*",
+        "emoji-picker-element-data": "^1.5.0",
         "less": "^4.2.0",
+        "recordrtc": "^5.6.2",
         "svelte": "^4.2.5",
         "svelte-check": "^3.6.0",
         "svelte-preprocess-less": "^0.4.0",
         "tslib": "^2.6.2",
         "typescript": "^5.2.2",
-        "vite": "^4.5.0"
+        "videojs-record": "^4.6.0",
+        "vite": "^5.0.0",
+        "vite-plugin-static-copy": "^0.16.0",
+        "vue": "^3.3.8",
+        "vue-advanced-chat": "^2.0.7",
+        "vue-i18n": "^9.4.1"
     },
     "dependencies": {
         "@workspace/components": "workspace:^",
