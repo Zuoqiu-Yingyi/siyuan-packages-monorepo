@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-11-20
+
+- 添加收集箱客户端 | Add inbox client.
+
 ## 2023-11-19
 
 - 添加附属仓库 `inbox` 的管理脚本 | Add management scripts for sub-repository `inbox`.

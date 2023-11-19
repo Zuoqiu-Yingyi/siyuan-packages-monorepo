@@ -1,0 +1,14 @@
+{
+    "CANCEL_SELECT_MESSAGE": "Cancel",
+    "CONVERSATION_STARTED": "Conversation started on:",
+    "IS_ONLINE": "is online",
+    "IS_TYPING": "is writing...",
+    "LAST_SEEN": "last seen ",
+    "MESSAGES_EMPTY": "No messages",
+    "MESSAGE_DELETED": "This message was deleted",
+    "NEW_MESSAGES": "New Messages",
+    "ROOMS_EMPTY": "No rooms",
+    "ROOM_EMPTY": "No room selected",
+    "SEARCH": "Search",
+    "TYPE_MESSAGE": "Type message"
+}

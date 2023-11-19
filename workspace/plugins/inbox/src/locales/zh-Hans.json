@@ -1,0 +1,14 @@
+{
+    "CANCEL_SELECT_MESSAGE": "取消",
+    "CONVERSATION_STARTED": "对话开始于：",
+    "IS_ONLINE": "在线",
+    "IS_TYPING": "正在输入...",
+    "LAST_SEEN": "上次出现 ",
+    "MESSAGES_EMPTY": "无消息",
+    "MESSAGE_DELETED": "此消息已删除",
+    "NEW_MESSAGES": "新消息",
+    "ROOMS_EMPTY": "新聊天室",
+    "ROOM_EMPTY": "未选择聊天室",
+    "SEARCH": "搜索",
+    "TYPE_MESSAGE": "输入消息"
+}

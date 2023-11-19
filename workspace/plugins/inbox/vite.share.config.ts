@@ -15,16 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { UserConfig } from "vite";
+import { defineConfig } from "vite";
 import { resolve } from "node:path";
-
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { less } from "svelte-preprocess-less";
+import vue from '@vitejs/plugin-vue';
 
 // https://vitejs.dev/config/
-export default {
+export default defineConfig({
     base: `./`,
     plugins: [
+        vue(),
         svelte({
             preprocess: {
                 style: less(),
@@ -33,9 +34,9 @@ export default {
     ],
     resolve: {
         alias: {
-            "@": resolve(__dirname, "./src"),
             "~": resolve(__dirname, "./"),
-        },
+            "@": resolve(__dirname, "./src"),
+        }
     },
     build: {
         minify: true,
@@ -48,10 +49,6 @@ export default {
                 /^@electron\/.*$/,
             ],
             output: {
-                // REF: https://cn.rollupjs.org/configuration-options/#output-intro-output-outro
-                // manualChunks: (id: string, { getModuleInfo, getModuleIds }) => {
-                //     console.log(id);
-                // },
                 entryFileNames: entryInfo => {
                     // console.log(entryInfo);
                     switch (entryInfo.name) {
@@ -76,4 +73,4 @@ export default {
             },
         },
     },
-} as UserConfig;
+});

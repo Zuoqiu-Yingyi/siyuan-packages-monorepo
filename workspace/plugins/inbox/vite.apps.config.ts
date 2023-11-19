@@ -15,29 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import deepmerge from "deepmerge";
-import { defineConfig, UserConfig } from "vite";
-
-import viteShareConfig from "./vite.share.config";
-import vitePluginConfig from "./vite.plugin.config";
-import viteAppsConfig from "./vite.apps.config";
+import { UserConfig } from "vite";
+import { resolve } from "node:path";
 
 // https://vitejs.dev/config/
-export default defineConfig(async env => {
-    // console.log(env);
-    var config: UserConfig;
-
-    switch (env.mode) {
-        case "apps":
-            config = deepmerge.all<UserConfig>([viteShareConfig, viteAppsConfig]);
-            break;
-
-        case "plugin":
-        default:
-            config = deepmerge.all<UserConfig>([viteShareConfig, vitePluginConfig]);
-            break;
-    }
-
-    // console.log(config);
-    return config;
-});
+export default {
+    build: {
+        rollupOptions: {
+            input: {
+                client: resolve(__dirname, "./apps/client.html"),
+            },
+        },
+    },
+} as UserConfig;

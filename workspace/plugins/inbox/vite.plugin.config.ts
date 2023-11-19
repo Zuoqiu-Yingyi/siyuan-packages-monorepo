@@ -18,57 +18,57 @@
 import { UserConfig } from "vite";
 import { resolve } from "node:path";
 
-import { svelte } from "@sveltejs/vite-plugin-svelte";
-import { less } from "svelte-preprocess-less";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 // https://vitejs.dev/config/
 export default {
-    base: `./`,
     plugins: [
-        svelte({
-            preprocess: {
-                style: less(),
-            },
+        viteStaticCopy({
+            targets: [
+                /* emoji-picker-element-data */
+                {
+                    src: "./node_modules/emoji-picker-element-data/zh/emojibase/data.json",
+                    dest: "./libs/emoji-picker-element-data/zh/emojibase/",
+                    // rename: "data.json",
+                },
+                {
+                    src: "./node_modules/emoji-picker-element-data/en/emojibase/data.json",
+                    dest: "./libs/emoji-picker-element-data/en/emojibase/",
+                    // rename: "data.json",
+                },
+            ],
         }),
     ],
-    resolve: {
-        alias: {
-            "@": resolve(__dirname, "./src"),
-            "~": resolve(__dirname, "./"),
-        },
-    },
     build: {
-        minify: true,
-        // sourcemap: "inline",
-        emptyOutDir: false,
-        copyPublicDir: false,
+        emptyOutDir: true,
+        copyPublicDir: true,
+        lib: {
+            entry: resolve(__dirname, "src/index.ts"),
+            fileName: "index",
+            formats: ["cjs"],
+        },
         rollupOptions: {
-            external: [
-                "siyuan",
-                /^@electron\/.*$/,
-            ],
+            input: {
+                index: resolve(__dirname, "src/index.ts"),
+            },
             output: {
-                // REF: https://cn.rollupjs.org/configuration-options/#output-intro-output-outro
-                // manualChunks: (id: string, { getModuleInfo, getModuleIds }) => {
-                //     console.log(id);
-                // },
-                entryFileNames: entryInfo => {
-                    // console.log(entryInfo);
-                    switch (entryInfo.name) {
-                        default:
-                            return "assets/[name]-[hash].js";
-                    }
-                },
-                chunkFileNames: chunkInfo => {
+                entryFileNames: chunkInfo => {
                     // console.log(chunkInfo);
                     switch (chunkInfo.name) {
+                        case "index":
+                            return "[name].js";
+
                         default:
-                            return "chunks/[name]-[hash].js";
+                            return "assets/[name]-[hash].js";
                     }
                 },
                 assetFileNames: assetInfo => {
                     // console.log(chunkInfo);
                     switch (assetInfo.name) {
+                        case "style.css":
+                        case "index.css":
+                            return "index.css";
+
                         default:
                             return "assets/[name]-[hash][extname]";
                     }
