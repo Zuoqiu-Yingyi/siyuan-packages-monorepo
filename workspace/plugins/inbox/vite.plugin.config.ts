@@ -18,26 +18,9 @@
 import { UserConfig } from "vite";
 import { resolve } from "node:path";
 
-import { viteStaticCopy } from "vite-plugin-static-copy";
-
 // https://vitejs.dev/config/
 export default {
     plugins: [
-        viteStaticCopy({
-            targets: [
-                /* emoji-picker-element-data */
-                {
-                    src: "./node_modules/emoji-picker-element-data/zh/emojibase/data.json",
-                    dest: "./libs/emoji-picker-element-data/zh/emojibase/",
-                    // rename: "data.json",
-                },
-                {
-                    src: "./node_modules/emoji-picker-element-data/en/emojibase/data.json",
-                    dest: "./libs/emoji-picker-element-data/en/emojibase/",
-                    // rename: "data.json",
-                },
-            ],
-        }),
     ],
     build: {
         emptyOutDir: true,

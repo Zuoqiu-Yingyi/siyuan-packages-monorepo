@@ -17,46 +17,50 @@
 
 <script setup lang="ts">
 import { inject } from "vue";
+import type { I18n, VueI18nTranslation } from "vue-i18n";
 import { register } from "vue-advanced-chat";
 
 import type { Client } from "@siyuan-community/siyuan-sdk";
-import type { I18n, VueI18nTranslation } from "vue-i18n";
 
 register();
 
-const client = inject("client") as Client;
 const i18n = inject("i18n") as I18n;
+const theme = inject("theme") as string;
+const locale = inject("locale") as string;
+const client = inject("client") as Client;
 const t = i18n.global.t as VueI18nTranslation;
 
-const i10n = {
-	CANCEL_SELECT_MESSAGE: t("CANCEL_SELECT_MESSAGE"),
-	CONVERSATION_STARTED: t("CONVERSATION_STARTED"),
-	IS_ONLINE: t("IS_ONLINE"),
-	IS_TYPING: t("IS_TYPING"),
-	LAST_SEEN: t("LAST_SEEN"),
-	MESSAGES_EMPTY: t("MESSAGES_EMPTY"),
-	MESSAGE_DELETED: t("MESSAGE_DELETED"),
-	NEW_MESSAGES: t("NEW_MESSAGES"),
-	ROOMS_EMPTY: t("ROOMS_EMPTY"),
-	ROOM_EMPTY: t("ROOM_EMPTY"),
-	SEARCH: t("SEARCH"),
-	TYPE_MESSAGE: t("TYPE_MESSAGE"),
+const emoji_data_source = `./../libs/emoji-picker-element-data/${locale}/cldr/data.json`;
+const text_messages = {
+    CANCEL_SELECT_MESSAGE: t("CANCEL_SELECT_MESSAGE"),
+    CONVERSATION_STARTED: t("CONVERSATION_STARTED"),
+    IS_ONLINE: t("IS_ONLINE"),
+    IS_TYPING: t("IS_TYPING"),
+    LAST_SEEN: t("LAST_SEEN"),
+    MESSAGES_EMPTY: t("MESSAGES_EMPTY"),
+    MESSAGE_DELETED: t("MESSAGE_DELETED"),
+    NEW_MESSAGES: t("NEW_MESSAGES"),
+    ROOMS_EMPTY: t("ROOMS_EMPTY"),
+    ROOM_EMPTY: t("ROOM_EMPTY"),
+    SEARCH: t("SEARCH"),
+    TYPE_MESSAGE: t("TYPE_MESSAGE"),
 };
-
 </script>
 
 <template>
     <vue-advanced-chat
-        height="calc(100vh - 16px)"
+        height="100vh"
         :current-user-id="'user-id'"
         :rooms="[]"
         :messages="[]"
-		:emoji-data-source="'./../libs/emoji-picker-element-data/en/emojibase/data.json'"
-		:text-messages.prop="{
-			/* REF: https://cn.vuejs.org/guide/extras/web-components.html#passing-dom-properties */
-			...i10n,
-		}"
+        :theme="theme"
+        :emoji-data-source="emoji_data_source"
+        :text-messages.prop="{
+            /* REF: https://cn.vuejs.org/guide/extras/web-components.html#passing-dom-properties */
+            ...text_messages,
+        }"
     />
 </template>
 
-<style lang="less"></style>
+<style scoped lang="less">
+</style>

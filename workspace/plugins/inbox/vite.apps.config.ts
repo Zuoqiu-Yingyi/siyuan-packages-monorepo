@@ -18,12 +18,36 @@
 import { UserConfig } from "vite";
 import { resolve } from "node:path";
 
+import { viteStaticCopy } from "vite-plugin-static-copy";
+
 // https://vitejs.dev/config/
 export default {
+    plugins: [
+        viteStaticCopy({
+            targets: [
+                /* emoji-picker-element-data */
+                {
+                    src: "./node_modules/emoji-picker-element-data/zh/cldr/data.json",
+                    dest: "./libs/emoji-picker-element-data/zh-Hans/cldr/",
+                    // rename: "data.json",
+                },
+                {
+                    src: "./node_modules/emoji-picker-element-data/zh-hant/cldr/data.json",
+                    dest: "./libs/emoji-picker-element-data/zh-Hant/cldr/",
+                    // rename: "data.json",
+                },
+                {
+                    src: "./node_modules/emoji-picker-element-data/en/cldr/data.json",
+                    dest: "./libs/emoji-picker-element-data/en/cldr/",
+                    // rename: "data.json",
+                },
+            ],
+        }),
+    ],
     build: {
         rollupOptions: {
             input: {
-                client: resolve(__dirname, "./apps/client.html"),
+                inbox: resolve(__dirname, "./apps/inbox.html"),
             },
         },
     },

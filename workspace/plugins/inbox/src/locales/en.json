@@ -10,5 +10,6 @@
     "ROOMS_EMPTY": "No rooms",
     "ROOM_EMPTY": "No room selected",
     "SEARCH": "Search",
-    "TYPE_MESSAGE": "Type message"
+    "TYPE_MESSAGE": "Type message",
+    "inbox": "Inbox"
 }
