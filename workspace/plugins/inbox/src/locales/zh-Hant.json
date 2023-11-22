@@ -7,8 +7,9 @@
     "MESSAGES_EMPTY": "無消息",
     "MESSAGE_DELETED": "此消息已刪除",
     "NEW_MESSAGES": "新消息",
-    "ROOMS_EMPTY": "新聊天室",
-    "ROOM_EMPTY": "未選擇聊天室",
+    "ROOMS_EMPTY": "新討論組",
+    "ROOM_EMPTY": "未選擇討論組",
     "SEARCH": "搜索",
-    "TYPE_MESSAGE": "輸入消息"
+    "TYPE_MESSAGE": "輸入消息",
+    "inbox": "收集箱"
 }
