@@ -19,6 +19,7 @@ import { BlockID } from "@workspace/types/siyuan";
 import { EditorType } from ".";
 import regexp from "../regexp";
 import { functions } from "lodash";
+import { trimPrefix } from "../misc/string";
 
 export interface ISiyuanUrlParams {
     id: BlockID, // 块 ID
@@ -231,3 +232,14 @@ export function getSiyuanBasePathname(baseURL: string = globalThis.document.base
 }
 
 export const BASE_PATHNAME = getSiyuanBasePathname();
+
+/**
+ * 跳转到认证页面
+ * @param to 认证完成后跳转到的页面
+ */
+export function auth(to: string = trimPrefix(globalThis.location.href, globalThis.location.origin)): void {
+    const url = new URL(globalThis.location.origin);
+    url.pathname = "/check-auth";
+    url.searchParams.set("to", to);
+    globalThis.location.replace(url); // 当前页面不会保存到会话历史中
+}

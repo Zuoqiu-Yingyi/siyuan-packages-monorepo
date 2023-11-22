@@ -19,7 +19,7 @@ import type { Electron } from "@workspace/types/electron";
 
 export const dialog: Electron.Dialog = globalThis
     ?.require
-    ?.("electron")
+    ?.("@electron/remote")
     ?.dialog;
 
 export default dialog;

@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-11-23
+
+- 修复无法在浏览器环境中正确加载的问题 | Fix the issue that cannot be loaded correctly in the browser environment.
+
 ## 2023-11-20
 
 - 添加收集箱客户端 | Add inbox client.

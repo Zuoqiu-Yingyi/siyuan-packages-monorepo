@@ -18,7 +18,8 @@
 import type path from "node:path";
 
 const _path = globalThis
-    ?.require("node:path");
+    ?.require
+    ?.("node:path");
 
 /**
  * @inheritdoc {@link path.resolve}

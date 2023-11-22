@@ -15,11 +15,5 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type os from "node:os";
-
-export const release: typeof os.release = (...args: any[]) => {
-    return globalThis
-        ?.require
-        ?.("node:os")
-        ?.release(...args);
-}
+// REF: https://www.npmjs.com/package/threads-es
+export * from "threads-es";
