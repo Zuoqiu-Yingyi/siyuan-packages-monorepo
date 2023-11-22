@@ -17,7 +17,7 @@
         "@workspace/vite-config-custom": "workspace:*"
     },
     "devDependencies": {
-        "eslint": "^8.53.0",
+        "eslint": "^8.54.0",
         "prettier": "^2.8.8",
         "siyuan": "^0.8.8",
         "turbo": "^1.10.16"

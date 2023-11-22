@@ -15,11 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type os from "node:os";
+// REF: https://github.com/TypeStrong/ts-node/issues/2072
+import { register } from "node:module";
+import { pathToFileURL } from "node:url";
 
-export const release: typeof os.release = (...args: any[]) => {
-    return globalThis
-        ?.require
-        ?.("node:os")
-        ?.release(...args);
+try {
+    register("ts-node/esm", pathToFileURL("./"));
+} catch (error) {
+    console.error(error);
 }
