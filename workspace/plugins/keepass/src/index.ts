@@ -56,6 +56,7 @@ import type {
     TDBStoreName,
 } from "./types/idb-schema";
 import { src2url } from "@workspace/utils/misc/url";
+import { trimPrefix } from "@workspace/utils/misc/string";
 
 declare var globalThis: ISiyuanGlobal;
 
@@ -288,11 +289,16 @@ export default class KeepassPlugin extends siyuan.Plugin {
                     label: this.i18n.menu.command.openKeeWebWindow.text,
                     click: () => this.openKeeWebWindow(false),
                 });
-                menu.open({
-                    x: globalThis.siyuan.coordinates.pageX,
-                    y: globalThis.siyuan.coordinates.pageY,
-                    isLeft: true,
-                });
+                if (FLAG_MOBILE) {
+                    menu.fullscreen();
+                }
+                else {
+                    menu.open({
+                        x: globalThis.siyuan?.coordinates?.pageX ?? 0,
+                        y: globalThis.siyuan?.coordinates?.pageY ?? 0,
+                        isLeft: true,
+                    });
+                }
             },
         });
     }
@@ -419,7 +425,8 @@ export default class KeepassPlugin extends siyuan.Plugin {
         const local_storage_keys = Object.keys(local_storage);
 
         const entries = sync1<string>(local_siyuan_keys, local_storage_keys);
-        this.logger.debug(entries);
+        // this.logger.debug(entries);
+
         entries.delete.forEach(entry => globalThis.localStorage.removeItem(entry));
         this.setLocalStorageItems(this.local);
         return local_siyuan;
@@ -856,7 +863,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
                 title: "KeeWeb",
                 id: this.CUSTOM_TAB_ID_KEEWEB,
                 data: {
-                    src: this.KEEWEB_INDEX_URL.href,
+                    src: trimPrefix(this.KEEWEB_INDEX_URL.href, globalThis.document.baseURI),
                     title: "KeeWeb",
                 },
             },
