@@ -1,8 +1,13 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-11-30
+
+- 修复 `host` 发生变更时页签打开问题 | Fix the issue of tab opening when `host` changes.
+
 ## 2023-11-23
 
 - 修复无法在浏览器环境中正确加载的问题 | Fix the issue that cannot be loaded correctly in the browser environment.
+- 完善讨论组组件 | Improve discussion group component.
 
 ## 2023-11-20
 

@@ -10,13 +10,13 @@
         "@workspace/utils": "workspace:^"
     },
     "devDependencies": {
-        "@types/katex": "^0.16.5",
-        "@types/plantuml-encoder": "^1.4.1",
-        "@types/viz.js": "^2.1.4",
-        "abcjs": "^6.2.2",
+        "@types/katex": "^0.16.7",
+        "@types/plantuml-encoder": "^1.4.2",
+        "@types/viz.js": "^2.1.5",
+        "abcjs": "^6.2.3",
         "echarts": "^5.4.3",
         "highlight.js": "^11.9.0",
-        "mermaid": "^10.5.1",
+        "mermaid": "^10.6.1",
         "pdfjs-dist": "^3.11.174",
         "ts-toolbelt": "^9.6.0",
         "viewerjs": "^1.11.6"

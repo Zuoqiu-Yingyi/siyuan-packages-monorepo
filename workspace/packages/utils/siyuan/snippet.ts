@@ -30,6 +30,7 @@ export interface ISnippet {
  */
 export function renderSnippets(snippets: ISnippet[]): void {
     snippets.forEach(item => {
+        // TODO: 使用新 ID 格式
         const id = `snippet${item.type === "css" ? "CSS" : "JS"}${item.id}`;
         let exitElement = document.getElementById(id) as HTMLScriptElement;
         if (!item.enabled) {
