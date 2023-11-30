@@ -3,6 +3,7 @@
 ## 2023-11-30
 
 - 修复 `host` 发生变更时页签打开问题 | Fix the issue of tab opening when `host` changes.
+- 重新添加附属仓库 `keepass` | Re-add sub-repository `keepass`.
 
 ## 2023-11-23
 
