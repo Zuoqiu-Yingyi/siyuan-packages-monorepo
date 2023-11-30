@@ -56,6 +56,7 @@ import type {
     TDBStoreName,
 } from "./types/idb-schema";
 import { src2url } from "@workspace/utils/misc/url";
+import { trimPrefix } from "@workspace/utils/misc/string";
 
 declare var globalThis: ISiyuanGlobal;
 
@@ -862,7 +863,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
                 title: "KeeWeb",
                 id: this.CUSTOM_TAB_ID_KEEWEB,
                 data: {
-                    src: this.KEEWEB_INDEX_URL.href,
+                    src: trimPrefix(this.KEEWEB_INDEX_URL.href, globalThis.document.baseURI),
                     title: "KeeWeb",
                 },
             },
