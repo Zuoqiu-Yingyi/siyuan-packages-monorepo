@@ -1,0 +1,21 @@
+{
+  "version": "1.0.1",
+  "manifestVersion": "0.1.0",
+  "name": "theme-cupertino-light",
+  "description": "Cupertino Theme (Light)",
+  "author": {
+    "name": "Jonas Gnioui",
+    "email": "btxtiger@outlook.com",
+    "url": "https://github.com/btxtiger"
+  },
+  "resources": {
+    "css": "cgAHkI+doLpStpySwpQUKhXMQKQ1AogrSekPE9WbIDN9sajvzm4EtZQ6WWfZuKAwQgygOJCjVO1yESX2zOwzlaVS46371maw1IgXIQai77KEkxWRcZMzydYOP2tr651lHrv85mNT++SIqKXFvODiC4qk6JyafWFdZ520PnfKsyqHbB0Mrt6lKGa3P9kqWrOm9JYZfXfGpJ2pp7/qMPcOhwSsvvbjd8Hy6DnCBf/ThnNXpsxvmh3UaBAm0ZUP8uFl8sH4miltl6M7KOL9o6wN0yGbR2u3q1sVtEMk29kkO3ut/zEfulIWE8DXxS5zyl+aUy+12XJZJfyY8881z+t1mA=="
+  },
+  "url": "https://plugins.keeweb.info/plugins/theme-cupertino-light",
+  "publicKey": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnRq2k3TTx0ewTe6wDr6QVeB5diwiIWzsJD+ApfZu1KNPedcAgslAfjpNsYF1if6cYsPMJH70xJ2np6RQBl1VPdwShOuxkD7m0BD5Hw/Aar8Hdp5cvAdOOMdBO+0DbGeUMy+z66s+oUCJmqVp19T6PkkxbhN08rgtT7v+aFvrbqbO/vlsskbJpH2K2io+e1XmRGPnSr9q4KSqfGbTfe5gLwDIOFd66Z4mb5Utb5wWpsy6Gjh06Yf257AccGD3A1bkTNOyeeX0tqciYBePWMk0icP/aZ6hnErfhnUKf3tOgPLppSHiGcaSKekhChZ2xLUs3U64JwrXSmwHj+TzdO3S0QIDAQAB",
+  "license": "MIT",
+  "theme": {
+    "name": "keeweb-cupertino-light",
+    "title": "Cupertino Theme (Light)"
+  }
+}

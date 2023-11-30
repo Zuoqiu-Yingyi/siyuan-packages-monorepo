@@ -1,0 +1,59 @@
+{
+    "menu": {
+        "command": {
+            "openKeeWebBrowser": {
+                "text": "Open KeeWeb in Browser"
+            },
+            "openKeeWebTab": {
+                "text": "Open KeeWeb in New Tab"
+            },
+            "openKeeWebWindow": {
+                "text": "Open KeeWeb in New Window"
+            }
+        }
+    },
+    "settings": {
+        "generalSettings": {
+            "reset": {
+                "description": "Reset all settings options of this plugin to default (page will refresh after reset)",
+                "text": "Reset",
+                "title": "Reset Settings"
+            },
+            "deleteKeeWebConfig": {
+                "description": "Delete all KeeWeb user configurations (initialize KeeWeb app)",
+                "text": "Deletem",
+                "title": "Delete KeeWeb User Configuration"
+            },
+            "title": "General Settings"
+        },
+        "keewebSettings": {
+            "pluginTab": {
+                "siyuan": {
+                    "description": "Enable the SiYuan Note plugin for KeeWeb<br/>- Load password database file <code class='fn__code'>*.kdbx</code> from SiYuan workspace<br/>- Save password database file <code class='fn__code'>*.kdbx</code> to SiYuan workspace<br/>- Synchronize KeeWeb user configuration",
+                    "title": "KeeWeb Plugin: <code class='fn__code'>siyuan</code>"
+                },
+                "title": "Plugins"
+            },
+            "title": "KeeWeb Settings",
+            "windowTab": {
+                "center": {
+                    "description": "Display new windows in the center of the screen",
+                    "title": "Window Center"
+                },
+                "height": {
+                    "description": "Default height of new windows",
+                    "title": "Window Height"
+                },
+                "title": "Window",
+                "top": {
+                    "description": "Whether new windows opened are set to be always on top by default",
+                    "title": "Window Always-on-Top"
+                },
+                "width": {
+                    "description": "Default width of new windows",
+                    "title": "Window Width"
+                }
+            }
+        }
+    }
+}
