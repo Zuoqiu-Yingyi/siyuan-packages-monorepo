@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-12-02
+
+- 优化安卓端打开方案 | Optimize the open scheme on Android.
+
 ## 2023-11-30
 
 - 修复 `host` 发生变更时页签打开问题 | Fix the issue of tab opening when `host` changes.
