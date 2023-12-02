@@ -18,7 +18,6 @@
 import { BlockID } from "@workspace/types/siyuan";
 import { EditorType } from ".";
 import regexp from "../regexp";
-import { functions } from "lodash";
 import { trimPrefix } from "../misc/string";
 
 export interface ISiyuanUrlParams {

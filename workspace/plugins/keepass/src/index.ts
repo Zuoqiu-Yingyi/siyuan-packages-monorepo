@@ -57,6 +57,7 @@ import type {
 } from "./types/idb-schema";
 import { src2url } from "@workspace/utils/misc/url";
 import { trimPrefix } from "@workspace/utils/misc/string";
+import { isAndroid } from "@workspace/utils/env/native-front-end";
 
 declare var globalThis: ISiyuanGlobal;
 
@@ -856,27 +857,43 @@ export default class KeepassPlugin extends siyuan.Plugin {
      * 在新页签中打开 KeeWeb
      */
     protected readonly openKeeWebTab = async () => {
-        siyuan.openTab({
-            app: this.app,
-            custom: {
-                icon: "icon-keepass-keeweb",
-                title: "KeeWeb",
-                id: this.CUSTOM_TAB_ID_KEEWEB,
-                data: {
-                    src: trimPrefix(this.KEEWEB_INDEX_URL.href, globalThis.document.baseURI),
-                    title: "KeeWeb",
-                },
-            },
-            keepCursor: false,
-            removeCurrentTab: false,
-        });
+        switch (true) {
+            case isAndroid():
+                globalThis.location.assign(this.KEEWEB_INDEX_URL);
+                break;
+
+            default:
+                siyuan.openTab({
+                    app: this.app,
+                    custom: {
+                        icon: "icon-keepass-keeweb",
+                        title: "KeeWeb",
+                        id: this.CUSTOM_TAB_ID_KEEWEB,
+                        data: {
+                            src: trimPrefix(this.KEEWEB_INDEX_URL.href, globalThis.document.baseURI),
+                            title: "KeeWeb",
+                        },
+                    },
+                    keepCursor: false,
+                    removeCurrentTab: false,
+                });
+                break;
+        }
     };
 
     /**
      * 在浏览器中打开 KeeWeb
      */
     protected readonly openKeeWebBrowser = async () => {
-        globalThis.open(this.KEEWEB_INDEX_URL.href);
+        switch (true) {
+            case isAndroid():
+                globalThis.JSAndroid?.openExternal(this.KEEWEB_INDEX_URL.href);
+                break;
+
+            default:
+                globalThis.open(this.KEEWEB_INDEX_URL.href);
+                break;
+        }
     };
 
     /**

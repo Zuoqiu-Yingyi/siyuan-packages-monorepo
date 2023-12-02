@@ -31,6 +31,11 @@ export type openTabParametersOptionsCustom = openTabParametersOptions.custom;
 export interface ISiyuan {
 }
 
+// REF: https://github.com/siyuan-note/siyuan-android/blob/fix/open-link-use-js/app/src/main/java/org/b3log/siyuan/JSAndroid.java
+export interface IJSAndroid {
+    openExternal(url: string): void;
+}
+
 export interface ISiyuanVariable {
     /* Siyuan */
     Lute: typeof siyuan.Lute;
@@ -45,6 +50,9 @@ export interface ISiyuanVariable {
     katex?: typeof import("katex");
     mermaid?: typeof import("mermaid").default;
     plantumlEncoder?: typeof import("plantuml-encoder");
+
+    JSAndroid?: IJSAndroid;
+    webkit?: any;
 }
 
 export interface ISiyuanElectron {

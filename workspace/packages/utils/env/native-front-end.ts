@@ -25,6 +25,10 @@ export const FLAG_POPUP = isPopup();
 export const FLAG_LIGHT = isLight();
 export const FLAG_DARK = isDark();
 
+export const FLAG_SIYUAN = isSiyuan();
+export const FLAG_SIYUAN_PARENT = isSiyuanParent();
+export const FLAG_SIYUAN_TOP = isSiyuanTop();
+
 export function hasNodeRequire(): boolean {
     return !!globalThis.require;
 }
@@ -86,3 +90,33 @@ export function isLight(): boolean {
 export function isDark(): boolean {
     return !isLight();
 }
+
+export function isSiyuan(): boolean {
+    return !!globalThis.siyuan;
+}
+
+export function isSiyuanParent(): boolean {
+    return !isSiyuan() && !!globalThis.parent?.siyuan;
+}
+
+export function isSiyuanTop(): boolean {
+    return !isSiyuan() && !!globalThis.parent?.siyuan;
+}
+
+export function isAndroid(): boolean {
+    return !!globalThis.JSAndroid
+        && globalThis
+            ?.siyuan
+            ?.config
+            ?.system
+            ?.container === "android";
+};
+
+export function isIOS(): boolean {
+    return !!globalThis.webkit?.messageHandlers
+        && globalThis
+            ?.siyuan
+            ?.config
+            ?.system
+            ?.container === "ios";
+};
