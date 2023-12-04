@@ -16,17 +16,23 @@
 -->
 
 <script setup lang="ts">
-import { inject } from "vue";
+import { inject, reactive } from "vue";
 import type { I18n, VueI18nTranslation } from "vue-i18n";
-import { register } from "vue-advanced-chat";
+import { register, VueAdvancedChat, type RoomUser, type Room, type Message } from "vue-advanced-chat";
 
+import type { Logger } from "@workspace/utils/logger";
 import type { Client } from "@siyuan-community/siyuan-sdk";
+
+import { ChannelName } from "@/constant";
+import { Control } from "@/messages/control";
 
 register();
 
+const user = inject("user") as RoomUser;
 const i18n = inject("i18n") as I18n;
-const theme = inject("theme") as string;
+const theme = inject("theme") as "dark" | "light";
 const locale = inject("locale") as string;
+const logger = inject("logger") as Logger;
 const client = inject("client") as Client;
 const t = i18n.global.t as VueI18nTranslation;
 
@@ -45,16 +51,31 @@ const text_messages = {
     SEARCH: t("SEARCH"),
     TYPE_MESSAGE: t("TYPE_MESSAGE"),
 };
+
+const rooms = reactive<Room[]>([]);
+const messages = reactive<Message[]>([]);
+
+const control_channel = client.broadcast({ channel: ChannelName.control });
+const control = new Control(
+    t,
+    control_channel,
+    logger,
+    user,
+    rooms,
+    messages,
+);
+control.online();
 </script>
 
 <template>
     <vue-advanced-chat
         height="100vh"
-        :current-user-id="'user-id'"
-        :rooms="[]"
-        :messages="[]"
+        :current-user-id="user._id"
         :theme="theme"
         :emoji-data-source="emoji_data_source"
+
+        :rooms.prop="rooms"
+        :messages.prop="messages"
         :text-messages.prop="{
             /* REF: https://cn.vuejs.org/guide/extras/web-components.html#passing-dom-properties */
             ...text_messages,
@@ -62,5 +83,4 @@ const text_messages = {
     />
 </template>
 
-<style scoped lang="less">
-</style>
+<style scoped lang="less"></style>
