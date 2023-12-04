@@ -18,11 +18,28 @@
 import { UserConfig } from "vite";
 import { resolve } from "node:path";
 
+import vue from '@vitejs/plugin-vue';
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
 // https://vitejs.dev/config/
 export default {
     plugins: [
+        vue({
+            template: {
+                compilerOptions: {
+                    // REF: https://www.npmjs.com/package/vue-advanced-chat#vue
+                    isCustomElement: tag => {
+                        // console.log(tag);
+                        switch (tag) {
+                            case "vue-advanced-chat":
+                                return true;
+                            default:
+                                return false;
+                        }
+                    },
+                },
+            },
+        }),
         viteStaticCopy({
             targets: [
                 /* emoji-picker-element-data */

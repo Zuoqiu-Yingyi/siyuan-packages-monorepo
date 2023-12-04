@@ -26,16 +26,19 @@ import zh_Hant from "@/locales/zh-Hant.json";
 
 import { createApp } from "vue";
 import { createI18n } from "vue-i18n";
+import type { RoomUser } from "vue-advanced-chat";
 
 import { Client, KernelError } from "@siyuan-community/siyuan-sdk";
 import { mapLang } from "@workspace/utils/locale/language";
 import { trimSuffix } from "@workspace/utils/misc/string";
+import { auth } from "@workspace/utils/siyuan/url";
 import { FLAG_LIGHT } from "@workspace/utils/env/native-front-end";
-
-import { ChannelName } from "@/constant";
-import App from "./App.vue";
+import { id } from "@workspace/utils/siyuan/id";
 
 import { Logger } from "@workspace/utils/logger";
+
+import App from "./App.vue";
+import CONSTANT from "~/src/constant";
 
 (async () => {
     /* 主题 */
@@ -49,9 +52,14 @@ import { Logger } from "@workspace/utils/logger";
         baseURL: trimSuffix(globalThis.location.origin, `plugins/${manifest.name}/apps/client.html`),
     });
 
-    await client.broadcast({
-        channel: ChannelName.control,
-    });
+    try {
+        /* 验证是否已通过认证 */
+        const response = await client.echo({ method: "POST" });
+        var ip = response.data.Context.ClientIP || response.data.Context.RemoteIP;
+    } catch (error) {
+        auth(); // 跳转到认证页面
+        return;
+    }
 
     /* 本地化 */
     const locale = mapLang(); // 语言
@@ -71,6 +79,34 @@ import { Logger } from "@workspace/utils/logger";
 
     globalThis.document.title = i18n.global.t("inbox") as string;
 
+    /* 当前用户信息 */
+    const user: RoomUser = (() => {
+        try {
+            const user_json = globalThis.sessionStorage.getItem(CONSTANT.SESSION_STORAGE_URL_NAME);
+            if (user_json) {
+                const current_user: RoomUser = JSON.parse(user_json);
+                current_user.status.state = "online";
+                return current_user;
+            }
+        } finally {
+            // @ts-ignore
+            const platform = globalThis.navigator.userAgentData?.platform
+                || globalThis.navigator.platform;
+            const current_user_id = id();
+            const current_user: RoomUser = {
+                _id: current_user_id,
+                username: [ip, platform, current_user_id].join("-"),
+                avatar: "",
+                status: {
+                    state: "online",
+                    lastChanged: new Date().toISOString(),
+                },
+            };
+            globalThis.sessionStorage.setItem(CONSTANT.SESSION_STORAGE_URL_NAME, JSON.stringify(current_user));
+            return current_user;
+        }
+    })();
+
     /* 初始化应用 */
     const app = createApp(App);
 
@@ -78,14 +114,18 @@ import { Logger } from "@workspace/utils/logger";
      * 启用开发模式的性能分析
      * REF: https://cn.vuejs.org/api/application.html#app-config-performance
      */
-    app.config.performance = true;
+    // app.config.performance = true;
 
     app.use(i18n);
 
+    app.provide("user", user);
     app.provide("i18n", i18n);
     app.provide("theme", theme);
     app.provide("locale", locale);
+    app.provide("logger", logger);
     app.provide("client", client);
 
-    app.mount(globalThis.document.body);
+    const root = globalThis.document.createElement("div");
+    globalThis.document.body.append(root);
+    app.mount(root);
 })();

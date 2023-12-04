@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-12-05
+
+- 添加上线与离线状态广播 | Add online and offline status broadcast.
+
 ## 2023-12-02
 
 - 优化安卓端打开方案 | Optimize the open scheme on Android.

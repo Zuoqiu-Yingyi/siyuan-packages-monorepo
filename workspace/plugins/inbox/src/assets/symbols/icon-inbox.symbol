@@ -1,0 +1,10 @@
+<symbol id="icon-inbox" viewBox="0 0 256 256">
+    <path
+        fill="#d23f31"
+        d="M 48 104 V200 H144 V136 H112 V168 H80 V136 H96 V104 Z"
+    />
+    <path
+        fill="#3b3e43"
+        d="M 112 56 V120 H144 V88 H176 V120 H160 V152 H208 V56 Z"
+    />
+</symbol>
