@@ -74,7 +74,7 @@ export class Control {
         }
 
         this._inbox = {
-            roomId: "default",
+            roomId: "main",
             roomName: this.t("inbox"),
             avatar: "",
             users: [
