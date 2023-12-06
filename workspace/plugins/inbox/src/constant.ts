@@ -19,8 +19,8 @@ export enum ChannelName {
     control = "plugin-inbox-control",
 }
 
-export const SESSION_STORAGE_URL_NAME = "plugin-inbox-user";
+export const STORAGE_USER_NAME = "plugin-inbox-user";
 
 export default {
-    SESSION_STORAGE_URL_NAME,
+    STORAGE_USER_NAME,
 } as const;

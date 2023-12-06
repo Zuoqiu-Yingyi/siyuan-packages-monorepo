@@ -18,12 +18,15 @@
 import siyuan from "siyuan";
 import type { ISiyuanGlobal } from "@workspace/types/siyuan";
 
+import icon_inbox from "./assets/symbols/icon-inbox.symbol?raw";
+
 import {
     Client,
     type types,
 } from "@siyuan-community/siyuan-sdk";
 
 import Settings from "./components/Settings.svelte";
+import InboxDock from "./components/InboxDock.svelte";
 
 import {
     FLAG_MOBILE,
@@ -36,18 +39,25 @@ import type { IConfig } from "./types/config";
 
 declare var globalThis: ISiyuanGlobal;
 
-export default class TemplatePlugin extends siyuan.Plugin {
-    static readonly GLOBAL_CONFIG_NAME = "global-config";
-
+export default class InboxPlugin extends siyuan.Plugin {
+    static readonly GLOBAL_CONFIG_NAME = "config.json";
+    
     declare public readonly i18n: I18N;
-
+    
     public readonly siyuan = siyuan;
     public readonly logger: InstanceType<typeof Logger>;
     public readonly client: InstanceType<typeof Client>;
-
+    
     protected readonly SETTINGS_DIALOG_ID: string;
+    protected readonly INBOX_APP_PATH: string;
 
-    protected config: IConfig = DEFAULT_CONFIG;
+    protected config: IConfig = mergeIgnoreArray(DEFAULT_CONFIG);
+
+    protected inboxDock!: {
+        dock: ReturnType<siyuan.Plugin["addDock"]>,
+        model?: siyuan.IDockModel,
+        component?: InstanceType<typeof InboxDock>,
+    }; // 收集箱面板
 
     constructor(options: any) {
         super(options);
@@ -56,6 +66,7 @@ export default class TemplatePlugin extends siyuan.Plugin {
         this.client = new Client(undefined, "fetch");
 
         this.SETTINGS_DIALOG_ID = `${this.name}-settings-dialog`;
+        this.INBOX_APP_PATH = `plugins/${this.name}/apps/inbox.html`;
     }
 
     onload(): void {
@@ -63,9 +74,47 @@ export default class TemplatePlugin extends siyuan.Plugin {
 
         /* 注册图标 */
         this.addIcons([
+            icon_inbox,
         ].join(""));
 
-        this.loadData(TemplatePlugin.GLOBAL_CONFIG_NAME)
+        /* 注册侧边栏 */
+        const plugin = this;
+        this.inboxDock = {
+            dock: this.addDock({
+                config: {
+                    position: "RightTop",
+                    size: { width: 256, height: 0 },
+                    icon: "icon-inbox",
+                    title: this.displayName,
+                    show: true,
+                },
+                data: {
+                    src: plugin.INBOX_APP_PATH,
+                },
+                type: "-dock",
+                init() {
+                    // plugin.logger.debug(this);
+
+                    this.element.classList.add("fn__flex-column");
+                    const dock = new InboxDock({
+                        target: this.element,
+                        props: {
+                            plugin,
+                            ...this.data,
+                        },
+                    });
+                    plugin.inboxDock.model = this;
+                    plugin.inboxDock.component = dock;
+                },
+                destroy() {
+                    plugin.inboxDock.component?.$destroy();
+                    delete plugin.inboxDock.component;
+                    delete plugin.inboxDock.model;
+                },
+            }),
+        };
+
+        this.loadData(InboxPlugin.GLOBAL_CONFIG_NAME)
             .then(config => {
                 this.config = mergeIgnoreArray(DEFAULT_CONFIG, config || {}) as IConfig;
             })
@@ -110,6 +159,6 @@ export default class TemplatePlugin extends siyuan.Plugin {
         if (config && config !== this.config) {
             this.config = config;
         }
-        return this.saveData(TemplatePlugin.GLOBAL_CONFIG_NAME, this.config);
+        return this.saveData(InboxPlugin.GLOBAL_CONFIG_NAME, JSON.stringify(this.config, undefined, 4));
     }
 };
