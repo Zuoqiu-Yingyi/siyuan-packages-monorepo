@@ -16,14 +16,13 @@
 -->
 
 <script setup lang="ts">
-import { inject, reactive } from "vue";
+import { inject, shallowRef } from "vue";
 import type { I18n, VueI18nTranslation } from "vue-i18n";
 import { register, VueAdvancedChat, type RoomUser, type Room, type Message } from "vue-advanced-chat";
 
 import type { Logger } from "@workspace/utils/logger";
 import type { Client } from "@siyuan-community/siyuan-sdk";
 
-import { ChannelName } from "@/constant";
 import { Control } from "@/messages/control";
 
 register();
@@ -52,17 +51,20 @@ const text_messages = {
     TYPE_MESSAGE: t("TYPE_MESSAGE"),
 };
 
-const rooms = reactive<Room[]>([]);
-const messages = reactive<Message[]>([]);
+const rooms = shallowRef<Room[]>([]);
+const messages = shallowRef<Message[]>([]);
+const roomsLoaded = shallowRef<boolean>(false);
+const messagesLoaded = shallowRef<boolean>(false);
 
-const control_channel = client.broadcast({ channel: ChannelName.control });
 const control = new Control(
     t,
-    control_channel,
+    client,
     logger,
     user,
     rooms,
+    roomsLoaded,
     messages,
+    messagesLoaded,
 );
 control.online();
 </script>
@@ -71,6 +73,8 @@ control.online();
     <vue-advanced-chat
         height="100vh"
         :current-user-id="user._id"
+        :rooms-loaded="roomsLoaded"
+        :messages-loaded="messagesLoaded"
         :theme="theme"
         :emoji-data-source="emoji_data_source"
 

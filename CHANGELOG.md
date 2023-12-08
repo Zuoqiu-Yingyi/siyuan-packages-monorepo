@@ -1,5 +1,13 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-12-08
+
+- 使用 CRDT 算法在不同客户端之间同步消息 | Use CRDT algorithm to synchronize messages between different clients.
+
+## 2023-12-06
+
+- 添加收集箱侧边面板 | Add inbox dock panel.
+
 ## 2023-12-05
 
 - 添加上线与离线状态广播 | Add online and offline status broadcast.

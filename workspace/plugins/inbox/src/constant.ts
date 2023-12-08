@@ -15,12 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import manifest from "~/public/plugin.json";
+
 export enum ChannelName {
     control = "plugin-inbox-control",
+    data = "plugin-inbox-data",
 }
 
 export const STORAGE_USER_NAME = "plugin-inbox-user";
-
-export default {
-    STORAGE_USER_NAME,
-} as const;
+export const PETAL_DATA_DIRECTORY = `data/storage/petal/${manifest.name}`;
+export const ROOMS_DATA_FILE_PATH = `${PETAL_DATA_DIRECTORY}/rooms.json`;
+export const MESSAGES_DATA_FILE_PATH = `${PETAL_DATA_DIRECTORY}/messages.json`;
+export const MAIN_ROOM_ID = "main";

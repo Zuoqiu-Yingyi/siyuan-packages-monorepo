@@ -15,8 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as Y from "yjs";
+import { WebsocketProvider } from "y-websocket";
+
+import { Client } from "@siyuan-community/siyuan-sdk";
+import * as Constants from "@/constant";
+
 import type { Logger } from "@workspace/utils/logger";
-import type { UnwrapNestedRefs } from "vue";
+import type { ShallowRef } from "vue";
 import type {
     Message,
     Room,
@@ -50,38 +56,117 @@ export interface IStatusResponseMessage extends Omit<IBaseStatusMessage, "receiv
 export class Control {
     protected readonly _inbox: Room;
     protected readonly _ready: Promise<void>;
+
+    protected readonly _ws_control: WebSocket;
+
+    protected readonly _y_doc: Y.Doc;
+    protected readonly _y_provider: WebsocketProvider;
+    protected readonly _y_rooms: Y.Array<Room>;
+    protected readonly _y_messages: Y.Array<Message>;
+
     constructor(
         protected readonly t: VueI18nTranslation,
-        protected readonly _ws: WebSocket,
+        protected readonly _client: Client,
         protected readonly _logger: Logger,
         protected readonly _user: RoomUser,
-        protected readonly _rooms: UnwrapNestedRefs<Room[]>,
-        protected readonly _messages: UnwrapNestedRefs<Message[]>,
+        protected readonly _rooms: ShallowRef<Room[]>,
+        protected readonly _rooms_loaded: ShallowRef<boolean>,
+        protected readonly _messages: ShallowRef<Message[]>,
+        protected readonly _messages_loaded: ShallowRef<boolean>,
     ) {
-        this._ws.addEventListener("open", this.onopen);
-        this._ws.addEventListener("message", this.onmessage);
-        this._ws.addEventListener("error", this.onerror);
-        this._ws.addEventListener("close", this.onclose);
-        globalThis.addEventListener("beforeunload", this.onbeforeunload);
-
-        if (this._ws.readyState === WebSocket.OPEN) {
-            this._ready = Promise.resolve();
-        }
-        else {
-            this._ready = new Promise<void>(resolve => {
-                this._ws.onopen = () => resolve();
-            });
-        }
-
         this._inbox = {
-            roomId: "main",
+            roomId: Constants.MAIN_ROOM_ID,
             roomName: this.t("inbox"),
             avatar: "",
             users: [
                 this._user,
             ],
         };
-        this._rooms.push(this._inbox);
+        this._ws_control = this._client.broadcast({ channel: Constants.ChannelName.control });
+        this._ws_control.addEventListener("open", this.onopen);
+        this._ws_control.addEventListener("message", this.onmessage);
+        this._ws_control.addEventListener("error", this.onerror);
+        this._ws_control.addEventListener("close", this.onclose);
+
+        const url = new URL(this._ws_control.url);
+        const paths = url.pathname.split("/");
+        const roomname = paths.pop() as string;
+        url.pathname = paths.join("/");
+        url.search = "";
+        url.hash = "";
+
+        this._y_doc = new Y.Doc();
+        this._y_rooms = this._y_doc.getArray("rooms");
+        this._y_messages = this._y_doc.getArray("messages");
+        this._y_provider = new WebsocketProvider(
+            url.href,
+            roomname,
+            this._y_doc,
+            {
+                connect: false,
+                params: {
+                    channel: Constants.ChannelName.data,
+                },
+            },
+        );
+        this._ready = this.init();
+        this._ready.then(() => {
+            this._rooms_loaded.value = true;
+            this._messages_loaded.value = true;
+
+            globalThis.addEventListener("beforeunload", this.onbeforeunload);
+            globalThis.document.addEventListener("visibilitychange", this.onvisibilitychange);
+        });
+    }
+
+    protected async init(): Promise<void> {
+        this._y_doc.on("update", this.onupdate);
+        this._y_doc.on("updateV2", this.onupdate);
+
+        const online_client_number = await this._getChannelListenerNumber();
+
+        if (online_client_number === 0) {
+            const results = await Promise.allSettled([
+                this._client.getFile({ path: Constants.ROOMS_DATA_FILE_PATH }, "json"),
+                this._client.getFile({ path: Constants.MESSAGES_DATA_FILE_PATH }, "json"),
+            ]);
+            if (results[0].status === "fulfilled") { // rooms
+                const rooms = results[0].value as Room[];
+                const main_room = rooms.find(room => room.roomId === Constants.MAIN_ROOM_ID);
+                if (main_room) {
+                    const current_user = main_room.users.find(user => user._id === this._user._id);
+                    if (!current_user) {
+                        main_room.users.push(this._user);
+                    }
+                }
+                else {
+                    rooms.push(this._inbox);
+                }
+                this._y_rooms.push(rooms);
+            }
+            else {
+                this._y_rooms.push([this._inbox]);
+            }
+            if (results[1].status === "fulfilled") { // messages
+                this._y_messages.push(results[1].value as Message[]);
+            }
+        }
+
+        this._y_provider.connect();
+        return new Promise<void>(resolve => {
+            if (this._ws_control.readyState === WebSocket.OPEN) {
+                resolve();
+            }
+            else {
+                this._ws_control.onopen = () => resolve();
+            }
+        });
+    }
+
+    public destroy(): void {
+        this._y_provider.destroy();
+        this._y_doc.destroy();
+        this._ws_control.close();
     }
 
     public online(): void {
@@ -147,7 +232,16 @@ export class Control {
 
     protected async _sendMessage(data: string | Blob | ArrayBufferLike | ArrayBufferView): Promise<void> {
         await this._ready;
-        this._ws.send(data);
+        this._ws_control.send(data);
+    }
+
+    protected async _getChannelListenerNumber(name: string = Constants.ChannelName.data): Promise<number> {
+        try {
+            const response = await this._client.getChannelInfo({ name });
+            return response.data.channel.count;
+        } catch (error) {
+            return 0;
+        }
     }
 
     /**
@@ -221,5 +315,32 @@ export class Control {
 
     protected readonly onbeforeunload = (e: BeforeUnloadEvent) => {
         this.offline();
+    }
+
+    protected readonly onvisibilitychange = (e: Event) => {
+        // this._logger.debug("onvisibilitychange");
+
+        // REF: https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon
+        if (document.visibilityState === "hidden") {
+            const rooms = new FormData();
+            rooms.append("path", Constants.ROOMS_DATA_FILE_PATH);
+            rooms.append("file", new Blob([JSON.stringify(this._rooms.value, undefined, 4)]));
+            navigator.sendBeacon(Client.api.file.putFile.pathname, rooms);
+
+            const messages = new FormData();
+            messages.append("path", Constants.MESSAGES_DATA_FILE_PATH);
+            messages.append("file", new Blob([JSON.stringify(this._messages.value, undefined, 4)]));
+            navigator.sendBeacon(Client.api.file.putFile.pathname, messages);
+        }
+    }
+
+    protected readonly onupdate = async (
+        update: Uint8Array,
+        origin: any,
+        doc: Y.Doc,
+    ) => {
+        // this._logger.debugs("onupdate", update, origin, doc);
+        this._rooms.value = [...this._y_rooms.toArray()];
+        this._messages.value = [...this._y_messages.toArray()];
     }
 }

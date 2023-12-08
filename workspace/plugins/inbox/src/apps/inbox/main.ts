@@ -38,7 +38,7 @@ import { id } from "@workspace/utils/siyuan/id";
 import { Logger } from "@workspace/utils/logger";
 
 import App from "./App.vue";
-import CONSTANT from "~/src/constant";
+import * as Constants from "~/src/constant";
 
 (async () => {
     /* 主题 */
@@ -82,7 +82,7 @@ import CONSTANT from "~/src/constant";
     /* 当前用户信息 */
     const user: RoomUser = (() => {
         try {
-            const user_json = globalThis.sessionStorage.getItem(CONSTANT.STORAGE_USER_NAME);
+            const user_json = globalThis.sessionStorage.getItem(Constants.STORAGE_USER_NAME);
             if (user_json) {
                 const current_user: RoomUser = JSON.parse(user_json);
                 current_user.status.state = "online";
@@ -102,7 +102,7 @@ import CONSTANT from "~/src/constant";
                     lastChanged: new Date().toISOString(),
                 },
             };
-            globalThis.sessionStorage.setItem(CONSTANT.STORAGE_USER_NAME, JSON.stringify(current_user));
+            globalThis.sessionStorage.setItem(Constants.STORAGE_USER_NAME, JSON.stringify(current_user));
             return current_user;
         }
     })();
