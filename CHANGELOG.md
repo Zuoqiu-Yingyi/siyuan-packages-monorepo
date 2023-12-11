@@ -3,6 +3,7 @@
 ## 2023-12-11
 
 - 修复设置页签标题栏样式问题 | Fix the issue of setting tab title bar style.
+- 支持自定义编辑器折行方案 | Support custom editor word wrap scheme.
 
 ## 2023-12-08
 
