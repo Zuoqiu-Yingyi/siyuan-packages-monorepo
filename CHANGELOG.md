@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-12-11
+
+- 修复设置页签标题栏样式问题 | Fix the issue of setting tab title bar style.
+
 ## 2023-12-08
 
 - 使用 CRDT 算法在不同客户端之间同步消息 | Use CRDT algorithm to synchronize messages between different clients.
