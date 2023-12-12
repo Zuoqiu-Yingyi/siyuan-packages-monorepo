@@ -1,5 +1,10 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-12-12
+
+- 修复在 `BrowserWindow` 中编辑器无法加载问题 | Fix the issue that the editor cannot be loaded in `BrowserWindow`.
+- 改进上下文菜单关闭交互 | Improve context menu close interaction.
+
 ## 2023-12-11
 
 - 修复设置页签标题栏样式问题 | Fix the issue of setting tab title bar style.
