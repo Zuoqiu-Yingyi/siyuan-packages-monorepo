@@ -16,7 +16,7 @@ import { Client } from "@siyuan-community/siyuan-sdk";
 import { setThemeMode } from "./utils/theme";
 
 /* 类型 */
-import { ISiyuan } from "./types/siyuan";
+import { ISiyuanVariable } from "@workspace/types/siyuan";
 import { IData } from "./types/data";
 
 /* 语言包 */
@@ -54,7 +54,7 @@ async function init() {
         }, "fetch");
     }
 
-    var siyuan: ISiyuan;
+    var siyuan: ISiyuanVariable;
 
     if (globalThis.frameElement) { // 以 widget 或者 iframe 模式加载
         /* 获取思源应用对象 */
