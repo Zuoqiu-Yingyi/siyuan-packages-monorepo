@@ -5,6 +5,10 @@
     "publishConfig": {
         "access": "public"
     },
+    "dependencies": {
+        "@workspace/tsconfig": "workspace:^",
+        "@workspace/types": "workspace:^"
+    },
     "devDependencies": {
         "@kayahr/text-encoding": "^1.2.0",
         "@types/file-saver": "^2.0.7",
@@ -42,9 +46,5 @@
         "threads-es": "^1.0.0",
         "uuid": "^9.0.1",
         "valid-filename": "^4.0.0"
-    },
-    "dependencies": {
-        "@workspace/tsconfig": "workspace:^",
-        "@workspace/types": "workspace:^"
     }
 }

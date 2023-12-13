@@ -7,11 +7,6 @@
         "build": "vite build",
         "build:dev": "vite build --sourcemap inline"
     },
-    "devDependencies": {
-        "@types/node": "^20.9.4",
-        "typescript": "^5.3.2",
-        "vite": "^5.0.2"
-    },
     "dependencies": {
         "@workspace/types": "workspace:^",
         "@workspace/utils": "workspace:^"

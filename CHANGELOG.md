@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-12-13
+
+- 提取部分依赖至工作空间 | Extract some dependencies to workspace.
+
 ## 2023-12-12
 
 - 修复在 `BrowserWindow` 中编辑器无法加载问题 | Fix the issue that the editor cannot be loaded in `BrowserWindow`.
