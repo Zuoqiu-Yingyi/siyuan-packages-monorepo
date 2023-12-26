@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-12-27
+
+- 优化云收集箱面板内容查看功能 | Optimize cloud inbox panel content viewing function.
+
 ## 2023-12-13
 
 - 提取部分依赖至工作空间 | Extract some dependencies to workspace.

@@ -59,6 +59,10 @@ export interface IOpenMenuDocTreeEvent extends CustomEvent<siyuan.IEventBusMap["
     // type: "open-menu-content";
 }
 
+export interface IOpenMenuInboxEvent extends CustomEvent<siyuan.IEventBusMap["open-menu-inbox"]> {
+    // type: "open-menu-inbox";
+}
+
 export interface IOpenSiyuanUrlEvent extends CustomEvent<siyuan.IEventBusMap["open-siyuan-url"]> {
     // type: "open-siyuan-url";
 }
