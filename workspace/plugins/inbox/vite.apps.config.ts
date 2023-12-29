@@ -32,6 +32,7 @@ export default {
                         // console.log(tag);
                         switch (tag) {
                             case "vue-advanced-chat":
+                            case "emoji-picker":
                                 return true;
                             default:
                                 return false;
