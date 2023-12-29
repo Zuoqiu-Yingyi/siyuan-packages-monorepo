@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2023-12-30
+
+- 修复 `vue-advanced-chat` 组件无法正常注册问题 | Fix the issue that the `vue-advanced-chat` component cannot be registered normally.
+
 ## 2023-12-27
 
 - 优化云收集箱面板内容查看功能 | Optimize cloud inbox panel content viewing function.

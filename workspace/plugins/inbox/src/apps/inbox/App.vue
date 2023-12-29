@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { inject, shallowRef } from "vue";
 import type { I18n, VueI18nTranslation } from "vue-i18n";
-import { register, VueAdvancedChat, type RoomUser, type Room, type Message } from "vue-advanced-chat";
+import { register, type VueAdvancedChat, type RoomUser, type Room, type Message } from "vue-advanced-chat";
 
 import type { Logger } from "@workspace/utils/logger";
 import type { Client } from "@siyuan-community/siyuan-sdk";
@@ -56,16 +56,7 @@ const messages = shallowRef<Message[]>([]);
 const roomsLoaded = shallowRef<boolean>(false);
 const messagesLoaded = shallowRef<boolean>(false);
 
-const control = new Control(
-    t,
-    client,
-    logger,
-    user,
-    rooms,
-    roomsLoaded,
-    messages,
-    messagesLoaded,
-);
+const control = new Control(t, client, logger, user, rooms, roomsLoaded, messages, messagesLoaded);
 control.online();
 </script>
 
