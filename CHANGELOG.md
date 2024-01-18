@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-01-19
+
+- 优化聊天室消息列表加载 | Optimize chat room message list loading.
+
 ## 2023-12-30
 
 - 修复 `vue-advanced-chat` 组件无法正常注册问题 | Fix the issue that the `vue-advanced-chat` component cannot be registered normally.

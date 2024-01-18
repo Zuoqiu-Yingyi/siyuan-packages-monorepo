@@ -10,7 +10,7 @@
         "@workspace/types": "workspace:^"
     },
     "devDependencies": {
-        "@kayahr/text-encoding": "^1.2.0",
+        "@kayahr/text-encoding": "^1.2.1",
         "@types/file-saver": "^2.0.7",
         "@types/html-escaper": "^3.0.2",
         "@types/jstimezonedetect": "^1.0.6",
@@ -19,6 +19,7 @@
         "@types/mime-types": "^2.1.4",
         "@types/parse-data-url": "^3.0.2",
         "@types/streamsaver": "^2.0.4",
+        "@types/ua-parser-js": "^0.7.39",
         "@types/uuid": "^9.0.7",
         "binary-extensions": "^2.2.0",
         "browser-fs-access": "^0.34.1",
@@ -36,7 +37,7 @@
         "mapbox-to-css-font": "^2.4.2",
         "media-typer": "^1.1.0",
         "mime-types": "^2.1.35",
-        "moment": "^2.29.4",
+        "moment": "^2.30.1",
         "mrmime": "^1.0.1",
         "normalize-path": "^3.0.0",
         "parse-data-url": "^5.0.0",
@@ -44,6 +45,7 @@
         "selection-range": "^1.1.0",
         "text-extensions": "^2.4.0",
         "threads-es": "^1.0.0",
+        "ua-parser-js": "^1.0.37",
         "uuid": "^9.0.1",
         "valid-filename": "^4.0.0"
     }
