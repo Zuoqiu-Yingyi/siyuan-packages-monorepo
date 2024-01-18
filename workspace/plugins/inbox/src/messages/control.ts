@@ -56,6 +56,7 @@ export interface IStatusResponseMessage extends Omit<IBaseStatusMessage, "receiv
 export class Control {
     protected readonly _inbox: Room;
     protected readonly _ready: Promise<void>;
+    protected _resolve!: (value: void | PromiseLike<void>) => void;
 
     protected readonly _ws_control: WebSocket;
 
@@ -74,6 +75,7 @@ export class Control {
         protected readonly _messages: ShallowRef<Message[]>,
         protected readonly _messages_loaded: ShallowRef<boolean>,
     ) {
+        /* 主聊天室 */
         this._inbox = {
             roomId: Constants.MAIN_ROOM_ID,
             roomName: this.t("inbox"),
@@ -82,6 +84,8 @@ export class Control {
                 this._user,
             ],
         };
+
+        /* 控制信道 */
         this._ws_control = this._client.broadcast({ channel: Constants.ChannelName.control });
         this._ws_control.addEventListener("open", this.onopen);
         this._ws_control.addEventListener("message", this.onmessage);
@@ -95,6 +99,7 @@ export class Control {
         url.search = "";
         url.hash = "";
 
+        /* 使用 CRDT 算法同步的数据 */
         this._y_doc = new Y.Doc();
         this._y_rooms = this._y_doc.getArray("rooms");
         this._y_messages = this._y_doc.getArray("messages");
@@ -109,17 +114,32 @@ export class Control {
                 },
             },
         );
-        this._ready = this.init();
-        this._ready.then(() => {
-            this._rooms_loaded.value = true;
-            this._messages_loaded.value = true;
 
-            globalThis.addEventListener("beforeunload", this.onbeforeunload);
-            globalThis.document.addEventListener("visibilitychange", this.onvisibilitychange);
+        /* 等待初始化完成 */
+        this._ready = new Promise<void>(resolve => {
+            let resolved = false;
+            this._resolve = () => {
+                if (!resolved) {
+                    resolved = true;
+                    resolve();
+                }
+            };
         });
     }
 
-    protected async init(): Promise<void> {
+    /**
+     * 异步初始化
+     */
+    public async init(): Promise<void> {
+        await this._init();
+
+        globalThis.addEventListener("beforeunload", this.onbeforeunload);
+        globalThis.document.addEventListener("visibilitychange", this.onvisibilitychange);
+
+        this._resolve();
+    }
+
+    protected async _init(): Promise<void> {
         this._y_doc.on("update", this.onupdate);
         this._y_doc.on("updateV2", this.onupdate);
 
@@ -177,6 +197,112 @@ export class Control {
     public offline(): void {
         this._user.status.state = "offline";
         this._sendCurrentUserState(true);
+    }
+
+    /**
+     * vue-advanced-chat 事件处理
+     */
+    public async handler(e: CustomEvent) {
+        this._logger.debug(e);
+        await this._ready;
+
+        switch (e.type) {
+            /**
+             * 向下滚动聊天室列表到底部
+             */
+            case "fetch-more-rooms": {
+                break;
+            }
+            /**
+             * 收缩/展开聊天室列表 (单击消息列表左上角按钮)
+             */
+            case "toggle-rooms-list": {
+                const detail: {
+                    opened: boolean; // 聊天室列表是否处于展开状态
+                } = e.detail[0];
+                break;
+            }
+            /**
+             * 点击聊天室列表右上角的 + 按钮
+             */
+            case "add-room": {
+                break;
+            }
+            case "search-room":
+                break;
+            case "room-action-handler":
+                break;
+            case "room-info":
+                break;
+
+            /**
+             * 触发:
+             * - 某个聊天室初次加载时
+             * - 向上滚动聊天室消息列表到顶部时触发
+             */
+            case "fetch-messages": {
+                const detail: {
+                    options: {
+                        reset: boolean; // 聊天室是否为初次加载
+                    };
+                    room: Room; // 当前聊天室对象的代理
+                } = e.detail[0];
+                if (detail.options.reset) {
+                    this._messages_loaded.value = false;
+                    this._messages.value = this._y_messages.toArray();
+                    setTimeout(() => {
+                        this._messages_loaded.value = true;
+                    });
+                }
+                break;
+            }
+            /**
+             * 消息输入框中内容更改
+             * 发送消息后清空输入框
+             */
+            case "typing-message": {
+                const detail: {
+                    roomId: string; // 当前聊天室 ID
+                    message: string; // 消息输入框中的文本内容
+                } = e.detail[0];
+                break;
+            }
+            /**
+             * 点击消息发送按钮
+             */
+            case "send-message": {
+                const detail: {
+                    options: {
+                        reset: boolean; // 聊天室是否为初次加载
+                    };
+                    room: Room; // 当前聊天室对象的代理
+                } = e.detail[0];
+                break;
+            }
+            case "edit-message":
+                break;
+            case "delete-message":
+                break;
+            case "open-file":
+                break;
+            case "open-user-tag":
+                break;
+            case "open-failed-message":
+                break;
+            case "menu-action-handler":
+                break;
+            case "message-action-handler":
+                break;
+            case "message-selection-action-handler":
+                break;
+            case "send-message-reaction":
+                break;
+            case "textarea-action-handler":
+                break;
+
+            default:
+                break;
+        }
     }
 
     /**
@@ -313,10 +439,16 @@ export class Control {
         this._logger.info(e);
     }
 
+    /**
+     * 页面关闭前
+     */
     protected readonly onbeforeunload = (e: BeforeUnloadEvent) => {
         this.offline();
     }
 
+    /**
+     * 页面可视状态变更
+     */
     protected readonly onvisibilitychange = (e: Event) => {
         // this._logger.debug("onvisibilitychange");
 
@@ -340,7 +472,15 @@ export class Control {
         doc: Y.Doc,
     ) => {
         // this._logger.debugs("onupdate", update, origin, doc);
-        this._rooms.value = [...this._y_rooms.toArray()];
-        this._messages.value = [...this._y_messages.toArray()];
+        this._rooms_loaded.value = false;
+        this._messages_loaded.value = false;
+
+        this._rooms.value = this._y_rooms.toArray();
+        this._messages.value = this._y_messages.toArray();
+
+        setTimeout(() => {
+            this._rooms_loaded.value = true;
+            this._messages_loaded.value = true;
+        });
     }
 }

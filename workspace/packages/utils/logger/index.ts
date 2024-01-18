@@ -15,16 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { UA } from "./../misc/user-agent";
 
 /**
  * 日志记录器
  * REF: [Console - Web API 接口参考 | MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/console)
  */
 export class Logger {
+    protected readonly FLAG_FIREFOX: boolean;
     constructor(
         public label: string, // 日志标签名称
         public collapsed: boolean = true, // 是否折叠日志组
-    ) { }
+    ) {
+        this.FLAG_FIREFOX = UA.browser.name === "Firefox" || UA.engine.name === "Gecko";
+    }
 
     /**
      * 输出
@@ -37,7 +41,10 @@ export class Logger {
         multiple: boolean,
         ...args: any[]
     ): void {
-        const label = `[\x1b[4m${this.label}\x1b[0m] - <\x1b[1m${func.name.toUpperCase()}\x1b[0m>`; // 日志组标签
+        const label = this.FLAG_FIREFOX
+            ? `[${this.label}] - <${func.name.toUpperCase()}>`
+            : `[\x1b[4m${this.label}\x1b[0m] - <\x1b[1m${func.name.toUpperCase()}\x1b[0m>`; // 日志组标签
+
         if (this.collapsed) {
             globalThis.console.groupCollapsed(label); // 启用折叠日志组
         }

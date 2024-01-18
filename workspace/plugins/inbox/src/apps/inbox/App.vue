@@ -16,7 +16,7 @@
 -->
 
 <script setup lang="ts">
-import { inject, shallowRef } from "vue";
+import { inject, shallowRef, onMounted } from "vue";
 import type { I18n, VueI18nTranslation } from "vue-i18n";
 import { register, type VueAdvancedChat, type RoomUser, type Room, type Message } from "vue-advanced-chat";
 
@@ -35,8 +35,8 @@ const logger = inject("logger") as Logger;
 const client = inject("client") as Client;
 const t = i18n.global.t as VueI18nTranslation;
 
-const emoji_data_source = `./../libs/emoji-picker-element-data/${locale}/cldr/data.json`;
-const text_messages = {
+const emoji_data_source = `./../libs/emoji-picker-element-data/${locale}/cldr/data.json`; // 表情数据源
+const text_messages = { // 界面文本本地化
     CANCEL_SELECT_MESSAGE: t("CANCEL_SELECT_MESSAGE"),
     CONVERSATION_STARTED: t("CONVERSATION_STARTED"),
     IS_ONLINE: t("IS_ONLINE"),
@@ -57,7 +57,10 @@ const roomsLoaded = shallowRef<boolean>(false);
 const messagesLoaded = shallowRef<boolean>(false);
 
 const control = new Control(t, client, logger, user, rooms, roomsLoaded, messages, messagesLoaded);
-control.online();
+onMounted(async () => {
+    await control.init();
+    control.online();
+});
 </script>
 
 <template>
@@ -75,6 +78,27 @@ control.online();
             /* REF: https://cn.vuejs.org/guide/extras/web-components.html#passing-dom-properties */
             ...text_messages,
         }"
+
+        @fetch-more-rooms="control.handler"
+        @toggle-rooms-list="control.handler"
+        @add-room="control.handler"
+        @search-room="control.handler"
+        @room-action-handler="control.handler"
+        @room-info="control.handler"
+
+        @fetch-messages="control.handler"
+        @send-message="control.handler"
+        @edit-message="control.handler"
+        @delete-message="control.handler"
+        @open-file="control.handler"
+        @open-user-tag="control.handler"
+        @open-failed-message="control.handler"
+        @menu-action-handler="control.handler"
+        @message-action-handler="control.handler"
+        @message-selection-action-handler="control.handler"
+        @send-message-reaction="control.handler"
+        @textarea-action-handler="control.handler"
+        @typing-message="control.handler"
     />
 </template>
 

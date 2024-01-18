@@ -31,6 +31,7 @@ import type { RoomUser } from "vue-advanced-chat";
 import { Client, KernelError } from "@siyuan-community/siyuan-sdk";
 import { mapLang } from "@workspace/utils/locale/language";
 import { trimSuffix } from "@workspace/utils/misc/string";
+import { UA } from "@workspace/utils/misc/user-agent";
 import { auth } from "@workspace/utils/siyuan/url";
 import { FLAG_LIGHT } from "@workspace/utils/env/native-front-end";
 import { id } from "@workspace/utils/siyuan/id";
@@ -89,13 +90,17 @@ import * as Constants from "~/src/constant";
                 return current_user;
             }
         } finally {
-            // @ts-ignore
-            const platform = globalThis.navigator.userAgentData?.platform
-                || globalThis.navigator.platform;
             const current_user_id = id();
+            const username = [
+                UA.os.name,
+                UA.browser.name,
+                UA.device.vendor,
+                // ip,
+                current_user_id,
+            ].join("-");
             const current_user: RoomUser = {
                 _id: current_user_id,
-                username: [ip, platform, current_user_id].join("-"),
+                username,
                 avatar: "",
                 status: {
                     state: "online",
