@@ -26,7 +26,6 @@
         "videojs-record": "^4.6.0",
         "vue-advanced-chat": "^2.0.10",
         "vue-i18n": "^9.9.0",
-        "y-websocket": "^1.5.3",
         "yjs": "^13.6.10"
     }
 }

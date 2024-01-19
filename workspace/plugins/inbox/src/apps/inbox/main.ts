@@ -83,13 +83,17 @@ import * as Constants from "~/src/constant";
     /* 当前用户信息 */
     const user: RoomUser = (() => {
         try {
-            const user_json = globalThis.sessionStorage.getItem(Constants.STORAGE_USER_NAME);
+            const user_json = globalThis.localStorage.getItem(Constants.STORAGE_USER_NAME);
             if (user_json) {
                 const current_user: RoomUser = JSON.parse(user_json);
                 current_user.status.state = "online";
                 return current_user;
             }
-        } finally {
+            else {
+                throw new Error();
+            }
+        }
+        catch {
             const current_user_id = id();
             const username = [
                 UA.os.name,
@@ -107,10 +111,12 @@ import * as Constants from "~/src/constant";
                     lastChanged: new Date().toISOString(),
                 },
             };
-            globalThis.sessionStorage.setItem(Constants.STORAGE_USER_NAME, JSON.stringify(current_user));
+            globalThis.localStorage.setItem(Constants.STORAGE_USER_NAME, JSON.stringify(current_user));
             return current_user;
         }
     })();
+
+    logger.debug(user);
 
     /* 初始化应用 */
     const app = createApp(App);

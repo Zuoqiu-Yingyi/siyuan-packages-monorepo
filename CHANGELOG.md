@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-01-20
+
+- 实现客户端之间消息同步功能 | Implement message synchronization function between clients.
+
 ## 2024-01-19
 
 - 优化聊天室消息列表加载 | Optimize chat room message list loading.

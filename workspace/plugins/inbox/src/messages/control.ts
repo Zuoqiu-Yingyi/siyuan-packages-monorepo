@@ -16,15 +16,19 @@
  */
 
 import * as Y from "yjs";
-import { WebsocketProvider } from "y-websocket";
 
 import { Client } from "@siyuan-community/siyuan-sdk";
 import * as Constants from "@/constant";
+
+import { id } from "@workspace/utils/siyuan/id";
+import { moment } from "@workspace/utils/date/moment";
+import { deshake } from "@workspace/utils/misc/deshake";
 
 import type { Logger } from "@workspace/utils/logger";
 import type { ShallowRef } from "vue";
 import type {
     Message,
+    MessageFile,
     Room,
     RoomUser,
 } from "vue-advanced-chat";
@@ -34,6 +38,8 @@ import type {
     IBaseResponseMessage,
 } from ".";
 import type { VueI18nTranslation } from "vue-i18n";
+
+let interval: string | number | NodeJS.Timeout | undefined;
 
 export interface IBaseStatusMessage extends IBaseMessage {
     channel: "status";
@@ -56,14 +62,21 @@ export interface IStatusResponseMessage extends Omit<IBaseStatusMessage, "receiv
 export class Control {
     protected readonly _inbox: Room;
     protected readonly _ready: Promise<void>;
+    protected readonly _ready_ws: Promise<void>;
+    protected ready: boolean = false;
+    protected ready_ws: boolean = false;
     protected _resolve!: (value: void | PromiseLike<void>) => void;
+    protected _resolve_ws!: (value: void | PromiseLike<void>) => void;
 
     protected readonly _ws_control: WebSocket;
+    protected readonly _ws_data: WebSocket;
 
     protected readonly _y_doc: Y.Doc;
-    protected readonly _y_provider: WebsocketProvider;
-    protected readonly _y_rooms: Y.Array<Room>;
-    protected readonly _y_messages: Y.Array<Message>;
+    protected readonly _y_rooms: Y.Map<Room>; // 聊天室 ID -> 聊天室对象
+    protected readonly _y_messages: Y.Map<Message>; // 消息 ID -> 消息对象
+    protected readonly _y_room_messages: Y.Map<string[]>; // 聊天室 ID -> 消息列表
+
+    protected _current_room_id: string; // 当前聊天室 ID
 
     constructor(
         protected readonly t: VueI18nTranslation,
@@ -76,6 +89,7 @@ export class Control {
         protected readonly _messages_loaded: ShallowRef<boolean>,
     ) {
         /* 主聊天室 */
+        this._current_room_id = Constants.MAIN_ROOM_ID;
         this._inbox = {
             roomId: Constants.MAIN_ROOM_ID,
             roomName: this.t("inbox"),
@@ -83,44 +97,50 @@ export class Control {
             users: [
                 this._user,
             ],
+            index: 0,
         };
 
         /* 控制信道 */
         this._ws_control = this._client.broadcast({ channel: Constants.ChannelName.control });
-        this._ws_control.addEventListener("open", this.onopen);
-        this._ws_control.addEventListener("message", this.onmessage);
-        this._ws_control.addEventListener("error", this.onerror);
-        this._ws_control.addEventListener("close", this.onclose);
+        this._ws_control.addEventListener("open", this.onWsOpen);
+        this._ws_control.addEventListener("message", this.onWsControlMessage);
+        this._ws_control.addEventListener("error", this.onWsError);
+        this._ws_control.addEventListener("close", this.onWsClose);
 
-        const url = new URL(this._ws_control.url);
-        const paths = url.pathname.split("/");
-        const roomname = paths.pop() as string;
-        url.pathname = paths.join("/");
-        url.search = "";
-        url.hash = "";
+        this._ws_data = this._client.broadcast({ channel: Constants.ChannelName.data });
+        this._ws_data.addEventListener("open", this.onWsOpen);
+        this._ws_data.addEventListener("message", this.onWsDataMessage);
+        this._ws_data.addEventListener("error", this.onWsError);
+        this._ws_data.addEventListener("close", this.onWsClose);
 
         /* 使用 CRDT 算法同步的数据 */
-        this._y_doc = new Y.Doc();
-        this._y_rooms = this._y_doc.getArray("rooms");
-        this._y_messages = this._y_doc.getArray("messages");
-        this._y_provider = new WebsocketProvider(
-            url.href,
-            roomname,
-            this._y_doc,
-            {
-                connect: false,
-                params: {
-                    channel: Constants.ChannelName.data,
-                },
-            },
-        );
+        this._y_doc = new Y.Doc({
+            autoLoad: false,
+        });
+        this._y_rooms = this._y_doc.getMap("rooms");
+        this._y_messages = this._y_doc.getMap("messages");
+        this._y_room_messages = this._y_doc.getMap("room-messages");
+
+        this._y_rooms.observe(this.observeRooms);
+        this._y_messages.observe(this.observeMessages);
+        this._y_room_messages.observe(this.observeRoomMessages);
 
         /* 等待初始化完成 */
         this._ready = new Promise<void>(resolve => {
-            let resolved = false;
             this._resolve = () => {
-                if (!resolved) {
-                    resolved = true;
+                if (!this.ready) {
+                    globalThis.addEventListener("beforeunload", this.onbeforeunload);
+                    globalThis.document.addEventListener("visibilitychange", this.onvisibilitychange);
+
+                    this.ready = true;
+                    resolve();
+                }
+            };
+        });
+        this._ready_ws = new Promise<void>(resolve => {
+            this._resolve_ws = () => {
+                if (!this.ready_ws) {
+                    this.ready_ws = true;
                     resolve();
                 }
             };
@@ -131,28 +151,36 @@ export class Control {
      * 异步初始化
      */
     public async init(): Promise<void> {
-        await this._init();
+        await this._ready_ws;
 
-        globalThis.addEventListener("beforeunload", this.onbeforeunload);
-        globalThis.document.addEventListener("visibilitychange", this.onvisibilitychange);
+        // this._y_doc.on("update", this.onupdate);
+        this._y_doc.on("updateV2", this.onYjsUpdate);
+        this._y_doc.on("afterAllTransactions", this.onYjsAfterAllTransactions);
+
+        await this.load();
 
         this._resolve();
     }
 
-    protected async _init(): Promise<void> {
-        this._y_doc.on("update", this.onupdate);
-        this._y_doc.on("updateV2", this.onupdate);
+    /**
+     * 加载数据
+     */
+    public async load(): Promise<void> {
 
-        const online_client_number = await this._getChannelListenerNumber();
+        const online_client_number = await this._getOnlineClientNumber();
 
-        if (online_client_number === 0) {
+        if (online_client_number <= 1) {
+            /* 从文件加载数据 */
             const results = await Promise.allSettled([
                 this._client.getFile({ path: Constants.ROOMS_DATA_FILE_PATH }, "json"),
                 this._client.getFile({ path: Constants.MESSAGES_DATA_FILE_PATH }, "json"),
+                this._client.getFile({ path: Constants.ROOM_MESSAGES_MAP_FILE_PATH }, "json"),
             ]);
+
+            /* 房间列表 */
             if (results[0].status === "fulfilled") { // rooms
-                const rooms = results[0].value as Room[];
-                const main_room = rooms.find(room => room.roomId === Constants.MAIN_ROOM_ID);
+                const rooms = results[0].value as Record<string, Room>;
+                const main_room = rooms[Constants.MAIN_ROOM_ID];
                 if (main_room) {
                     const current_user = main_room.users.find(user => user._id === this._user._id);
                     if (!current_user) {
@@ -160,32 +188,50 @@ export class Control {
                     }
                 }
                 else {
-                    rooms.push(this._inbox);
+                    rooms[this._inbox.roomId] = this._inbox;
                 }
-                this._y_rooms.push(rooms);
+
+                Object.entries(rooms).forEach(([key, value]) => {
+                    this._y_rooms.set(key, value);
+                });
             }
             else {
-                this._y_rooms.push([this._inbox]);
+                this._y_rooms.set(this._inbox.roomId, this._inbox);
             }
+
+            /* 初始化消息 ID -> 消息对象 */
             if (results[1].status === "fulfilled") { // messages
-                this._y_messages.push(results[1].value as Message[]);
+                Object.entries(results[1].value).forEach(([key, value]: [string, Message]) => {
+                    this._y_messages.set(key, value);
+                });
+            }
+
+            /* 初始化房间 ID -> 消息列表 */
+            if (results[2].status === "fulfilled") { // messages
+                Object.entries(results[2].value).forEach(([key, value]: [string, string[]]) => {
+                    this._y_room_messages.set(key, value);
+                });
             }
         }
+        else {
+            // TODO: 从其他在线的客户端换获取数据
+        }
+    }
 
-        this._y_provider.connect();
-        return new Promise<void>(resolve => {
-            if (this._ws_control.readyState === WebSocket.OPEN) {
-                resolve();
-            }
-            else {
-                this._ws_control.onopen = () => resolve();
-            }
-        });
+    /**
+     * 保存数据
+     */
+    public async save(): Promise<void> {
+        await Promise.all([
+            this._client.putFile({ path: Constants.ROOMS_DATA_FILE_PATH, file: JSON.stringify(this._y_rooms.toJSON(), undefined, 4) }),
+            this._client.putFile({ path: Constants.MESSAGES_DATA_FILE_PATH, file: JSON.stringify(this._y_messages.toJSON(), undefined, 4) }),
+            this._client.putFile({ path: Constants.ROOM_MESSAGES_MAP_FILE_PATH, file: JSON.stringify(this._y_room_messages.toJSON(), undefined, 4) }),
+        ]);
     }
 
     public destroy(): void {
-        this._y_provider.destroy();
         this._y_doc.destroy();
+        this._ws_data.close();
         this._ws_control.close();
     }
 
@@ -242,18 +288,14 @@ export class Control {
              */
             case "fetch-messages": {
                 const detail: {
-                    options: {
+                    options?: {
                         reset: boolean; // 聊天室是否为初次加载
                     };
-                    room: Room; // 当前聊天室对象的代理
+                    room: Room; // 当前聊天室对象 (proxy)
                 } = e.detail[0];
-                if (detail.options.reset) {
-                    this._messages_loaded.value = false;
-                    this._messages.value = this._y_messages.toArray();
-                    setTimeout(() => {
-                        this._messages_loaded.value = true;
-                    });
-                }
+
+                this._current_room_id = detail.room.roomId;
+                this.updateMessages(detail.room.roomId);
                 break;
             }
             /**
@@ -263,8 +305,9 @@ export class Control {
             case "typing-message": {
                 const detail: {
                     roomId: string; // 当前聊天室 ID
-                    message: string; // 消息输入框中的文本内容
+                    message: string | null; // 消息输入框中的文本内容
                 } = e.detail[0];
+                // TODO: 广播当前正在编辑的用户
                 break;
             }
             /**
@@ -272,11 +315,48 @@ export class Control {
              */
             case "send-message": {
                 const detail: {
-                    options: {
-                        reset: boolean; // 聊天室是否为初次加载
-                    };
-                    room: Room; // 当前聊天室对象的代理
+                    roomId: string; // 当前聊天室 ID
+                    usersTag: RoomUser[]; // @ 的用户列表 (proxy)
+                    content: string; // 发送的消息
+                    files?: MessageFile[]; // 附件列表 (proxy)
+                    replyMessage?: Message; // 回复的消息
                 } = e.detail[0];
+
+                // 添加到消息列表
+                const date = new Date();
+                const datetime = moment(date);
+                const message: Message = {
+                    _id: id(), // 消息 ID
+                    indexId: datetime.valueOf(), // 用于修改消息时的索引
+                    date: datetime.format("YYYY-MM-DD"), // 日期
+                    timestamp: datetime.format("YYYY-MM-DD HH:mm:ss"), // 时间戳
+
+                    senderId: this._user._id, // 发送者 ID
+                    avatar: this._user.avatar, // 发送者头像
+                    username: this._user.username, // 发送者昵称
+
+                    content: detail.content, // 消息内容
+                    files: detail.files, // 消息附件
+                    replyMessage: detail.replyMessage, // 回复的消息
+
+                    system: false,
+                    saved: true,
+                    distributed: true,
+                    seen: true,
+                    deleted: false,
+                    edited: false,
+                    failure: false,
+                    disableActions: false,
+                    disableReactions: false,
+                };
+                const messages = this._y_room_messages.get(detail.roomId) || [];
+                messages.push(message._id);
+                this._y_room_messages.set(detail.roomId, messages);
+                this._y_messages.set(message._id, message);
+                // this.updateMessages(detail.roomId);
+
+                // TODO: 处理 files
+                // TODO: 通知 @ 的用户 / 所回复消息对应的用户
                 break;
             }
             case "edit-message":
@@ -295,8 +375,37 @@ export class Control {
                 break;
             case "message-selection-action-handler":
                 break;
-            case "send-message-reaction":
+            /**
+             * 使用表情 emoji 评论消息
+             */
+            case "send-message-reaction": {
+                const detail: {
+                    roomId: string; // 当前聊天室 ID
+                    messageId: string; // 消息 ID
+                    reaction: {
+                        unicode: string; // 表情 Unicode 字符
+                    };
+                    remove?: boolean; // 是否移除
+                } = e.detail[0];
+
+                const message = this._y_messages.get(detail.messageId);
+                if (message) {
+                    if (!message.reactions) {
+                        message.reactions = {};
+                    }
+                    const user_set = new Set(message.reactions[detail.reaction.unicode]);
+                    if (detail.remove) {
+                        user_set.delete(this._user._id);
+                    }
+                    else {
+                        user_set.add(this._user._id);
+                    }
+
+                    message.reactions[detail.reaction.unicode] = Array.from(user_set);
+                    this._y_messages.set(message._id, message);
+                }
                 break;
+            }
             case "textarea-action-handler":
                 break;
 
@@ -304,6 +413,42 @@ export class Control {
                 break;
         }
     }
+
+    /**
+     * 更新聊天室列表
+     */
+    public readonly updateRooms = deshake(() => {
+        this._rooms_loaded.value = false;
+
+        const rooms: Room[] = [];
+        for (const room of this._y_rooms.values()) {
+            rooms.push(room);
+        }
+        this._rooms.value = rooms;
+
+        /* 避免初始化时一直显示正在加载动画 */
+        setTimeout(() => {
+            this._rooms_loaded.value = true;
+        });
+    })
+
+    /**
+     * 更新消息列表
+     * @param roomId 聊天室 ID
+     */
+    public readonly updateMessages = deshake((roomId: string = this._current_room_id) => {
+        this._messages_loaded.value = false;
+
+        const messages = this._y_room_messages.get(roomId) || [];
+        this._messages.value = messages
+            .map(message_id => this._y_messages.get(message_id)!)
+            .filter(message => !!message);
+
+        /* 避免初始化时一直显示正在加载动画 */
+        setTimeout(() => {
+            this._messages_loaded.value = true;
+        });
+    })
 
     /**
      * 构造消息
@@ -353,18 +498,29 @@ export class Control {
                 user: this._user,
             },
         );
-        this._sendMessage(globalThis.JSON.stringify(message));
+        this._broadcastControlMessage(message);
     }
 
-    protected async _sendMessage(data: string | Blob | ArrayBufferLike | ArrayBufferView): Promise<void> {
-        await this._ready;
-        this._ws_control.send(data);
+    /**
+     * 广播控制消息
+     */
+    protected async _broadcastControlMessage(data: any): Promise<void> {
+        await this._ready_ws;
+        this._ws_control.send(globalThis.JSON.stringify(data));
     }
 
-    protected async _getChannelListenerNumber(name: string = Constants.ChannelName.data): Promise<number> {
+    /**
+     * 广播更新消息
+    */
+    protected async _broadcastUpdateMessage(data: Uint8Array): Promise<void> {
+        await this._ready_ws;
+        this._ws_data.send(data);
+    }
+
+    protected async _getOnlineClientNumber(name: string = Constants.ChannelName.data): Promise<number> {
         try {
             const response = await this._client.getChannelInfo({ name });
-            return response.data.channel.count;
+            return response.data.channel.count
         } catch (error) {
             return 0;
         }
@@ -373,10 +529,20 @@ export class Control {
     /**
      * 处理其他用户状态变更
      */
-    protected _handleOtherUserStateChange(message: IStatusBroadcastMessage): void {
+    protected async _handleOtherUserStateChange(message: IStatusBroadcastMessage): Promise<void> {
         switch (message.type) {
             case "broadcast":
-                this._sendCurrentUserState(false, message.sender);
+                switch (message.data.user.status.state) {
+                    case "online": // 上线
+                        await this._sendCurrentUserState(false, message.sender);
+
+                        /* 广播编辑状态 */
+                        const state = Y.encodeStateAsUpdateV2(this._y_doc);
+                        this._broadcastUpdateMessage(state);
+                        break;
+                    case "offline": // 离线
+                        break;
+                }
                 break;
             default:
                 break;
@@ -390,11 +556,15 @@ export class Control {
         }
     }
 
-    protected readonly onopen = (e: Event) => {
-        this._logger.info(e);
+    protected readonly onWsOpen = (e: Event) => {
+        // this._logger.info(e);
+
+        if (this._ws_control.readyState === WebSocket.OPEN && this._ws_data.readyState === WebSocket.OPEN) {
+            this._resolve_ws();
+        }
     }
 
-    protected readonly onmessage = (e: MessageEvent<string>) => {
+    protected readonly onWsControlMessage = async (e: MessageEvent<string>) => {
         const message: IBaseMessage = globalThis.JSON.parse(e.data);
         switch (message.type) {
             case "broadcast":// 广播消息
@@ -431,12 +601,20 @@ export class Control {
         }
     }
 
-    protected readonly onerror = (e: Event) => {
+    protected readonly onWsDataMessage = async (e: MessageEvent<Blob>) => {
+        // this._logger.info(e);
+
+        Y.applyUpdateV2(this._y_doc, new Uint8Array(await e.data.arrayBuffer()));
+    }
+
+    protected readonly onWsError = (e: Event) => {
         this._logger.error(e);
     }
 
-    protected readonly onclose = (e: CloseEvent) => {
-        this._logger.info(e);
+    protected readonly onWsClose = (e: CloseEvent) => {
+        // this._logger.info(e);
+
+        clearInterval(interval);
     }
 
     /**
@@ -444,6 +622,7 @@ export class Control {
      */
     protected readonly onbeforeunload = (e: BeforeUnloadEvent) => {
         this.offline();
+        this.destroy();
     }
 
     /**
@@ -454,33 +633,54 @@ export class Control {
 
         // REF: https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon
         if (document.visibilityState === "hidden") {
-            const rooms = new FormData();
-            rooms.append("path", Constants.ROOMS_DATA_FILE_PATH);
-            rooms.append("file", new Blob([JSON.stringify(this._rooms.value, undefined, 4)]));
-            navigator.sendBeacon(Client.api.file.putFile.pathname, rooms);
-
-            const messages = new FormData();
-            messages.append("path", Constants.MESSAGES_DATA_FILE_PATH);
-            messages.append("file", new Blob([JSON.stringify(this._messages.value, undefined, 4)]));
-            navigator.sendBeacon(Client.api.file.putFile.pathname, messages);
         }
     }
 
-    protected readonly onupdate = async (
+    protected readonly onYjsUpdate = async (
         update: Uint8Array,
         origin: any,
         doc: Y.Doc,
     ) => {
-        // this._logger.debugs("onupdate", update, origin, doc);
-        this._rooms_loaded.value = false;
-        this._messages_loaded.value = false;
+        // this._logger.infos("onYjsUpdate", update, origin);
 
-        this._rooms.value = this._y_rooms.toArray();
-        this._messages.value = this._y_messages.toArray();
+        this._broadcastUpdateMessage(update);
+        await this.save();
+    }
 
-        setTimeout(() => {
-            this._rooms_loaded.value = true;
-            this._messages_loaded.value = true;
-        });
+    protected readonly onYjsAfterAllTransactions = async (
+        doc: Y.Doc,
+        transactions: Array<Y.Transaction>,
+    ) => {
+        // this._logger.infos("onYjsAfterAllTransactions", doc, transactions);
+
+        this.updateRooms();
+        this.updateMessages();
+    }
+
+    protected readonly observeRooms = async (
+        e: Y.YMapEvent<Room>,
+        t: Y.Transaction,
+    ) => {
+        // this._logger.debugs("observeRooms", e, t);
+
+        this.updateRooms();
+    }
+
+    protected readonly observeMessages = async (
+        e: Y.YMapEvent<Message>,
+        t: Y.Transaction,
+    ) => {
+        // this._logger.debugs("observeMessages", e, t);
+
+        this.updateMessages();
+    }
+
+    protected readonly observeRoomMessages = async (
+        e: Y.YMapEvent<string[]>,
+        t: Y.Transaction,
+    ) => {
+        // this._logger.debugs("observeMessages", e, t);
+
+        this.updateMessages();
     }
 }

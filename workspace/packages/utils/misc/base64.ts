@@ -16,4 +16,7 @@
  */
 
 // REF: https://www.npmjs.com/package/js-base64
+import * as base64 from "js-base64";
+
 export * from "js-base64";
+export default base64;
