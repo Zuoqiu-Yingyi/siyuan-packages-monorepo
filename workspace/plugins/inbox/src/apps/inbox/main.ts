@@ -28,7 +28,7 @@ import { createApp } from "vue";
 import { createI18n } from "vue-i18n";
 import type { RoomUser } from "vue-advanced-chat";
 
-import { Client, KernelError } from "@siyuan-community/siyuan-sdk";
+import { Client } from "@siyuan-community/siyuan-sdk";
 import { mapLang } from "@workspace/utils/locale/language";
 import { trimSuffix } from "@workspace/utils/misc/string";
 import { UA } from "@workspace/utils/misc/user-agent";
@@ -49,8 +49,9 @@ import * as Constants from "~/src/constant";
     const logger = new Logger(`plugin-${manifest.name}-app-inbox`);
 
     /* 客户端 */
+    const baseURL = trimSuffix(globalThis.location.origin, `plugins/${manifest.name}/apps/client.html`);
     const client = new Client({
-        baseURL: trimSuffix(globalThis.location.origin, `plugins/${manifest.name}/apps/client.html`),
+        baseURL,
     });
 
     try {

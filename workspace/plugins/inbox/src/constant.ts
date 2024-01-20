@@ -28,3 +28,4 @@ export const ROOMS_DATA_FILE_PATH = `${PETAL_DATA_DIRECTORY}/rooms.json`;
 export const MESSAGES_DATA_FILE_PATH = `${PETAL_DATA_DIRECTORY}/messages.json`;
 export const ROOM_MESSAGES_MAP_FILE_PATH = `${PETAL_DATA_DIRECTORY}/room-messages.json`;
 export const MAIN_ROOM_ID = "main";
+export const ASSETS_DIR_PATH = "/assets/inbox/";
