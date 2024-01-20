@@ -166,7 +166,6 @@ export class Control {
      * 加载数据
      */
     public async load(): Promise<void> {
-
         const online_client_number = await this._getOnlineClientNumber();
 
         if (online_client_number <= 1) {
@@ -212,9 +211,6 @@ export class Control {
                     this._y_room_messages.set(key, value);
                 });
             }
-        }
-        else {
-            // TODO: 从其他在线的客户端换获取数据
         }
     }
 
@@ -322,7 +318,30 @@ export class Control {
                     replyMessage?: Message; // 回复的消息
                 } = e.detail[0];
 
-                // 添加到消息列表
+                /* 上传文件到 assets */
+                if (Array.isArray(detail.files) && detail.files.length > 0) {
+                    const files = detail.files
+                        .filter(file => (file.blob instanceof Blob))
+                        .map(file => new File(
+                            [file.blob!],
+                            file.name,
+                            {
+                                type: file.type,
+                            },
+                        ));
+                    const response = await this._client.upload({
+                        assetsDirPath: Constants.ASSETS_DIR_PATH,
+                        files,
+                    });
+                    detail.files.forEach(file => {
+                        const asset_path = response.data.succMap[file.name];
+                        file.url = asset_path
+                            ? `./../../../${asset_path}`
+                            : "";
+                    });
+                }
+
+                /* 添加到消息列表 */
                 const date = new Date();
                 const datetime = moment(date);
                 const message: Message = {
@@ -355,7 +374,6 @@ export class Control {
                 this._y_messages.set(message._id, message);
                 // this.updateMessages(detail.roomId);
 
-                // TODO: 处理 files
                 // TODO: 通知 @ 的用户 / 所回复消息对应的用户
                 break;
             }
@@ -482,7 +500,7 @@ export class Control {
     /**
      * 发送当前用户状态
      * @param broadcast 是否广播
-     * @param receiver 消息接收者
+     * @param receiver 消息接收者的用户 ID
      */
     protected async _sendCurrentUserState(
         broadcast: boolean,
@@ -633,6 +651,7 @@ export class Control {
 
         // REF: https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon
         if (document.visibilityState === "hidden") {
+            // navigator.sendBeacon("/log", analyticsData);
         }
     }
 
