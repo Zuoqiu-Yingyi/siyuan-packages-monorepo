@@ -381,8 +381,33 @@ export class Control {
                 break;
             case "delete-message":
                 break;
-            case "open-file":
+            /**
+             * 下载/查看文件
+             */
+            case "open-file": {
+                const detail: {
+                    file: {
+                        action: "download" | "preview"; // 文件操作
+                        file: MessageFile; // 消息中的文件对象 (proxy)
+                    };
+                    message: Message; // 文件所在的消息对象
+                } = e.detail[0];
+
+                switch (detail.file.action) {
+                    case "download":
+                        /* 在新页签中打开资源 URL */
+                        globalThis.open(
+                            new URL(detail.file.file.url, globalThis.location.href),
+                            "_blank",
+                        );
+                        break;
+
+                    case "preview":
+                    default:
+                        break;
+                }
                 break;
+            }
             case "open-user-tag":
                 break;
             case "open-failed-message":
