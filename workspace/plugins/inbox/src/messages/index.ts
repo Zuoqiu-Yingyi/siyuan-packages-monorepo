@@ -15,32 +15,76 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+export enum MessageType {
+    broadcast = "broadcast",
+    push = "push",
+    response = "response",
+    call = "call",
+    return = "return",
+}
+
 export interface IBaseMessage<D = any> {
-    type: "broadcast" | "response" | "call" | "return"; // 消息类型
+    type: MessageType; // 消息类型
     channel: string; // 消息通道
     sender: string; // 消息发送者 ID
-    receiver?: string; // 消息接收者 ID
+    receiver?: null | string | string[]; // 消息接收者 ID
     time: string; // ISO 8601
     data: D;
 }
 
+/**
+ * 广播消息
+ */
 export interface IBaseBroadcastMessage extends IBaseMessage {
-    type: "broadcast";
-    receiver: undefined;
+    type: MessageType.broadcast;
+    receiver?: null;
 }
 
-export interface IBaseResponseMessage extends IBaseMessage {
-    type: "response";
+/**
+ * 单播消息
+ * 指定消息接收者的 ID
+ */
+export interface IBaseUnicastMessage extends IBaseMessage {
+    type: MessageType.push | MessageType.response | MessageType.call | MessageType.return;
     receiver: string;
 }
 
+/**
+ * 组播
+ * 指定消息接收者的 ID 列表
+ */
+export interface IBaseMulticastMessage extends IBaseMessage {
+    type: MessageType.push | MessageType.response;
+    receiver: string[];
+}
+
+/**
+ * 推送消息
+ * 可能有响应, 也可能没有响应
+ */
+export interface IBasePushMessage extends IBaseMessage {
+    type: MessageType.push;
+    receiver: string | string[];
+}
+
+/**
+ * 响应消息
+ * 响应广播/推送
+ */
+export interface IBaseResponseMessage extends IBaseMessage {
+    type: MessageType.response;
+    receiver: string | string[];
+}
+
+/**
+ * 远程方法调用消息
+ */
 export interface IBaseCallMessage<
     F extends Function | ((...args: any) => any), // 函数
     N = F extends Function ? F["name"] : string, // 函数名
     A = F extends ((...args: any) => any) ? Parameters<F> : any[], // 函数参数
-> extends IBaseMessage {
-    type: "call";
-    receiver: string;
+> extends IBaseUnicastMessage {
+    type: MessageType.call;
     data: {
         id: string | number;
         name: N;
@@ -48,13 +92,15 @@ export interface IBaseCallMessage<
     };
 }
 
+/**
+ * 远程方法调用的返回结果消息
+ */
 export interface IBaseReturnMessage<
     F extends Function | ((...args: any) => any), // 函数
     N = F extends Function ? F["name"] : string, // 函数名
     R = F extends ((...args: any) => any) ? ReturnType<F> : any, // 函数返回值
-> extends IBaseMessage {
-    type: "return";
-    receiver: string;
+> extends IBaseUnicastMessage {
+    type: MessageType.return;
     data: {
         id: string | number;
         name: N;

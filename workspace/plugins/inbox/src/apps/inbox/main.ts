@@ -48,6 +48,13 @@ import * as Constants from "~/src/constant";
     /* 日志记录器 */
     const logger = new Logger(`plugin-${manifest.name}-app-inbox`);
 
+    /* 申请通知权限 */
+    if ("Notification" in globalThis) {
+        if (globalThis.Notification.permission !== "granted") {
+            globalThis.Notification.requestPermission();
+        }
+    }
+
     /* 客户端 */
     const baseURL = trimSuffix(globalThis.location.origin, `plugins/${manifest.name}/apps/client.html`);
     const client = new Client({
@@ -116,8 +123,7 @@ import * as Constants from "~/src/constant";
             return current_user;
         }
     })();
-
-    logger.debug(user);
+    // logger.debug(user);
 
     /* 初始化应用 */
     const app = createApp(App);

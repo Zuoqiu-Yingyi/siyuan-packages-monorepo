@@ -3,6 +3,9 @@
 ## 2024-01-20
 
 - 实现客户端之间消息同步功能 | Implement message synchronization function between clients.
+- 新增文件上传功能 | Add file upload function.
+- 新增文件下载功能 | Add file download function.
+- 新增新消息通知功能 | Add new message notification function.
 
 ## 2024-01-19
 
