@@ -23,40 +23,77 @@ import * as Constants from "@/constant";
 import { id } from "@workspace/utils/siyuan/id";
 import { moment } from "@workspace/utils/date/moment";
 import { deshake } from "@workspace/utils/misc/deshake";
+import { isString } from "@workspace/utils/misc/type";
+
+import {
+    MessageType,
+    type IBaseMessage,
+    type IBaseBroadcastMessage,
+    type IBaseResponseMessage,
+} from ".";
 
 import type { Logger } from "@workspace/utils/logger";
 import type { ShallowRef } from "vue";
 import type {
+    LastMessage,
     Message,
     MessageFile,
     Room,
     RoomUser,
 } from "vue-advanced-chat";
-import type {
-    IBaseMessage,
-    IBaseBroadcastMessage,
-    IBaseResponseMessage,
-} from ".";
 import type { VueI18nTranslation } from "vue-i18n";
+import { merge } from "@workspace/utils/misc/merge";
 
-let interval: string | number | NodeJS.Timeout | undefined;
-
-export interface IBaseStatusMessage extends IBaseMessage {
-    channel: "status";
+export enum ControlChannel {
+    user_status = "user-status", // 用户状态更改
+    last_message = "last-message", // 聊天室最新消息
+    notification = "notification", // 通知消息
 }
 
-export interface IStatusBroadcastMessage extends Omit<IBaseStatusMessage, "receiver">, Omit<IBaseBroadcastMessage, "channel"> {
-    type: "broadcast";
+export interface IBaseUserStatusMessage extends Omit<IBaseMessage, "receiver"> {
+    channel: ControlChannel.user_status;
+}
+
+export interface IUserStatusBroadcastMessage extends IBaseUserStatusMessage, Omit<IBaseBroadcastMessage, "channel"> {
+    type: MessageType.broadcast;
     data: {
         user: RoomUser;
     };
 }
 
-export interface IStatusResponseMessage extends Omit<IBaseStatusMessage, "receiver">, Omit<IBaseResponseMessage, "channel"> {
-    type: "response";
+export interface IUserStatusResponseMessage extends IBaseUserStatusMessage, Omit<IBaseResponseMessage, "channel"> {
+    type: MessageType.response;
     data: {
         user: RoomUser;
     };
+}
+
+export interface ILastMessageBroadcastMessage extends IBaseBroadcastMessage {
+    channel: ControlChannel.last_message;
+    data: {
+        roomId: string; // 聊天室 ID
+        lastMessage: LastMessage; // 聊天室最新消息
+    };
+}
+
+export interface INotificationMessage extends IBaseMessage {
+    channel: ControlChannel.notification;
+    data: {
+        title: string; // 通知标题
+        options?: NotificationOptions; // 通知选项
+    };
+}
+
+export interface IWsControlMessageOptions {
+    unicast: boolean;
+    multicast: boolean;
+    broadcast: boolean;
+    to_me: boolean;
+}
+
+export interface IWsControlMessageHandler {
+    handler: (this: InstanceType<typeof Control>, message: any) => any;
+    options: IWsControlMessageOptions;
 }
 
 export class Control {
@@ -76,13 +113,27 @@ export class Control {
     protected readonly _y_messages: Y.Map<Message>; // 消息 ID -> 消息对象
     protected readonly _y_room_messages: Y.Map<string[]>; // 聊天室 ID -> 消息列表
 
+    protected readonly _room_map: Map<
+        string,
+        Pick<
+            Room,
+            "unreadCount" | "lastMessage"
+        >
+    > = new Map(); // 聊天室 ID -> 聊天室各端独占内容
+    protected readonly _channel_handlers_map: Map<
+        string, // 消息通道名称
+        Set<IWsControlMessageHandler> // 监听器集合
+    > = new Map();
+
     protected _current_room_id: string; // 当前聊天室 ID
+    protected _rooms_list_opened: boolean = true; // 当前聊天列表是否展开
 
     constructor(
         protected readonly t: VueI18nTranslation,
         protected readonly _client: Client,
         protected readonly _logger: Logger,
         protected readonly _user: RoomUser,
+        protected readonly _room_id: ShallowRef<string>,
         protected readonly _rooms: ShallowRef<Room[]>,
         protected readonly _rooms_loaded: ShallowRef<boolean>,
         protected readonly _messages: ShallowRef<Message[]>,
@@ -93,7 +144,7 @@ export class Control {
         this._inbox = {
             roomId: Constants.MAIN_ROOM_ID,
             roomName: this.t("inbox"),
-            avatar: "",
+            avatar: Constants.ICON_FILE_PATH,
             users: [
                 this._user,
             ],
@@ -158,6 +209,10 @@ export class Control {
         this._y_doc.on("afterAllTransactions", this.onYjsAfterAllTransactions);
 
         await this.load();
+
+        this.addWsControlMessageHandler(ControlChannel.user_status, this._handleOtherUserStatusChange);
+        this.addWsControlMessageHandler(ControlChannel.last_message, this._handleLastMessage);
+        this.addWsControlMessageHandler(ControlChannel.notification, this._handleNotificationMessage);
 
         this._resolve();
     }
@@ -233,12 +288,25 @@ export class Control {
 
     public online(): void {
         this._user.status.state = "online";
-        this._sendCurrentUserState(true);
+        this._sendCurrentUserState();
     }
 
     public offline(): void {
         this._user.status.state = "offline";
-        this._sendCurrentUserState(true);
+        this._sendCurrentUserState();
+    }
+
+    /**
+     * 打开指定聊天室
+     * @param roomId 聊天室 ID
+     */
+    public openRoom(roomId: string): void {
+        const room = this._y_rooms.get(roomId);
+        if (room) {
+            if (room.users.find(user => user._id === this._user._id)) {
+                this._room_id.value = roomId;
+            }
+        }
     }
 
     /**
@@ -262,6 +330,7 @@ export class Control {
                 const detail: {
                     opened: boolean; // 聊天室列表是否处于展开状态
                 } = e.detail[0];
+                this._rooms_list_opened = detail.opened;
                 break;
             }
             /**
@@ -292,7 +361,16 @@ export class Control {
 
                 this._current_room_id = detail.room.roomId;
                 this.updateMessages(detail.room.roomId);
-                break;
+
+                /* 更新聊天室状态信息 */
+                const room = this._room_map.get(detail.room.roomId);
+                if (room) {
+                    room.unreadCount = 0;
+                    if (room.lastMessage?.new) {
+                        room.lastMessage.new = false;
+                    }
+                    this.updateRooms();
+                }
             }
             /**
              * 消息输入框中内容更改
@@ -374,7 +452,43 @@ export class Control {
                 this._y_messages.set(message._id, message);
                 // this.updateMessages(detail.roomId);
 
-                // TODO: 通知 @ 的用户 / 所回复消息对应的用户
+                this.updateUserStatus(detail.roomId, date);
+
+                const last_message: LastMessage = {
+                    content: message.content!,
+                    senderId: message.senderId,
+                    username: message.username,
+                    timestamp: message.timestamp,
+                    saved: message.saved,
+                    distributed: message.distributed,
+                    seen: message.seen,
+                    new: false,
+                    files: message.files,
+                };
+                this._room_map.set(detail.roomId, {
+                    unreadCount: 0,
+                    lastMessage: last_message,
+                });
+                this.updateRooms();
+                this._broadcastLastMessage(
+                    detail.roomId,
+                    last_message,
+                ); // 广播最新消息
+
+                const room = this._y_rooms.get(detail.roomId);
+                this._pushNotificationMessage(
+                    room?.roomName ?? this.t("inbox"),
+                    {
+                        badge: Constants.ICON_FILE_PATH,
+                        icon: Constants.ICON_FILE_PATH,
+                        image: (message.files ?? []).find(file => file.type.startsWith("image/"))?.url,
+                        body: `${message.content}\n${(message.files ?? []).map(file => `[${file.name}.${file.extension}]`).join(" ")}`,
+                        data: {
+                            roomId: detail.roomId,
+                            message: message,
+                        },
+                    },
+                ); // 推送消息
                 break;
             }
             case "edit-message":
@@ -447,6 +561,8 @@ export class Control {
                     message.reactions[detail.reaction.unicode] = Array.from(user_set);
                     this._y_messages.set(message._id, message);
                 }
+
+                this.updateUserStatus(detail.roomId);
                 break;
             }
             case "textarea-action-handler":
@@ -458,6 +574,33 @@ export class Control {
     }
 
     /**
+     * 更新用户状态
+     * @param roomId 聊天室 ID
+     * @param date 时间日期
+     */
+    public updateUserStatus(
+        roomId: string,
+        date: Date = new Date(),
+    ): void {
+        /* 更新用户信息 */
+        this._user.status.lastChanged = date.toISOString();
+
+        /* 更新聊天室信息 */
+        const room = this._y_rooms.get(roomId);
+        if (room) {
+            /* 更新用户状态 */
+            const user = room.users.find(user => user._id === this._user._id);
+            if (user) {
+                Object.assign(user, this._user);
+            }
+            else {
+                room.users.push(this._user);
+            }
+            this._y_rooms.set(room.roomId, room);
+        }
+    }
+
+    /**
      * 更新聊天室列表
      */
     public readonly updateRooms = deshake(() => {
@@ -465,7 +608,9 @@ export class Control {
 
         const rooms: Room[] = [];
         for (const room of this._y_rooms.values()) {
-            rooms.push(room);
+            if (room.users.find(user => user._id === this._user._id)) {
+                rooms.push(merge<Room>(this._room_map.get(room.roomId) ?? {}, room));
+            }
         }
         this._rooms.value = rooms;
 
@@ -524,24 +669,68 @@ export class Control {
 
     /**
      * 发送当前用户状态
-     * @param broadcast 是否广播
      * @param receiver 消息接收者的用户 ID
      */
     protected async _sendCurrentUserState(
-        broadcast: boolean,
-        receiver?: string,
+        receiver?: string | string[],
     ): Promise<void> {
-        const message = this._construct<IStatusBroadcastMessage | IStatusResponseMessage>(
-            broadcast
-                ? "broadcast"
-                : "response",
-            "status",
+        const message = this._construct<IUserStatusBroadcastMessage | IUserStatusResponseMessage>(
+            receiver
+                ? MessageType.response
+                : MessageType.broadcast,
+            ControlChannel.user_status,
             receiver,
             {
                 user: this._user,
             },
         );
         this._broadcastControlMessage(message);
+    }
+
+    /**
+     * 广播聊天室最新消息
+     * @param roomId 聊天室 ID
+     * @param lastMessage 聊天室最新消息
+     */
+    protected async _broadcastLastMessage(
+        roomId: string,
+        lastMessage: LastMessage,
+    ): Promise<void> {
+        const message = this._construct<ILastMessageBroadcastMessage>(
+            MessageType.broadcast,
+            ControlChannel.last_message,
+            undefined,
+            {
+                roomId,
+                lastMessage,
+            },
+        );
+        await this._broadcastControlMessage(message);
+    }
+
+    /**
+     * 推送通知消息
+     * @param title 通知标题
+     * @param options 通知选项
+     * @param receiver 消息接收者的用户 ID
+     */
+    protected async _pushNotificationMessage(
+        title: string,
+        options: NotificationOptions,
+        receiver?: string | string[],
+    ): Promise<void> {
+        const message = this._construct<INotificationMessage>(
+            receiver
+                ? MessageType.push
+                : MessageType.broadcast,
+            ControlChannel.notification,
+            receiver,
+            {
+                title,
+                options,
+            },
+        );
+        await this._broadcastControlMessage(message);
     }
 
     /**
@@ -572,12 +761,12 @@ export class Control {
     /**
      * 处理其他用户状态变更
      */
-    protected async _handleOtherUserStateChange(message: IStatusBroadcastMessage): Promise<void> {
+    protected async _handleOtherUserStatusChange(message: IUserStatusBroadcastMessage): Promise<void> {
         switch (message.type) {
             case "broadcast":
                 switch (message.data.user.status.state) {
                     case "online": // 上线
-                        await this._sendCurrentUserState(false, message.sender);
+                        await this._sendCurrentUserState(message.sender);
 
                         /* 广播编辑状态 */
                         const state = Y.encodeStateAsUpdateV2(this._y_doc);
@@ -599,6 +788,80 @@ export class Control {
         }
     }
 
+    /**
+     * 处理最新消息
+     */
+    protected async _handleLastMessage(message: ILastMessageBroadcastMessage): Promise<void> {
+        message.data.lastMessage.new = true;
+
+        const room = this._room_map.get(message.data.roomId);
+        if (room) {
+            room.unreadCount = room.unreadCount
+                ? room.unreadCount + 1
+                : 1;
+            room.lastMessage = message.data.lastMessage;
+        }
+        else {
+            this._room_map.set(message.data.roomId, {
+                unreadCount: 1,
+                lastMessage: message.data.lastMessage,
+            });
+        }
+        this.updateRooms();
+    }
+
+    /**
+     * 处理通知消息
+     */
+    protected async _handleNotificationMessage(message: INotificationMessage): Promise<void> {
+        /* 创建消息通知 */
+        if (globalThis.Notification?.permission === "granted") {
+            const notification = new globalThis.Notification(message.data.title, message.data.options);
+            notification.addEventListener("show", e => {
+                // this._logger.debug(e);
+            });
+            notification.addEventListener("click", e => {
+                // this._logger.debug(e);
+                this.openRoom((e.target as Notification).data?.roomId);
+            });
+            notification.addEventListener("close", e => {
+                // this._logger.debug(e);
+            });
+            notification.addEventListener("error", e => {
+                this._logger.error(e);
+            });
+        }
+    }
+
+    /**
+     * 注册控制消息处理器
+     * @param channel 消息通道名称
+     * @param handler 消息处理器
+     * @param options 消息处理器选项
+     */
+    public addWsControlMessageHandler(
+        channel: string,
+        handler: IWsControlMessageHandler["handler"],
+        {
+            unicast = true,
+            multicast = true,
+            broadcast = true,
+            to_me = true,
+        } = {},
+    ): void {
+        const handlers = this._channel_handlers_map.get(channel) || new Set();
+        handlers.add({
+            handler,
+            options: {
+                unicast,
+                multicast,
+                broadcast,
+                to_me,
+            },
+        });
+        this._channel_handlers_map.set(channel, handlers);
+    }
+
     protected readonly onWsOpen = (e: Event) => {
         // this._logger.info(e);
 
@@ -609,38 +872,30 @@ export class Control {
 
     protected readonly onWsControlMessage = async (e: MessageEvent<string>) => {
         const message: IBaseMessage = globalThis.JSON.parse(e.data);
-        switch (message.type) {
-            case "broadcast":// 广播消息
-                switch (message.channel) {
-                    case "status":
-                        this._handleOtherUserStateChange(message as IStatusBroadcastMessage);
-                        break;
 
-                    default:
-                        break;
-                }
-                break;
+        const flag_unicast = isString(message.receiver); // 单播
+        const flag_multicast = Array.isArray(message.receiver); // 组播
+        const flag_broadcast = message.type === MessageType.broadcast; // 广播
+        const flag_to_me = (flag_unicast && message.receiver === this._user._id)
+            || (flag_multicast && message.receiver!.includes(this._user._id))
+            || flag_broadcast; // 消息是否发送给本客户端
 
-            default: { // 单播消息
-                if (message.receiver === this._user._id) { // 单播至本客户端的消息
-                    switch (message.type) {
-                        case "response": // 响应消息
-                            switch (message.channel) {
-                                case "status":
-                                    this._handleOtherUserStateChange(message as IStatusBroadcastMessage);
-                                    break;
-
-                                default:
-                                    break;
-                            }
+        const handlers = this._channel_handlers_map.get(message.channel);
+        if (handlers) {
+            handlers.forEach(({ handler, options }) => {
+                if (options.to_me && flag_to_me) { // 发送给本客户端
+                    switch (true) {
+                        case options.unicast && flag_unicast:
+                        case options.multicast && flag_multicast:
+                        case options.broadcast && flag_broadcast:
+                            handler.call(this, message);
                             break;
 
                         default:
                             break;
                     }
                 }
-                break;
-            }
+            });
         }
     }
 
@@ -656,8 +911,6 @@ export class Control {
 
     protected readonly onWsClose = (e: CloseEvent) => {
         // this._logger.info(e);
-
-        clearInterval(interval);
     }
 
     /**

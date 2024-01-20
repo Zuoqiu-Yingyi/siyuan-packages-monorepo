@@ -24,6 +24,7 @@ import type { Logger } from "@workspace/utils/logger";
 import type { Client } from "@siyuan-community/siyuan-sdk";
 
 import { Control } from "@/messages/control";
+import * as Constants from "@/constant";
 
 register();
 
@@ -35,7 +36,56 @@ const logger = inject("logger") as Logger;
 const client = inject("client") as Client;
 const t = i18n.global.t as VueI18nTranslation;
 
-const emoji_data_source = `./../libs/emoji-picker-element-data/${locale}/cldr/data.json`; // 表情数据源
+/* emoji-picker-element-data 表情 emoji 数据语言标记 */
+const picker_locale: string = (() => {
+    switch (locale.toLowerCase()) {
+        case "zh":
+        case "zh-hans":
+            return "zh";
+        case "zh-hant":
+            return "zh-hant";
+        default:
+            const language = globalThis.navigator.language.toLowerCase();
+            for (const lang of [
+                "bn",
+                "da",
+                "de",
+                "en",
+                "en-gb",
+                "es",
+                "es-mx",
+                "et",
+                "fi",
+                "fr",
+                "hi",
+                "hu",
+                "it",
+                "ja",
+                "ko",
+                "lt",
+                "ms",
+                "nb",
+                "nl",
+                "pl",
+                "pt",
+                "ru",
+                "sv",
+                "th",
+                "uk",
+                "zh",
+                "zh-hant",
+            ].reverse()) {
+                if (language.startsWith(lang)) {
+                    return lang;
+                }
+            }
+            return "en";
+    }
+})();
+
+const emoji_data_source = globalThis.isSecureContext
+    ? `./../libs/emoji-picker-element-data/${locale}/cldr/data.json`
+    : `https://fastly.jsdelivr.net/npm/emoji-picker-element-data/${picker_locale}/cldr/data.json`; // 表情数据源, 非安全上下文中需要校验 ETag
 const text_messages = { // 界面文本本地化
     CANCEL_SELECT_MESSAGE: t("CANCEL_SELECT_MESSAGE"),
     CONVERSATION_STARTED: t("CONVERSATION_STARTED"),
@@ -50,13 +100,16 @@ const text_messages = { // 界面文本本地化
     SEARCH: t("SEARCH"),
     TYPE_MESSAGE: t("TYPE_MESSAGE"),
 };
+const room_info_enabled = true; // 是否启用房间信息
+const textarea_action_enabled = true; // 是否启用文本框更多操作按钮
 
+const roomId = shallowRef<string>(Constants.MAIN_ROOM_ID);
 const rooms = shallowRef<Room[]>([]);
-const messages = shallowRef<Message[]>([]);
 const roomsLoaded = shallowRef<boolean>(false);
+const messages = shallowRef<Message[]>([]);
 const messagesLoaded = shallowRef<boolean>(false);
 
-const control = new Control(t, client, logger, user, rooms, roomsLoaded, messages, messagesLoaded);
+const control = new Control(t, client, logger, user, roomId, rooms, roomsLoaded, messages, messagesLoaded);
 onMounted(async () => {
     await control.init();
     control.online();
@@ -67,10 +120,14 @@ onMounted(async () => {
     <vue-advanced-chat
         height="100vh"
         :current-user-id="user._id"
+        :room-id="roomId"
         :rooms-loaded="roomsLoaded"
         :messages-loaded="messagesLoaded"
         :theme="theme"
         :emoji-data-source="emoji_data_source"
+
+        :room-info-enabled="room_info_enabled"
+        :textarea-action-enabled="textarea_action_enabled"
 
         :rooms.prop="rooms"
         :messages.prop="messages"
