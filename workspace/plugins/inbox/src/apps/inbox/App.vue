@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { inject, shallowRef, onMounted } from "vue";
 import type { I18n, VueI18nTranslation } from "vue-i18n";
-import { register, type VueAdvancedChat, type RoomUser, type Room, type Message } from "vue-advanced-chat";
+import { register, type VueAdvancedChat, type RoomUser, type Room, type Message, type Props } from "vue-advanced-chat";
 
 import type { Logger } from "@workspace/utils/logger";
 import type { Client } from "@siyuan-community/siyuan-sdk";
@@ -83,7 +83,7 @@ const picker_locale: string = (() => {
     }
 })();
 
-const emoji_data_source = globalThis.isSecureContext
+const emoji_data_source: string = globalThis.isSecureContext
     ? `./../libs/emoji-picker-element-data/${locale}/cldr/data.json`
     : `https://fastly.jsdelivr.net/npm/emoji-picker-element-data/${picker_locale}/cldr/data.json`; // 表情数据源, 非安全上下文中需要校验 ETag
 const text_messages = { // 界面文本本地化
@@ -100,10 +100,17 @@ const text_messages = { // 界面文本本地化
     SEARCH: t("SEARCH"),
     TYPE_MESSAGE: t("TYPE_MESSAGE"),
 };
-const room_info_enabled = true; // 是否启用房间信息
-const textarea_action_enabled = true; // 是否启用文本框更多操作按钮
+const room_info_enabled: Props["room-info-enabled"] = true; // 是否启用房间信息
+const textarea_action_enabled: Props["textarea-action-enabled"] = true; // 是否启用文本框更多操作按钮
+const capture_files: Props["capture-files"] = "environment"; // 启用哪个摄像头 (environment: 后摄; user: 前摄)
+const custom_search_room_enabled: boolean = false; // 是否使用自定义方案进行搜索聊天室
 
-const roomId = shallowRef<string>(Constants.MAIN_ROOM_ID);
+const username_options: Props["username-options"] = {
+    minUsers: 2, // 聊天室中用户数 >= minUsers 时显示用户昵称
+    currentUser: true, // 是否显示当前用户昵称
+}; // 用户昵称显示选项
+
+const roomId = shallowRef<string | null>(null);
 const rooms = shallowRef<Room[]>([]);
 const roomsLoaded = shallowRef<boolean>(false);
 const messages = shallowRef<Message[]>([]);
@@ -119,15 +126,17 @@ onMounted(async () => {
 <template>
     <vue-advanced-chat
         height="100vh"
-        :current-user-id="user._id"
         :room-id="roomId"
         :rooms-loaded="roomsLoaded"
         :messages-loaded="messagesLoaded"
-        :theme="theme"
-        :emoji-data-source="emoji_data_source"
 
+        :theme="theme"
+        :current-user-id="user._id"
+        :emoji-data-source="emoji_data_source"
         :room-info-enabled="room_info_enabled"
         :textarea-action-enabled="textarea_action_enabled"
+        :capture-files="capture_files"
+        :custom-search-room-enabled="custom_search_room_enabled"
 
         :rooms.prop="rooms"
         :messages.prop="messages"
@@ -135,6 +144,7 @@ onMounted(async () => {
             /* REF: https://cn.vuejs.org/guide/extras/web-components.html#passing-dom-properties */
             ...text_messages,
         }"
+        :username-options.prop="username_options"
 
         @fetch-more-rooms="control.handler"
         @toggle-rooms-list="control.handler"
