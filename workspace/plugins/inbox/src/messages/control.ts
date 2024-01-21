@@ -25,6 +25,7 @@ import { moment } from "@workspace/utils/date/moment";
 import { deshake } from "@workspace/utils/misc/deshake";
 import { isString } from "@workspace/utils/misc/type";
 import { deepEqual } from "@workspace/utils/misc/equal";
+import { deepClone } from "@workspace/utils/misc/clone";
 
 import {
     MessageType,
@@ -146,7 +147,6 @@ export class Control {
 
     protected _current_room_id: string; // 当前聊天室 ID
     protected _rooms_list_opened: boolean = true; // 当前聊天列表是否展开
-    protected _force_update_message: boolean = false; // 是否强制更新消息列表
 
     constructor(
         protected readonly t: VueI18nTranslation,
@@ -404,7 +404,7 @@ export class Control {
                 } = e.detail[0];
 
                 this._current_room_id = detail.room.roomId;
-                this.updateMessages(true, detail.room.roomId);
+                this.updateMessages(detail.room.roomId);
 
                 /* 更新聊天室状态信息 */
                 const room = this._room_status_map.get(detail.room.roomId);
@@ -559,8 +559,6 @@ export class Control {
                     message.files = detail.files;
                     message.replyMessage = detail.replyMessage;
                     message.edited = true;
-
-                    this._force_update_message = true;
                     this._y_messages.set(message._id, message);
                 }
                 break;
@@ -627,7 +625,7 @@ export class Control {
 
                 switch (detail.action.name) {
                     case "refresh": // 页面刷新
-                        this.updateMessages(true);
+                        this.updateMessages();
                         break;
 
                     default:
@@ -686,7 +684,6 @@ export class Control {
                     }
 
                     message.reactions[detail.reaction.unicode] = Array.from(user_set);
-                    this._force_update_message = true;
                     this._y_messages.set(message._id, message);
                 }
 
@@ -851,39 +848,35 @@ export class Control {
                 rooms.push(merge<Room>(this._room_status_map.get(room.roomId) ?? {}, room));
             }
         }
-        this._rooms.value = rooms;
+        this._rooms.value = deepClone()(rooms);
 
-        /* 避免初始化时一直显示正在加载动画 */
-        setTimeout(() => {
-            this._rooms_loaded.value = true;
-        });
+        this._rooms_loaded.value = true;
     })
 
     /**
      * 更新消息列表
      * @param roomId 聊天室 ID
-     * @param force 强制更新
      */
     public readonly updateMessages = deshake((
-        force: boolean = this._force_update_message,
         roomId: string = this._current_room_id,
     ) => {
         this._messages_loaded.value = false;
-        if (force) {
-            this._force_update_message = false;
-            this._messages.value = [];
-        }
 
         const messages_list = this._y_room_messages.get(roomId) || [];
         const messages = messages_list
             .map(message_id => this._y_messages.get(message_id)!)
             .filter(message => !!message);
+        this._messages.value = deepClone()(messages);
 
-        /* 避免初始化时一直显示正在加载动画 */
-        setTimeout(() => {
-            this._messages.value = messages;
+        if (messages.length > 0) {
             this._messages_loaded.value = true;
-        });
+        }
+        else {
+            /* 避免无消息时一直显示正在加载动画 */
+            setTimeout(() => {
+                this._messages_loaded.value = true;
+            });
+        }
     })
 
     /**

@@ -24,7 +24,6 @@ import type { Logger } from "@workspace/utils/logger";
 import type { Client } from "@siyuan-community/siyuan-sdk";
 
 import { Control } from "@/messages/control";
-import * as Constants from "@/constant";
 
 register();
 
