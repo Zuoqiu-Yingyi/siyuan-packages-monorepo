@@ -24,6 +24,7 @@ import { id } from "@workspace/utils/siyuan/id";
 import { moment } from "@workspace/utils/date/moment";
 import { deshake } from "@workspace/utils/misc/deshake";
 import { isString } from "@workspace/utils/misc/type";
+import { deepEqual } from "@workspace/utils/misc/equal";
 
 import {
     MessageType,
@@ -133,7 +134,7 @@ export class Control {
         protected readonly _client: Client,
         protected readonly _logger: Logger,
         protected readonly _user: RoomUser,
-        protected readonly _room_id: ShallowRef<string>,
+        protected readonly _room_id: ShallowRef<string | null>,
         protected readonly _rooms: ShallowRef<Room[]>,
         protected readonly _rooms_loaded: ShallowRef<boolean>,
         protected readonly _messages: ShallowRef<Message[]>,
@@ -339,12 +340,26 @@ export class Control {
             case "add-room": {
                 break;
             }
-            case "search-room":
+            /**
+             * 自定义聊天室搜索方案
+             * 设置属性 custom-search-room-enabled 为 true 时开启
+             */
+            case "search-room": {
+                const detail: {
+                    roomId: string; // 当前聊天室 ID
+                    value: string; // 搜索框中的文本内容
+                } = e.detail[0];
                 break;
+            }
             case "room-action-handler":
                 break;
-            case "room-info":
+            /**
+             * 在聊天页面点击聊天室标题
+             */
+            case "room-info": {
+                const detail: Room = e.detail[0]; // (proxy)
                 break;
+            }
 
             /**
              * 触发:
@@ -522,8 +537,13 @@ export class Control {
                 }
                 break;
             }
-            case "open-user-tag":
+            /**
+             * 点击消息中的 @ 用户
+             */
+            case "open-user-tag": {
+                const detail: RoomUser = e.detail[0]; // (proxy)
                 break;
+            }
             case "open-failed-message":
                 break;
             case "menu-action-handler":
@@ -565,8 +585,19 @@ export class Control {
                 this.updateUserStatus(detail.roomId);
                 break;
             }
-            case "textarea-action-handler":
+            /**
+             * 点击消息输入框右侧的更多操作按钮触发
+             */
+            case "textarea-action-handler": {
+                const detail: {
+                    file: {
+                        roomId: string; // 当前聊天室 ID
+                        action: "string"; // 操作名称
+                    };
+                    message: Message; // 文件所在的消息对象
+                } = e.detail[0];
                 break;
+            }
 
             default:
                 break;
@@ -586,17 +617,39 @@ export class Control {
         this._user.status.lastChanged = date.toISOString();
 
         /* 更新聊天室信息 */
+        this.updateUsers(roomId);
+    }
+
+    /**
+     * 更新聊天室用户列表
+     * @param roomId 聊天室 ID
+     * @param user 用户
+     */
+    public updateUsers(
+        roomId: string = this._inbox.roomId,
+        user: RoomUser = this._user,
+    ): void {
+        /* 更新聊天室信息 */
         const room = this._y_rooms.get(roomId);
         if (room) {
             /* 更新用户状态 */
-            const user = room.users.find(user => user._id === this._user._id);
-            if (user) {
-                Object.assign(user, this._user);
+            const user_ = room.users.find(u => u._id === user._id);
+            let update = false;
+
+            if (user_) {
+                if (!deepEqual(user_, user)) {
+                    Object.assign(user_, user);
+                    update = true;
+                }
             }
             else {
-                room.users.push(this._user);
+                room.users.push(user);
+                update = true;
             }
-            this._y_rooms.set(room.roomId, room);
+
+            if (update) {
+                this._y_rooms.set(room.roomId, room);
+            }
         }
     }
 
@@ -950,6 +1003,7 @@ export class Control {
     ) => {
         // this._logger.infos("onYjsAfterAllTransactions", doc, transactions);
 
+        this.updateUsers();
         this.updateRooms();
         this.updateMessages();
     }

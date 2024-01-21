@@ -65,12 +65,44 @@ export class Logger {
         globalThis.console.groupEnd(); // 结束日志组
     }
 
+    clear(...args: any[]) {
+        this.stdout(globalThis.console.clear, false, ...args);
+    }
+
+    countReset(...args: any[]) {
+        this.stdout(globalThis.console.countReset, false, ...args);
+    }
+
+    count(...args: any[]) {
+        this.stdout(globalThis.console.count, false, ...args);
+    }
+
+    counts(...args: any[]) {
+        this.stdout(globalThis.console.count, true, ...args);
+    }
+
+    assert(...args: any[]) {
+        this.stdout(globalThis.console.assert, false, ...args);
+    }
+
+    asserts(...args: any[]) {
+        this.stdout(globalThis.console.assert, true, ...args);
+    }
+
     dir(...args: any[]) {
         this.stdout(globalThis.console.dir, false, ...args);
     }
 
     dirs(...args: any[]) {
         this.stdout(globalThis.console.dir, true, ...args);
+    }
+
+    dirxml(...args: any[]) {
+        this.stdout(globalThis.console.dirxml, false, ...args);
+    }
+
+    dirxmls(...args: any[]) {
+        this.stdout(globalThis.console.dirxml, true, ...args);
     }
 
     table(...args: any[]) {

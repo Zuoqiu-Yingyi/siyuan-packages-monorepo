@@ -59,7 +59,7 @@ import * as Constants from "~/src/constant";
     const baseURL = trimSuffix(globalThis.location.origin, `plugins/${manifest.name}/apps/client.html`);
     const client = new Client({
         baseURL,
-    });
+    }, "fetch");
 
     try {
         /* 验证是否已通过认证 */
