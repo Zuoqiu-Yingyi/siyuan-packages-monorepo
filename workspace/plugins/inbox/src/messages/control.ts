@@ -36,6 +36,7 @@ import {
 import type { Logger } from "@workspace/utils/logger";
 import type { ShallowRef } from "vue";
 import type {
+    CustomAction,
     LastMessage,
     Message,
     MessageFile,
@@ -48,6 +49,7 @@ import { merge } from "@workspace/utils/misc/merge";
 export enum ControlChannel {
     user_status = "user-status", // 用户状态更改
     last_message = "last-message", // 聊天室最新消息
+    typing_status = "typing-status", // 聊天室用户输入状态
     notification = "notification", // 通知消息
 }
 
@@ -77,6 +79,15 @@ export interface ILastMessageBroadcastMessage extends IBaseBroadcastMessage {
     };
 }
 
+export interface ITypingStatusBroadcastMessage extends IBaseBroadcastMessage {
+    channel: ControlChannel.typing_status;
+    data: {
+        roomId: string; // 聊天室 ID
+        typing: boolean; // 用户是否正在输入
+        user: RoomUser; // 用户
+    };
+}
+
 export interface INotificationMessage extends IBaseMessage {
     channel: ControlChannel.notification;
     data: {
@@ -97,6 +108,12 @@ export interface IWsControlMessageHandler {
     options: IWsControlMessageOptions;
 }
 
+export interface IUserStatus {
+    typing: {
+        timer: null | ReturnType<typeof setTimeout>; // 定时器
+    }; // 用户输入状态
+}
+
 export class Control {
     protected readonly _inbox: Room;
     protected readonly _ready: Promise<void>;
@@ -114,17 +131,18 @@ export class Control {
     protected readonly _y_messages: Y.Map<Message>; // 消息 ID -> 消息对象
     protected readonly _y_room_messages: Y.Map<string[]>; // 聊天室 ID -> 消息列表
 
-    protected readonly _room_map: Map<
+    protected readonly _room_user_status_map: Map<string, IUserStatus> = new Map(); // [聊天室 ID]-(用户 ID) -> 用户状态
+    protected readonly _room_status_map: Map<
         string,
         Pick<
             Room,
-            "unreadCount" | "lastMessage"
+            "unreadCount" | "lastMessage" | "typingUsers"
         >
-    > = new Map(); // 聊天室 ID -> 聊天室各端独占内容
+    > = new Map(); // 聊天室 ID -> 聊天室状态信息
     protected readonly _channel_handlers_map: Map<
         string, // 消息通道名称
         Set<IWsControlMessageHandler> // 监听器集合
-    > = new Map();
+    > = new Map(); // 消息通道名称 -> 监听器集合
 
     protected _current_room_id: string; // 当前聊天室 ID
     protected _rooms_list_opened: boolean = true; // 当前聊天列表是否展开
@@ -212,6 +230,7 @@ export class Control {
         await this.load();
 
         this.addWsControlMessageHandler(ControlChannel.user_status, this._handleOtherUserStatusChange);
+        this.addWsControlMessageHandler(ControlChannel.typing_status, this._handleTypingStatus);
         this.addWsControlMessageHandler(ControlChannel.last_message, this._handleLastMessage);
         this.addWsControlMessageHandler(ControlChannel.notification, this._handleNotificationMessage);
 
@@ -338,6 +357,7 @@ export class Control {
              * 点击聊天室列表右上角的 + 按钮
              */
             case "add-room": {
+                const detail: undefined = e.detail[0];
                 break;
             }
             /**
@@ -351,8 +371,16 @@ export class Control {
                 } = e.detail[0];
                 break;
             }
-            case "room-action-handler":
+            /**
+             * 聊天室列表中的下拉菜单项
+             */
+            case "room-action-handler": {
+                const detail: {
+                    roomId: string; // 聊天室 ID
+                    action: CustomAction; // 菜单项
+                } = e.detail[0];
                 break;
+            }
             /**
              * 在聊天页面点击聊天室标题
              */
@@ -378,7 +406,7 @@ export class Control {
                 this.updateMessages(detail.room.roomId);
 
                 /* 更新聊天室状态信息 */
-                const room = this._room_map.get(detail.room.roomId);
+                const room = this._room_status_map.get(detail.room.roomId);
                 if (room) {
                     room.unreadCount = 0;
                     if (room.lastMessage?.new) {
@@ -396,7 +424,20 @@ export class Control {
                     roomId: string; // 当前聊天室 ID
                     message: string | null; // 消息输入框中的文本内容
                 } = e.detail[0];
-                // TODO: 广播当前正在编辑的用户
+
+                const user = this._y_rooms.get(detail.roomId)?.users.find(user => user._id === this._user._id)
+                    ?? this._user;
+                const typing = !!detail.message; // 用户是否正在编辑
+
+                /* 广播当前用户编辑状态 */
+                await this._broadcastTypingStatus(
+                    detail.roomId,
+                    typing,
+                    user,
+                );
+
+                /* 更新当前聊天室的用户编辑状态 */
+                this._setUserTypingStatus(detail.roomId, user._id, typing);
                 break;
             }
             /**
@@ -480,10 +521,15 @@ export class Control {
                     new: false,
                     files: message.files,
                 };
-                this._room_map.set(detail.roomId, {
+
+                /* 更新聊天室状态 */
+                const room_status = this._room_status_map.get(detail.roomId) ?? {};
+                Object.assign(room_status, {
                     unreadCount: 0,
                     lastMessage: last_message,
                 });
+                this._room_status_map.set(detail.roomId, room_status);
+
                 this.updateRooms();
                 this._broadcastLastMessage(
                     detail.roomId,
@@ -506,10 +552,32 @@ export class Control {
                 ); // 推送消息
                 break;
             }
-            case "edit-message":
+            /**
+             * 编辑消息
+             * TODO
+             */
+            case "edit-message": {
+                const detail: {
+                    roomId: string; // 聊天室 ID
+                    messageId: string; // 消息 ID
+                    usersTag: RoomUser[]; // @ 的用户列表 (proxy)
+                    newContent: string; // 更新后的消息文本内容
+                    files?: null | MessageFile[]; // 附件列表 (proxy)
+                    replyMessage?: null | Message; // 回复的消息
+                } = e.detail[0];
                 break;
-            case "delete-message":
+            }
+            /**
+             * 删除消息
+             * TODO
+             */
+            case "delete-message": {
+                const detail: {
+                    roomId: string; // 聊天室 ID
+                    message: Message; // 消息对象
+                } = e.detail[0];
                 break;
+            }
             /**
              * 下载/查看文件
              */
@@ -539,6 +607,7 @@ export class Control {
             }
             /**
              * 点击消息中的 @ 用户
+             * TODO
              */
             case "open-user-tag": {
                 const detail: RoomUser = e.detail[0]; // (proxy)
@@ -546,12 +615,41 @@ export class Control {
             }
             case "open-failed-message":
                 break;
-            case "menu-action-handler":
+            /**
+             * 消息界面右上角菜单项
+             * TODO
+             */
+            case "menu-action-handler": {
+                const detail: {
+                    roomId: string; // 聊天室 ID
+                    action: CustomAction; // 菜单项
+                } = e.detail[0];
                 break;
-            case "message-action-handler":
+            }
+            /**
+             * 消息菜单项
+             * TODO
+             */
+            case "message-action-handler": {
+                const detail: {
+                    roomId: string; // 聊天室 ID
+                    action: CustomAction; // 菜单项
+                    message: Message; // 消息内容
+                } = e.detail[0];
                 break;
-            case "message-selection-action-handler":
+            }
+            /**
+             * 多选消息菜单项
+             * TODO
+             */
+            case "message-selection-action-handler": {
+                const detail: {
+                    roomId: string; // 聊天室 ID
+                    action: CustomAction; // 菜单项
+                    messages: Message[]; // 消息列表 (proxy)
+                } = e.detail[0];
                 break;
+            }
             /**
              * 使用表情 emoji 评论消息
              */
@@ -621,6 +719,43 @@ export class Control {
     }
 
     /**
+     * 更新用户输入状态
+     * @param roomId 聊天室 ID
+     * @param userId 用户 ID
+     * @param typing 用户输入状态
+     */
+    public updateUserTypingStatus(
+        roomId: string,
+        userId: string,
+        typing: boolean,
+    ): void {
+        /* 更新该聊天室用户输入状态 */
+        const room_status = this._room_status_map.get(roomId);
+        const typing_users = new Set<string>(room_status?.typingUsers ?? []);
+        const typing_users_count = typing_users.size;
+        if (typing) { // 正在输入
+            typing_users.add(userId);
+        }
+        else { // 停止输入
+            typing_users.delete(userId);
+        }
+
+        if (typing_users_count !== typing_users.size) { // 正在输入的用户数量发生变化时更新
+            if (room_status) { // 更新聊天室状态
+                room_status.typingUsers = [...typing_users];
+            }
+            else { // 添加聊天室状态
+                this._room_status_map.set(roomId, {
+                    typingUsers: [...typing_users],
+                });
+            }
+
+            /* 更新聊天室信息 */
+            this.updateRooms();
+        }
+    }
+
+    /**
      * 更新聊天室用户列表
      * @param roomId 聊天室 ID
      * @param user 用户
@@ -637,8 +772,8 @@ export class Control {
             let update = false;
 
             if (user_) {
-                if (!deepEqual(user_, user)) {
-                    Object.assign(user_, user);
+                if (!deepEqual(user_.status, user.status)) {
+                    user_.status = user.status;
                     update = true;
                 }
             }
@@ -662,7 +797,7 @@ export class Control {
         const rooms: Room[] = [];
         for (const room of this._y_rooms.values()) {
             if (room.users.find(user => user._id === this._user._id)) {
-                rooms.push(merge<Room>(this._room_map.get(room.roomId) ?? {}, room));
+                rooms.push(merge<Room>(this._room_status_map.get(room.roomId) ?? {}, room));
             }
         }
         this._rooms.value = rooms;
@@ -741,6 +876,33 @@ export class Control {
     }
 
     /**
+     * 广播聊天室用户输入状态
+     * @param roomId 聊天室 ID
+     * @param typing 用户是否正在输入
+     * @param user 用户
+     */
+    protected async _broadcastTypingStatus(
+        roomId: string,
+        typing: boolean,
+        user: RoomUser = this._user,
+    ): Promise<void> {
+        const room = this._y_rooms.get(roomId);
+        if (room) {
+            const message = this._construct<ITypingStatusBroadcastMessage>(
+                MessageType.broadcast,
+                ControlChannel.typing_status,
+                undefined,
+                {
+                    roomId,
+                    typing,
+                    user,
+                },
+            );
+            await this._broadcastControlMessage(message);
+        }
+    }
+
+    /**
      * 广播聊天室最新消息
      * @param roomId 聊天室 ID
      * @param lastMessage 聊天室最新消息
@@ -812,6 +974,48 @@ export class Control {
     }
 
     /**
+     * 设置用户输入状态
+     * @param roomId 聊天室 ID
+     * @param userId 用户 ID
+     * @param typing 用户输入状态
+     * @param timeout 编辑状态超时时间
+     */
+    protected _setUserTypingStatus(
+        roomId: string,
+        userId: string,
+        typing: boolean,
+        timeout: number = Constants.USER_TYPING_STATUS_TIMEOUT,
+    ): void {
+        /* 删除原有的定时器 */
+        const room_user_key = `[${roomId}]-(${userId})`; // 由 聊天室 ID 与 用户 ID 组成的键
+        const user_status = this._room_user_status_map.get(room_user_key);
+        if (user_status?.typing.timer) {
+            clearTimeout(user_status.typing.timer);
+        }
+
+        /* 更新用户输入状态 */
+        this.updateUserTypingStatus(roomId, userId, typing);
+
+        if (typing) {
+            /* 设置新的定时器 */
+            const timer = setTimeout(
+                () => this.updateUserTypingStatus(roomId, userId, false),
+                timeout,
+            );
+            if (user_status) {
+                user_status.typing.timer = timer;
+            }
+            else {
+                this._room_user_status_map.set(room_user_key, {
+                    typing: {
+                        timer,
+                    },
+                });
+            }
+        }
+    }
+
+    /**
      * 处理其他用户状态变更
      */
     protected async _handleOtherUserStatusChange(message: IUserStatusBroadcastMessage): Promise<void> {
@@ -842,12 +1046,25 @@ export class Control {
     }
 
     /**
+     * 处理用户输入状态
+     */
+    protected async _handleTypingStatus(message: ITypingStatusBroadcastMessage): Promise<void> {
+        const {
+            roomId,
+            typing,
+            user,
+        } = message.data;
+
+        this._setUserTypingStatus(roomId, user._id, typing);
+    }
+
+    /**
      * 处理最新消息
      */
     protected async _handleLastMessage(message: ILastMessageBroadcastMessage): Promise<void> {
         message.data.lastMessage.new = true;
 
-        const room = this._room_map.get(message.data.roomId);
+        const room = this._room_status_map.get(message.data.roomId);
         if (room) {
             room.unreadCount = room.unreadCount
                 ? room.unreadCount + 1
@@ -855,7 +1072,7 @@ export class Control {
             room.lastMessage = message.data.lastMessage;
         }
         else {
-            this._room_map.set(message.data.roomId, {
+            this._room_status_map.set(message.data.roomId, {
                 unreadCount: 1,
                 lastMessage: message.data.lastMessage,
             });

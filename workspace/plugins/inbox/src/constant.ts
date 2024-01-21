@@ -30,3 +30,4 @@ export const ROOM_MESSAGES_MAP_FILE_PATH = `${PETAL_DATA_DIRECTORY}/room-message
 export const MAIN_ROOM_ID = "main";
 export const ASSETS_DIR_PATH = `/assets/${manifest.name}/`;
 export const ICON_FILE_PATH = "./../icon.png";
+export const USER_TYPING_STATUS_TIMEOUT = 10_000; // 用户编辑状态持续时间 (ms)
