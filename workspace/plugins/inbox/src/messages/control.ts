@@ -146,6 +146,7 @@ export class Control {
 
     protected _current_room_id: string; // 当前聊天室 ID
     protected _rooms_list_opened: boolean = true; // 当前聊天列表是否展开
+    protected _force_update_message: boolean = false; // 是否强制更新消息列表
 
     constructor(
         protected readonly t: VueI18nTranslation,
@@ -403,7 +404,7 @@ export class Control {
                 } = e.detail[0];
 
                 this._current_room_id = detail.room.roomId;
-                this.updateMessages(detail.room.roomId);
+                this.updateMessages(true, detail.room.roomId);
 
                 /* 更新聊天室状态信息 */
                 const room = this._room_status_map.get(detail.room.roomId);
@@ -453,26 +454,8 @@ export class Control {
                 } = e.detail[0];
 
                 /* 上传文件到 assets */
-                if (Array.isArray(detail.files) && detail.files.length > 0) {
-                    const files = detail.files
-                        .filter(file => (file.blob instanceof Blob))
-                        .map(file => new File(
-                            [file.blob!],
-                            file.name,
-                            {
-                                type: file.type,
-                            },
-                        ));
-                    const response = await this._client.upload({
-                        assetsDirPath: Constants.ASSETS_DIR_PATH,
-                        files,
-                    });
-                    detail.files.forEach(file => {
-                        const asset_path = response.data.succMap[file.name];
-                        file.url = asset_path
-                            ? `./../../../${asset_path}`
-                            : "";
-                    });
+                if (Array.isArray(detail.files)) {
+                    await this.uploadFiles(detail.files);
                 }
 
                 /* 添加到消息列表 */
@@ -506,7 +489,6 @@ export class Control {
                 messages.push(message._id);
                 this._y_room_messages.set(detail.roomId, messages);
                 this._y_messages.set(message._id, message);
-                // this.updateMessages(detail.roomId);
 
                 this.updateUserStatus(detail.roomId, date);
 
@@ -536,6 +518,7 @@ export class Control {
                     last_message,
                 ); // 广播最新消息
 
+                /* 推送消息通知 */
                 const room = this._y_rooms.get(detail.roomId);
                 this._pushNotificationMessage(
                     room?.roomName ?? this.t("inbox"),
@@ -554,7 +537,6 @@ export class Control {
             }
             /**
              * 编辑消息
-             * TODO
              */
             case "edit-message": {
                 const detail: {
@@ -562,20 +544,38 @@ export class Control {
                     messageId: string; // 消息 ID
                     usersTag: RoomUser[]; // @ 的用户列表 (proxy)
                     newContent: string; // 更新后的消息文本内容
-                    files?: null | MessageFile[]; // 附件列表 (proxy)
-                    replyMessage?: null | Message; // 回复的消息
+                    files?: MessageFile[]; // 附件列表 (proxy)
+                    replyMessage?: Message; // 回复的消息
                 } = e.detail[0];
+
+                const message = this._y_messages.get(detail.messageId);
+                if (message) {
+                    /* 上传文件到 assets */
+                    if (Array.isArray(detail.files)) {
+                        await this.uploadFiles(detail.files);
+                    }
+
+                    message.content = detail.newContent;
+                    message.files = detail.files;
+                    message.replyMessage = detail.replyMessage;
+                    message.edited = true;
+
+                    this._force_update_message = true;
+                    this._y_messages.set(message._id, message);
+                }
                 break;
             }
             /**
              * 删除消息
-             * TODO
              */
             case "delete-message": {
                 const detail: {
                     roomId: string; // 聊天室 ID
                     message: Message; // 消息对象
                 } = e.detail[0];
+
+                detail.message.deleted = true;
+                this._y_messages.set(detail.message._id, detail.message);
                 break;
             }
             /**
@@ -607,28 +607,36 @@ export class Control {
             }
             /**
              * 点击消息中的 @ 用户
-             * TODO
              */
             case "open-user-tag": {
                 const detail: RoomUser = e.detail[0]; // (proxy)
+                // TODO: 点击 @ 的用户
                 break;
             }
             case "open-failed-message":
                 break;
             /**
              * 消息界面右上角菜单项
-             * TODO
              */
             case "menu-action-handler": {
                 const detail: {
                     roomId: string; // 聊天室 ID
                     action: CustomAction; // 菜单项
                 } = e.detail[0];
+                // TODO: 消息界面菜单
+
+                switch (detail.action.name) {
+                    case "refresh": // 页面刷新
+                        this.updateMessages(true);
+                        break;
+
+                    default:
+                        break;
+                }
                 break;
             }
             /**
              * 消息菜单项
-             * TODO
              */
             case "message-action-handler": {
                 const detail: {
@@ -636,11 +644,11 @@ export class Control {
                     action: CustomAction; // 菜单项
                     message: Message; // 消息内容
                 } = e.detail[0];
+                // TODO: 消息菜单
                 break;
             }
             /**
              * 多选消息菜单项
-             * TODO
              */
             case "message-selection-action-handler": {
                 const detail: {
@@ -648,6 +656,7 @@ export class Control {
                     action: CustomAction; // 菜单项
                     messages: Message[]; // 消息列表 (proxy)
                 } = e.detail[0];
+                // TODO: 多选消息菜单
                 break;
             }
             /**
@@ -677,6 +686,7 @@ export class Control {
                     }
 
                     message.reactions[detail.reaction.unicode] = Array.from(user_set);
+                    this._force_update_message = true;
                     this._y_messages.set(message._id, message);
                 }
 
@@ -694,12 +704,53 @@ export class Control {
                     };
                     message: Message; // 文件所在的消息对象
                 } = e.detail[0];
+                // TODO: 消息输入框右侧的更多操作按钮
                 break;
             }
 
             default:
                 break;
         }
+    }
+
+    /**
+     * 上传文件
+     * @param messageFiles 文件列表
+     * @param assetsDirPath assets 目录路径
+     * @returns 文件列表
+     */
+    public async uploadFiles(
+        messageFiles: MessageFile[],
+        assetsDirPath: string = Constants.ASSETS_DIR_PATH,
+    ): Promise<MessageFile[]> {
+        const files = messageFiles
+            .filter(file => (file.blob instanceof Blob) && !file.url) // 仅上传存在文件内容 且 未上传的文件
+            .map(file => new File(
+                [file.blob!],
+                file.name,
+                {
+                    type: file.type,
+                },
+            ));
+        if (files.length > 0) {
+            const response = await this._client.upload({
+                assetsDirPath,
+                files,
+            });
+            messageFiles.forEach(file => {
+                const asset_path = response.data.succMap[file.name];
+                delete file.localUrl;
+                file.url = asset_path
+                    ? `./../../../${asset_path}`
+                    : file.url;
+            });
+        }
+        else {
+            messageFiles.forEach(file => {
+                delete file.localUrl;
+            });
+        }
+        return messageFiles;
     }
 
     /**
@@ -811,17 +862,26 @@ export class Control {
     /**
      * 更新消息列表
      * @param roomId 聊天室 ID
+     * @param force 强制更新
      */
-    public readonly updateMessages = deshake((roomId: string = this._current_room_id) => {
+    public readonly updateMessages = deshake((
+        force: boolean = this._force_update_message,
+        roomId: string = this._current_room_id,
+    ) => {
         this._messages_loaded.value = false;
+        if (force) {
+            this._force_update_message = false;
+            this._messages.value = [];
+        }
 
-        const messages = this._y_room_messages.get(roomId) || [];
-        this._messages.value = messages
+        const messages_list = this._y_room_messages.get(roomId) || [];
+        const messages = messages_list
             .map(message_id => this._y_messages.get(message_id)!)
             .filter(message => !!message);
 
         /* 避免初始化时一直显示正在加载动画 */
         setTimeout(() => {
+            this._messages.value = messages;
             this._messages_loaded.value = true;
         });
     })

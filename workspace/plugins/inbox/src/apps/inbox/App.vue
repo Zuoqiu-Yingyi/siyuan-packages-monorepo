@@ -97,7 +97,11 @@ const menu_actions: Props["menu-actions"] = [
         name: "test",
         title: "Test",
     },
-]; // 聊天室更多菜单
+    {
+        name: "refresh",
+        title: "Refresh",
+    },
+]; // 聊天面板菜单
 const message_actions: Props["message-actions"] = [
     {
         name: "test",
