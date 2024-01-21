@@ -3,6 +3,9 @@
 ## 2024-01-21
 
 - 修复多节点同步聊天室用户数据失效的问题 | Fix the issue that the multi-node synchronization chat room user data is invalid.
+- 新增用户输入状态广播功能 | Add user typing status broadcast function.
+- 新增删除与编辑消息功能 | Add delete and edit message function.
+- 修复部分操作无法实时更新的问题 | Fix the issue that some operations cannot be updated in real time.
 
 ## 2024-01-20
 
