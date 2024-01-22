@@ -150,6 +150,7 @@ export class Control {
 
     protected _current_room_id: string; // 当前聊天室 ID
     protected _rooms_list_opened: boolean = true; // 当前聊天列表是否展开
+    protected _typing_limitation: boolean = false; // 是否限制用户输入状态广播
 
     constructor(
         protected readonly t: VueI18nTranslation,
@@ -450,19 +451,29 @@ export class Control {
                     message: string | null; // 消息输入框中的文本内容
                 } = e.detail[0];
 
-                const user = this._y_rooms.get(detail.roomId)?.users.find(user => user._id === this._user._id)
-                    ?? this._user;
                 const typing = !!detail.message; // 用户是否正在编辑
+                if (!typing) { // 用户停止编辑时立即更新编辑状态并广播
+                    this._typing_limitation = false;
+                }
 
-                /* 广播当前用户编辑状态 */
-                await this._broadcastTypingStatus(
-                    detail.roomId,
-                    typing,
-                    user,
-                );
+                if (!this._typing_limitation) { // 更新编辑状态并广播
+                    /* 设置下次广播间隔 */
+                    this._typing_limitation = true;
+                    setTimeout(() => (this._typing_limitation = false), Constants.USER_TYPING_STATUS_INTERVAL);
 
-                /* 更新当前聊天室的用户编辑状态 */
-                this._setUserTypingStatus(detail.roomId, user._id, typing);
+                    const user = this._y_rooms.get(detail.roomId)?.users.find(user => user._id === this._user._id)
+                        ?? this._user;
+
+                    /* 更新当前聊天室的用户编辑状态 */
+                    this._setUserTypingStatus(detail.roomId, user._id, typing);
+
+                    /* 广播当前用户编辑状态 */
+                    await this._broadcastTypingStatus(
+                        detail.roomId,
+                        typing,
+                        user,
+                    );
+                }
                 break;
             }
             /**
@@ -774,23 +785,31 @@ export class Control {
         messageFiles: MessageFile[],
         assetsDirPath: string = Constants.ASSETS_DIR_PATH,
     ): Promise<MessageFile[]> {
-        const files = messageFiles
+        const files: File[] = messageFiles
             .filter(file => (file.blob instanceof Blob) && !file.url) // 仅上传存在文件内容 且 未上传的文件
-            .map(file => new File(
-                [file.blob!],
-                file.name,
-                {
-                    type: file.type,
-                },
-            ));
+            .map(file => {
+                if (!(file.blob instanceof File)) {
+                    file.blob = new File(
+                        [file.blob!],
+                        file.extension
+                            ? `${file.name}.${file.extension}`
+                            : file.name,
+                        {
+                            type: file.type,
+                        },
+                    );
+                }
+                return file.blob as File;
+            });
         if (files.length > 0) {
             const response = await this._client.upload({
                 assetsDirPath,
                 files,
             });
             messageFiles.forEach(file => {
-                const asset_path = response.data.succMap[file.name];
                 delete file.localUrl;
+
+                const asset_path = response.data.succMap[(file.blob as File)?.name];
                 file.url = asset_path
                     ? `./../../../${asset_path}`
                     : file.url;
@@ -945,7 +964,8 @@ export class Control {
             const lines: string[] = [];
             if (message.replyMessage) { // 存在引用的消息
                 const block = this.messages2markdown([message.replyMessage]);
-                lines.concat(block.split("\n").map(line => `> ${line}`));
+                lines.push(...block.split("\n").map(line => `> ${line}`));
+                lines.push(""); // 硬换行, 打破引述块
             }
             if (Array.isArray(message.files)) { // 存在附件
                 message.files.forEach(file => {
@@ -989,7 +1009,7 @@ export class Control {
                     // .replaceAll(/°[^°]*(((?<MARK>°)[^°]*)+((?<-MARK>°)[^°]*)+)*(?(MARK)(?!))°/g, "<u>$1</u>") // (js 的正则表达式引擎不支持平衡组) 使用平衡组替换 °foo° 为 <u>foo</u>
                     .replaceAll(/°([^°]+)°/g, "<u>$1</u>") // 替换 °foo° 为 <u>foo</u>
                     .replaceAll("\x00", "°"); // 恢复所有转义的 ° 符号
-                lines.push(content); 
+                lines.push(content);
             }
             blocks.push(lines.join("\n"));
         });
