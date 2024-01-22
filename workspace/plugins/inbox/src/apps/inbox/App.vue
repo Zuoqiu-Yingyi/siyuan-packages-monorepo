@@ -87,50 +87,99 @@ const link_options: Props["link-options"] = {
 }; // 超链接打开方式 (该参数无效, 默认配置也无效)
 const room_actions: Props["room-actions"] = [
     {
-        name: "test",
-        title: "Test",
+        // 添加成员
+        name: "room-users-add",
+        title: t("actions.room.users.add"),
     },
-]; // 聊天室下拉菜单
+    {
+        // 更改名称
+        name: "room-change-name",
+        title: t("actions.room.changeName"),
+    },
+    {
+        // 更改图标
+        name: "room-change-icon",
+        title: t("actions.room.changeIcon"),
+    },
+    {
+        // 退出群组
+        name: "room-users-leave",
+        title: t("actions.room.users.leave"),
+    },
+    {
+        // 解散群组
+        name: "room-disband",
+        title: t("actions.room.disband"),
+    },
+]; // 聊天室下拉菜单 (派遣 room-action-handler 事件)
 const menu_actions: Props["menu-actions"] = [
     {
-        name: "test",
-        title: "Test",
+        // 刷新
+        name: "menu-reload-messages",
+        title: t("actions.menu.reloadMessages"),
     },
     {
-        name: "refresh",
-        title: "Refresh",
+        // 更改用户昵称
+        name: "menu-change-username",
+        title: t("actions.menu.changeUsername"),
     },
-]; // 聊天面板菜单
+    {
+        // 更改用户头像
+        name: "menu-change-avatar",
+        title: t("actions.menu.changeAvatar"),
+    },
+    {
+        // 清空所有消息
+        name: "menu-clear-messages",
+        title: t("actions.menu.clearMessages"),
+    },
+]; // 聊天面板菜单 (派遣 menu-action-handler 事件)
 const message_actions: Props["message-actions"] = [
     {
-        name: "test",
-        title: "Test",
+        // 复制消息
+        name: "message-copy",
+        title: t("actions.message.copy"),
     },
     {
+        // 转发消息
+        name: "message-forward",
+        title: t("actions.message.forward"),
+    },
+    {
+        // 选择消息 (内部处理)
         name: "selectMessages",
-        title: "Select",
+        title: t("actions.message.select"),
     },
     {
+        // 回复消息 (内部处理)
         name: "replyMessage",
-        title: "Reply",
+        title: t("actions.message.reply"),
     },
     {
+        // 编辑消息 (内部处理)
         name: "editMessage",
-        title: "Edit Message",
+        title: t("actions.message.edit"),
         onlyMe: true,
     },
     {
+        // 删除消息 (派遣 delete-message 事件)
         name: "deleteMessage",
-        title: "Delete Message",
+        title: t("actions.message.delete"),
         onlyMe: true,
     },
-]; // 消息菜单
+]; // 消息菜单 (派遣 message-action-handler 事件)
 const message_selection_actions: Props["message-selection-actions"] = [
     {
-        name: "test",
-        title: "Test",
+        // 复制消息
+        name: "messages-copy",
+        title: t("actions.messages.copy"),
     },
-]; // 多选消息菜单
+    {
+        // 转发消息
+        name: "messages-forward",
+        title: t("actions.messages.forward"),
+    },
+]; // 多选消息菜单 (派遣 message-selection-action-handler 事件)
 const room_info_enabled: Props["room-info-enabled"] = true; // 是否启用房间信息
 const textarea_action_enabled: Props["textarea-action-enabled"] = true; // 是否启用文本框更多操作按钮
 const capture_files: Props["capture-files"] = "environment"; // 启用哪个摄像头 (environment: 后摄; user: 前摄)

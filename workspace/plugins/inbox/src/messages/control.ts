@@ -26,6 +26,8 @@ import { deshake } from "@workspace/utils/misc/deshake";
 import { isString } from "@workspace/utils/misc/type";
 import { deepEqual } from "@workspace/utils/misc/equal";
 import { deepClone } from "@workspace/utils/misc/clone";
+import { copyText } from "@workspace/utils/misc/copy";
+import { contentTypeParse } from "@workspace/utils/file/content-type";
 
 import {
     MessageType,
@@ -46,6 +48,7 @@ import type {
 } from "vue-advanced-chat";
 import type { VueI18nTranslation } from "vue-i18n";
 import { merge } from "@workspace/utils/misc/merge";
+import { trimPrefix } from "@workspace/utils/misc/string";
 
 export enum ControlChannel {
     user_status = "user-status", // 用户状态更改
@@ -380,6 +383,26 @@ export class Control {
                     roomId: string; // 聊天室 ID
                     action: CustomAction; // 菜单项
                 } = e.detail[0];
+
+                switch (detail.action.name) {
+                    case "room-users-add": { // TODO: 添加成员
+                        break;
+                    }
+                    case "room-change-name": { // TODO: 更改名称
+                        break;
+                    }
+                    case "room-change-icon": { // TODO: 更改图标
+                        break;
+                    }
+                    case "room-users-leave": { // TODO: 退出群组
+                        break;
+                    }
+                    case "room-disband": { // TODO: 解散群组
+                        break;
+                    }
+                    default:
+                        break;
+                }
                 break;
             }
             /**
@@ -387,6 +410,7 @@ export class Control {
              */
             case "room-info": {
                 const detail: Room = e.detail[0]; // (proxy)
+                // TODO: 显示并编辑聊天室信息
                 break;
             }
 
@@ -621,13 +645,21 @@ export class Control {
                     roomId: string; // 聊天室 ID
                     action: CustomAction; // 菜单项
                 } = e.detail[0];
-                // TODO: 消息界面菜单
 
                 switch (detail.action.name) {
-                    case "refresh": // 页面刷新
+                    case "menu-reload-messages": { // 页面刷新
                         this.updateMessages();
                         break;
-
+                    }
+                    case "menu-change-username": { // TODO: 更改用户昵称
+                        break;
+                    }
+                    case "menu-change-avatar": { // TODO: 更改用户头像
+                        break;
+                    }
+                    case "menu-clear-messages": { // TODO: 清空所有消息
+                        break;
+                    }
                     default:
                         break;
                 }
@@ -642,7 +674,18 @@ export class Control {
                     action: CustomAction; // 菜单项
                     message: Message; // 消息内容
                 } = e.detail[0];
-                // TODO: 消息菜单
+
+                switch (detail.action.name) {
+                    case "message-copy": { // 复制消息
+                        this.copyMessages([detail.message]);
+                        break;
+                    }
+                    case "message-forward": { // TODO: 转发消息
+                        break;
+                    }
+                    default:
+                        break;
+                }
                 break;
             }
             /**
@@ -654,7 +697,18 @@ export class Control {
                     action: CustomAction; // 菜单项
                     messages: Message[]; // 消息列表 (proxy)
                 } = e.detail[0];
-                // TODO: 多选消息菜单
+
+                switch (detail.action.name) {
+                    case "messages-copy": { // 复制消息
+                        this.copyMessages(detail.messages);
+                        break;
+                    }
+                    case "messages-forward": { // TODO: 转发消息组
+                        break;
+                    }
+                    default:
+                        break;
+                }
                 break;
             }
             /**
@@ -878,6 +932,84 @@ export class Control {
             });
         }
     })
+
+    /**
+     * 消息列表转换为 Markdown
+     * @param messages 消息列表
+     * @returns 消息 Markdown 文本
+     */
+    public messages2markdown(messages: Message[]): string {
+        const blocks: string[] = [];
+
+        messages.forEach(message => {
+            const lines: string[] = [];
+            if (message.replyMessage) { // 存在引用的消息
+                const block = this.messages2markdown([message.replyMessage]);
+                lines.concat(block.split("\n").map(line => `> ${line}`));
+            }
+            if (Array.isArray(message.files)) { // 存在附件
+                message.files.forEach(file => {
+                    const anchor_text = file.name.replaceAll(/(?<!\\)([\[\]])/g, "\\$1"); // 超链接锚文本
+                    const asset_path = trimPrefix(file.url, "./../../../"); // 资源引用路径
+                    const content_type = contentTypeParse(file.type); // 文件类型
+                    if (content_type) {
+                        switch (content_type.maintype) {
+                            case "image": // 图片
+                                lines.push(`![${anchor_text}](<${asset_path}>)`);
+                                break;
+                            case "audio": { // 音频
+                                const audio = document.createElement("audio");
+                                audio.src = asset_path;
+                                audio.dataset.src = asset_path;
+                                audio.controls = true;
+                                lines.push(audio.outerHTML);
+                                break;
+                            }
+                            case "video": { // 视频
+                                const video = document.createElement("video");
+                                video.src = asset_path;
+                                video.dataset.src = asset_path;
+                                video.controls = true;
+                                lines.push(video.outerHTML);
+                                break;
+                            }
+                            default: // 其他文件类型
+                                lines.push(`[${anchor_text}](<${asset_path}>)`);
+                                break;
+                        }
+                    }
+                    else { // 未知文件类型
+                        lines.push(`[${anchor_text}](<${asset_path}>)`);
+                    }
+                });
+            }
+            if (message.content) { // 存在文本内容
+                const content = message.content
+                    .replaceAll("\\°", "\x00") // 替换所有转义后的 ° 符号
+                    // .replaceAll(/°[^°]*(((?<MARK>°)[^°]*)+((?<-MARK>°)[^°]*)+)*(?(MARK)(?!))°/g, "<u>$1</u>") // (js 的正则表达式引擎不支持平衡组) 使用平衡组替换 °foo° 为 <u>foo</u>
+                    .replaceAll(/°([^°]+)°/g, "<u>$1</u>") // 替换 °foo° 为 <u>foo</u>
+                    .replaceAll("\x00", "°"); // 恢复所有转义的 ° 符号
+                lines.push(content); 
+            }
+            blocks.push(lines.join("\n"));
+        });
+
+        const markdown = blocks.join("\n\n");
+        return markdown;
+    }
+
+    /**
+     * 复制消息
+     * @param messages 消息列表
+     * @returns 消息 Markdown 文本
+     */
+    public async copyMessages(
+        messages: Message[],
+    ): Promise<string> {
+        const markdown = this.messages2markdown(messages);
+        await copyText(markdown);
+        return markdown;
+    }
 
     /**
      * 构造消息
