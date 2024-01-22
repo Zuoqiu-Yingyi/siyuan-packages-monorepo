@@ -11,5 +11,34 @@
     "ROOM_EMPTY": "No room selected",
     "SEARCH": "Search",
     "TYPE_MESSAGE": "Type message",
+    "actions": {
+        "menu": {
+            "changeAvatar": "Change avatar",
+            "changeUsername": "Change nickname",
+            "clearMessages": "Clear messages",
+            "reloadMessages": "Reload message"
+        },
+        "message": {
+            "copy": "Copy",
+            "delete": "Delete",
+            "edit": "Edit",
+            "forward": "Forward",
+            "reply": "Reply",
+            "select": "Select"
+        },
+        "messages": {
+            "copy": "Copy",
+            "forward": "Forward"
+        },
+        "room": {
+            "changeIcon": "Change icon",
+            "changeName": "Change name",
+            "disband": "Dismiss group",
+            "users": {
+                "add": "Add members",
+                "leave": "Leave group"
+            }
+        }
+    },
     "inbox": "Inbox"
 }

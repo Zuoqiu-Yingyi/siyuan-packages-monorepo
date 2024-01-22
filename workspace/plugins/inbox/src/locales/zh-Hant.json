@@ -11,5 +11,34 @@
     "ROOM_EMPTY": "未選擇討論組",
     "SEARCH": "搜索",
     "TYPE_MESSAGE": "輸入消息",
+    "actions": {
+        "menu": {
+            "changeAvatar": "更改頭像",
+            "changeUsername": "更改暱稱",
+            "clearMessages": "清空訊息",
+            "reloadMessages": "重載訊息"
+        },
+        "message": {
+            "copy": "複製",
+            "delete": "刪除",
+            "edit": "編輯",
+            "forward": "轉發",
+            "reply": "回覆",
+            "select": "多選"
+        },
+        "messages": {
+            "copy": "複製",
+            "forward": "轉發"
+        },
+        "room": {
+            "changeIcon": "更改圖示",
+            "changeName": "更改名稱",
+            "disband": "解散群組",
+            "users": {
+                "add": "新增成員",
+                "leave": "退出群組"
+            }
+        }
+    },
     "inbox": "收集箱"
 }

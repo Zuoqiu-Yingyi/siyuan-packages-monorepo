@@ -21,6 +21,7 @@ import * as media from "media-typer";
 export {
     content,
     media,
+    parse as contentTypeParse,
 };
 
 export interface IContentType {

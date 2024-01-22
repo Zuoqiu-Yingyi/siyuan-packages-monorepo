@@ -17,12 +17,16 @@
 
 import copy from 'copy-to-clipboard';
 
-export function copyText(text: string) {
+export async function copyText(text: string) {
     // navigator clipboard api needs a secure context (https | localhost | loopback)
-    if (navigator.clipboard && window.isSecureContext) {
+    if (globalThis.isSecureContext && globalThis.navigator.clipboard) {
         // navigator clipboard api method'
-        return navigator.clipboard.writeText(text);
+        try {
+            return globalThis.navigator.clipboard.writeText(text);
+        } catch (error) {
+            return copy(text);
+        }
     } else {
-        copy(text);
+        return copy(text);
     }
 }

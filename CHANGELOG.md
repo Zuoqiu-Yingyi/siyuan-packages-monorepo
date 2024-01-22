@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-01-22
+
+- 新增复制消息功能 | Add copy message function.
+
 ## 2024-01-21
 
 - 修复多节点同步聊天室用户数据失效的问题 | Fix the issue that the multi-node synchronization chat room user data is invalid.
