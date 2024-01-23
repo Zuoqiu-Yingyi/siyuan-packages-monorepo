@@ -1,8 +1,13 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-01-24
+
+- 修复侧边面板图标尺寸异常问题 | Fix the issue of abnormal icon size in the side panel.
+
 ## 2024-01-22
 
 - 新增复制消息功能 | Add copy message function.
+- 优化用户编辑状态广播机制 | Optimize user edit status broadcast mechanism.
 
 ## 2024-01-21
 
