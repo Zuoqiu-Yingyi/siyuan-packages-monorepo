@@ -24,7 +24,10 @@
 
 <div class="block__logo">
     {#if icon}
-        <Svg {icon} />
+        <Svg
+            className={"block__logoicon"}
+            {icon}
+        />
     {/if}
     {#if title}
         {title}
