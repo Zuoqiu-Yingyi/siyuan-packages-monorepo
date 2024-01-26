@@ -20,6 +20,7 @@ import { resolve } from "node:path";
 
 import vue from '@vitejs/plugin-vue';
 import { viteStaticCopy } from "vite-plugin-static-copy";
+import { vitePluginForArco } from "@arco-plugins/vite-vue";
 
 // https://vitejs.dev/config/
 export default {
@@ -35,11 +36,15 @@ export default {
                             case "emoji-picker":
                                 return true;
                             default:
-                                return false;
+                                return /\w+(-\w+)+/.test(tag);
                         }
                     },
                 },
             },
+        }),
+        // REF: https://arco.design/vue/docs/start
+        vitePluginForArco({
+            style: true,
         }),
         viteStaticCopy({
             targets: [

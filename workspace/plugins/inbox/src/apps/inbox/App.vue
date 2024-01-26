@@ -17,9 +17,10 @@
 
 <script setup lang="ts">
 import { inject, shallowRef, onMounted } from "vue";
-import type { I18n, VueI18nTranslation } from "vue-i18n";
 import { register, type VueAdvancedChat, type RoomUser, type Room, type Message, type Props } from "vue-advanced-chat";
+import InboxTextareaMenu from "@/components/InboxTextareaMenu.vue";
 
+import type { I18n, VueI18nTranslation } from "vue-i18n";
 import type { Logger } from "@workspace/utils/logger";
 import type { Client } from "@siyuan-community/siyuan-sdk";
 
@@ -34,6 +35,9 @@ const locale = inject("locale") as string;
 const logger = inject("logger") as Logger;
 const client = inject("client") as Client;
 const t = i18n.global.t as VueI18nTranslation;
+
+/* 设置 Arco 主题 */
+globalThis.document.body.setAttribute("arco-theme", theme);
 
 /* emoji-picker-element-data 表情 emoji 数据语言标记 */
 const picker_locale: string = (() => {
@@ -250,25 +254,10 @@ onMounted(async () => {
         @typing-message="control.handler"
     >
         <!-- 消息输入框的自定义按钮, 点击时触发 textarea-action-handler 事件 -->
-        <svg
-            slot="custom-action-icon"
-            id="vac-icon-textarea-action"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            version="1.1"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-        >
-            <path d="M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z" />
-        </svg>
+        <span slot="custom-action-icon">
+            <InboxTextareaMenu />
+        </span>
     </vue-advanced-chat>
 </template>
 
-<style scoped lang="less">
-#vac-icon-textarea-action {
-    path {
-        fill: var(--chat-icon-color-menu);
-    }
-}
-</style>
+<style scoped lang="less"></style>
