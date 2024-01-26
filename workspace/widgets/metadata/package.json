@@ -15,7 +15,6 @@
         "@workspace/utils": "workspace:^"
     },
     "devDependencies": {
-        "@arco-design/web-vue": "^2.54.2",
         "@types/js-yaml": "^4.0.9",
         "js-yaml": "^4.1.0",
         "moment": "^2.30.1",

@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-01-26
+
+- 提取部分依赖至工作空间 | Extract some dependencies to workspace.
+
 ## 2024-01-24
 
 - 修复侧边面板图标尺寸异常问题 | Fix the issue of abnormal icon size in the side panel.
