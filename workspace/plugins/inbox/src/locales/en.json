@@ -38,7 +38,25 @@
                 "add": "Add members",
                 "leave": "Leave group"
             }
+        },
+        "textarea": {
+            "photo": {
+                "front": "Front camera",
+                "rear": "Rear camera",
+                "title": "Photograph"
+            },
+            "video": {
+                "front": "Front camera",
+                "rear": "Rear camera",
+                "title": "Video"
+            }
         }
     },
-    "inbox": "Inbox"
+    "inbox": "Inbox",
+    "menu": {
+        "group": {
+            "photo": "Photograph",
+            "video": "Video"
+        }
+    }
 }

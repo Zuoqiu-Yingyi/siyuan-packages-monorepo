@@ -38,6 +38,18 @@
                 "add": "新增成員",
                 "leave": "退出群組"
             }
+        },
+        "textarea": {
+            "photo": {
+                "front": "前置鏡頭",
+                "rear": "後置攝像頭",
+                "title": "拍照"
+            },
+            "video": {
+                "front": "前置鏡頭",
+                "rear": "後置鏡頭",
+                "title": "錄影"
+            }
         }
     },
     "inbox": "收集箱"

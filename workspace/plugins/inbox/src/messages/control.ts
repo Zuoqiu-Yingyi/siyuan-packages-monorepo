@@ -363,6 +363,7 @@ export class Control {
              */
             case "add-room": {
                 const detail: undefined = e.detail[0];
+                // TODO: 新建群组
                 break;
             }
             /**
@@ -386,7 +387,8 @@ export class Control {
                 } = e.detail[0];
 
                 switch (detail.action.name) {
-                    case "room-users-add": { // TODO: 添加成员
+                    case "room-users-add": { // TODO: 添加成员 (仅能添加不在该群组的成员)
+                        // 主群组默认会添加所有成员
                         break;
                     }
                     case "room-change-name": { // TODO: 更改名称
@@ -395,10 +397,58 @@ export class Control {
                     case "room-change-icon": { // TODO: 更改图标
                         break;
                     }
-                    case "room-users-leave": { // TODO: 退出群组
+                    case "room-users-leave": { // 退出群组
+                        if (detail.roomId === this._inbox.roomId) { // 主群组不能退出
+                            // TODO: 提示主群组不能退出
+                        }
+                        else {
+                            const room = this._y_rooms.get(detail.roomId);
+                            if (room) {
+                                const user_index = room.users.findIndex(user => user._id === this._user._id);
+                                if (user_index >= 0) {
+                                    if (room.users.length === 1) { // 当前用户为该群组最后一个用户
+                                        // TODO: 提示当前用户为该群组最后一个用户, 退出后该群组解散
+                                    }
+
+                                    /* 退出操作 */
+                                    // TODO: 用户二次确认退出群组
+                                    const user = room.users[user_index];
+                                    room.users.splice(user_index, 1);
+                                    this._y_rooms.set(room.roomId, room);
+
+                                    if (detail.roomId === this._current_room_id) { // 将消息面板切换到主聊天室
+                                        this._room_id.value = this._inbox.roomId;
+                                    }
+                                    this.updateRooms(); // 更新聊天室列表状态
+
+                                    // TODO: 提示群组退出成功
+                                    // TODO: 可撤回退出操作
+                                }
+                            }
+                        }
                         break;
                     }
-                    case "room-disband": { // TODO: 解散群组
+                    case "room-disband": { // TODO: 解散群组 (仅当前用户为该群组最后一个用户时才能解散)
+                        if (detail.roomId === this._inbox.roomId) { // 主群组不能解散
+                            // TODO: 提示主群组不能解散
+                        }
+                        else {
+                            const room = this._y_rooms.get(detail.roomId);
+                            const messages = this._y_room_messages.get(detail.roomId);
+                            if (room && messages) {
+                                /* 解散操作 */
+                                // TODO: 用户二次确认解散群组
+
+                                if (detail.roomId === this._current_room_id) { // 将消息面板切换到主聊天室
+                                    this._room_id.value = this._inbox.roomId;
+                                }
+                                this._y_rooms.delete(detail.roomId);
+                                this._y_room_messages.delete(detail.roomId);
+
+                                // TODO: 提示群组解散成功
+                                // TODO: 可撤回解散操作
+                            }
+                        }
                         break;
                     }
                     default:
@@ -668,7 +718,24 @@ export class Control {
                     case "menu-change-avatar": { // TODO: 更改用户头像
                         break;
                     }
-                    case "menu-clear-messages": { // TODO: 清空所有消息
+                    case "menu-clear-messages": { // 清空所有消息
+                        const messages = this._y_room_messages.get(detail.roomId);
+                        if (messages) {
+                            // TODO: 用户二次确认清空该群组的所有消息
+
+                            /* 删除群组相关的状态 */
+                            const room_status = this._room_status_map.get(detail.roomId);
+                            if (room_status) {
+                                delete room_status.lastMessage;
+                                delete room_status.unreadCount;
+                            }
+
+                            /* 清空群组消息列表 */
+                            this._y_room_messages.set(detail.roomId, []);
+
+                            // TODO: 提示清空该群组所有消息成功
+                            // TODO: 可撤回清空消息的操作
+                        }
                         break;
                     }
                     default:
@@ -1029,6 +1096,22 @@ export class Control {
         const markdown = this.messages2markdown(messages);
         await copyText(markdown);
         return markdown;
+    }
+
+    /**
+     * 转发消息
+     * @param messages 消息列表
+     * @param roomId 目标群组 ID
+     */
+    public forwardMessages(
+        messages: Message[],
+        roomId: string,
+    ): void {
+        const messages_list = this._y_room_messages.get(roomId);
+        if (messages_list) {
+            messages_list.push(...messages.map(message => message._id));
+            this._y_room_messages.set(roomId, messages_list);
+        }
     }
 
     /**
