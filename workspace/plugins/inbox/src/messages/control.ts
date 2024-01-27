@@ -827,10 +827,7 @@ export class Control {
              */
             case "textarea-action-handler": {
                 const detail: {
-                    file: {
-                        roomId: string; // 当前聊天室 ID
-                        action: "string"; // 操作名称
-                    };
+                    roomId: string; // 当前聊天室 ID
                     message: Message; // 文件所在的消息对象
                 } = e.detail[0];
                 // TODO: 消息输入框右侧的更多操作按钮

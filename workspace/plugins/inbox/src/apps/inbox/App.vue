@@ -26,6 +26,7 @@ import type { Client } from "@siyuan-community/siyuan-sdk";
 
 import { Control } from "@/messages/control";
 
+const vue_advanced_chat = shallowRef<HTMLElement | null>(null);
 register();
 
 const user = inject("user") as RoomUser;
@@ -194,7 +195,6 @@ const username_options: Props["username-options"] = {
     currentUser: true, // 是否显示当前用户昵称
 }; // 用户昵称显示选项
 
-const shadow_root = shallowRef<HTMLElement | null>(null);
 const roomId = shallowRef<string | null>(null);
 const rooms = shallowRef<Room[]>([]);
 const roomsLoaded = shallowRef<boolean>(false);
@@ -205,7 +205,7 @@ const control = new Control(t, client, logger, user, roomId, rooms, roomsLoaded,
 onMounted(async () => {
     await control.init();
     control.online();
-    logger.debug(shadow_root.value);
+    logger.debug(vue_advanced_chat.value);
 });
 
 /**
@@ -213,11 +213,17 @@ onMounted(async () => {
  * @param files 文件列表
  */
 function onCamera(files: FileList | null): void {
-    if (Array.isArray(files) && files.length > 0) {
-        const vac_col_messages = shadow_root.value?.querySelector(".vac-col-messages");
+    // logger.debug(files);
+
+    if (files?.length) {
+        const vac_col_messages = vue_advanced_chat.value?.shadowRoot?.querySelector(".vac-col-messages");
         if (vac_col_messages) {
             const dataTransfer = new DataTransfer();
-            // TODO: 为 .vac-col-messages 元素派遣 drap 事件
+            for (const file of files) {
+                dataTransfer.items.add(file);
+            }
+
+            // 向 .vac-col-messages 元素派遣拖拽文件 drap 事件以将文件添加到消息输入框中
             vac_col_messages.dispatchEvent(new DragEvent("drop", { dataTransfer }));
         }
     }
@@ -227,7 +233,7 @@ function onCamera(files: FileList | null): void {
 <template>
     <vue-advanced-chat
         height="100vh"
-        ref="shadow_root"
+        ref="vue_advanced_chat"
         :room-id="roomId"
         :rooms-loaded="roomsLoaded"
         :messages-loaded="messagesLoaded"
