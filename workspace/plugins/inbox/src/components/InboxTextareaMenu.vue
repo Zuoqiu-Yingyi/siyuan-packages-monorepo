@@ -19,6 +19,51 @@
 <script setup lang="ts">
 import { Dropdown, Dgroup, Doption } from "@arco-design/web-vue";
 import { IconCamera, IconVideoCamera, IconImage, IconUser } from "@arco-design/web-vue/es/icon";
+import { defineEmits } from "vue";
+
+enum TextareaOptionType {
+    PHOTO_FRONT,
+    PHOTO_REAR,
+    VIDEO_FRONT,
+    VIDEO_REAR,
+}
+
+const emits = defineEmits<{
+    // REF: https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-emits
+    camera: [files: FileList | null]; // 相机拍照/录像
+}>();
+
+/* 调用相机输入 */
+const camera_input = document.createElement("input");
+camera_input.type = "file";
+camera_input.addEventListener("change", e => {
+    emits("camera", camera_input.files);
+});
+
+function onclick(e: MouseEvent, optionType: TextareaOptionType): void {
+    // REF: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/capture
+    switch (optionType) {
+        case TextareaOptionType.PHOTO_FRONT: // 使用前置摄像头拍摄照片
+            camera_input.accept = "image/*";
+            camera_input.capture = "user";
+            break;
+        case TextareaOptionType.PHOTO_REAR: // 使用后置摄像头拍摄照片
+            camera_input.accept = "image/*";
+            camera_input.capture = "environment";
+            break;
+        case TextareaOptionType.VIDEO_FRONT: // 使用前置摄像头录制视频
+            camera_input.accept = "video/*";
+            camera_input.capture = "user";
+            break;
+        case TextareaOptionType.VIDEO_REAR: // 使用后置摄像头录制视频
+            camera_input.accept = "video/*";
+            camera_input.capture = "environment";
+            break;
+        default:
+            break;
+    }
+    camera_input.click();
+}
 </script>
 
 <template>
@@ -41,13 +86,13 @@ import { IconCamera, IconVideoCamera, IconImage, IconUser } from "@arco-design/w
                     <IconCamera />
                     {{ $t("actions.textarea.photo.title") }}
                 </template>
-                <Doption>
+                <Doption @click="e => onclick(e, TextareaOptionType.PHOTO_FRONT)">
                     {{ $t("actions.textarea.photo.front") }}
                     <template #icon>
                         <IconUser />
                     </template>
                 </Doption>
-                <Doption>
+                <Doption @click="e => onclick(e, TextareaOptionType.PHOTO_REAR)">
                     {{ $t("actions.textarea.photo.rear") }}
                     <template #icon>
                         <IconImage />
@@ -59,13 +104,13 @@ import { IconCamera, IconVideoCamera, IconImage, IconUser } from "@arco-design/w
                     <IconVideoCamera />
                     {{ $t("actions.textarea.video.title") }}
                 </template>
-                <Doption>
+                <Doption @click="e => onclick(e, TextareaOptionType.VIDEO_FRONT)">
                     {{ $t("actions.textarea.video.front") }}
                     <template #icon>
                         <IconUser />
                     </template>
                 </Doption>
-                <Doption>
+                <Doption @click="e => onclick(e, TextareaOptionType.VIDEO_REAR)">
                     {{ $t("actions.textarea.video.rear") }}
                     <template #icon>
                         <IconImage />
