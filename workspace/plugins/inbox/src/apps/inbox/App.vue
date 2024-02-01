@@ -16,7 +16,7 @@
 -->
 
 <script setup lang="ts">
-import { inject, shallowRef, onMounted } from "vue";
+import { inject, shallowRef, onMounted, reactive } from "vue";
 import { register, type VueAdvancedChat, type RoomUser, type Room, type Message, type Props } from "vue-advanced-chat";
 import ArcoConfigProvider from "@workspace/components/arco/ArcoConfigProvider.vue";
 import InboxTextareaMenu from "@/components/InboxTextareaMenu.vue";
@@ -28,6 +28,8 @@ import type { Logger } from "@workspace/utils/logger";
 import type { Client } from "@siyuan-community/siyuan-sdk";
 
 import { Control } from "@/messages/control";
+import { computed } from "vue";
+import { watch } from "vue";
 
 const vue_advanced_chat = shallowRef<HTMLElement | null>(null);
 register();
@@ -200,13 +202,13 @@ const username_options: Props["username-options"] = {
     currentUser: true, // 是否显示当前用户昵称
 }; // 用户昵称显示选项
 
-const inbox = {
+const roomMain = reactive<Room>({
     roomId: Constants.MAIN_ROOM_ID,
     roomName: t("inbox"),
     avatar: Constants.ICON_FILE_PATH,
     users: [user],
     index: 0,
-};
+}); // 主收集箱
 const roomId = shallowRef<string | null>(null);
 const rooms = shallowRef<Room[]>([]);
 const roomsLoaded = shallowRef<boolean>(false);
@@ -215,7 +217,7 @@ const messagesLoaded = shallowRef<boolean>(false);
 
 const roomDialogVisible = shallowRef<boolean>(false);
 const userDialogVisible = shallowRef<boolean>(false);
-const currentRoom = shallowRef<Room>(inbox);
+const currentRoom = shallowRef<Room>(roomMain);
 const currentRoomUser = shallowRef<RoomUser>(user);
 
 const control = new Control(
@@ -223,8 +225,8 @@ const control = new Control(
     client, //
     logger, //
     user, //
-    inbox, //
     roomId, //
+    roomMain, //
     roomDialogVisible, //
     currentRoom, //
     userDialogVisible, //
@@ -266,7 +268,11 @@ function onSelectFiles(files: FileList | null): void {
     <ArcoConfigProvider :locale="locale" />
     <InboxRoomInfoDialog
         v-model:visible="roomDialogVisible"
+        :main="roomMain"
         :room="currentRoom"
+        :user="currentRoomUser"
+        :users="roomMain.users"
+        @update="control.handleRoomInfoUpdate"
     />
     <vue-advanced-chat
         height="100vh"

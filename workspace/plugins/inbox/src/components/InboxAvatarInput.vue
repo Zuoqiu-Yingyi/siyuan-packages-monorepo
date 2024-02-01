@@ -17,19 +17,20 @@
 
 <!-- 图标输入框 -->
 <script setup lang="ts">
-import { computed, watch } from "vue";
-import { Avatar, Upload, Divider, Input } from "@arco-design/web-vue";
-import * as Constants from "@/constant";
-import { shallowRef } from "vue";
+import { ref } from "vue";
+import { Avatar, Divider, Input } from "@arco-design/web-vue";
+import { isStaticPathname } from "@workspace/utils/siyuan/url";
 
 const avatar = defineModel<string>("avatar", { required: true });
-const avatar_src = shallowRef<string>(avatar.value);
-const input_value = shallowRef<string>(avatar.value);
+const avatar_src = ref<string>(avatar.value);
+const input_value = ref<string>(avatar.value);
+const input_error = ref<boolean>(false);
 
 /**
  * 点击图标
  */
 function onAvatarClick(): void {
+    console.debug("onAvatarClick", arguments);
     // TODO: 上传图片文件
 }
 
@@ -38,7 +39,7 @@ function onAvatarClick(): void {
  */
 function onAvatarLoad(): void {
     console.debug("onAvatarLoad", arguments);
-    avatar_src.value = avatar.value;
+    input_error.value = false;
 }
 
 /**
@@ -46,8 +47,7 @@ function onAvatarLoad(): void {
  */
 function onAvatarError(): void {
     console.debug("onAvatarError", arguments);
-    avatar.value = Constants.ICON_FILE_PATH;
-    input_value.value = Constants.ICON_FILE_PATH;
+    input_error.value = true;
 }
 
 /**
@@ -56,7 +56,14 @@ function onAvatarError(): void {
  */
 function onInputChange(value: string): void {
     console.debug("onInputChange", arguments);
+
+    if (isStaticPathname(value) && !value.startsWith("/")) {
+        // 处理静态资源相对路径
+        value = `./../../../${value}`;
+        input_value.value = value;
+    }
     avatar.value = value;
+    avatar_src.value = value;
 }
 </script>
 
@@ -65,18 +72,31 @@ function onInputChange(value: string): void {
         trigger-type="mask"
         :size="32"
         @click="onAvatarClick"
-        @load="onAvatarLoad"
-        @error="onAvatarError"
     >
-        <img :src="avatar_src" />
+        <div
+            v-if="input_error"
+            class="arco-avatar-image-icon"
+        >
+            <IconImageClose />
+        </div>
+        <img
+            :style="{ display: input_error ? 'none' : undefined }"
+            :src="avatar_src"
+            @load="onAvatarLoad"
+            @error="onAvatarError"
+        />
         <template #trigger-icon>
             <!-- 点击图标以上传图片文件 -->
             <IconUpload />
         </template>
     </Avatar>
-    <Divider direction="vertical" />
+    <Divider
+        direction="vertical"
+        margin="0.5em"
+    />
     <Input
         v-model="input_value"
+        :error="input_error"
         :allow-clear="true"
         :placeholder="$t('form.avatar.input.placeholder')"
         @change="onInputChange"

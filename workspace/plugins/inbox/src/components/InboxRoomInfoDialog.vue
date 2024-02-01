@@ -17,25 +17,42 @@
 <!-- 聊天室信息对话框 -->
 
 <script setup lang="ts">
-import {} from "vue";
-import { Modal, Form, FormItem } from "@arco-design/web-vue";
+import { computed, shallowRef, watchPostEffect } from "vue";
+import { Modal, Form, FormItem, Input, Select } from "@arco-design/web-vue";
 import InboxAvatarInput from "./InboxAvatarInput.vue";
-import type { Room } from "vue-advanced-chat";
-import { reactive } from "vue";
+
+import type { Room, RoomUser } from "vue-advanced-chat";
 
 interface IProps {
-    room: Room;
+    main: Room; // 主聊天室
+    room: Room; // 当前聊天室
+    user: RoomUser; // 当前用户
+    users: RoomUser[]; // 所有用户
 }
 
-interface IEmits extends /* @vue-ignore */ Record<string, any[]> {
+type TEmits = {
     update: [room: Room]; // 更新聊天室信息
-}
+};
 
 const visible = defineModel<boolean>("visible");
 const props = defineProps<IProps>();
-const emits = defineEmits<IEmits>();
+const emits = defineEmits<TEmits>();
 
-const room = reactive<Room>(props.room);
+const avatar = shallowRef<string>("");
+const roomName = shallowRef<string>("");
+const users = shallowRef<string[]>([]);
+const usersOptions = computed(() =>
+    props.users.map(user => ({
+        ...user,
+        disabled: user._id === props.user._id,
+    })),
+);
+
+watchPostEffect(() => {
+    avatar.value = props.room.avatar;
+    roomName.value = props.room.roomName;
+    users.value = props.room.users.map(user => user._id);
+});
 
 /**
  * 点击取消按钮的回调函数
@@ -48,10 +65,18 @@ function onCancel(e: Event): void {
  * 点击确认按钮的回调函数
  */
 function onOk(e: Event): void {
-    // TODO: 保存聊天室信息
+    /* 派发聊天室信息更新事件 */
+    emits("update", {
+        ...props.room,
+        avatar: avatar.value,
+        roomName: roomName.value,
+        users: users.value
+            .map(userId => props.users.find(user => user._id === userId)!)
+            .filter(user => !!user),
+    });
+
     visible.value = false;
 }
-
 </script>
 
 <template>
@@ -70,12 +95,25 @@ function onOk(e: Event): void {
         >
             <!-- 聊天室图标 -->
             <FormItem :label="$t('dialog.room.avatar.label')">
-                <InboxAvatarInput v-model:avatar="props.room.avatar" />
+                <InboxAvatarInput v-model:avatar="avatar" />
             </FormItem>
             <!-- 聊天室名称 -->
-            <FormItem :label="$t('dialog.room.name.label')"> </FormItem>
+            <FormItem :label="$t('dialog.room.name.label')">
+                <Input v-model="roomName" />
+            </FormItem>
             <!-- 聊天室用户 -->
-            <FormItem :label="$t('dialog.room.users.label')"> </FormItem>
+            <FormItem :label="$t('dialog.room.users.label')">
+                <Select
+                    v-model:model-value="users"
+                    :disabled="props.main.roomId === props.room.roomId"
+                    :options="usersOptions"
+                    :field-names="{
+                        value: '_id',
+                        label: 'username',
+                    }"
+                    :multiple="true"
+                />
+            </FormItem>
         </Form>
     </Modal>
 </template>

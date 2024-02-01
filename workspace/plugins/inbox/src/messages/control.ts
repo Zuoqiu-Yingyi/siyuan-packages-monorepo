@@ -156,8 +156,8 @@ export class Control {
         protected readonly _client: Client,
         protected readonly _logger: Logger,
         protected readonly _user: RoomUser,
-        protected readonly _inbox: Room,
         protected readonly _room_id: ShallowRef<string | null>,
+        protected readonly _room_main: Room,
         protected readonly _room_dialog_visible: ShallowRef<boolean>,
         protected readonly _room_current: ShallowRef<Room | undefined>,
         protected readonly _room_user_dialog_visible: ShallowRef<boolean>,
@@ -260,9 +260,12 @@ export class Control {
                     if (!current_user) {
                         main_room.users.push(this._user);
                     }
+
+                    this.sortUsers(main_room.users);
+                    Object.assign(this._room_main, main_room);
                 }
                 else {
-                    rooms[this._inbox.roomId] = this._inbox;
+                    rooms[this._room_main.roomId] = this._room_main;
                 }
 
                 Object.entries(rooms).forEach(([key, value]) => {
@@ -270,7 +273,7 @@ export class Control {
                 });
             }
             else {
-                this._y_rooms.set(this._inbox.roomId, this._inbox);
+                this._y_rooms.set(this._room_main.roomId, this._room_main);
             }
 
             /* 初始化消息 ID -> 消息对象 */
@@ -393,7 +396,7 @@ export class Control {
                         break;
                     }
                     case "room-users-leave": { // 退出群组
-                        if (detail.roomId === this._inbox.roomId) { // 主群组不能退出
+                        if (detail.roomId === this._room_main.roomId) { // 主群组不能退出
                             // TODO: 提示主群组不能退出
                         }
                         else {
@@ -412,7 +415,7 @@ export class Control {
                                     this._y_rooms.set(room.roomId, room);
 
                                     if (detail.roomId === this._current_room_id) { // 将消息面板切换到主聊天室
-                                        this._room_id.value = this._inbox.roomId;
+                                        this._room_id.value = this._room_main.roomId;
                                     }
                                     this.updateRooms(); // 更新聊天室列表状态
 
@@ -424,7 +427,7 @@ export class Control {
                         break;
                     }
                     case "room-disband": { // TODO: 解散群组 (仅当前用户为该群组最后一个用户时才能解散)
-                        if (detail.roomId === this._inbox.roomId) { // 主群组不能解散
+                        if (detail.roomId === this._room_main.roomId) { // 主群组不能解散
                             // TODO: 提示主群组不能解散
                         }
                         else {
@@ -435,7 +438,7 @@ export class Control {
                                 // TODO: 用户二次确认解散群组
 
                                 if (detail.roomId === this._current_room_id) { // 将消息面板切换到主聊天室
-                                    this._room_id.value = this._inbox.roomId;
+                                    this._room_id.value = this._room_main.roomId;
                                 }
                                 this._y_rooms.delete(detail.roomId);
                                 this._y_room_messages.delete(detail.roomId);
@@ -836,6 +839,16 @@ export class Control {
     }
 
     /**
+     * 处理聊天室信息对话框更新事件
+     * @param room 聊天室信息
+     */
+    public readonly handleRoomInfoUpdate = async (room: Room) => {
+        if (this._y_rooms.has(room.roomId)) {
+            this._y_rooms.set(room.roomId, room);
+        }
+    }
+
+    /**
      * 上传文件
      * @param messageFiles 文件列表
      * @param assetsDirPath assets 目录路径
@@ -942,7 +955,7 @@ export class Control {
      * @param user 用户
      */
     public updateUsers(
-        roomId: string = this._inbox.roomId,
+        roomId: string = this._room_main.roomId,
         user: RoomUser = this._user,
     ): void {
         /* 更新聊天室信息 */
@@ -1011,6 +1024,14 @@ export class Control {
             });
         }
     })
+
+    /**
+     * 排序用户列表
+     * @param users: 用户列表
+     */
+    public sortUsers(users: RoomUser[] = this._room_main.users): void {
+        users.sort((u1, u2) => u1._id.localeCompare(u2._id));
+    }
 
     /**
      * 消息列表转换为 Markdown
@@ -1317,12 +1338,13 @@ export class Control {
             default:
                 break;
         }
-        const user = this._inbox.users.find(user => user._id === message.data.user._id);
+        const user = this._room_main.users.find(user => user._id === message.data.user._id);
         if (user) {
             Object.assign(user, message.data.user);
         }
         else {
-            this._inbox.users.push(message.data.user);
+            this._room_main.users.push(message.data.user);
+            this.sortUsers();
         }
     }
 
