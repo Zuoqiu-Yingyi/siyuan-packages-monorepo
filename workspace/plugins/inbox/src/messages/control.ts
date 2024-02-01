@@ -119,7 +119,6 @@ export interface IUserStatus {
 }
 
 export class Control {
-    protected readonly _inbox: Room;
     protected readonly _ready: Promise<void>;
     protected readonly _ready_ws: Promise<void>;
     protected ready: boolean = false;
@@ -157,7 +156,12 @@ export class Control {
         protected readonly _client: Client,
         protected readonly _logger: Logger,
         protected readonly _user: RoomUser,
+        protected readonly _inbox: Room,
         protected readonly _room_id: ShallowRef<string | null>,
+        protected readonly _room_dialog_visible: ShallowRef<boolean>,
+        protected readonly _room_current: ShallowRef<Room | undefined>,
+        protected readonly _room_user_dialog_visible: ShallowRef<boolean>,
+        protected readonly _room_user_current: ShallowRef<RoomUser | undefined>,
         protected readonly _rooms: ShallowRef<Room[]>,
         protected readonly _rooms_loaded: ShallowRef<boolean>,
         protected readonly _messages: ShallowRef<Message[]>,
@@ -165,15 +169,6 @@ export class Control {
     ) {
         /* 主聊天室 */
         this._current_room_id = Constants.MAIN_ROOM_ID;
-        this._inbox = {
-            roomId: Constants.MAIN_ROOM_ID,
-            roomName: this.t("inbox"),
-            avatar: Constants.ICON_FILE_PATH,
-            users: [
-                this._user,
-            ],
-            index: 0,
-        };
 
         /* 控制信道 */
         this._ws_control = this._client.broadcast({ channel: Constants.ChannelName.control });
@@ -461,7 +456,8 @@ export class Control {
              */
             case "room-info": {
                 const detail: Room = e.detail[0]; // (proxy)
-                // TODO: 显示并编辑聊天室信息
+                this._room_current.value = detail;
+                this._room_dialog_visible.value = true;
                 break;
             }
 
@@ -610,6 +606,7 @@ export class Control {
                     {
                         badge: Constants.ICON_FILE_PATH,
                         icon: Constants.ICON_FILE_PATH,
+                        // @ts-ignore
                         image: (message.files ?? []).find(file => file.type.startsWith("image/"))?.url,
                         body: `${message.content}\n${(message.files ?? []).map(file => `[${file.name}.${file.extension}]`).join(" ")}`,
                         data: {
@@ -830,7 +827,6 @@ export class Control {
                     roomId: string; // 当前聊天室 ID
                     message: Message; // 文件所在的消息对象
                 } = e.detail[0];
-                // TODO: 消息输入框右侧的更多操作按钮
                 break;
             }
 

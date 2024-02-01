@@ -19,7 +19,6 @@
 <script setup lang="ts">
 import { Dropdown, Dgroup, Doption } from "@arco-design/web-vue";
 import { IconCamera, IconVideoCamera, IconImage, IconUser } from "@arco-design/web-vue/es/icon";
-import { defineEmits } from "vue";
 
 enum TextareaOptionType {
     PHOTO_FRONT,
@@ -30,14 +29,14 @@ enum TextareaOptionType {
 
 const emits = defineEmits<{
     // REF: https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-emits
-    camera: [files: FileList | null]; // 相机拍照/录像
+    files: [files: FileList | null]; // 文件列表
 }>();
 
 /* 调用相机输入 */
 const camera_input = document.createElement("input");
 camera_input.type = "file";
 camera_input.addEventListener("change", e => {
-    emits("camera", camera_input.files);
+    emits("files", camera_input.files);
 });
 
 function onclick(e: MouseEvent, optionType: TextareaOptionType): void {

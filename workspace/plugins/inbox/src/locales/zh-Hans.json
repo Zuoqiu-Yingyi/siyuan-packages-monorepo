@@ -52,5 +52,26 @@
             }
         }
     },
+    "dialog": {
+        "room": {
+            "avatar": {
+                "label": "群组图标"
+            },
+            "name": {
+                "label": "群组名称"
+            },
+            "title": "群组信息",
+            "users": {
+                "label": "群组成员"
+            }
+        }
+    },
+    "form": {
+        "avatar": {
+            "input": {
+                "placeholder": "请输入图片 URL"
+            }
+        }
+    },
     "inbox": "收集箱"
 }

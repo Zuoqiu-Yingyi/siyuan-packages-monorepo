@@ -52,6 +52,27 @@
             }
         }
     },
+    "dialog": {
+        "room": {
+            "avatar": {
+                "label": "Group icon"
+            },
+            "name": {
+                "label": "Group name"
+            },
+            "title": "Group information",
+            "users": {
+                "label": "Group members"
+            }
+        }
+    },
+    "form": {
+        "avatar": {
+            "input": {
+                "placeholder": "Please enter image URL"
+            }
+        }
+    },
     "inbox": "Inbox",
     "menu": {
         "group": {
