@@ -18,7 +18,10 @@
 <script setup lang="ts">
 import { inject, shallowRef, onMounted } from "vue";
 import { register, type VueAdvancedChat, type RoomUser, type Room, type Message, type Props } from "vue-advanced-chat";
+import ArcoConfigProvider from "@workspace/components/arco/ArcoConfigProvider.vue";
 import InboxTextareaMenu from "@/components/InboxTextareaMenu.vue";
+import InboxRoomInfoDialog from "@/components/InboxRoomInfoDialog.vue";
+import * as Constants from "@/constant";
 
 import type { I18n, VueI18nTranslation } from "vue-i18n";
 import type { Logger } from "@workspace/utils/logger";
@@ -58,6 +61,8 @@ const picker_locale: string = (() => {
             return "en";
     }
 })();
+
+/* Arco Design 本地化语言标记 */
 
 const emoji_data_source: string = globalThis.isSecureContext ? `./../libs/emoji-picker-element-data/${locale}/cldr/data.json` : `https://fastly.jsdelivr.net/npm/emoji-picker-element-data/${picker_locale}/cldr/data.json`; // 表情数据源, 非安全上下文中需要校验 ETag
 const text_messages = {
@@ -195,13 +200,40 @@ const username_options: Props["username-options"] = {
     currentUser: true, // 是否显示当前用户昵称
 }; // 用户昵称显示选项
 
+const inbox = {
+    roomId: Constants.MAIN_ROOM_ID,
+    roomName: t("inbox"),
+    avatar: Constants.ICON_FILE_PATH,
+    users: [user],
+    index: 0,
+};
 const roomId = shallowRef<string | null>(null);
 const rooms = shallowRef<Room[]>([]);
 const roomsLoaded = shallowRef<boolean>(false);
 const messages = shallowRef<Message[]>([]);
 const messagesLoaded = shallowRef<boolean>(false);
 
-const control = new Control(t, client, logger, user, roomId, rooms, roomsLoaded, messages, messagesLoaded);
+const roomDialogVisible = shallowRef<boolean>(false);
+const userDialogVisible = shallowRef<boolean>(false);
+const currentRoom = shallowRef<Room>(inbox);
+const currentRoomUser = shallowRef<RoomUser>(user);
+
+const control = new Control(
+    t, //
+    client, //
+    logger, //
+    user, //
+    inbox, //
+    roomId, //
+    roomDialogVisible, //
+    currentRoom, //
+    userDialogVisible, //
+    currentRoomUser, //
+    rooms, //
+    roomsLoaded, //
+    messages, //
+    messagesLoaded, //
+);
 onMounted(async () => {
     await control.init();
     control.online();
@@ -209,10 +241,10 @@ onMounted(async () => {
 });
 
 /**
- * 相机拍照/录像
+ * 选择文件列表
  * @param files 文件列表
  */
-function onCamera(files: FileList | null): void {
+function onSelectFiles(files: FileList | null): void {
     // logger.debug(files);
 
     if (files?.length) {
@@ -231,6 +263,11 @@ function onCamera(files: FileList | null): void {
 </script>
 
 <template>
+    <ArcoConfigProvider :locale="locale" />
+    <InboxRoomInfoDialog
+        v-model:visible="roomDialogVisible"
+        :room="currentRoom"
+    />
     <vue-advanced-chat
         height="100vh"
         ref="vue_advanced_chat"
@@ -279,7 +316,7 @@ function onCamera(files: FileList | null): void {
     >
         <!-- 消息输入框的自定义按钮, 点击时触发 textarea-action-handler 事件 -->
         <span slot="custom-action-icon">
-            <InboxTextareaMenu @camera="onCamera" />
+            <InboxTextareaMenu @files="onSelectFiles" />
         </span>
     </vue-advanced-chat>
 </template>

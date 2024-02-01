@@ -1,8 +1,21 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-02-01
+
+- 添加群组信息编辑对话框 | Add group information edit dialog.
+
+## 2024-01-28
+
+- 将从相机获取的图片/录像添加到消息输入框中 | Add pictures/videos obtained from the camera to the message input box.
+
+## 2024-01-27
+
+- 添加从设备相机获取图片/录像功能 | Add the function of getting pictures/videos from the device camera.
+
 ## 2024-01-26
 
 - 提取部分依赖至工作空间 | Extract some dependencies to workspace.
+- 添加消息输入区的更多菜单 | Add more menu in message input area.
 
 ## 2024-01-24
 
