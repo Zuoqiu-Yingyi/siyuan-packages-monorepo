@@ -99,24 +99,14 @@ const link_options: Props["link-options"] = {
 }; // 超链接打开方式 (该参数无效, 默认配置也无效)
 const room_actions: Props["room-actions"] = [
     {
-        // 添加成员
-        name: "room-users-add",
-        title: t("actions.room.users.add"),
-    },
-    {
-        // 更改名称
-        name: "room-change-name",
-        title: t("actions.room.changeName"),
-    },
-    {
-        // 更改图标
-        name: "room-change-icon",
-        title: t("actions.room.changeIcon"),
+        // 群组设置
+        name: "room-settings",
+        title: t("actions.room.settings"),
     },
     {
         // 退出群组
-        name: "room-users-leave",
-        title: t("actions.room.users.leave"),
+        name: "room-leave",
+        title: t("actions.room.leave"),
     },
     {
         // 解散群组
@@ -126,19 +116,14 @@ const room_actions: Props["room-actions"] = [
 ]; // 聊天室下拉菜单 (派遣 room-action-handler 事件)
 const menu_actions: Props["menu-actions"] = [
     {
+        // 用户设置
+        name: "menu-user-settings",
+        title: t("actions.menu.userSettings"),
+    },
+    {
         // 刷新
         name: "menu-reload-messages",
         title: t("actions.menu.reloadMessages"),
-    },
-    {
-        // 更改用户昵称
-        name: "menu-change-username",
-        title: t("actions.menu.changeUsername"),
-    },
-    {
-        // 更改用户头像
-        name: "menu-change-avatar",
-        title: t("actions.menu.changeAvatar"),
     },
     {
         // 清空所有消息
@@ -272,7 +257,7 @@ function onSelectFiles(files: FileList | null): void {
         :room="currentRoom"
         :user="currentRoomUser"
         :users="roomMain.users"
-        @update="control.handleRoomInfoUpdate"
+        @confirm="control.onRoomInfoConfirm"
     />
     <vue-advanced-chat
         height="100vh"

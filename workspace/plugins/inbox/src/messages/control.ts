@@ -139,7 +139,7 @@ export class Control {
         string,
         Pick<
             Room,
-            "unreadCount" | "lastMessage" | "typingUsers"
+            "index" | "unreadCount" | "lastMessage" | "typingUsers"
         >
     > = new Map(); // 聊天室 ID -> 聊天室状态信息
     protected readonly _channel_handlers_map: Map<
@@ -297,9 +297,9 @@ export class Control {
      */
     public async save(): Promise<void> {
         await Promise.all([
-            this._client.putFile({ path: Constants.ROOMS_DATA_FILE_PATH, file: JSON.stringify(this._y_rooms.toJSON(), undefined, 4) }),
-            this._client.putFile({ path: Constants.MESSAGES_DATA_FILE_PATH, file: JSON.stringify(this._y_messages.toJSON(), undefined, 4) }),
-            this._client.putFile({ path: Constants.ROOM_MESSAGES_MAP_FILE_PATH, file: JSON.stringify(this._y_room_messages.toJSON(), undefined, 4) }),
+            this._client.putFile({ path: Constants.ROOMS_DATA_FILE_PATH, file: JSON.stringify(this._y_rooms.toJSON(), undefined, "\t") }),
+            this._client.putFile({ path: Constants.MESSAGES_DATA_FILE_PATH, file: JSON.stringify(this._y_messages.toJSON(), undefined, "\t") }),
+            this._client.putFile({ path: Constants.ROOM_MESSAGES_MAP_FILE_PATH, file: JSON.stringify(this._y_room_messages.toJSON(), undefined, "\t") }),
         ]);
     }
 
@@ -361,7 +361,12 @@ export class Control {
              */
             case "add-room": {
                 const detail: undefined = e.detail[0];
-                // TODO: 新建群组
+                this._openRoomInfoDialog({
+                    roomId: id(),
+                    roomName: `${this.t("inbox")} ${this._y_rooms.size + 1}`,
+                    avatar: Constants.ICON_FILE_PATH,
+                    users: [this._user],
+                });
                 break;
             }
             /**
@@ -385,17 +390,14 @@ export class Control {
                 } = e.detail[0];
 
                 switch (detail.action.name) {
-                    case "room-users-add": { // TODO: 添加成员 (仅能添加不在该群组的成员)
-                        // 主群组默认会添加所有成员
+                    case "room-settings": { // 群组设置
+                        const room = this._y_rooms.get(detail.roomId);
+                        if (room) {
+                            this._openRoomInfoDialog(room);
+                        }
                         break;
                     }
-                    case "room-change-name": { // TODO: 更改名称
-                        break;
-                    }
-                    case "room-change-icon": { // TODO: 更改图标
-                        break;
-                    }
-                    case "room-users-leave": { // 退出群组
+                    case "room-leave": { // 退出群组
                         if (detail.roomId === this._room_main.roomId) { // 主群组不能退出
                             // TODO: 提示主群组不能退出
                         }
@@ -459,8 +461,10 @@ export class Control {
              */
             case "room-info": {
                 const detail: Room = e.detail[0]; // (proxy)
-                this._room_current.value = detail;
-                this._room_dialog_visible.value = true;
+                const room = this._y_rooms.get(detail.roomId);
+                if (room) {
+                    this._openRoomInfoDialog(room);
+                }
                 break;
             }
 
@@ -591,6 +595,7 @@ export class Control {
                 /* 更新聊天室状态 */
                 const room_status = this._room_status_map.get(detail.roomId) ?? {};
                 Object.assign(room_status, {
+                    index: last_message.timestamp,
                     unreadCount: 0,
                     lastMessage: last_message,
                 });
@@ -835,16 +840,6 @@ export class Control {
 
             default:
                 break;
-        }
-    }
-
-    /**
-     * 处理聊天室信息对话框更新事件
-     * @param room 聊天室信息
-     */
-    public readonly handleRoomInfoUpdate = async (room: Room) => {
-        if (this._y_rooms.has(room.roomId)) {
-            this._y_rooms.set(room.roomId, room);
         }
     }
 
@@ -1318,6 +1313,14 @@ export class Control {
     }
 
     /**
+     * 打开聊天室信息对话框
+     */
+    protected _openRoomInfoDialog(room: Room): void {
+        this._room_current.value = room;
+        this._room_dialog_visible.value = true;
+    }
+
+    /**
      * 处理其他用户状态变更
      */
     protected async _handleOtherUserStatusChange(message: IUserStatusBroadcastMessage): Promise<void> {
@@ -1365,19 +1368,22 @@ export class Control {
      * 处理最新消息
      */
     protected async _handleLastMessage(message: ILastMessageBroadcastMessage): Promise<void> {
-        message.data.lastMessage.new = true;
+        const lastMessage = message.data.lastMessage;
+        lastMessage.new = true;
 
         const room = this._room_status_map.get(message.data.roomId);
         if (room) {
+            room.index = lastMessage.timestamp;
             room.unreadCount = room.unreadCount
                 ? room.unreadCount + 1
                 : 1;
-            room.lastMessage = message.data.lastMessage;
+            room.lastMessage = lastMessage;
         }
         else {
             this._room_status_map.set(message.data.roomId, {
+                index: lastMessage.timestamp,
                 unreadCount: 1,
-                lastMessage: message.data.lastMessage,
+                lastMessage: lastMessage,
             });
         }
         this.updateRooms();
@@ -1528,6 +1534,27 @@ export class Control {
         this.updateMessages();
     }
 
+    /**
+     * 处理聊天室信息对话框确认事件
+     * @param room 聊天室信息
+     */
+    public readonly onRoomInfoConfirm = async (
+        room: Room,
+    ) => {
+        // this._logger.debug("onRoomInfoConfirm");
+
+        await this.ready;
+        this._y_rooms.set(room.roomId, room);
+
+        /* 若为新的聊天室, 添加对应的消息列表 */
+        if (!this._y_room_messages.has(room.roomId)) {
+            this._y_room_messages.set(room.roomId, []);
+        }
+    }
+
+    /**
+     * 观察聊天室信息变更
+     */
     protected readonly observeRooms = async (
         e: Y.YMapEvent<Room>,
         t: Y.Transaction,
@@ -1537,6 +1564,9 @@ export class Control {
         this.updateRooms();
     }
 
+    /**
+     * 观察消息列表内容变更
+     */
     protected readonly observeMessages = async (
         e: Y.YMapEvent<Message>,
         t: Y.Transaction,
@@ -1546,6 +1576,9 @@ export class Control {
         this.updateMessages();
     }
 
+    /**
+     * 观察聊天室对应的消息列表变更
+     */
     protected readonly observeRoomMessages = async (
         e: Y.YMapEvent<string[]>,
         t: Y.Transaction,
