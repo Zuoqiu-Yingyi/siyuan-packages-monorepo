@@ -58,10 +58,22 @@
             "name": {
                 "label": "Group name"
             },
-            "title": "Group information",
+            "title": "Group settings",
             "users": {
                 "label": "Group members"
             }
+        },
+        "user": {
+            "avatar": {
+                "label": "Avatar"
+            },
+            "id": {
+                "label": "User ID"
+            },
+            "name": {
+                "label": "Nickname"
+            },
+            "title": "User settings"
         }
     },
     "form": {

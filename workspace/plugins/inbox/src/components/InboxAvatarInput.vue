@@ -17,20 +17,32 @@
 
 <!-- 图标输入框 -->
 <script setup lang="ts">
-import { ref } from "vue";
+import { shallowRef, watch } from "vue";
 import { Avatar, Divider, Input } from "@arco-design/web-vue";
 import { isStaticPathname } from "@workspace/utils/siyuan/url";
 
 const avatar = defineModel<string>("avatar", { required: true });
-const avatar_src = ref<string>(avatar.value);
-const input_value = ref<string>(avatar.value);
-const input_error = ref<boolean>(false);
+
+const avatar_src = shallowRef<string>("");
+const input_value = shallowRef<string>("");
+const input_error = shallowRef<boolean>(false);
+
+watch(
+    avatar,
+    value => {
+        avatar_src.value = value;
+        input_value.value = value;
+    },
+    {
+        immediate: true,
+    },
+);
 
 /**
  * 点击图标
  */
 function onAvatarClick(): void {
-    console.debug("onAvatarClick", arguments);
+    // console.debug("onAvatarClick", arguments);
     // TODO: 上传图片文件
 }
 
@@ -38,7 +50,7 @@ function onAvatarClick(): void {
  * 图标加载成功
  */
 function onAvatarLoad(): void {
-    console.debug("onAvatarLoad", arguments);
+    // console.debug("onAvatarLoad", arguments);
     input_error.value = false;
 }
 
@@ -46,7 +58,7 @@ function onAvatarLoad(): void {
  * 图标加载错误
  */
 function onAvatarError(): void {
-    console.debug("onAvatarError", arguments);
+    // console.debug("onAvatarError", arguments);
     input_error.value = true;
 }
 
@@ -55,7 +67,7 @@ function onAvatarError(): void {
  * @param value 输入框中的内容
  */
 function onInputChange(value: string): void {
-    console.debug("onInputChange", arguments);
+    // console.debug("onInputChange", arguments);
 
     if (isStaticPathname(value) && !value.startsWith("/")) {
         // 处理静态资源相对路径
