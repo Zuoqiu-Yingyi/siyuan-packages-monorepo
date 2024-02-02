@@ -20,6 +20,7 @@
 import { computed, shallowRef, watchPostEffect } from "vue";
 import { Modal, Form, FormItem, Input, Select } from "@arco-design/web-vue";
 import InboxAvatarInput from "./InboxAvatarInput.vue";
+import InboxAvatarGroup from "./InboxAvatarGroup.vue";
 
 import type { Room, RoomUser } from "vue-advanced-chat";
 
@@ -31,24 +32,27 @@ interface IProps {
 }
 
 type TEmits = {
-    update: [room: Room]; // 更新聊天室信息
+    confirm: [room: Room]; // 确认按钮
 };
 
 const visible = defineModel<boolean>("visible");
 const props = defineProps<IProps>();
 const emits = defineEmits<TEmits>();
 
-const avatar = shallowRef<string>("");
-const roomName = shallowRef<string>("");
-const users = shallowRef<string[]>([]);
+const roomId = shallowRef<string>(""); // 当前聊天室 ID
+const avatar = shallowRef<string>(""); // 当前聊天室图标
+const roomName = shallowRef<string>(""); // 当前聊天室名称
+const users = shallowRef<string[]>([]); // 当前聊天室成员 ID 列表
 const usersOptions = computed(() =>
     props.users.map(user => ({
         ...user,
         disabled: user._id === props.user._id,
     })),
-);
+); // 所有用户列表
+const avatars = computed(() => users.value.map(id => props.users.find(user => user._id === id)?.avatar));
 
 watchPostEffect(() => {
+    roomId.value = props.room.roomId;
     avatar.value = props.room.avatar;
     roomName.value = props.room.roomName;
     users.value = props.room.users.map(user => user._id);
@@ -66,13 +70,11 @@ function onCancel(e: Event): void {
  */
 function onOk(e: Event): void {
     /* 派发聊天室信息更新事件 */
-    emits("update", {
+    emits("confirm", {
         ...props.room,
         avatar: avatar.value,
         roomName: roomName.value,
-        users: users.value
-            .map(userId => props.users.find(user => user._id === userId)!)
-            .filter(user => !!user),
+        users: users.value.map(userId => props.users.find(user => user._id === userId)!).filter(user => !!user),
     });
 
     visible.value = false;
@@ -93,13 +95,23 @@ function onOk(e: Event): void {
             :auto-label-width="true"
             size="medium"
         >
+            <!-- 聊天室 ID -->
+            <FormItem :label="$t('dialog.room.id.label')">
+                <Input
+                    :readonly="true"
+                    v-model="roomId"
+                />
+            </FormItem>
             <!-- 聊天室图标 -->
             <FormItem :label="$t('dialog.room.avatar.label')">
                 <InboxAvatarInput v-model:avatar="avatar" />
             </FormItem>
             <!-- 聊天室名称 -->
             <FormItem :label="$t('dialog.room.name.label')">
-                <Input v-model="roomName" />
+                <Input
+                    v-model="roomName"
+                    :allow-clear="true"
+                />
             </FormItem>
             <!-- 聊天室用户 -->
             <FormItem :label="$t('dialog.room.users.label')">
@@ -113,6 +125,10 @@ function onOk(e: Event): void {
                     }"
                     :multiple="true"
                 />
+                <template #extra>
+                    <!-- 用户头像列表 -->
+                    <InboxAvatarGroup :avatars="avatars" />
+                </template>
             </FormItem>
         </Form>
     </Modal>

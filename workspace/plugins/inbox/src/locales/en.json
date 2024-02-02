@@ -13,10 +13,9 @@
     "TYPE_MESSAGE": "Type message",
     "actions": {
         "menu": {
-            "changeAvatar": "Change avatar",
-            "changeUsername": "Change nickname",
             "clearMessages": "Clear messages",
-            "reloadMessages": "Reload message"
+            "reloadMessages": "Reload message",
+            "userSettings": "Member settings"
         },
         "message": {
             "copy": "Copy",
@@ -31,13 +30,9 @@
             "forward": "Forward"
         },
         "room": {
-            "changeIcon": "Change icon",
-            "changeName": "Change name",
             "disband": "Dismiss group",
-            "users": {
-                "add": "Add members",
-                "leave": "Leave group"
-            }
+            "leave": "Leave group",
+            "settings": "Group settings"
         },
         "textarea": {
             "photo": {
@@ -56,6 +51,9 @@
         "room": {
             "avatar": {
                 "label": "Group icon"
+            },
+            "id": {
+                "label": "Group ID"
             },
             "name": {
                 "label": "Group name"

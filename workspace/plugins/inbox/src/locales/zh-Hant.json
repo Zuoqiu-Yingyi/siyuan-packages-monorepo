@@ -13,10 +13,9 @@
     "TYPE_MESSAGE": "輸入消息",
     "actions": {
         "menu": {
-            "changeAvatar": "更改頭像",
-            "changeUsername": "更改暱稱",
             "clearMessages": "清空訊息",
-            "reloadMessages": "重載訊息"
+            "reloadMessages": "重載訊息",
+            "userSettings": "成員設定"
         },
         "message": {
             "copy": "複製",
@@ -31,13 +30,9 @@
             "forward": "轉發"
         },
         "room": {
-            "changeIcon": "更改圖示",
-            "changeName": "更改名稱",
             "disband": "解散群組",
-            "users": {
-                "add": "新增成員",
-                "leave": "退出群組"
-            }
+            "leave": "退出群組",
+            "settings": "群組設定"
         },
         "textarea": {
             "photo": {
@@ -56,6 +51,9 @@
         "room": {
             "avatar": {
                 "label": "群組圖示"
+            },
+            "id": {
+                "label": "群組 ID"
             },
             "name": {
                 "label": "群組名稱"

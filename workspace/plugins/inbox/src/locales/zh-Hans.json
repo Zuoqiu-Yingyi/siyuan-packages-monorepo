@@ -13,10 +13,9 @@
     "TYPE_MESSAGE": "输入消息",
     "actions": {
         "menu": {
-            "changeAvatar": "更改头像",
-            "changeUsername": "更改昵称",
             "clearMessages": "清空消息",
-            "reloadMessages": "重载消息"
+            "reloadMessages": "重载消息",
+            "userSettings": "成员设置"
         },
         "message": {
             "copy": "复制",
@@ -31,13 +30,9 @@
             "forward": "转发"
         },
         "room": {
-            "changeIcon": "更改图标",
-            "changeName": "更改名称",
             "disband": "解散群组",
-            "users": {
-                "add": "添加成员",
-                "leave": "退出群组"
-            }
+            "leave": "退出群组",
+            "settings": "群组设置"
         },
         "textarea": {
             "photo": {
@@ -56,6 +51,9 @@
         "room": {
             "avatar": {
                 "label": "群组图标"
+            },
+            "id": {
+                "label": "群组 ID"
             },
             "name": {
                 "label": "群组名称"
