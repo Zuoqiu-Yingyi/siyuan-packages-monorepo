@@ -13,10 +13,11 @@
  * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 
 import * as Y from "yjs";
-
+import { h } from "vue";
+import { Modal, Notification } from "@arco-design/web-vue";
 import { Client } from "@siyuan-community/siyuan-sdk";
 import * as Constants from "@/constant";
 
@@ -27,6 +28,8 @@ import { isString } from "@workspace/utils/misc/type";
 import { deepEqual } from "@workspace/utils/misc/equal";
 import { deepClone } from "@workspace/utils/misc/clone";
 import { copyText } from "@workspace/utils/misc/copy";
+import { trimPrefix } from "@workspace/utils/misc/string";
+import { merge } from "@workspace/utils/misc/merge";
 import { contentTypeParse } from "@workspace/utils/file/content-type";
 
 import {
@@ -35,6 +38,7 @@ import {
     type IBaseBroadcastMessage,
     type IBaseResponseMessage,
 } from ".";
+import { ConfirmModal } from "@/utils/modal";
 
 import type { Logger } from "@workspace/utils/logger";
 import type { ShallowRef } from "vue";
@@ -47,8 +51,6 @@ import type {
     RoomUser,
 } from "vue-advanced-chat";
 import type { VueI18nTranslation } from "vue-i18n";
-import { merge } from "@workspace/utils/misc/merge";
-import { trimPrefix } from "@workspace/utils/misc/string";
 
 export enum ControlChannel {
     user_status = "user-status", // 用户状态更改
@@ -399,7 +401,14 @@ export class Control {
                     }
                     case "room-leave": { // 退出群组
                         if (detail.roomId === this._room_main.roomId) { // 主群组不能退出
-                            // TODO: 提示主群组不能退出
+                            Notification.warning(
+                                {
+                                    title: this.t("notice.title.warning"),
+                                    content: this.t("notice.mainRoomCannotLeave"),
+                                    closable: true,
+                                    duration: 8000,
+                                },
+                            );
                         }
                         else {
                             const room = this._y_rooms.get(detail.roomId);
@@ -407,46 +416,120 @@ export class Control {
                                 const user_index = room.users.findIndex(user => user._id === this._user._id);
                                 if (user_index >= 0) {
                                     if (room.users.length === 1) { // 当前用户为该群组最后一个用户
-                                        // TODO: 提示当前用户为该群组最后一个用户, 退出后该群组解散
+                                        Notification.warning(
+                                            {
+                                                title: this.t("notice.title.warning"),
+                                                content: this.t("notice.lastUserCannotLeave"),
+                                                closable: true,
+                                                duration: 8000,
+                                            },
+                                        );
                                     }
+                                    else {
+                                        /* 退出操作 */
+                                        // 用户二次确认退出群组
+                                        const result = await ConfirmModal({
+                                            title: this.t("notice.title.warning"),
+                                            content: () => h("span", {
+                                                class: "markdown",
+                                                innerHTML: this.t(
+                                                    "notice.confirmLeaveRoom",
+                                                    {
+                                                        roomname: room.roomName,
+                                                    },
+                                                ),
+                                            }),
+                                        });
 
-                                    /* 退出操作 */
-                                    // TODO: 用户二次确认退出群组
-                                    const user = room.users[user_index];
-                                    room.users.splice(user_index, 1);
-                                    this._y_rooms.set(room.roomId, room);
+                                        if (result) {
+                                            const user = room.users[user_index];
+                                            room.users.splice(user_index, 1);
+                                            this._y_rooms.set(room.roomId, room);
 
-                                    if (detail.roomId === this._current_room_id) { // 将消息面板切换到主聊天室
-                                        this._room_id.value = this._room_main.roomId;
+                                            if (detail.roomId === this._current_room_id) { // 将消息面板切换到主聊天室
+                                                this._room_id.value = this._room_main.roomId;
+                                            }
+                                            this.updateRooms(); // 更新聊天室列表状态
+
+                                            // 提示群组退出成功
+                                            Notification.success(
+                                                {
+                                                    title: this.t("notice.title.success"),
+                                                    content: () => h("span", {
+                                                        class: "markdown",
+                                                        innerHTML: this.t(
+                                                            "notice.leaveRoomSuccess",
+                                                            {
+                                                                username: this._user.username,
+                                                                roomname: room.roomName,
+                                                            },
+                                                        ),
+                                                    }),
+                                                    closable: true,
+                                                    duration: 8000,
+                                                },
+                                            );
+                                        }
                                     }
-                                    this.updateRooms(); // 更新聊天室列表状态
-
-                                    // TODO: 提示群组退出成功
-                                    // TODO: 可撤回退出操作
                                 }
                             }
                         }
                         break;
                     }
-                    case "room-disband": { // TODO: 解散群组 (仅当前用户为该群组最后一个用户时才能解散)
+                    case "room-disband": { // 解散群组
                         if (detail.roomId === this._room_main.roomId) { // 主群组不能解散
-                            // TODO: 提示主群组不能解散
+                            Notification.warning({
+                                title: this.t("notice.title.warning"),
+                                content: this.t("notice.mainRoomCannotDisband"),
+                                closable: true,
+                                duration: 8000,
+                            });
                         }
                         else {
                             const room = this._y_rooms.get(detail.roomId);
                             const messages = this._y_room_messages.get(detail.roomId);
                             if (room && messages) {
                                 /* 解散操作 */
-                                // TODO: 用户二次确认解散群组
+                                // 用户二次确认解散群组
+                                const result = await ConfirmModal({
+                                    title: this.t("notice.title.warning"),
+                                    content: () => h("span", {
+                                        class: "markdown",
+                                        innerHTML: this.t(
+                                            "notice.confirmDisbandRoom",
+                                            {
+                                                roomname: room.roomName,
+                                            },
+                                        ),
+                                    }),
+                                });
 
-                                if (detail.roomId === this._current_room_id) { // 将消息面板切换到主聊天室
-                                    this._room_id.value = this._room_main.roomId;
+                                if (result) {
+                                    if (detail.roomId === this._current_room_id) { // 将消息面板切换到主聊天室
+                                        this._room_id.value = this._room_main.roomId;
+                                    }
+                                    this._y_rooms.delete(detail.roomId);
+                                    this._y_room_messages.delete(detail.roomId);
+
+                                    // 提示群组解散成功
+                                    Notification.success(
+                                        {
+                                            title: this.t("notice.title.success"),
+                                            content: () => h("span", {
+                                                class: "markdown",
+                                                innerHTML: this.t(
+                                                    "notice.disbandRoomSuccess",
+                                                    {
+                                                        username: this._user.username,
+                                                        roomname: room.roomName,
+                                                    },
+                                                ),
+                                            }),
+                                            closable: true,
+                                            duration: 8000,
+                                        },
+                                    );
                                 }
-                                this._y_rooms.delete(detail.roomId);
-                                this._y_room_messages.delete(detail.roomId);
-
-                                // TODO: 提示群组解散成功
-                                // TODO: 可撤回解散操作
                             }
                         }
                         break;
@@ -713,14 +796,11 @@ export class Control {
                 } = e.detail[0];
 
                 switch (detail.action.name) {
+                    case "menu-user-settings": { // TODO: 我的信息
+                        break;
+                    }
                     case "menu-reload-messages": { // 页面刷新
                         this.updateMessages();
-                        break;
-                    }
-                    case "menu-change-username": { // TODO: 更改用户昵称
-                        break;
-                    }
-                    case "menu-change-avatar": { // TODO: 更改用户头像
                         break;
                     }
                     case "menu-clear-messages": { // 清空所有消息
@@ -739,7 +819,6 @@ export class Control {
                             this._y_room_messages.set(detail.roomId, []);
 
                             // TODO: 提示清空该群组所有消息成功
-                            // TODO: 可撤回清空消息的操作
                         }
                         break;
                     }

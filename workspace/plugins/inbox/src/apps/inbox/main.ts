@@ -26,6 +26,7 @@ import zh_Hant from "@/locales/zh-Hant.json";
 
 import { createApp } from "vue";
 import { createI18n } from "vue-i18n";
+import { Modal , Notification } from '@arco-design/web-vue';
 import type { RoomUser } from "vue-advanced-chat";
 
 import { Client } from "@siyuan-community/siyuan-sdk";
@@ -142,6 +143,14 @@ import * as Constants from "~/src/constant";
     app.provide("locale", locale);
     app.provide("logger", logger);
     app.provide("client", client);
+
+    /**
+     * 设置全局组件上下文
+     * REF: https://arco.design/vue/component/modal
+     * REF: https://arco.design/vue/component/notification
+     */
+    Modal._context = app._context;
+    Notification._context = app._context;
 
     const root = globalThis.document.createElement("div");
     globalThis.document.body.append(root);

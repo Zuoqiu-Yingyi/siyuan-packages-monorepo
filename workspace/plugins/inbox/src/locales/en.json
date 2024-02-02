@@ -77,5 +77,18 @@
             "photo": "Photograph",
             "video": "Video"
         }
+    },
+    "notice": {
+        "confirmDisbandRoom": "Are you sure you want to disband group <code>{roomname}</code> ?<br/>This operation is irreversible!",
+        "confirmLeaveRoom": "Are you sure you want to leave group <code>{roomname}</code> ?<br/>This operation is irreversible!",
+        "disbandRoomSuccess": "Member <u>{'@'}{username}</u> disband group <code>{roomname}</code>",
+        "lastUserCannotLeave": "The current user is the last member of the group and cannot exit the group!",
+        "leaveRoomSuccess": "Member <u>{'@'}{username}</u> leaves group <code>{roomname}</code>",
+        "mainRoomCannotDisband": "The main group cannot be dismissed!",
+        "mainRoomCannotLeave": "Can't leave the main group!",
+        "title": {
+            "success": "SUCCESS",
+            "warning": "WARNING"
+        }
     }
 }

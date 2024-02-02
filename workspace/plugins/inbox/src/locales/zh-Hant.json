@@ -71,5 +71,18 @@
             }
         }
     },
-    "inbox": "收集箱"
+    "inbox": "收集箱",
+    "notice": {
+        "confirmDisbandRoom": "是否確認解散群組 <code>{roomname}</code> ？<br/>該操作不可逆！",
+        "confirmLeaveRoom": "是否確認退出群組 <code>{roomname}</code> ？<br/>該操作不可逆！",
+        "disbandRoomSuccess": "成員 <u>{'@'}{username}</u> 解散群組 <code>{roomname}</code>",
+        "lastUserCannotLeave": "目前使用者為該群組最後一個成員，不能退出該群組！",
+        "leaveRoomSuccess": "成員 <u>{'@'}{username}</u> 退出群組 <code>{roomname}</code>",
+        "mainRoomCannotDisband": "不能解散主群組！",
+        "mainRoomCannotLeave": "不能退出主群組！",
+        "title": {
+            "success": "成功",
+            "warning": "警告"
+        }
+    }
 }
