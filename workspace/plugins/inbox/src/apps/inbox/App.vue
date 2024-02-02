@@ -21,18 +21,17 @@ import { register, type VueAdvancedChat, type RoomUser, type Room, type Message,
 import ArcoConfigProvider from "@workspace/components/arco/ArcoConfigProvider.vue";
 import InboxTextareaMenu from "@/components/InboxTextareaMenu.vue";
 import InboxRoomInfoDialog from "@/components/InboxRoomInfoDialog.vue";
+import InboxUserInfoDialog from "@/components/InboxUserInfoDialog.vue";
 import * as Constants from "@/constant";
+import { Control } from "@/messages/control";
 
 import type { I18n, VueI18nTranslation } from "vue-i18n";
 import type { Logger } from "@workspace/utils/logger";
 import type { Client } from "@siyuan-community/siyuan-sdk";
+import { deepClone } from "@workspace/utils/misc/clone";
 
-import { Control } from "@/messages/control";
-import { computed } from "vue";
-import { watch } from "vue";
-
-const vue_advanced_chat = shallowRef<HTMLElement | null>(null);
 register();
+const vue_advanced_chat = shallowRef<HTMLElement | null>(null);
 
 const user = inject("user") as RoomUser;
 const i18n = inject("i18n") as I18n;
@@ -191,7 +190,7 @@ const roomMain = reactive<Room>({
     roomId: Constants.MAIN_ROOM_ID,
     roomName: t("inbox"),
     avatar: Constants.ICON_FILE_PATH,
-    users: [user],
+    users: [deepClone()(user)],
     index: 0,
 }); // 主收集箱
 const roomId = shallowRef<string | null>(null);
@@ -259,6 +258,12 @@ function onSelectFiles(files: FileList | null): void {
         :users="roomMain.users"
         @confirm="control.onRoomInfoConfirm"
     />
+    <InboxUserInfoDialog
+        v-model:visible="userDialogVisible"
+        :room="currentRoom"
+        :user="currentRoomUser"
+        @confirm="control.onUserInfoConfirm"
+    />
     <vue-advanced-chat
         height="100vh"
         ref="vue_advanced_chat"
@@ -312,9 +317,4 @@ function onSelectFiles(files: FileList | null): void {
     </vue-advanced-chat>
 </template>
 
-<style scoped lang="less">
-:global(.arco-modal) {
-    box-sizing: border-box;
-    max-width: 95%;
-}
-</style>
+<style scoped lang="less"></style>

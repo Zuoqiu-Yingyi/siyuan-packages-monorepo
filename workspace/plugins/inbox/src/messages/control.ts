@@ -17,14 +17,14 @@
 
 import * as Y from "yjs";
 import { h } from "vue";
-import { Modal, Notification } from "@arco-design/web-vue";
+import { Notification } from "@arco-design/web-vue";
 import { Client } from "@siyuan-community/siyuan-sdk";
 import * as Constants from "@/constant";
 
 import { id } from "@workspace/utils/siyuan/id";
 import { moment } from "@workspace/utils/date/moment";
 import { deshake } from "@workspace/utils/misc/deshake";
-import { isString } from "@workspace/utils/misc/type";
+import { isNone, isNumber, isString } from "@workspace/utils/misc/type";
 import { deepEqual } from "@workspace/utils/misc/equal";
 import { deepClone } from "@workspace/utils/misc/clone";
 import { copyText } from "@workspace/utils/misc/copy";
@@ -259,7 +259,10 @@ export class Control {
                 const main_room = rooms[Constants.MAIN_ROOM_ID];
                 if (main_room) {
                     const current_user = main_room.users.find(user => user._id === this._user._id);
-                    if (!current_user) {
+                    if (current_user) {
+                        this.updateUser(current_user);
+                    }
+                    else {
                         main_room.users.push(this._user);
                     }
 
@@ -367,7 +370,7 @@ export class Control {
                     roomId: id(),
                     roomName: `${this.t("inbox")} ${this._y_rooms.size + 1}`,
                     avatar: Constants.ICON_FILE_PATH,
-                    users: [this._user],
+                    users: [deepClone()(this._user)],
                 });
                 break;
             }
@@ -629,6 +632,11 @@ export class Control {
                     await this.uploadFiles(detail.files);
                 }
 
+                /* 获取当前用户在该聊天室的用户信息 */
+                const room = this._y_rooms.get(detail.roomId);
+                const user = room?.users.find(u => u._id === this._user._id)
+                    ?? this._user;
+
                 /* 添加到消息列表 */
                 const date = new Date();
                 const datetime = moment(date);
@@ -638,9 +646,9 @@ export class Control {
                     date: datetime.format("YYYY-MM-DD"), // 日期
                     timestamp: datetime.format("YYYY-MM-DD HH:mm:ss"), // 时间戳
 
-                    senderId: this._user._id, // 发送者 ID
-                    avatar: this._user.avatar, // 发送者头像
-                    username: this._user.username, // 发送者昵称
+                    senderId: user._id, // 发送者 ID
+                    avatar: user.avatar, // 发送者头像
+                    username: user.username, // 发送者昵称
 
                     content: detail.content, // 消息内容
                     files: detail.files, // 消息附件
@@ -691,7 +699,6 @@ export class Control {
                 ); // 广播最新消息
 
                 /* 推送消息通知 */
-                const room = this._y_rooms.get(detail.roomId);
                 this._pushNotificationMessage(
                     room?.roomName ?? this.t("inbox"),
                     {
@@ -782,6 +789,7 @@ export class Control {
             case "open-user-tag": {
                 const detail: RoomUser = e.detail[0]; // (proxy)
                 // TODO: 点击 @ 的用户
+                // TODO: 与 @ 的用户创建一个新的聊天室
                 break;
             }
             case "open-failed-message":
@@ -796,7 +804,14 @@ export class Control {
                 } = e.detail[0];
 
                 switch (detail.action.name) {
-                    case "menu-user-settings": { // TODO: 我的信息
+                    case "menu-user-settings": { // 用户信息
+                        const room = this._y_rooms.get(detail.roomId);
+                        if (room) {
+                            const user = room.users.find(user => user._id === this._user._id);
+                            if (user) {
+                                this._openUserInfoDialog(room, user);
+                            }
+                        }
                         break;
                     }
                     case "menu-reload-messages": { // 页面刷新
@@ -971,6 +986,15 @@ export class Control {
     }
 
     /**
+     * 更新当前用户
+     * @param user 当前用户
+     */
+    public updateUser(user: RoomUser): void {
+        merge(this._user, user);
+        globalThis.localStorage.setItem(Constants.STORAGE_USER_NAME, JSON.stringify(this._user));
+    }
+
+    /**
      * 更新用户状态
      * @param roomId 聊天室 ID
      * @param date 时间日期
@@ -1068,6 +1092,7 @@ export class Control {
                 rooms.push(merge<Room>(this._room_status_map.get(room.roomId) ?? {}, room));
             }
         }
+        this.sortRooms(rooms);
         this._rooms.value = deepClone()(rooms);
 
         this._rooms_loaded.value = true;
@@ -1098,6 +1123,28 @@ export class Control {
             });
         }
     })
+
+    /**
+     * 排序聊天室列表
+     */
+    public sortRooms(rooms: Room[]): void {
+        rooms.sort((r1, r2) => {
+            switch (true) {
+                case isNumber(r1.index) && isNumber(r2.index): // 序号 (升序排序)
+                    return r1.index - r2.index;
+                case isString(r1.index) && isString(r2.index): // UTC 时间戳字符串 (降序排序)
+                    return r2.index.localeCompare(r1.index);
+                case isNumber(r1.index) && isString(r2.index): // 序号在 UTC 时间戳前方
+                case !isNone(r1.index) && isNone(r2.index): // 有序号在无序号前方
+                    return -1;
+                case isString(r1.index) && isNumber(r2.index): // 序号在 UTC 时间戳前方
+                case isNone(r1.index) && !isNone(r2.index): // 有序号在无序号前方
+                    return 1;
+                default:
+                    return 0;
+            }
+        });
+    }
 
     /**
      * 排序用户列表
@@ -1400,6 +1447,20 @@ export class Control {
     }
 
     /**
+     * 打开用户信息对话框
+     * @param room 当前聊天室
+     * @param user 当前聊天室的本用户
+     */
+    protected _openUserInfoDialog(
+        room: Room,
+        user: RoomUser,
+    ): void {
+        this._room_current.value = room;
+        this._room_user_current.value = user;
+        this._room_user_dialog_visible.value = true;
+    }
+
+    /**
      * 处理其他用户状态变更
      */
     protected async _handleOtherUserStatusChange(message: IUserStatusBroadcastMessage): Promise<void> {
@@ -1628,6 +1689,38 @@ export class Control {
         /* 若为新的聊天室, 添加对应的消息列表 */
         if (!this._y_room_messages.has(room.roomId)) {
             this._y_room_messages.set(room.roomId, []);
+        }
+    }
+
+    /**
+     * 处理用户信息对话框确认事件
+     * @param room 聊天室信息
+     * @param user 用户信息
+     */
+    public readonly onUserInfoConfirm = async (
+        room: Room,
+        user: RoomUser,
+    ) => {
+        this._logger.debugs("onRoomInfoConfirm", room, user);
+
+        await this.ready;
+        const room_ = this._y_rooms.get(room.roomId);
+        if (room_) {
+            /* 更新对应聊天室的用户 */
+            const user_ = room_.users.find(u => u._id === user._id);
+            if (user_) {
+                Object.assign(user_, user);
+            }
+            else {
+                room_.users.push(user);
+                this.sortUsers(room_.users);
+            }
+
+            /* 若更新主聊天室的用户, 保存至 localStorage */
+            if (room_.roomId === this._room_main.roomId) {
+                this.updateUser(user);
+            }
+            this._y_rooms.set(room_.roomId, room_);
         }
     }
 

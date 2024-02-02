@@ -1,5 +1,12 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-02-02
+
+- 完善群组信息编辑对话框 | Improve group information edit dialog.
+- 完善群组设置菜单项 | Improve group settings menu items.
+- 添加退出群组与解散群组功能 | Add exit group and dissolve group function.
+- 完善用户信息编辑对话框 | Improve user information edit dialog.
+
 ## 2024-02-01
 
 - 添加群组信息编辑对话框 | Add group information edit dialog.

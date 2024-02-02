@@ -58,10 +58,22 @@
             "name": {
                 "label": "群组名称"
             },
-            "title": "群组信息",
+            "title": "群组设置",
             "users": {
                 "label": "群组成员"
             }
+        },
+        "user": {
+            "avatar": {
+                "label": "本群头像"
+            },
+            "id": {
+                "label": "用户 ID"
+            },
+            "name": {
+                "label": "本群昵称"
+            },
+            "title": "用户设置"
         }
     },
     "form": {

@@ -131,7 +131,7 @@ export function isStaticPathname(
         case href.startsWith("history/"): // 工作空间/history
 
         case href.startsWith("assets/"): // 工作空间/data/assets
-        case href.startsWith("emojies/"): // 工作空间/data/emojies
+        case href.startsWith("emojis/"): // 工作空间/data/emojis
         case href.startsWith("plugins/"): // 工作空间/data/plugins
         case href.startsWith("public/"): // 工作空间/data/public
         case href.startsWith("snippets/"): // 工作空间/data/snippets
@@ -156,7 +156,7 @@ export function isStaticWebFileServicePath(path: string): boolean {
         case path.startsWith("history/"):
 
         case path.startsWith("data/assets/"):
-        case path.startsWith("data/emojies/"):
+        case path.startsWith("data/emojis/"):
         case path.startsWith("data/plugins/"):
         case path.startsWith("data/public/"):
         case path.startsWith("data/snippets/"):
@@ -178,7 +178,7 @@ export function staticPathname2WorkspacePath(pathname: string): string {
     if (pathname.startsWith("/")) pathname = pathname.substring(1);
     switch (true) {
         case pathname.startsWith("assets/"): // 工作空间/data/assets
-        case pathname.startsWith("emojies/"): // 工作空间/data/emojies
+        case pathname.startsWith("emojis/"): // 工作空间/data/emojis
         case pathname.startsWith("plugins/"): // 工作空间/data/plugins
         case pathname.startsWith("public/"): // 工作空间/data/public
         case pathname.startsWith("snippets/"): // 工作空间/data/snippets
@@ -204,7 +204,7 @@ export function staticPathname2WorkspacePath(pathname: string): string {
 export function workspacePath2StaticPathname(path: string): string {
     switch (true) {
         case path.startsWith("data/assets/"):
-        case path.startsWith("data/emojies/"):
+        case path.startsWith("data/emojis/"):
         case path.startsWith("data/plugins/"):
         case path.startsWith("data/public/"):
         case path.startsWith("data/snippets/"):
