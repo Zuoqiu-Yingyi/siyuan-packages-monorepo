@@ -312,4 +312,9 @@ function onSelectFiles(files: FileList | null): void {
     </vue-advanced-chat>
 </template>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+:global(.arco-modal) {
+    box-sizing: border-box;
+    max-width: 95%;
+}
+</style>
