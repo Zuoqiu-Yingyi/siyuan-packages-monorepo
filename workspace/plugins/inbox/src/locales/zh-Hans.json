@@ -88,8 +88,8 @@
     },
     "inbox": "收集箱",
     "notice": {
-        "clearRoomMessagesSuccess": "已清空群组 <code>{roomname}</code> 的所有消息",
-        "confirmClearRoomMessages": "是否确认清空群组 <code>{roomname}</code> 的所有消息？<br/>该操作不可逆！",
+        "clearRoomMessagesSuccess": "已清空群组 <code>{roomname}</code> 中的所有消息 （共 <code>{count}</code> 条）",
+        "confirmClearRoomMessages": "是否确认清空群组 <code>{roomname}</code> 中的所有消息？<br/>该群组中共有 <code>{count}</code> 条消息。<br/>该操作不可逆！",
         "confirmDisbandRoom": "是否确认解散群组 <code>{roomname}</code> ？<br/>该操作不可逆！",
         "confirmLeaveRoom": "是否确认退出群组 <code>{roomname}</code> ？<br/>该操作不可逆！",
         "disbandRoomSuccess": "成员 <u>{'@'}{username}</u> 解散群组 <code>{roomname}</code>",

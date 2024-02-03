@@ -26,7 +26,7 @@ import zh_Hant from "@/locales/zh-Hant.json";
 
 import { createApp } from "vue";
 import { createI18n } from "vue-i18n";
-import { Modal , Notification } from '@arco-design/web-vue';
+import { Modal, Notification } from '@arco-design/web-vue';
 import type { RoomUser } from "vue-advanced-chat";
 
 import { Client } from "@siyuan-community/siyuan-sdk";
@@ -89,6 +89,34 @@ import * as Constants from "~/src/constant";
 
     globalThis.document.title = i18n.global.t("inbox") as string;
 
+    /* 用户默认头像 */
+    const avatar = ((browser: string) => {
+        switch (true) {
+            case browser.includes("chrome"):
+                return "./../icons/chrome.svg";
+            case browser.includes("chromium"):
+                return "./../icons/chromium.svg";
+            case browser.includes("edge"):
+                return "./../icons/edge.svg";
+            case browser.includes("electron"):
+                return "./../icons/electron.svg";
+            case browser.includes("firefox"):
+                return "./../icons/firefox.svg";
+            case browser.includes("opera"):
+                return "./../icons/opera.svg";
+            case browser.includes("safari"):
+                return "./../icons/safari.svg";
+            case browser.includes("uc"):
+                return "./../icons/uc.svg";
+            case browser.includes("vivaldi"):
+                return "./../icons/vivaldi.svg";
+            case browser.includes("webkit"):
+                return "./../icons/webkit.svg";
+            default:
+                return "./../icons/siyuan.svg";
+        }
+    })(String(UA.browser.name).toLowerCase());
+
     /* 当前用户信息 */
     const user: RoomUser = (() => {
         try {
@@ -114,7 +142,7 @@ import * as Constants from "~/src/constant";
             const current_user: RoomUser = {
                 _id: current_user_id,
                 username,
-                avatar: "",
+                avatar,
                 status: {
                     state: "online",
                     lastChanged: new Date().toISOString(),
