@@ -15,6 +15,12 @@
         "menu": {
             "clearMessages": "Clear messages",
             "reloadMessages": "Reload message",
+            "room": {
+                "add": "Create group",
+                "hide": "Hide unjoined groups",
+                "show": "Show all groups",
+                "title": "Group"
+            },
             "userSettings": "Member settings"
         },
         "message": {

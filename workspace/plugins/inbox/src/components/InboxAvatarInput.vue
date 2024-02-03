@@ -102,6 +102,7 @@ function onInputChange(value: string): void {
 
 <template>
     <Avatar
+        class="flex-shrink-0"
         trigger-type="mask"
         :size="32"
         @click="onAvatarClick"
@@ -124,8 +125,9 @@ function onInputChange(value: string): void {
         </template>
     </Avatar>
     <Divider
+        class="flex-shrink-0"
         direction="vertical"
-        margin="0.5em"
+        margin="0.25em"
     />
     <Input
         v-model="input_value"
@@ -133,8 +135,11 @@ function onInputChange(value: string): void {
         :allow-clear="true"
         :placeholder="$t('form.avatar.input.placeholder')"
         @change="onInputChange"
-    >
-    </Input>
+    />
 </template>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.flex-shrink-0 {
+    flex-shrink: 0;
+}
+</style>

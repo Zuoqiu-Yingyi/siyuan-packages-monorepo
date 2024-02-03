@@ -18,11 +18,14 @@
 <script setup lang="ts">
 import { inject, shallowRef, reactive, watch, onMounted } from "vue";
 import { register, type VueAdvancedChat, type RoomUser, type Room, type Message, type Props } from "vue-advanced-chat";
+
 import ArcoConfigProvider from "@workspace/components/arco/ArcoConfigProvider.vue";
-import InboxTextareaMenu from "@/components/InboxTextareaMenu.vue";
 import InboxRoomInfoDialog from "@/components/InboxRoomInfoDialog.vue";
 import InboxUserInfoDialog from "@/components/InboxUserInfoDialog.vue";
 import InboxRoomSelectDialog from "@/components/InboxRoomSelectDialog.vue";
+import InboxMenu from "@/components/InboxMenu.vue";
+import InboxTextareaMenu from "@/components/InboxTextareaMenu.vue";
+
 import * as Constants from "@/constant";
 import { Control } from "@/messages/control";
 
@@ -225,29 +228,22 @@ const control = new Control(
     roomUserInfoDialogVisible, //
 );
 
-watch(
-    rooms,
-    () => {
-        roomsLoaded.value = true;
-    },
-);
+watch(rooms, () => {
+    roomsLoaded.value = true;
+});
 
-watch(
-    messages,
-    (messages) => {
-        if (messages.length > 0) {
+watch(messages, messages => {
+    if (messages.length > 0) {
+        messagesLoaded.value = true;
+    } else {
+        /* 避免无消息时一直处于加载状态 */
+        messagesLoaded.value = false;
+
+        setTimeout(() => {
             messagesLoaded.value = true;
-        }
-        else {
-            /* 避免无消息时一直处于加载状态 */
-            messagesLoaded.value = false;
-
-            setTimeout(() => {
-                messagesLoaded.value = true;
-            }, 250);
-        }
-    },
-);
+        }, 250);
+    }
+});
 
 onMounted(async () => {
     await control.init();
@@ -345,8 +341,18 @@ function onSelectFiles(files: FileList | null): void {
         @textarea-action-handler="control.handler"
         @typing-message="control.handler"
     >
+        <!-- 自定义添加按钮 -->
+        <span
+            class="icon"
+            slot="add-icon"
+        >
+            <InboxMenu @click="control.onClickMenuItem" />
+        </span>
         <!-- 消息输入框的自定义按钮, 点击时触发 textarea-action-handler 事件 -->
-        <span slot="custom-action-icon">
+        <span
+            class="icon"
+            slot="custom-action-icon"
+        >
             <InboxTextareaMenu @files="onSelectFiles" />
         </span>
     </vue-advanced-chat>

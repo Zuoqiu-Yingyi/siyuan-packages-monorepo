@@ -37,6 +37,7 @@ import {
     type IBaseMessage,
     type IBaseBroadcastMessage,
     type IBaseResponseMessage,
+    MenuAction,
 } from ".";
 import { ConfirmModal } from "@/utils/modal";
 
@@ -153,6 +154,7 @@ export class Control {
     protected _current_room_id: string; // 当前聊天室 ID
     protected _rooms_list_opened: boolean = true; // 当前聊天列表是否展开
     protected _typing_limitation: boolean = false; // 是否限制用户输入状态广播
+    protected _show_all_rooms: boolean = false; // 是否显示所有聊天室
 
     /**
      * @param t 本地化函数
@@ -379,16 +381,10 @@ export class Control {
                 break;
             }
             /**
-             * 点击聊天室列表右上角的 + 按钮
+             * 点击聊天室列表右上角的按钮
              */
             case "add-room": {
                 const detail: undefined = e.detail[0];
-                this._openRoomInfoDialog({
-                    roomId: id(),
-                    roomName: `${this.t("inbox")} ${this._y_rooms.size + 1}`,
-                    avatar: Constants.ICON_FILE_PATH,
-                    users: [deepClone()(this._user)],
-                });
                 break;
             }
             /**
@@ -1140,7 +1136,9 @@ export class Control {
     public readonly updateRooms = deshake(() => {
         const rooms: Room[] = [];
         for (const room of this._y_rooms.values()) {
-            if (room.users.find(user => user._id === this._user._id)) {
+            if (this._show_all_rooms // 显示所有聊天室
+                || !!room.users.find(user => user._id === this._user._id) // 当前用户已加入的聊天室
+            ) {
                 rooms.push(merge<Room>(this._room_status_map.get(room.roomId) ?? {}, room));
             }
         }
@@ -1715,6 +1713,44 @@ export class Control {
     }
 
     /**
+     * 处理菜单项点击事件
+     * @param action 菜单项
+     */
+    public readonly onClickMenuItem = async (
+        action: MenuAction,
+    ) => {
+        // this._logger.debug("onClickMenuItem");
+        await this.ready;
+
+        switch (action) {
+            case MenuAction.ADD_ROOM: { // 添加聊天室
+                this._openRoomInfoDialog({
+                    roomId: id(),
+                    roomName: `${this.t("inbox")} ${this._y_rooms.size + 1}`,
+                    avatar: Constants.ICON_FILE_PATH,
+                    users: [deepClone()(this._user)],
+                });
+                break;
+            }
+
+            case MenuAction.SHOW_ALL_ROOMS: { // 显示所有群组
+                this._show_all_rooms = true;
+                this.updateRooms();
+                break;
+            }
+
+            case MenuAction.HIDE_UNJOINED_ROOMS: { // 隐藏未加入的群组
+                this._show_all_rooms = false;
+                this.updateRooms();
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+
+    /**
      * 处理聊天室信息对话框确认事件
      * @param room 聊天室信息
      */
@@ -1722,7 +1758,6 @@ export class Control {
         room: Room,
     ) => {
         // this._logger.debug("onRoomInfoConfirm");
-
         await this.ready;
         this._y_rooms.set(room.roomId, room);
 

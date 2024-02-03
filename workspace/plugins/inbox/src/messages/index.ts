@@ -15,6 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+export enum MenuAction {
+    ADD_ROOM = "add-room",
+    SHOW_ALL_ROOMS = "show-all-rooms",
+    HIDE_UNJOINED_ROOMS = "hide-unjoined-rooms",
+}
+
 export enum MessageType {
     broadcast = "broadcast",
     push = "push",
