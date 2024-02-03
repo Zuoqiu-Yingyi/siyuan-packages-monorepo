@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { computed, shallowRef, watchPostEffect } from "vue";
-import { Modal, Form, FormItem, Input, Select } from "@arco-design/web-vue";
+import { Modal, Form, FormItem, Input, Select, type SelectOptionData } from "@arco-design/web-vue";
 import InboxAvatarInput from "./InboxAvatarInput.vue";
 import InboxAvatarGroup from "./InboxAvatarGroup.vue";
 
@@ -43,11 +43,13 @@ const roomId = shallowRef<string>(""); // 当前聊天室 ID
 const avatar = shallowRef<string>(""); // 当前聊天室图标
 const roomName = shallowRef<string>(""); // 当前聊天室名称
 const users = shallowRef<string[]>([]); // 当前聊天室成员 ID 列表
-const usersOptions = computed(() =>
-    props.users.map(user => ({
-        ...user,
-        disabled: user._id === props.user._id,
-    })),
+const usersOptions = computed<SelectOptionData[]>(() =>
+    props.room.users.find(user => user._id === props.user._id) // 当前用户所在的聊天室
+        ? props.users.map(user => ({
+              ...user,
+              disabled: user._id === props.user._id,
+          })) // 不能修改当前用户
+        : props.users, // 可以修改所有用户
 ); // 所有用户列表
 const avatars = computed(() => users.value.map(id => props.users.find(user => user._id === id)?.avatar));
 
@@ -117,7 +119,7 @@ function onOk(e: Event): void {
             <FormItem :label="$t('dialog.room.users.label')">
                 <Select
                     v-model:model-value="users"
-                    :disabled="props.main.roomId === props.room.roomId"
+                    :disabled="main.roomId === room.roomId"
                     :options="usersOptions"
                     :field-names="{
                         value: '_id',

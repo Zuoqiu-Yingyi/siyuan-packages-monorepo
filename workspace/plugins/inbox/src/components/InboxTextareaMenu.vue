@@ -18,7 +18,6 @@
 <!-- 消息输入框菜单 -->
 <script setup lang="ts">
 import { Dropdown, Dgroup, Doption } from "@arco-design/web-vue";
-import { IconCamera, IconVideoCamera, IconImage, IconUser } from "@arco-design/web-vue/es/icon";
 
 enum TextareaOptionType {
     PHOTO_FRONT,
@@ -68,22 +67,12 @@ function onclick(e: MouseEvent, optionType: TextareaOptionType): void {
 <template>
     <!-- REF: https://arco.design/vue/component/dropdown -->
     <Dropdown trigger="hover">
-        <svg
-            id="vac-icon-textarea-action"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            version="1.1"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-        >
-            <path d="M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z" />
-        </svg>
+        <IconPlusCircle />
         <template #content>
             <Dgroup>
                 <template #title>
                     <IconCamera />
-                    {{ $t("actions.textarea.photo.title") }}
+                    <span class="group-title">{{ $t("actions.textarea.photo.title") }}</span>
                 </template>
                 <Doption @click="e => onclick(e, TextareaOptionType.PHOTO_FRONT)">
                     {{ $t("actions.textarea.photo.front") }}
@@ -101,7 +90,7 @@ function onclick(e: MouseEvent, optionType: TextareaOptionType): void {
             <Dgroup>
                 <template #title>
                     <IconVideoCamera />
-                    {{ $t("actions.textarea.video.title") }}
+                    <span class="group-title">{{ $t("actions.textarea.video.title") }}</span>
                 </template>
                 <Doption @click="e => onclick(e, TextareaOptionType.VIDEO_FRONT)">
                     {{ $t("actions.textarea.video.front") }}
@@ -121,9 +110,7 @@ function onclick(e: MouseEvent, optionType: TextareaOptionType): void {
 </template>
 
 <style scoped lang="less">
-#vac-icon-textarea-action {
-    path {
-        fill: var(--chat-icon-color-menu);
-    }
+.group-title {
+    margin-left: 0.5em;
 }
 </style>
