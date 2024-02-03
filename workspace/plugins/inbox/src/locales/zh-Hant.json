@@ -85,6 +85,8 @@
     },
     "inbox": "收集箱",
     "notice": {
+        "clearRoomMessagesSuccess": "已清空群組 <code>{roomname}</code> 的所有訊息",
+        "confirmClearRoomMessages": "是否確認清空群組 <code>{roomname}</code> 的所有訊息？<br/>該操作不可逆！",
         "confirmDisbandRoom": "是否確認解散群組 <code>{roomname}</code> ？<br/>該操作不可逆！",
         "confirmLeaveRoom": "是否確認退出群組 <code>{roomname}</code> ？<br/>該操作不可逆！",
         "disbandRoomSuccess": "成員 <u>{'@'}{username}</u> 解散群組 <code>{roomname}</code>",

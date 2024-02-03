@@ -91,6 +91,8 @@
         }
     },
     "notice": {
+        "clearRoomMessagesSuccess": "Cleared all messages from group <code>{roomname}</code>",
+        "confirmClearRoomMessages": "Are you sure you want to clear all messages from group <code>{roomname}</code>? <br/>This operation is irreversible!",
         "confirmDisbandRoom": "Are you sure you want to disband group <code>{roomname}</code> ?<br/>This operation is irreversible!",
         "confirmLeaveRoom": "Are you sure you want to leave group <code>{roomname}</code> ?<br/>This operation is irreversible!",
         "disbandRoomSuccess": "Member <u>{'@'}{username}</u> disband group <code>{roomname}</code>",

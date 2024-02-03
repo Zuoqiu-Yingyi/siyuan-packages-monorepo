@@ -789,7 +789,6 @@ export class Control {
             case "open-user-tag": {
                 const detail: RoomUser = e.detail[0]; // (proxy)
                 // TODO: 点击 @ 的用户
-                // TODO: 与 @ 的用户创建一个新的聊天室
                 break;
             }
             case "open-failed-message":
@@ -819,21 +818,55 @@ export class Control {
                         break;
                     }
                     case "menu-clear-messages": { // 清空所有消息
-                        const messages = this._y_room_messages.get(detail.roomId);
-                        if (messages) {
-                            // TODO: 用户二次确认清空该群组的所有消息
+                        const room = this._y_rooms.get(detail.roomId);
+                        if (room) {
+                            const messages = this._y_room_messages.get(detail.roomId);
+                            if (messages) {
+                                // 用户二次确认清空该群组的所有消息
+                                const result = await ConfirmModal({
+                                    title: this.t("notice.title.warning"),
+                                    content: () => h("span", {
+                                        class: "markdown",
+                                        innerHTML: this.t(
+                                            "notice.confirmClearRoomMessages",
+                                            {
+                                                roomname: room.roomName,
+                                            },
+                                        ),
+                                    }),
+                                });
 
-                            /* 删除群组相关的状态 */
-                            const room_status = this._room_status_map.get(detail.roomId);
-                            if (room_status) {
-                                delete room_status.lastMessage;
-                                delete room_status.unreadCount;
+                                if (result) {
+                                    /* 删除群组相关的状态 */
+                                    const room_status = this._room_status_map.get(detail.roomId);
+                                    if (room_status) {
+                                        delete room_status.lastMessage;
+                                        delete room_status.unreadCount;
+                                    }
+
+                                    /* 清空群组消息列表 */
+                                    this._y_room_messages.set(detail.roomId, []);
+
+                                    // 提示清空该群组所有消息成功
+                                    Notification.success(
+                                        {
+                                            title: this.t("notice.title.success"),
+                                            content: () => h("span", {
+                                                class: "markdown",
+                                                innerHTML: this.t(
+                                                    "notice.clearRoomMessagesSuccess",
+                                                    {
+                                                        roomname: room.roomName,
+                                                    },
+                                                ),
+                                            }),
+                                            closable: true,
+                                            duration: 8000,
+                                        },
+                                    );
+                                }
+
                             }
-
-                            /* 清空群组消息列表 */
-                            this._y_room_messages.set(detail.roomId, []);
-
-                            // TODO: 提示清空该群组所有消息成功
                         }
                         break;
                     }
