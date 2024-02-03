@@ -154,22 +154,37 @@ export class Control {
     protected _rooms_list_opened: boolean = true; // 当前聊天列表是否展开
     protected _typing_limitation: boolean = false; // 是否限制用户输入状态广播
 
+    /**
+     * @param t 本地化函数
+     * @param _client SiYuan SDK 客户端
+     * @param _logger 日志记录器
+     * @param _user 当前用户
+     * @param _main 主聊天室
+     * 
+     * @param _rooms 当前用户所在的聊天室列表
+     * @param _messages 当前聊天室的消息列表
+     * @param _room_id 当前聊天室 ID
+     * @param _room_current 当前聊天室对象
+     * @param _room_user_current 当前聊天室用户对象
+     * @param _room_info_dialog_visible 聊天室信息对话框是否可见
+     * @param _room_select_dialog_visible 聊天室选择对话框是否可见
+     * @param _room_user_info_dialog_visible 聊天室用户信息对话框是否可见
+     */
     constructor(
         protected readonly t: VueI18nTranslation,
         protected readonly _client: Client,
         protected readonly _logger: Logger,
         protected readonly _user: RoomUser,
-        protected readonly _room_id: ShallowRef<string | null>,
-        protected readonly _room_main: Room,
-        protected readonly _room_select_dialog_visible: ShallowRef<boolean>,
-        protected readonly _room_info_dialog_visible: ShallowRef<boolean>,
-        protected readonly _room_current: ShallowRef<Room | undefined>,
-        protected readonly _room_user_info_dialog_visible: ShallowRef<boolean>,
-        protected readonly _room_user_current: ShallowRef<RoomUser | undefined>,
+        protected readonly _main: Room,
+
         protected readonly _rooms: ShallowRef<Room[]>,
-        protected readonly _rooms_loaded: ShallowRef<boolean>,
         protected readonly _messages: ShallowRef<Message[]>,
-        protected readonly _messages_loaded: ShallowRef<boolean>,
+        protected readonly _room_id: ShallowRef<string | null>,
+        protected readonly _room_current: ShallowRef<Room | undefined>,
+        protected readonly _room_user_current: ShallowRef<RoomUser | undefined>,
+        protected readonly _room_info_dialog_visible: ShallowRef<boolean>,
+        protected readonly _room_select_dialog_visible: ShallowRef<boolean>,
+        protected readonly _room_user_info_dialog_visible: ShallowRef<boolean>,
     ) {
         /* 主聊天室 */
         this._current_room_id = Constants.MAIN_ROOM_ID;
@@ -269,10 +284,10 @@ export class Control {
                     }
 
                     this.sortUsers(main_room.users);
-                    Object.assign(this._room_main, main_room);
+                    Object.assign(this._main, main_room);
                 }
                 else {
-                    rooms[this._room_main.roomId] = this._room_main;
+                    rooms[this._main.roomId] = this._main;
                 }
 
                 Object.entries(rooms).forEach(([key, value]) => {
@@ -280,7 +295,7 @@ export class Control {
                 });
             }
             else {
-                this._y_rooms.set(this._room_main.roomId, this._room_main);
+                this._y_rooms.set(this._main.roomId, this._main);
             }
 
             /* 初始化消息 ID -> 消息对象 */
@@ -405,7 +420,7 @@ export class Control {
                         break;
                     }
                     case "room-leave": { // 退出群组
-                        if (detail.roomId === this._room_main.roomId) { // 主群组不能退出
+                        if (detail.roomId === this._main.roomId) { // 主群组不能退出
                             Notification.warning(
                                 {
                                     title: this.t("notice.title.warning"),
@@ -452,7 +467,7 @@ export class Control {
                                             this._y_rooms.set(room.roomId, room);
 
                                             if (detail.roomId === this._current_room_id) { // 将消息面板切换到主聊天室
-                                                this._room_id.value = this._room_main.roomId;
+                                                this._room_id.value = this._main.roomId;
                                             }
                                             this.updateRooms(); // 更新聊天室列表状态
 
@@ -482,7 +497,7 @@ export class Control {
                         break;
                     }
                     case "room-disband": { // 解散群组
-                        if (detail.roomId === this._room_main.roomId) { // 主群组不能解散
+                        if (detail.roomId === this._main.roomId) { // 主群组不能解散
                             Notification.warning({
                                 title: this.t("notice.title.warning"),
                                 content: this.t("notice.mainRoomCannotDisband"),
@@ -511,7 +526,7 @@ export class Control {
 
                                 if (result) {
                                     if (detail.roomId === this._current_room_id) { // 将消息面板切换到主聊天室
-                                        this._room_id.value = this._room_main.roomId;
+                                        this._room_id.value = this._main.roomId;
                                     }
                                     this._y_rooms.delete(detail.roomId);
                                     this._y_room_messages.delete(detail.roomId);
@@ -833,6 +848,7 @@ export class Control {
                                             "notice.confirmClearRoomMessages",
                                             {
                                                 roomname: room.roomName,
+                                                count: messages.length,
                                             },
                                         ),
                                     }),
@@ -859,6 +875,7 @@ export class Control {
                                                     "notice.clearRoomMessagesSuccess",
                                                     {
                                                         roomname: room.roomName,
+                                                        count: messages.length,
                                                     },
                                                 ),
                                             }),
@@ -1090,7 +1107,7 @@ export class Control {
      * @param user 用户
      */
     public updateUsers(
-        roomId: string = this._room_main.roomId,
+        roomId: string = this._main.roomId,
         user: RoomUser = this._user,
     ): void {
         /* 更新聊天室信息 */
@@ -1171,7 +1188,7 @@ export class Control {
      * 排序用户列表
      * @param users: 用户列表
      */
-    public sortUsers(users: RoomUser[] = this._room_main.users): void {
+    public sortUsers(users: RoomUser[] = this._main.users): void {
         users.sort((u1, u2) => u1._id.localeCompare(u2._id));
     }
 
@@ -1504,12 +1521,12 @@ export class Control {
             default:
                 break;
         }
-        const user = this._room_main.users.find(user => user._id === message.data.user._id);
+        const user = this._main.users.find(user => user._id === message.data.user._id);
         if (user) {
             Object.assign(user, message.data.user);
         }
         else {
-            this._room_main.users.push(message.data.user);
+            this._main.users.push(message.data.user);
             this.sortUsers();
         }
     }
@@ -1740,7 +1757,7 @@ export class Control {
             }
 
             /* 若更新主聊天室的用户, 保存至 localStorage */
-            if (room_.roomId === this._room_main.roomId) {
+            if (room_.roomId === this._main.roomId) {
                 this.updateUser(user);
             }
             this._y_rooms.set(room_.roomId, room_);

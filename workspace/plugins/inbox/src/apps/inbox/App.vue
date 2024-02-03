@@ -187,41 +187,42 @@ const username_options: Props["username-options"] = {
     currentUser: true, // 是否显示当前用户昵称
 }; // 用户昵称显示选项
 
-const roomMain = reactive<Room>({
+const main = reactive<Room>({
     roomId: Constants.MAIN_ROOM_ID,
     roomName: t("inbox"),
     avatar: Constants.ICON_FILE_PATH,
     users: [deepClone()(user)],
     index: 0,
 }); // 主收集箱
-const roomId = shallowRef<string | null>(null);
-const rooms = shallowRef<Room[]>([]);
-const roomsLoaded = shallowRef<boolean>(false);
-const messages = shallowRef<Message[]>([]);
-const messagesLoaded = shallowRef<boolean>(false);
+const roomId = shallowRef<string | null>(null); // 当前聊天室 ID
+const rooms = shallowRef<Room[]>([]); // 当前用户所在的聊天室列表
+const roomsLoaded = shallowRef<boolean>(false); // 聊天室列表是否加载完成
+const messages = shallowRef<Message[]>([]); // 当前聊天室消息列表
+const messagesLoaded = shallowRef<boolean>(false); // 当前聊天室消息列表是否加载完成
 
-const roomSelectDialogVisible = shallowRef<boolean>(false);
-const roomInfoDialogVisible = shallowRef<boolean>(false);
-const userInfoDialogVisible = shallowRef<boolean>(false);
-const currentRoom = shallowRef<Room>(roomMain);
-const currentRoomUser = shallowRef<RoomUser>(user);
+const currentRoom = shallowRef<Room>(main); // 当前聊天室
+const currentRoomUser = shallowRef<RoomUser>(user); // 当前聊天室用户
+
+const roomInfoDialogVisible = shallowRef<boolean>(false); // 是否显示聊天室信息对话框
+const roomSelectDialogVisible = shallowRef<boolean>(false); // 是否显示聊天室选择对话框
+const roomUserInfoDialogVisible = shallowRef<boolean>(false); // 是否显示用户信息对话框
 
 const control = new Control(
     t, //
     client, //
     logger, //
     user, //
-    roomId, //
-    roomMain, //
-    roomSelectDialogVisible, //
-    roomInfoDialogVisible, //
-    currentRoom, //
-    userInfoDialogVisible, //
-    currentRoomUser, //
+    main, //
+
     rooms, //
-    roomsLoaded, //
     messages, //
-    messagesLoaded, //
+    roomId, //
+    currentRoom, //
+    currentRoomUser, //
+
+    roomInfoDialogVisible, //
+    roomSelectDialogVisible, //
+    roomUserInfoDialogVisible, //
 );
 
 watch(
@@ -239,6 +240,8 @@ watch(
         }
         else {
             /* 避免无消息时一直处于加载状态 */
+            messagesLoaded.value = false;
+
             setTimeout(() => {
                 messagesLoaded.value = true;
             }, 250);
@@ -278,14 +281,14 @@ function onSelectFiles(files: FileList | null): void {
     <ArcoConfigProvider :locale="locale" />
     <InboxRoomInfoDialog
         v-model:visible="roomInfoDialogVisible"
-        :main="roomMain"
+        :main="main"
         :room="currentRoom"
         :user="currentRoomUser"
-        :users="roomMain.users"
+        :users="main.users"
         @confirm="control.onRoomInfoConfirm"
     />
     <InboxUserInfoDialog
-        v-model:visible="userInfoDialogVisible"
+        v-model:visible="roomUserInfoDialogVisible"
         :room="currentRoom"
         :user="currentRoomUser"
         @confirm="control.onUserInfoConfirm"

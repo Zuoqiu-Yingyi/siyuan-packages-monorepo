@@ -17,15 +17,35 @@
 
 <!-- 图标输入框 -->
 <script setup lang="ts">
-import { shallowRef, watch } from "vue";
+import { inject, shallowRef, watch } from "vue";
 import { Avatar, Divider, Input } from "@arco-design/web-vue";
 import { isStaticPathname } from "@workspace/utils/siyuan/url";
+
+import type { Client } from "@siyuan-community/siyuan-sdk";
+
+const client = inject("client") as Client;
 
 const avatar = defineModel<string>("avatar", { required: true });
 
 const avatar_src = shallowRef<string>("");
 const input_value = shallowRef<string>("");
 const input_error = shallowRef<boolean>(false);
+
+/* 图标文件上传 */
+const camera_input = document.createElement("input");
+camera_input.type = "file";
+camera_input.accept = "image/*";
+camera_input.addEventListener("change", async e => {
+    const image = camera_input.files?.item(0);
+    if (image) {
+        const path = `public/inbox/avatar/${image.name}`;
+        await client.putFile({
+            file: image,
+            path: `data/${path}`,
+        });
+        onInputChange(path);
+    }
+});
 
 watch(
     avatar,
@@ -43,7 +63,8 @@ watch(
  */
 function onAvatarClick(): void {
     // console.debug("onAvatarClick", arguments);
-    // TODO: 上传图片文件
+    // 上传图片文件
+    camera_input.click();
 }
 
 /**
