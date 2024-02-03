@@ -13,6 +13,10 @@
     "TYPE_MESSAGE": "Type message",
     "actions": {
         "menu": {
+            "app": {
+                "reset": "Reset app",
+                "title": "Application"
+            },
             "clearMessages": "Clear messages",
             "reloadMessages": "Reload message",
             "room": {
@@ -104,6 +108,7 @@
         "confirmClearRoomMessages": "Are you sure you want to clear all messages in group <code>{roomname}</code>? <br/>There are <code>{count}</code> messages in this group. <br/>This operation is irreversible!",
         "confirmDisbandRoom": "Are you sure you want to disband group <code>{roomname}</code> ?<br/>This operation is irreversible!",
         "confirmLeaveRoom": "Are you sure you want to leave group <code>{roomname}</code> ?<br/>This operation is irreversible!",
+        "confirmReset": "Reset this app?<br/>This operation will delete all application data and reinitialize the application.<br/>This operation is irreversible!",
         "disbandRoomSuccess": "Member <u>{'@'}{username}</u> disband group <code>{roomname}</code>",
         "lastUserCannotLeave": "The current user is the last member of the group and cannot exit the group!",
         "leaveRoomSuccess": "Member <u>{'@'}{username}</u> leaves group <code>{roomname}</code>",

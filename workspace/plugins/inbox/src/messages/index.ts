@@ -19,6 +19,8 @@ export enum MenuAction {
     ADD_ROOM = "add-room",
     SHOW_ALL_ROOMS = "show-all-rooms",
     HIDE_UNJOINED_ROOMS = "hide-unjoined-rooms",
+
+    RESET = "reset",
 }
 
 export enum MessageType {
