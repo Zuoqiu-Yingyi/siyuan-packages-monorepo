@@ -148,6 +148,7 @@ export class Control {
         string, // 消息通道名称
         Set<IWsControlMessageHandler> // 监听器集合
     > = new Map(); // 消息通道名称 -> 监听器集合
+    protected readonly _temp_messages: Message[] = []; // 临时消息列表
 
     protected _current_room_id: string; // 当前聊天室 ID
     protected _rooms_list_opened: boolean = true; // 当前聊天列表是否展开
@@ -160,9 +161,10 @@ export class Control {
         protected readonly _user: RoomUser,
         protected readonly _room_id: ShallowRef<string | null>,
         protected readonly _room_main: Room,
-        protected readonly _room_dialog_visible: ShallowRef<boolean>,
+        protected readonly _room_select_dialog_visible: ShallowRef<boolean>,
+        protected readonly _room_info_dialog_visible: ShallowRef<boolean>,
         protected readonly _room_current: ShallowRef<Room | undefined>,
-        protected readonly _room_user_dialog_visible: ShallowRef<boolean>,
+        protected readonly _room_user_info_dialog_visible: ShallowRef<boolean>,
         protected readonly _room_user_current: ShallowRef<RoomUser | undefined>,
         protected readonly _rooms: ShallowRef<Room[]>,
         protected readonly _rooms_loaded: ShallowRef<boolean>,
@@ -890,7 +892,8 @@ export class Control {
                         this.copyMessages([detail.message]);
                         break;
                     }
-                    case "message-forward": { // TODO: 转发消息
+                    case "message-forward": { // 转发消息
+                        await this.forwardMessages(detail.roomId, detail.message);
                         break;
                     }
                     default:
@@ -913,7 +916,8 @@ export class Control {
                         this.copyMessages(detail.messages);
                         break;
                     }
-                    case "messages-forward": { // TODO: 转发消息组
+                    case "messages-forward": { // 转发消息组
+                        await this.forwardMessages(detail.roomId, ...detail.messages);
                         break;
                     }
                     default:
@@ -1117,8 +1121,6 @@ export class Control {
      * 更新聊天室列表
      */
     public readonly updateRooms = deshake(() => {
-        this._rooms_loaded.value = false;
-
         const rooms: Room[] = [];
         for (const room of this._y_rooms.values()) {
             if (room.users.find(user => user._id === this._user._id)) {
@@ -1127,8 +1129,6 @@ export class Control {
         }
         this.sortRooms(rooms);
         this._rooms.value = deepClone()(rooms);
-
-        this._rooms_loaded.value = true;
     })
 
     /**
@@ -1138,23 +1138,11 @@ export class Control {
     public readonly updateMessages = deshake((
         roomId: string = this._current_room_id,
     ) => {
-        this._messages_loaded.value = false;
-
         const messages_list = this._y_room_messages.get(roomId) || [];
         const messages = messages_list
             .map(message_id => this._y_messages.get(message_id)!)
             .filter(message => !!message);
         this._messages.value = deepClone()(messages);
-
-        if (messages.length > 0) {
-            this._messages_loaded.value = true;
-        }
-        else {
-            /* 避免无消息时一直显示正在加载动画 */
-            setTimeout(() => {
-                this._messages_loaded.value = true;
-            });
-        }
     })
 
     /**
@@ -1268,17 +1256,19 @@ export class Control {
 
     /**
      * 转发消息
+     * @param roomId 消息所在聊天室 ID
      * @param messages 消息列表
-     * @param roomId 目标群组 ID
      */
     public forwardMessages(
-        messages: Message[],
         roomId: string,
+        ...messages: Message[]
     ): void {
-        const messages_list = this._y_room_messages.get(roomId);
-        if (messages_list) {
-            messages_list.push(...messages.map(message => message._id));
-            this._y_room_messages.set(roomId, messages_list);
+        const room = this._y_rooms.get(roomId);
+        if (room) {
+            this._temp_messages.length = 0;
+            this._temp_messages.push(...messages);
+            this._room_current.value = room;
+            this._room_select_dialog_visible.value = true;
         }
     }
 
@@ -1476,7 +1466,7 @@ export class Control {
      */
     protected _openRoomInfoDialog(room: Room): void {
         this._room_current.value = room;
-        this._room_dialog_visible.value = true;
+        this._room_info_dialog_visible.value = true;
     }
 
     /**
@@ -1490,7 +1480,7 @@ export class Control {
     ): void {
         this._room_current.value = room;
         this._room_user_current.value = user;
-        this._room_user_dialog_visible.value = true;
+        this._room_user_info_dialog_visible.value = true;
     }
 
     /**
@@ -1755,6 +1745,58 @@ export class Control {
             }
             this._y_rooms.set(room_.roomId, room_);
         }
+    }
+
+    /**
+     * 处理群组选择对话框确认事件
+     * @param roomIds 群组 ID 列表
+     */
+    public readonly onRoomSelectConfirm = async (
+        roomIds: string[],
+    ) => {
+        const rooms = roomIds
+            .map(roomId => this._y_rooms.get(roomId)!)
+            .filter(room => !!room);
+
+        // 转发消息
+        const date = new Date();
+        const datetime = moment(date);
+        let indexId = datetime.valueOf();
+
+        const messages_: Message[] = this._temp_messages.map(message => ({
+            ...message,
+            date: datetime.format("YYYY-MM-DD"), // 日期
+            timestamp: datetime.format("YYYY-MM-DD HH:mm:ss"), // 时间戳
+            reactions: undefined,
+        }));
+        this._temp_messages.length = 0;
+
+        rooms.forEach(room => {
+            const messages_list = this._y_room_messages.get(room.roomId);
+            if (messages_list) {
+                const user = room.users.find(user => user._id === this._user._id)
+                    ?? this._user;
+
+                /* 为消息设置新的 ID 与发送者 */
+                const messages__: Message[] = messages_.map(message => ({
+                    ...message,
+                    _id: id(),
+                    indexId: indexId++,
+                    senderId: user._id,
+                    avatar: user.avatar,
+                    username: user.username,
+                }));
+
+                /* 转发后的消息 */
+                messages__.forEach(message => {
+                    this._y_messages.set(message._id, message);
+                });
+
+                /* 转发后的消息关联到对应的聊天室 */
+                messages_list.push(...messages__.map(message => message._id));
+                this._y_room_messages.set(room.roomId, messages_list);
+            }
+        });
     }
 
     /**

@@ -63,7 +63,7 @@ function onCancel(e: Event): void {
  * 点击确认按钮的回调函数
  */
 function onOk(e: Event): void {
-    /* 派发聊天室信息更新事件 */
+    /* 派发用户信息更新事件 */
     emits("confirm", props.room, {
         ...props.user,
         avatar: avatar.value,
