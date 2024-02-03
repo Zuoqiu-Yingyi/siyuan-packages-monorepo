@@ -13,6 +13,10 @@
     "TYPE_MESSAGE": "输入消息",
     "actions": {
         "menu": {
+            "app": {
+                "reset": "重置应用",
+                "title": "应用"
+            },
             "clearMessages": "清空消息",
             "reloadMessages": "重载消息",
             "room": {
@@ -98,6 +102,7 @@
         "confirmClearRoomMessages": "是否确认清空群组 <code>{roomname}</code> 中的所有消息？<br/>该群组中共有 <code>{count}</code> 条消息。<br/>该操作不可逆！",
         "confirmDisbandRoom": "是否确认解散群组 <code>{roomname}</code> ？<br/>该操作不可逆！",
         "confirmLeaveRoom": "是否确认退出群组 <code>{roomname}</code> ？<br/>该操作不可逆！",
+        "confirmReset": "是否重置该应用？<br/>该操作将删除所有应用数据并重新初始化应用。<br/>该操作不可逆！",
         "disbandRoomSuccess": "成员 <u>{'@'}{username}</u> 解散群组 <code>{roomname}</code>",
         "lastUserCannotLeave": "当前用户为该群组最后一个成员，不能退出该群组！",
         "leaveRoomSuccess": "成员 <u>{'@'}{username}</u> 退出群组 <code>{roomname}</code>",

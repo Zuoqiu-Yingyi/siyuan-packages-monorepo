@@ -1745,6 +1745,25 @@ export class Control {
                 break;
             }
 
+            case MenuAction.RESET: { // 重置应用
+                // 二次确认重置应用
+                const result = await ConfirmModal({
+                    title: this.t("notice.title.warning"),
+                    content: () => h("span", {
+                        class: "markdown",
+                        innerHTML: this.t("notice.confirmReset"),
+                    }),
+                });
+                
+                if (result) {
+                    this._y_rooms.clear();
+                    this._y_messages.clear();
+                    this._y_room_messages.clear();
+                    this._y_rooms.set(this._main.roomId, this._main);
+                }
+                break;
+            }
+
             default:
                 break;
         }

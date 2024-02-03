@@ -55,6 +55,18 @@ const emits = defineEmits<{
                     </template>
                 </Doption>
             </Dgroup>
+            <Dgroup>
+                <template #title>
+                    <IconApps />
+                    <span class="group-title">{{ $t("actions.menu.app.title") }}</span>
+                </template>
+                <Doption @click="e => emits('click', MenuAction.RESET)">
+                    {{ $t("actions.menu.app.reset") }}
+                    <template #icon>
+                        <IconRefresh />
+                    </template>
+                </Doption>
+            </Dgroup>
         </template>
     </Dropdown>
 </template>
