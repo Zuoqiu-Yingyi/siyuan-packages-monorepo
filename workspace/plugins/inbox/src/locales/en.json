@@ -63,6 +63,9 @@
                 "label": "Group members"
             }
         },
+        "roomSelect": {
+            "title": "Group selection"
+        },
         "user": {
             "avatar": {
                 "label": "Avatar"

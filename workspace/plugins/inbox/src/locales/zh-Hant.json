@@ -63,6 +63,9 @@
                 "label": "群組成員"
             }
         },
+        "roomSelect": {
+            "title": "群組選擇"
+        },
         "user": {
             "avatar": {
                 "label": "本群頭像"

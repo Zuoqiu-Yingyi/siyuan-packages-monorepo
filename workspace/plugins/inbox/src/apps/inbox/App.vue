@@ -16,12 +16,13 @@
 -->
 
 <script setup lang="ts">
-import { inject, shallowRef, onMounted, reactive } from "vue";
+import { inject, shallowRef, reactive, watch, onMounted } from "vue";
 import { register, type VueAdvancedChat, type RoomUser, type Room, type Message, type Props } from "vue-advanced-chat";
 import ArcoConfigProvider from "@workspace/components/arco/ArcoConfigProvider.vue";
 import InboxTextareaMenu from "@/components/InboxTextareaMenu.vue";
 import InboxRoomInfoDialog from "@/components/InboxRoomInfoDialog.vue";
 import InboxUserInfoDialog from "@/components/InboxUserInfoDialog.vue";
+import InboxRoomSelectDialog from "@/components/InboxRoomSelectDialog.vue";
 import * as Constants from "@/constant";
 import { Control } from "@/messages/control";
 
@@ -199,8 +200,9 @@ const roomsLoaded = shallowRef<boolean>(false);
 const messages = shallowRef<Message[]>([]);
 const messagesLoaded = shallowRef<boolean>(false);
 
-const roomDialogVisible = shallowRef<boolean>(false);
-const userDialogVisible = shallowRef<boolean>(false);
+const roomSelectDialogVisible = shallowRef<boolean>(false);
+const roomInfoDialogVisible = shallowRef<boolean>(false);
+const userInfoDialogVisible = shallowRef<boolean>(false);
 const currentRoom = shallowRef<Room>(roomMain);
 const currentRoomUser = shallowRef<RoomUser>(user);
 
@@ -211,15 +213,39 @@ const control = new Control(
     user, //
     roomId, //
     roomMain, //
-    roomDialogVisible, //
+    roomSelectDialogVisible, //
+    roomInfoDialogVisible, //
     currentRoom, //
-    userDialogVisible, //
+    userInfoDialogVisible, //
     currentRoomUser, //
     rooms, //
     roomsLoaded, //
     messages, //
     messagesLoaded, //
 );
+
+watch(
+    rooms,
+    () => {
+        roomsLoaded.value = true;
+    },
+);
+
+watch(
+    messages,
+    (messages) => {
+        if (messages.length > 0) {
+            messagesLoaded.value = true;
+        }
+        else {
+            /* 避免无消息时一直处于加载状态 */
+            setTimeout(() => {
+                messagesLoaded.value = true;
+            }, 250);
+        }
+    },
+);
+
 onMounted(async () => {
     await control.init();
     control.online();
@@ -251,7 +277,7 @@ function onSelectFiles(files: FileList | null): void {
 <template>
     <ArcoConfigProvider :locale="locale" />
     <InboxRoomInfoDialog
-        v-model:visible="roomDialogVisible"
+        v-model:visible="roomInfoDialogVisible"
         :main="roomMain"
         :room="currentRoom"
         :user="currentRoomUser"
@@ -259,14 +285,20 @@ function onSelectFiles(files: FileList | null): void {
         @confirm="control.onRoomInfoConfirm"
     />
     <InboxUserInfoDialog
-        v-model:visible="userDialogVisible"
+        v-model:visible="userInfoDialogVisible"
         :room="currentRoom"
         :user="currentRoomUser"
         @confirm="control.onUserInfoConfirm"
     />
+    <InboxRoomSelectDialog
+        v-model:visible="roomSelectDialogVisible"
+        :room="currentRoom"
+        :rooms="rooms"
+        @confirm="control.onRoomSelectConfirm"
+    />
     <vue-advanced-chat
-        height="100vh"
         ref="vue_advanced_chat"
+        height="100vh"
         :room-id="roomId"
         :rooms-loaded="roomsLoaded"
         :messages-loaded="messagesLoaded"
