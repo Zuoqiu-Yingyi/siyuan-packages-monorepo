@@ -247,8 +247,8 @@ watch(messages, messages => {
 
 onMounted(async () => {
     await control.init();
-    control.online();
-    logger.debug(vue_advanced_chat.value);
+    await control.online();
+    // logger.debug(vue_advanced_chat.value);
 });
 
 /**
