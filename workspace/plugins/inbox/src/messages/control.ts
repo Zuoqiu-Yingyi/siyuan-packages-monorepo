@@ -332,28 +332,41 @@ export class Control {
     /**
      * 保存数据
      */
-    public async save(): Promise<void> {
+    public readonly save = deshake(async () => {
         await Promise.all([
             this._client.putFile({ path: Constants.ROOMS_DATA_FILE_PATH, file: JSON.stringify(this._y_rooms.toJSON(), undefined, "\t") }),
             this._client.putFile({ path: Constants.MESSAGES_DATA_FILE_PATH, file: JSON.stringify(this._y_messages.toJSON(), undefined, "\t") }),
             this._client.putFile({ path: Constants.ROOM_MESSAGES_MAP_FILE_PATH, file: JSON.stringify(this._y_room_messages.toJSON(), undefined, "\t") }),
         ]);
-    }
+    })
 
+    /**
+     * 释放资源
+     */
     public destroy(): void {
         this._y_doc.destroy();
         this._ws_data.close();
         this._ws_control.close();
     }
 
+    /**
+     * 当前用户状态切换为在线
+     */
     public async online(): Promise<void> {
-        this._user.status.state = "online";
-        await this._sendCurrentUserState();
+        if (this._user.status.state !== "online") {
+            this._user.status.state = "online";
+            await this._sendCurrentUserState();
+        }
     }
 
+    /**
+     * 当前用户状态切换为离线
+     */
     public async offline(): Promise<void> {
-        this._user.status.state = "offline";
-        await this._sendCurrentUserState();
+        if (this._user.status.state !== "offline") {
+            this._user.status.state = "offline";
+            await this._sendCurrentUserState();
+        }
     }
 
     /**
