@@ -1,14 +1,14 @@
 {
     "name": "inbox",
     "private": true,
-    "version": "0.1.0",
+    "version": "0.1.1",
     "type": "module",
     "scripts": {
         "dev": "vite",
         "build:dev": "npm run build:dev:plugin && npm run build:dev:apps",
         "build:dev:plugin": "vite build --mode plugin --sourcemap inline ",
         "build:dev:apps": "vite build --mode apps --sourcemap inline ",
-        "build": "npm run build:icons && npm run build:plugin && npm run build:apps",
+        "build": "npm run build:plugin && npm run build:apps",
         "build:plugin": "vite build --mode plugin",
         "build:apps": "vite build --mode apps",
         "preview": "vite preview",
