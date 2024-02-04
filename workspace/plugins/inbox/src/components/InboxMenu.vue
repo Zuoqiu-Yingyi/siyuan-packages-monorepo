@@ -60,6 +60,12 @@ const emits = defineEmits<{
                     <IconApps />
                     <span class="group-title">{{ $t("actions.menu.app.title") }}</span>
                 </template>
+                <Doption @click="e => emits('click', MenuAction.LOGOUT)">
+                    {{ $t("actions.menu.app.logout") }}
+                    <template #icon>
+                        <IconCloseCircle />
+                    </template>
+                </Doption>
                 <Doption @click="e => emits('click', MenuAction.RESET)">
                     {{ $t("actions.menu.app.reset") }}
                     <template #icon>
