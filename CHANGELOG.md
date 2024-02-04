@@ -3,6 +3,9 @@
 ## 2024-02-05
 
 - 监听系统主题变更事件 | Listen for system theme change events.
+- 优化数据保存策略 | Optimize data saving strategy.
+- 完善用户文档 | Improve user documentation.
+- 更新项目依赖 | Update project dependencies.
 
 ## 2024-02-04
 
