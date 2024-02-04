@@ -45,7 +45,7 @@
             "forward": "Forward"
         },
         "room": {
-            "disband": "Dismiss group",
+            "disband": "Disband group",
             "leave": "Leave group",
             "settings": "Group settings"
         },
