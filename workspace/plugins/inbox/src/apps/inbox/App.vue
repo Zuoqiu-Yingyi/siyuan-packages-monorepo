@@ -19,7 +19,9 @@
 import { inject, shallowRef, reactive, watch, onMounted } from "vue";
 import { register, type VueAdvancedChat, type RoomUser, type Room, type Message, type Props } from "vue-advanced-chat";
 
+import { FLAG_LIGHT, MEDIA_QUERY_LIST } from "@workspace/utils/env/native-front-end";
 import ArcoConfigProvider from "@workspace/components/arco/ArcoConfigProvider.vue";
+
 import InboxRoomInfoDialog from "@/components/InboxRoomInfoDialog.vue";
 import InboxUserInfoDialog from "@/components/InboxUserInfoDialog.vue";
 import InboxRoomSelectDialog from "@/components/InboxRoomSelectDialog.vue";
@@ -39,14 +41,10 @@ const vue_advanced_chat = shallowRef<HTMLElement | null>(null);
 
 const user = inject("user") as RoomUser;
 const i18n = inject("i18n") as I18n;
-const theme = inject("theme") as "dark" | "light";
 const locale = inject("locale") as string;
 const logger = inject("logger") as Logger;
 const client = inject("client") as Client;
 const t = i18n.global.t as VueI18nTranslation;
-
-/* 设置 Arco 主题 */
-globalThis.document.body.setAttribute("arco-theme", theme);
 
 /* emoji-picker-element-data 表情 emoji 数据语言标记 */
 const picker_locale: string = (() => {
@@ -197,6 +195,7 @@ const main = reactive<Room>({
     users: [deepClone()(user)],
     index: 0,
 }); // 主收集箱
+const theme = shallowRef<"light" | "dark">(FLAG_LIGHT ? "light" : "dark"); // 主题
 const roomId = shallowRef<string | null>(null); // 当前聊天室 ID
 const rooms = shallowRef<Room[]>([]); // 当前用户所在的聊天室列表
 const roomsLoaded = shallowRef<boolean>(false); // 聊天室列表是否加载完成
@@ -226,6 +225,20 @@ const control = new Control(
     roomInfoDialogVisible, //
     roomSelectDialogVisible, //
     roomUserInfoDialogVisible, //
+);
+
+/* 监听系统主题更改 */
+MEDIA_QUERY_LIST.light.addEventListener("change", e => {
+    theme.value = e.matches ? "light" : "dark";
+});
+
+watch(
+    theme,
+    () => {
+        /* 设置 Arco 主题 */
+        globalThis.document.body.setAttribute("arco-theme", theme.value);
+    },
+    { immediate: true },
 );
 
 watch(rooms, () => {
