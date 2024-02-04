@@ -1,0 +1,38 @@
+@media (prefers-color-scheme: light) {
+    :root {
+        background-color: white;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        background-color: black;
+    }
+}
+
+body {
+    margin: 0;
+}
+
+.markdown {
+    code {
+        outline: 1px solid currentColor;
+        padding: 0.25em;
+        border-radius: 0.25em;
+        font-size: 87.5%;
+    }
+}
+
+.arco-modal {
+    &:not(.arco-modal-fullscreen) {
+        // 非全屏模式的模态对话框
+        box-sizing: border-box;
+        max-width: 95%;
+    }
+}
+
+.icon {
+    svg {
+        font-size: 24px;
+    }
+}

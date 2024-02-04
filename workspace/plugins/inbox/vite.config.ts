@@ -15,63 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { defineConfig } from "vite";
-import { resolve } from "node:path";
-import { svelte } from "@sveltejs/vite-plugin-svelte";
-import { less } from "svelte-preprocess-less";
+import deepmerge from "deepmerge";
+import { defineConfig, UserConfig } from "vite";
+
+import viteShareConfig from "./vite.share.config";
+import vitePluginConfig from "./vite.plugin.config";
+import viteAppsConfig from "./vite.apps.config";
 
 // https://vitejs.dev/config/
-export default defineConfig({
-    base: `./`,
-    plugins: [
-        svelte({
-            preprocess: {
-                style: less(),
-            },
-        }),
-    ],
-    resolve: {
-        alias: {
-            "~": resolve(__dirname, "./"),
-            "@": resolve(__dirname, "./src"),
-        }
-    },
-    build: {
-        minify: true,
-        // sourcemap: "inline",
-        lib: {
-            entry: resolve(__dirname, "src/index.ts"),
-            fileName: "index",
-            formats: ["cjs"],
-        },
-        rollupOptions: {
-            external: [
-                "siyuan",
-                /^@electron\/.*$/,
-            ],
-            output: {
-                entryFileNames: chunkInfo => {
-                    // console.log(chunkInfo);
-                    switch (chunkInfo.name) {
-                        case "index":
-                            return "[name].js";
+export default defineConfig(async env => {
+    // console.log(env);
+    var config: UserConfig;
 
-                        default:
-                            return "assets/[name]-[hash].js";
-                    }
-                },
-                assetFileNames: assetInfo => {
-                    // console.log(chunkInfo);
-                    switch (assetInfo.name) {
-                        case "style.css":
-                        case "index.css":
-                            return "index.css";
+    switch (env.mode) {
+        case "apps":
+            config = deepmerge.all<UserConfig>([viteShareConfig, viteAppsConfig]);
+            break;
 
-                        default:
-                            return "assets/[name]-[hash][extname]";
-                    }
-                },
-            },
-        },
-    },
+        case "plugin":
+        default:
+            config = deepmerge.all<UserConfig>([viteShareConfig, vitePluginConfig]);
+            break;
+    }
+
+    // console.log(config);
+    return config;
 });
