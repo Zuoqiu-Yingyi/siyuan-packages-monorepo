@@ -54,10 +54,18 @@ import type {
 import type { VueI18nTranslation } from "vue-i18n";
 
 export enum ControlChannel {
+    load = "load", // 客户端加载
     user_status = "user-status", // 用户状态更改
     last_message = "last-message", // 聊天室最新消息
     typing_status = "typing-status", // 聊天室用户输入状态
     notification = "notification", // 通知消息
+}
+
+export interface ILoadBroadcastMessage extends IBaseBroadcastMessage {
+    channel: ControlChannel.load;
+    data: {
+        user: RoomUser;
+    };
 }
 
 export interface IBaseUserStatusMessage extends Omit<IBaseMessage, "receiver"> {
@@ -248,12 +256,13 @@ export class Control {
         this._y_doc.on("updateV2", this.onYjsUpdate);
         this._y_doc.on("afterAllTransactions", this.onYjsAfterAllTransactions);
 
-        await this.load();
-
+        this.addWsControlMessageHandler(ControlChannel.load, this._handleLoadMessage);
         this.addWsControlMessageHandler(ControlChannel.user_status, this._handleOtherUserStatusChange);
         this.addWsControlMessageHandler(ControlChannel.typing_status, this._handleTypingStatus);
         this.addWsControlMessageHandler(ControlChannel.last_message, this._handleLastMessage);
         this.addWsControlMessageHandler(ControlChannel.notification, this._handleNotificationMessage);
+
+        await this.load();
 
         this._resolve();
     }
@@ -314,6 +323,10 @@ export class Control {
                 });
             }
         }
+        else {
+            /* 请求从其他客户端加载数据 */
+            await this._broadcastLoadMessage();
+        }
     }
 
     /**
@@ -333,14 +346,14 @@ export class Control {
         this._ws_control.close();
     }
 
-    public online(): void {
+    public async online(): Promise<void> {
         this._user.status.state = "online";
-        this._sendCurrentUserState();
+        await this._sendCurrentUserState();
     }
 
-    public offline(): void {
+    public async offline(): Promise<void> {
         this._user.status.state = "offline";
-        this._sendCurrentUserState();
+        await this._sendCurrentUserState();
     }
 
     /**
@@ -1187,7 +1200,16 @@ export class Control {
      * @param users: 用户列表
      */
     public sortUsers(users: RoomUser[] = this._main.users): void {
-        users.sort((u1, u2) => u1._id.localeCompare(u2._id));
+        users.sort((u1, u2) => {
+            switch (true) {
+                case u1._id === this._user._id: // 当前用户在最前方
+                    return -1;
+                case u2._id === this._user._id: // 当前用户在最前方
+                    return 1;
+                default: // 按用户 ID 排序
+                    return u1._id.localeCompare(u2._id);
+            }
+        });
     }
 
     /**
@@ -1333,7 +1355,22 @@ export class Control {
                 user: this._user,
             },
         );
-        this._broadcastControlMessage(message);
+        await this._broadcastControlMessage(message);
+    }
+
+    /**
+     * 广播客户端数据加载消息
+     */
+    protected async _broadcastLoadMessage(): Promise<void> {
+        const message = this._construct<ILoadBroadcastMessage>(
+            MessageType.broadcast,
+            ControlChannel.load,
+            undefined,
+            {
+                user: this._user,
+            },
+        );
+        await this._broadcastControlMessage(message);
     }
 
     /**
@@ -1411,8 +1448,11 @@ export class Control {
 
     /**
      * 广播控制消息
+     * @param data 控制消息数据
      */
-    protected async _broadcastControlMessage(data: any): Promise<void> {
+    protected async _broadcastControlMessage(
+        data: any,
+    ): Promise<void> {
         await this._ready_ws;
         this._ws_control.send(globalThis.JSON.stringify(data));
     }
@@ -1499,6 +1539,20 @@ export class Control {
     }
 
     /**
+     * 处理数据加载请求
+     */
+    protected async _handleLoadMessage(message: ILoadBroadcastMessage): Promise<void> {
+        switch (message.type) {
+            case "broadcast":
+                const state = Y.encodeStateAsUpdateV2(this._y_doc);
+                await this._broadcastUpdateMessage(state);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
      * 处理其他用户状态变更
      */
     protected async _handleOtherUserStatusChange(message: IUserStatusBroadcastMessage): Promise<void> {
@@ -1507,10 +1561,6 @@ export class Control {
                 switch (message.data.user.status.state) {
                     case "online": // 上线
                         await this._sendCurrentUserState(message.sender);
-
-                        /* 广播编辑状态 */
-                        const state = Y.encodeStateAsUpdateV2(this._y_doc);
-                        this._broadcastUpdateMessage(state);
                         break;
                     case "offline": // 离线
                         break;
@@ -1685,8 +1735,16 @@ export class Control {
         // this._logger.debug("onvisibilitychange");
 
         // REF: https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon
-        if (document.visibilityState === "hidden") {
-            // navigator.sendBeacon("/log", analyticsData);
+        switch (document.visibilityState) {
+            case "visible":
+                this.online();
+                break;
+            case "hidden":
+                this.offline();
+                // navigator.sendBeacon("/log", analyticsData);
+                break;
+            default:
+                break;
         }
     }
 
@@ -1776,7 +1834,7 @@ export class Control {
                         innerHTML: this.t("notice.confirmReset"),
                     }),
                 });
-                
+
                 if (result) {
                     this._y_rooms.clear();
                     this._y_messages.clear();

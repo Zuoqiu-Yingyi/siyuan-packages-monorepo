@@ -42,23 +42,38 @@ const emits = defineEmits<TEmits>();
 const roomId = shallowRef<string>(""); // 当前聊天室 ID
 const avatar = shallowRef<string>(""); // 当前聊天室图标
 const roomName = shallowRef<string>(""); // 当前聊天室名称
-const users = shallowRef<string[]>([]); // 当前聊天室成员 ID 列表
-const usersOptions = computed<SelectOptionData[]>(() =>
-    props.room.users.find(user => user._id === props.user._id) // 当前用户所在的聊天室
-        ? props.users.map(user => ({
+const userIds = shallowRef<string[]>([]); // 当前聊天室成员 ID 列表
+const avatars = computed(() => userIds.value.map(id => props.users.find(user => user._id === id)?.avatar)); // 用户头像地址列表
+const usersOptions = computed<SelectOptionData[]>(() => {
+    const users = props.users.toSorted(userCompareFn);
+    return !!props.room.users.find(user => user._id === props.user._id) // 当前用户所在的聊天室
+        ? users.map(user => ({
               ...user,
               disabled: user._id === props.user._id,
           })) // 不能修改当前用户
-        : props.users, // 可以修改所有用户
-); // 所有用户列表
-const avatars = computed(() => users.value.map(id => props.users.find(user => user._id === id)?.avatar));
+        : users; // 可以修改所有用户
+}); // 所有用户列表
 
 watchPostEffect(() => {
     roomId.value = props.room.roomId;
     avatar.value = props.room.avatar;
     roomName.value = props.room.roomName;
-    users.value = props.room.users.map(user => user._id);
+    userIds.value = props.room.users.toSorted(userCompareFn).map(user => user._id);
 });
+
+/**
+ * 用户排序方法
+ */
+function userCompareFn(user1: RoomUser, user2: RoomUser): number {
+    switch (true) {
+        case user1._id === props.user._id: // 当前用户排在最前方
+            return -1;
+        case user2._id === props.user._id: // 当前用户排在最前方
+            return 1;
+        default:
+            return user1.username.localeCompare(user2.username); // 按照用户名排序
+    }
+}
 
 /**
  * 点击取消按钮的回调函数
@@ -76,7 +91,7 @@ function onOk(e: Event): void {
         ...props.room,
         avatar: avatar.value,
         roomName: roomName.value,
-        users: users.value.map(userId => props.users.find(user => user._id === userId)!).filter(user => !!user),
+        users: userIds.value.map(userId => props.users.find(user => user._id === userId)!).filter(user => !!user),
     });
 
     visible.value = false;
@@ -118,8 +133,7 @@ function onOk(e: Event): void {
             <!-- 聊天室用户 -->
             <FormItem :label="$t('dialog.room.users.label')">
                 <Select
-                    v-model:model-value="users"
-                    :disabled="main.roomId === room.roomId"
+                    v-model:model-value="userIds"
                     :options="usersOptions"
                     :field-names="{
                         value: '_id',
