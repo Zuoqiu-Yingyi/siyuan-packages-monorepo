@@ -13,8 +13,8 @@ permissions:
   pull-requests: write
 
 env:
-  PACKAGE_NAME: template
-  PACKAGE_VERSION: 0.0.0
+  PACKAGE_NAME: inbox
+  PACKAGE_VERSION: 0.1.0
 
 jobs:
   release-please:

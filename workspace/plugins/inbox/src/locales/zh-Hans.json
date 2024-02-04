@@ -1,0 +1,122 @@
+{
+    "CANCEL_SELECT_MESSAGE": "取消",
+    "CONVERSATION_STARTED": "对话开始于：",
+    "IS_ONLINE": "在线",
+    "IS_TYPING": "正在输入...",
+    "LAST_SEEN": "上次出现 ",
+    "MESSAGES_EMPTY": "无消息",
+    "MESSAGE_DELETED": "此消息已删除",
+    "NEW_MESSAGES": "新消息",
+    "ROOMS_EMPTY": "新讨论组",
+    "ROOM_EMPTY": "未选择讨论组",
+    "SEARCH": "搜索",
+    "TYPE_MESSAGE": "输入消息",
+    "actions": {
+        "menu": {
+            "app": {
+                "logout": "注销登录",
+                "reset": "重置应用",
+                "title": "应用"
+            },
+            "clearMessages": "清空消息",
+            "reloadMessages": "重载消息",
+            "room": {
+                "add": "创建群组",
+                "hide": "隐藏未加入的群组",
+                "show": "显示所有群组",
+                "title": "群组"
+            },
+            "user": {
+                "delete": "删除当前用户",
+                "title": "用户"
+            },
+            "userSettings": "成员设置"
+        },
+        "message": {
+            "copy": "复制",
+            "delete": "删除",
+            "edit": "编辑",
+            "forward": "转发",
+            "reply": "回复",
+            "select": "多选"
+        },
+        "messages": {
+            "copy": "复制",
+            "forward": "转发"
+        },
+        "room": {
+            "disband": "解散群组",
+            "leave": "退出群组",
+            "settings": "群组设置"
+        },
+        "textarea": {
+            "photo": {
+                "front": "前置摄像头",
+                "rear": "后置摄像头",
+                "title": "拍照"
+            },
+            "video": {
+                "front": "前置摄像头",
+                "rear": "后置摄像头",
+                "title": "录像"
+            }
+        }
+    },
+    "dialog": {
+        "room": {
+            "avatar": {
+                "label": "群组图标"
+            },
+            "id": {
+                "label": "群组 ID"
+            },
+            "name": {
+                "label": "群组名称"
+            },
+            "title": "群组设置",
+            "users": {
+                "label": "群组成员"
+            }
+        },
+        "roomSelect": {
+            "title": "群组选择"
+        },
+        "user": {
+            "avatar": {
+                "label": "本群头像"
+            },
+            "id": {
+                "label": "用户 ID"
+            },
+            "name": {
+                "label": "本群昵称"
+            },
+            "title": "用户设置"
+        }
+    },
+    "form": {
+        "avatar": {
+            "input": {
+                "placeholder": "请输入图片 URL"
+            }
+        }
+    },
+    "inbox": "收集箱",
+    "notice": {
+        "clearRoomMessagesSuccess": "已清空群组 <code>{roomname}</code> 中的所有消息 （共 <code>{count}</code> 条）",
+        "confirmClearRoomMessages": "是否确认清空群组 <code>{roomname}</code> 中的所有消息？<br/>该群组中共有 <code>{count}</code> 条消息。<br/>该操作不可逆！",
+        "confirmDeleteUser": "是否删除当前用户 <u>{'@'}{username}</u>？<br/>该操作将删除当前用户的配置信息并创建一个新的用户。<br/>该操作不可逆！",
+        "confirmDisbandRoom": "是否确认解散群组 <code>{roomname}</code> ？<br/>该操作不可逆！",
+        "confirmLeaveRoom": "是否确认退出群组 <code>{roomname}</code> ？<br/>该操作不可逆！",
+        "confirmReset": "是否重置该应用？<br/>该操作将删除所有应用数据并重新初始化应用。<br/>该操作不可逆！",
+        "disbandRoomSuccess": "成员 <u>{'@'}{username}</u> 解散群组 <code>{roomname}</code>",
+        "lastUserCannotLeave": "当前用户为该群组最后一个成员，不能退出该群组！",
+        "leaveRoomSuccess": "成员 <u>{'@'}{username}</u> 退出群组 <code>{roomname}</code>",
+        "mainRoomCannotDisband": "不能解散主群组！",
+        "mainRoomCannotLeave": "不能退出主群组！",
+        "title": {
+            "success": "成功",
+            "warning": "警告"
+        }
+    }
+}

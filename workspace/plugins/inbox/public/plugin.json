@@ -1,9 +1,24 @@
 {
-    "name": "template",
+    "name": "inbox",
     "author": "Zuoqiu Yingyi",
-    "url": "https://github.com/Zuoqiu-Yingyi/siyuan-plugin-template",
-    "version": "0.0.0",
-    "minAppVersion": "2.9.0",
+    "url": "https://github.com/Zuoqiu-Yingyi/siyuan-plugin-inbox",
+    "version": "0.1.0",
+    "minAppVersion": "2.12.4",
+    "keywords": [
+        "收集箱",
+        "inbox",
+        "聊天室",
+        "chatroom",
+        "群聊",
+        "群组对话",
+        "群組對話",
+        "groupchat",
+        "即时通讯",
+        "即時通訊",
+        "instant messaging",
+        "IM",
+        "CRDT"
+    ],
     "backends": [
         "all"
     ],
@@ -11,14 +26,14 @@
         "all"
     ],
     "displayName": {
-        "default": "",
-        "zh_CN": "",
-        "zh_CHT": ""
+        "default": "Inbox",
+        "zh_CN": "收集箱",
+        "zh_CHT": "收集箱"
     },
     "description": {
-        "default": "",
-        "zh_CN": "",
-        "zh_CHT": ""
+        "default": "Chatroom style inbox, support multiple different devices in the local area network to share information through the browser.",
+        "zh_CN": "聊天室样式的内容收集箱，支持局域网中多个不同的设备通过浏览器共享信息。",
+        "zh_CHT": "聊天室樣式的內容收集箱，支持局域網中多個不同的設備通過瀏覽器共享信息。"
     },
     "readme": {
         "default": "README.md",

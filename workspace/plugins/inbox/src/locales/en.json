@@ -1,0 +1,128 @@
+{
+    "CANCEL_SELECT_MESSAGE": "Cancel",
+    "CONVERSATION_STARTED": "Conversation started on:",
+    "IS_ONLINE": "is online",
+    "IS_TYPING": "is writing...",
+    "LAST_SEEN": "last seen ",
+    "MESSAGES_EMPTY": "No messages",
+    "MESSAGE_DELETED": "This message was deleted",
+    "NEW_MESSAGES": "New Messages",
+    "ROOMS_EMPTY": "No rooms",
+    "ROOM_EMPTY": "No room selected",
+    "SEARCH": "Search",
+    "TYPE_MESSAGE": "Type message",
+    "actions": {
+        "menu": {
+            "app": {
+                "logout": "Logout",
+                "reset": "Reset app",
+                "title": "Application"
+            },
+            "clearMessages": "Clear messages",
+            "reloadMessages": "Reload message",
+            "room": {
+                "add": "Create group",
+                "hide": "Hide unjoined groups",
+                "show": "Show all groups",
+                "title": "Group"
+            },
+            "user": {
+                "delete": "Delete current user",
+                "title": "User"
+            },
+            "userSettings": "Member settings"
+        },
+        "message": {
+            "copy": "Copy",
+            "delete": "Delete",
+            "edit": "Edit",
+            "forward": "Forward",
+            "reply": "Reply",
+            "select": "Select"
+        },
+        "messages": {
+            "copy": "Copy",
+            "forward": "Forward"
+        },
+        "room": {
+            "disband": "Disband group",
+            "leave": "Leave group",
+            "settings": "Group settings"
+        },
+        "textarea": {
+            "photo": {
+                "front": "Front camera",
+                "rear": "Rear camera",
+                "title": "Photograph"
+            },
+            "video": {
+                "front": "Front camera",
+                "rear": "Rear camera",
+                "title": "Video"
+            }
+        }
+    },
+    "dialog": {
+        "room": {
+            "avatar": {
+                "label": "Group icon"
+            },
+            "id": {
+                "label": "Group ID"
+            },
+            "name": {
+                "label": "Group name"
+            },
+            "title": "Group settings",
+            "users": {
+                "label": "Group members"
+            }
+        },
+        "roomSelect": {
+            "title": "Group selection"
+        },
+        "user": {
+            "avatar": {
+                "label": "Avatar"
+            },
+            "id": {
+                "label": "User ID"
+            },
+            "name": {
+                "label": "Nickname"
+            },
+            "title": "User settings"
+        }
+    },
+    "form": {
+        "avatar": {
+            "input": {
+                "placeholder": "Please enter image URL"
+            }
+        }
+    },
+    "inbox": "Inbox",
+    "menu": {
+        "group": {
+            "photo": "Photograph",
+            "video": "Video"
+        }
+    },
+    "notice": {
+        "clearRoomMessagesSuccess": "Cleared all messages in group <code>{roomname}</code> (total <code>{count}</code>)",
+        "confirmClearRoomMessages": "Are you sure you want to clear all messages in group <code>{roomname}</code>? <br/>There are <code>{count}</code> messages in this group. <br/>This operation is irreversible!",
+        "confirmDeleteUser": "Delete current user <u>{'@'}{username}</u>?<br/>This operation will delete the current user's configuration information and create a new user.<br/>This operation is irreversible!",
+        "confirmDisbandRoom": "Are you sure you want to disband group <code>{roomname}</code> ?<br/>This operation is irreversible!",
+        "confirmLeaveRoom": "Are you sure you want to leave group <code>{roomname}</code> ?<br/>This operation is irreversible!",
+        "confirmReset": "Reset this app?<br/>This operation will delete all application data and reinitialize the application.<br/>This operation is irreversible!",
+        "disbandRoomSuccess": "Member <u>{'@'}{username}</u> disband group <code>{roomname}</code>",
+        "lastUserCannotLeave": "The current user is the last member of the group and cannot exit the group!",
+        "leaveRoomSuccess": "Member <u>{'@'}{username}</u> leaves group <code>{roomname}</code>",
+        "mainRoomCannotDisband": "The main group cannot be dismissed!",
+        "mainRoomCannotLeave": "Can't leave the main group!",
+        "title": {
+            "success": "SUCCESS",
+            "warning": "WARNING"
+        }
+    }
+}
