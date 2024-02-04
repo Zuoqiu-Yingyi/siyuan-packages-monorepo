@@ -1,5 +1,23 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-02-05
+
+- 监听系统主题变更事件 | Listen for system theme change events.
+
+## 2024-02-04
+
+- 添加用户默认头像 | Add user default avatar.
+- 添加群组相关菜单项 | Add group-related menu items.
+- 添加重置应用菜单项 | Add reset application menu item.
+- 添加注销登录菜单项 | Add logout menu item.
+- 优化群组成员管理功能 | Optimize group member management function.
+- 添加删除用户菜单项 | Add delete user menu item.
+
+## 2024-02-03
+
+- 添加清空所有消息功能 | Add clear all messages function.
+- 添加消息转发功能 | Add message forwarding function.
+
 ## 2024-02-02
 
 - 完善群组信息编辑对话框 | Improve group information edit dialog.

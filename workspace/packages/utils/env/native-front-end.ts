@@ -18,6 +18,15 @@
 import type { ISiyuanGlobal } from "@workspace/types/siyuan";
 declare var globalThis: ISiyuanGlobal;
 
+export const MEDIA_QUERY_LIST = {
+    get light() {
+        return window.matchMedia("(prefers-color-scheme: light)");
+    },
+    get dark() {
+        return window.matchMedia("(prefers-color-scheme: dark)");
+    },
+};
+
 export const FLAG_ELECTRON = isElectron();
 export const FLAG_IFRAME = isIframe();
 export const FLAG_POPUP = isPopup();
@@ -84,7 +93,7 @@ export function isLight(): boolean {
             break;
     }
 
-    return window.matchMedia('(prefers-color-scheme: light)').matches;
+    return MEDIA_QUERY_LIST.light.matches;
 }
 
 export function isDark(): boolean {

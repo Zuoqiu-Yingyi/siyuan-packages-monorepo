@@ -34,7 +34,6 @@ import { mapLang } from "@workspace/utils/locale/language";
 import { trimSuffix } from "@workspace/utils/misc/string";
 import { UA } from "@workspace/utils/misc/user-agent";
 import { auth } from "@workspace/utils/siyuan/url";
-import { FLAG_LIGHT } from "@workspace/utils/env/native-front-end";
 import { id } from "@workspace/utils/siyuan/id";
 
 import { Logger } from "@workspace/utils/logger";
@@ -43,9 +42,6 @@ import App from "./App.vue";
 import * as Constants from "~/src/constant";
 
 (async () => {
-    /* 主题 */
-    const theme = FLAG_LIGHT ? "light" : "dark";
-
     /* 日志记录器 */
     const logger = new Logger(`plugin-${manifest.name}-app-inbox`);
 
@@ -168,7 +164,6 @@ import * as Constants from "~/src/constant";
 
     app.provide("user", user);
     app.provide("i18n", i18n);
-    app.provide("theme", theme);
     app.provide("locale", locale);
     app.provide("logger", logger);
     app.provide("client", client);
