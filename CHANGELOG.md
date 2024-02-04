@@ -6,6 +6,7 @@
 - 优化数据保存策略 | Optimize data saving strategy.
 - 完善用户文档 | Improve user documentation.
 - 更新项目依赖 | Update project dependencies.
+- 重新添加附属仓库 `inbox` | Re-add sub-repository `inbox`.
 
 ## 2024-02-04
 
