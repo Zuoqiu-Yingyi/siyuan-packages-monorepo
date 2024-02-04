@@ -1690,6 +1690,9 @@ export class Control {
         }
     }
 
+    /**
+     * 当前客户端数据发生变更
+     */
     protected readonly onYjsUpdate = async (
         update: Uint8Array,
         origin: any,
@@ -1701,6 +1704,9 @@ export class Control {
         await this.save();
     }
 
+    /**
+     * 其他客户端数据发生变更
+     */
     protected readonly onYjsAfterAllTransactions = async (
         doc: Y.Doc,
         transactions: Array<Y.Transaction>,
@@ -1742,6 +1748,22 @@ export class Control {
             case MenuAction.HIDE_UNJOINED_ROOMS: { // 隐藏未加入的群组
                 this._show_all_rooms = false;
                 this.updateRooms();
+                break;
+            }
+
+            case MenuAction.LOGOUT: { // 注销登录状态
+                try {
+                    // TODO: 使用 logoutAuth() 替代
+                    // await this._client.logoutAuth();
+                    await this._client._request(
+                        "/api/system/logoutAuth",
+                        "POST",
+                    );
+                } catch (error) {
+                }
+                this.offline();
+                this.destroy();
+                globalThis.location.reload();
                 break;
             }
 
