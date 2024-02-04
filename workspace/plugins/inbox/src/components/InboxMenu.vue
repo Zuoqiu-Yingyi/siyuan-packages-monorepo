@@ -31,6 +31,7 @@ const emits = defineEmits<{
     <Dropdown trigger="hover">
         <IconMenu />
         <template #content>
+            <!-- 群组 -->
             <Dgroup>
                 <template #title>
                     <IconUserGroup />
@@ -55,6 +56,22 @@ const emits = defineEmits<{
                     </template>
                 </Doption>
             </Dgroup>
+
+            <!-- 用户 -->
+            <Dgroup>
+                <template #title>
+                    <IconApps />
+                    <span class="group-title">{{ $t("actions.menu.user.title") }}</span>
+                </template>
+                <Doption @click="e => emits('click', MenuAction.DELETE_USER)">
+                    {{ $t("actions.menu.user.delete") }}
+                    <template #icon>
+                        <IconCloseCircle />
+                    </template>
+                </Doption>
+            </Dgroup>
+
+            <!-- 应用 -->
             <Dgroup>
                 <template #title>
                     <IconApps />

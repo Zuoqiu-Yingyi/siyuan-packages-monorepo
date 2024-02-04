@@ -120,10 +120,10 @@ import * as Constants from "~/src/constant";
     /* 当前用户信息 */
     const user: RoomUser = (() => {
         try {
-            const user_json = globalThis.localStorage.getItem(Constants.STORAGE_USER_NAME);
+            const user_json = globalThis.localStorage.getItem(Constants.STORAGE_KEY_USER);
             if (user_json) {
                 const current_user: RoomUser = JSON.parse(user_json);
-                current_user.status.state = "online";
+                current_user.status.state = "offline";
                 return current_user;
             }
             else {
@@ -136,23 +136,24 @@ import * as Constants from "~/src/constant";
                 UA.os.name,
                 UA.browser.name,
                 UA.device.vendor,
+                UA.device.type,
                 // ip,
                 current_user_id,
-            ].join("-");
+            ].filter(s => !!s).join("-");
             const current_user: RoomUser = {
                 _id: current_user_id,
                 username,
                 avatar,
                 status: {
-                    state: "online",
+                    state: "offline",
                     lastChanged: new Date().toISOString(),
                 },
             };
-            globalThis.localStorage.setItem(Constants.STORAGE_USER_NAME, JSON.stringify(current_user));
+            globalThis.localStorage.setItem(Constants.STORAGE_KEY_USER, JSON.stringify(current_user));
             return current_user;
         }
     })();
-    // logger.debug(user);
+    logger.debug(user);
 
     /* 初始化应用 */
     const app = createApp(App);

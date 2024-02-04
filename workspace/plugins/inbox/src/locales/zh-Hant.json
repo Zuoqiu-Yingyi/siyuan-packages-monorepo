@@ -26,6 +26,10 @@
                 "show": "顯示所有群組",
                 "title": "群組"
             },
+            "user": {
+                "delete": "刪除目前用戶",
+                "title": "使用者"
+            },
             "userSettings": "成員設定"
         },
         "message": {
@@ -101,6 +105,7 @@
     "notice": {
         "clearRoomMessagesSuccess": "已清空群組 <code>{roomname}</code> 中的所有訊息 （共 <code>{count}</code> 則）",
         "confirmClearRoomMessages": "是否確認清空群組 <code>{roomname}</code> 中的所有訊息？<br/>該群組中共有 <code>{count}</code> 則訊息。<br/>該操作不可逆！",
+        "confirmDeleteUser": "是否刪除目前使用者 <u>{'@'}{username}</u>？<br/>該操作將刪除目前使用者的設定資訊並創建一個新的使用者。<br/>該操作不可逆！",
         "confirmDisbandRoom": "是否確認解散群組 <code>{roomname}</code> ？<br/>該操作不可逆！",
         "confirmLeaveRoom": "是否確認退出群組 <code>{roomname}</code> ？<br/>該操作不可逆！",
         "confirmReset": "是否重置該應用程式？<br/>該操作將刪除所有應用資料並重新初始化應用程式。<br/>該操作不可逆！",

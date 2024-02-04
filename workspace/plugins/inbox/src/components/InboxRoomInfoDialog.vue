@@ -46,12 +46,14 @@ const userIds = shallowRef<string[]>([]); // 当前聊天室成员 ID 列表
 const avatars = computed(() => userIds.value.map(id => props.users.find(user => user._id === id)?.avatar)); // 用户头像地址列表
 const usersOptions = computed<SelectOptionData[]>(() => {
     const users = props.users.toSorted(userCompareFn);
-    return !!props.room.users.find(user => user._id === props.user._id) // 当前用户所在的聊天室
+    const options = !!props.room.users.find(user => user._id === props.user._id) // 当前用户所在的聊天室
         ? users.map(user => ({
               ...user,
               disabled: user._id === props.user._id,
           })) // 不能修改当前用户
         : users; // 可以修改所有用户
+    console.debug(options);
+    return options;
 }); // 所有用户列表
 
 watchPostEffect(() => {

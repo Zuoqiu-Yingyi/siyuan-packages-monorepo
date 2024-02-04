@@ -22,7 +22,7 @@ export enum ChannelName {
     data = "plugin-inbox-data",
 }
 
-export const STORAGE_USER_NAME = `plugin-${manifest.name}-user`;
+export const STORAGE_KEY_USER = `plugin-${manifest.name}-user`;
 export const PETAL_DATA_DIRECTORY = `data/storage/petal/${manifest.name}`;
 export const ROOMS_DATA_FILE_PATH = `${PETAL_DATA_DIRECTORY}/rooms.json`;
 export const MESSAGES_DATA_FILE_PATH = `${PETAL_DATA_DIRECTORY}/messages.json`;
