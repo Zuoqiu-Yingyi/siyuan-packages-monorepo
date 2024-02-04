@@ -29,7 +29,7 @@ import { deepEqual } from "@workspace/utils/misc/equal";
 import { deepClone } from "@workspace/utils/misc/clone";
 import { copyText } from "@workspace/utils/misc/copy";
 import { trimPrefix } from "@workspace/utils/misc/string";
-import { merge } from "@workspace/utils/misc/merge";
+import { merge, mergeIgnoreArray } from "@workspace/utils/misc/merge";
 import { contentTypeParse } from "@workspace/utils/file/content-type";
 
 import {
@@ -711,7 +711,7 @@ export class Control {
 
                 /* 更新聊天室状态 */
                 const room_status = this._room_status_map.get(detail.roomId) ?? {};
-                Object.assign(room_status, {
+                merge(room_status, {
                     index: last_message.timestamp,
                     unreadCount: 0,
                     lastMessage: last_message,
@@ -1054,7 +1054,7 @@ export class Control {
      */
     public updateUser(user: RoomUser): void {
         merge(this._user, user);
-        globalThis.localStorage.setItem(Constants.STORAGE_USER_NAME, JSON.stringify(this._user));
+        globalThis.localStorage.setItem(Constants.STORAGE_KEY_USER, JSON.stringify(this._user));
     }
 
     /**
@@ -1149,10 +1149,14 @@ export class Control {
     public readonly updateRooms = deshake(() => {
         const rooms: Room[] = [];
         for (const room of this._y_rooms.values()) {
+            if (room.roomId === this._main.roomId) { // 主聊天室
+                Object.assign(this._main, room);
+            }
+
             if (this._show_all_rooms // 显示所有聊天室
                 || !!room.users.find(user => user._id === this._user._id) // 当前用户已加入的聊天室
             ) {
-                rooms.push(merge<Room>(this._room_status_map.get(room.roomId) ?? {}, room));
+                rooms.push(merge<Room>({}, room, this._room_status_map.get(room.roomId) ?? {}));
             }
         }
         this.sortRooms(rooms);
@@ -1571,7 +1575,7 @@ export class Control {
         }
         const user = this._main.users.find(user => user._id === message.data.user._id);
         if (user) {
-            Object.assign(user, message.data.user);
+            merge(user, message.data.user);
         }
         else {
             this._main.users.push(message.data.user);
@@ -1809,6 +1813,28 @@ export class Control {
                 break;
             }
 
+            case MenuAction.DELETE_USER: { // 删除当前用户
+                // 二次确认删除当前用户
+                const result = await ConfirmModal({
+                    title: this.t("notice.title.warning"),
+                    content: () => h("span", {
+                        class: "markdown",
+                        innerHTML: this.t(
+                            "notice.confirmDeleteUser",
+                            {
+                                username: this._user.username,
+                            },
+                        ),
+                    }),
+                });
+
+                if (result) {
+                    globalThis.localStorage.removeItem(Constants.STORAGE_KEY_USER);
+                    globalThis.location.reload(); // 重载页面以创建新的用户
+                }
+                break;
+            }
+
             case MenuAction.LOGOUT: { // 注销登录状态
                 try {
                     // TODO: 使用 logoutAuth() 替代
@@ -1883,7 +1909,7 @@ export class Control {
             /* 更新对应聊天室的用户 */
             const user_ = room_.users.find(u => u._id === user._id);
             if (user_) {
-                Object.assign(user_, user);
+                merge(user_, user);
             }
             else {
                 room_.users.push(user);

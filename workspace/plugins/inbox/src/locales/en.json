@@ -26,6 +26,10 @@
                 "show": "Show all groups",
                 "title": "Group"
             },
+            "user": {
+                "delete": "Delete current user",
+                "title": "User"
+            },
             "userSettings": "Member settings"
         },
         "message": {
@@ -107,6 +111,7 @@
     "notice": {
         "clearRoomMessagesSuccess": "Cleared all messages in group <code>{roomname}</code> (total <code>{count}</code>)",
         "confirmClearRoomMessages": "Are you sure you want to clear all messages in group <code>{roomname}</code>? <br/>There are <code>{count}</code> messages in this group. <br/>This operation is irreversible!",
+        "confirmDeleteUser": "Delete current user <u>{'@'}{username}</u>?<br/>This operation will delete the current user's configuration information and create a new user.<br/>This operation is irreversible!",
         "confirmDisbandRoom": "Are you sure you want to disband group <code>{roomname}</code> ?<br/>This operation is irreversible!",
         "confirmLeaveRoom": "Are you sure you want to leave group <code>{roomname}</code> ?<br/>This operation is irreversible!",
         "confirmReset": "Reset this app?<br/>This operation will delete all application data and reinitialize the application.<br/>This operation is irreversible!",

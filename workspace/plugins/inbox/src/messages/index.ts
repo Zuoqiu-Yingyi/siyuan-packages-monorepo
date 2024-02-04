@@ -20,6 +20,8 @@ export enum MenuAction {
     SHOW_ALL_ROOMS = "show-all-rooms",
     HIDE_UNJOINED_ROOMS = "hide-unjoined-rooms",
 
+    DELETE_USER = "delete-user",
+
     LOGOUT = "logout",
     RESET = "reset",
 }
