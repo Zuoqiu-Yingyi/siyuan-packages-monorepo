@@ -62,28 +62,34 @@ export function fontFamilyStyle(fontList: {
 }): string {
     const css: string[] = [];
     css.push(":root {");
-    if (fontList.base?.length > 0) {
+    if (fontList.base && fontList.base.length > 0) {
         const base = washFontList(fontList.base);
+        base.push("system-ui");
         css.push(`    --b3-font-family: ${base.join(", ")};`);
     }
-    if (fontList.editor?.length > 0) {
+    if (fontList.editor && fontList.editor.length > 0) {
         const editor = washFontList(fontList.editor);
+        editor.push("sans-serif");
         css.push(`    --b3-font-family-protyle: ${editor.join(", ")};`);
     }
-    if (fontList.code?.length > 0) {
+    if (fontList.code && fontList.code.length > 0) {
         const code = washFontList(fontList.code);
+        code.push("monospace");
         css.push(`    --b3-font-family-code: ${code.join(", ")};`);
     }
-    if (fontList.graph?.length > 0) {
+    if (fontList.graph && fontList.graph.length > 0) {
         const graph = washFontList(fontList.graph);
+        graph.push("serif");
         css.push(`    --b3-font-family-graph: ${graph.join(", ")};`);
     }
-    if (fontList.math?.length > 0) {
+    if (fontList.math && fontList.math.length > 0) {
         const math = washFontList(fontList.math);
+        math.push("math");
         css.push(`    --b3-font-family-math: ${math.join(", ")};`);
     }
-    if (fontList.emoji?.length > 0) {
+    if (fontList.emoji && fontList.emoji.length > 0) {
         const emoji = washFontList(fontList.emoji);
+        emoji.push("emoji");
         css.push(`    --b3-font-family-emoji: ${emoji.join(", ")};`);
     }
     css.push("}");
