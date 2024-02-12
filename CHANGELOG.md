@@ -1,5 +1,13 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-02-13
+
+- 为插件页面添加浏览器标签页图标 | Add browser tab icon to the plugin page.
+
+## 2024-02-09
+
+- 为字族列表添加备选的通用字体族名 | Add alternative generic font family names to the font family list.
+
 ## 2024-02-05
 
 - 监听系统主题变更事件 | Listen for system theme change events.
