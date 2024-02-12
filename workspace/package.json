@@ -21,21 +21,21 @@
         "@arco-plugins/vite-vue": "^1.4.5",
         "@sveltejs/vite-plugin-svelte": "^3.0.2",
         "@tsconfig/svelte": "^5.0.2",
-        "@types/node": "^20.11.16",
-        "@vitejs/plugin-vue": "^5.0.3",
+        "@types/node": "^20.11.17",
+        "@vitejs/plugin-vue": "^5.0.4",
         "deepmerge": "^4.3.1",
         "eslint": "^8.56.0",
         "less": "^4.2.0",
         "prettier": "^3.2.5",
-        "svelte": "^4.2.9",
-        "svelte-check": "^3.6.3",
+        "svelte": "^4.2.10",
+        "svelte-check": "^3.6.4",
         "svelte-preprocess-less": "^0.4.0",
         "ts-node": "^10.9.2",
         "tslib": "^2.6.2",
-        "turbo": "^1.12.2",
+        "turbo": "^1.12.3",
         "typescript": "^5.3.3",
-        "vite": "^5.0.12",
+        "vite": "^5.1.1",
         "vite-plugin-static-copy": "^1.0.1",
-        "vue": "^3.4.15"
+        "vue": "^3.4.18"
     }
 }
