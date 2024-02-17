@@ -30,7 +30,7 @@
 
 * 其他设备如何访问收集箱应用?
 
-  * 其他设备需要在浏览器中访问 URL `http(s)://host[:port]/plugin/inbox/apps/inbox.html`
+  * 其他设备需要在浏览器中访问 URL `http(s)://host[:port]/plugins/inbox/apps/inbox.html`
   * 其中 `http(s)://host[:port]` 需要填写思源内核服务地址, 例如 `http://192.168.1.2:6806`
 * 在收集箱中上传的文件将保存在哪里?
 
