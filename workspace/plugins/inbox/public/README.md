@@ -30,7 +30,7 @@ A Siyuan Note plugin that allows you to share information among different device
 
 * How can other devices access the inbox application?
 
-  * Other devices need to access the URL `http(s)://host[:port]/plugin/inbox/apps/inbox.html`
+  * Other devices need to access the URL `http(s)://host[:port]/plugins/inbox/apps/inbox.html`
   * The `http(s)://host[:port]` should be filled with the Siyuan core service address, such as `http://192.168.1.2:6806`
 * Where are the uploaded files saved in the inbox?
 
