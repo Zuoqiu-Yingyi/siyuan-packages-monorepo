@@ -34,6 +34,7 @@ export interface ILimits {
 export interface IOption {
     key: string | number,
     text: string,
+    title?: string,
 }
 
 export type IOptions = IOption[];
