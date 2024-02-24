@@ -124,7 +124,12 @@
         on:change={changed}
     >
         {#each options as option (option.key)}
-            <option value={option.key}>{option.text}</option>
+            <option
+                value={option.key}
+                title={option.title}
+            >
+                {option.text}
+            </option>
         {/each}
     </select>
 {:else if type === ItemType.textarea}

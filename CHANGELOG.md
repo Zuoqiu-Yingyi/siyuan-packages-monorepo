@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-02-24
+
+- 为下拉选择项元素添加 `title` 属性 | Add `title` attribute to dropdown select element.
+
 ## 2024-02-13
 
 - 为插件页面添加浏览器标签页图标 | Add browser tab icon to the plugin page.
