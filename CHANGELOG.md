@@ -3,6 +3,7 @@
 ## 2024-04-02
 
 - 修复查询非内容块导致频繁通知的问题 | Fix the issue of frequent notifications caused by querying non-content blocks.
+- 重新添加附属仓库 `wakatime` | Re-add sub-repository `wakatime`.
 
 ## 2024-02-24
 
