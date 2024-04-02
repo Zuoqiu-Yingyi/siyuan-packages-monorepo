@@ -56,6 +56,12 @@ export namespace Heartbeats {
         // <integer: total number of lines in the entity (when entity type is file)>,
         lines?: number;
 
+        // <integer: number of lines added since last heartbeat in the current file (optional)>,
+        line_additions?: number;
+
+        // <integer: number of lines removed since last heartbeat in the current file (optional)>,
+        line_deletions?: number;
+
         // <integer: current line row number of cursor with the first line starting at 1 (optional)>,
         lineno?: number;
 
