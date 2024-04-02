@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-04-02
+
+- 修复查询非内容块导致频繁通知的问题 | Fix the issue of frequent notifications caused by querying non-content blocks.
+
 ## 2024-02-24
 
 - 为下拉选择项元素添加 `title` 属性 | Add `title` attribute to dropdown select element.

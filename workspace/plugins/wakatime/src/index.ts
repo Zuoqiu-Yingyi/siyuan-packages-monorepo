@@ -97,9 +97,9 @@ export default class WakaTimePlugin extends siyuan.Plugin {
             .finally(async () => {
                 /* 初始化 channel */
                 this.initBridge();
-                const runing = await this.isWorkerRunning();
+                const running = await this.isWorkerRunning();
 
-                if (!runing) { // worker 未正常运行
+                if (!running) { // worker 未正常运行
                     /* 初始化 worker */
                     this.initWorker();
 
@@ -253,18 +253,29 @@ export default class WakaTimePlugin extends siyuan.Plugin {
             /* 获取所有更改的块 ID */
             transactions?.forEach(transaction => {
                 transaction.doOperations?.forEach(operation => {
+                    // this.logger.debug(operation);
                     switch (operation.action) {
-                        case "delete": // 忽略删除操作
-                            return;
-                        default:
+                        case "create":
+                        case "update":
+                        case "insert":
+                        case "move":
+                        case "append":
+                        case "appendInsert":
+                        case "prependInsert":
+                        case "foldHeading":
+                        case "unfoldHeading":
+                        case "setAttrs":
+                        case "doUpdateUpdated":
+                            if (operation.id) {
+                                this.bridge?.call<THandlers["addEditEvent"]>(
+                                    "addEditEvent",
+                                    operation.id,
+                                );
+                            }
                             break;
-                    }
-
-                    if (operation.id) {
-                        this.bridge?.call<THandlers["addEditEvent"]>(
-                            "addEditEvent",
-                            operation.id,
-                        );
+                        case "delete": // 忽略删除操作 (避免无法查询块信息)
+                        default: // 忽略其他操作 (闪卡, 属性视图等)
+                            break;
                     }
                 });
                 // transaction.undoOperations?.forEach(operation => {
