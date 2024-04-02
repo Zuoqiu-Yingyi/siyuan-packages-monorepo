@@ -1,0 +1,124 @@
+{
+    "displayName": "WakaTime",
+    "settings": {
+        "generalSettings": {
+            "cleanCache": {
+                "description": "Delete all offline cache files (page refresh after deletion)",
+                "text": "Clean",
+                "title": "Clean offline cache"
+            },
+            "reset": {
+                "description": "Reset all settings options to default options (refresh page after reset)",
+                "text": "Reset",
+                "title": "Reset settings options"
+            },
+            "title": "General"
+        },
+        "wakatimeSettings": {
+            "generalTab": {
+                "editCategory": {
+                    "description": "Action type tags for editing operations",
+                    "title": "Edit operation tags"
+                },
+                "heartbeats": {
+                    "description": "Enable to submit action information to Wakapi/WakaTime service while viewing/editing documents",
+                    "title": "Heartbeat connection"
+                },
+                "interval": {
+                    "description": "Time interval (in seconds) to push editing action information to Wakapi/WakaTime server",
+                    "title": "Push interval"
+                },
+                "language": {
+                    "description": "Custom language name for Source file<br/>Corresponds to <code class='fn__code'>Languages</code> in Wakapi/WakaTime statistics",
+                    "title": "Language name"
+                },
+                "project": {
+                    "description": "Custom current workspace name<br/>Corresponds to <code class='fn__code'>Projects</code> in Wakapi/WakaTime statistics",
+                    "title": "Project name"
+                },
+                "systemArch": {
+                    "description": "The kernel architecture of the current operating system",
+                    "title": "Operating System Architecture"
+                },
+                "systemName": {
+                    "description": "The name of the operating system on which the kernel resides",
+                    "title": "Operating System Name"
+                },
+                "systemVersion": {
+                    "description": "The version of the current operating system",
+                    "title": "Operating System Version"
+                },
+                "title": "General",
+                "userAgent": {
+                    "description": "Used to identify the editor currently used when pushing action information to the Wakapi/WakaTime service<br/>It is highly recommended to leave blank to use the default options<br/>Customizing this field may cause the Wakapi/WakaTime service to not recognize this plug-in",
+                    "title": "<a href='https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent'>User-Agent</a>"
+                },
+                "viewCategory": {
+                    "description": "Action type tags for viewing operations",
+                    "title": "View operation tags"
+                }
+            },
+            "serviceTab": {
+                "apiKey": {
+                    "description": "Wakapi/WakaTime API KEY<br/>Corresponds to <code class='fn__code'>api_key</code> in Wakapi/WakaTime configuration",
+                    "title": "API KEY"
+                },
+                "apiURL": {
+                    "description": "Wakapi/WakaTime API URL<br/>Corresponds to <code class='fn__code'>api_url</code> in Wakapi/WakaTime configuration",
+                    "title": "API URL"
+                },
+                "exclude": {
+                    "description": "Exclude documents with fields listed in the submission path.<br/>Each entry should be on a separate line. Use <code class='fn__code'>/</code> to enclose regular expressions.<br/>Corresponds to the <code class='fn__code'>exclude</code> option in the Wakapi/WakaTime configuration.",
+                    "placeholder": "Exclude no notebooks or documents",
+                    "title": "Exclude List"
+                },
+                "excludeID": {
+                    "description": "Exclude documents with fields listed in the submission ID path.<br/>Each entry should be on a separate line. Use <code class='fn__code'>/</code> to enclose regular expressions.",
+                    "placeholder": "Exclude no notebooks or documents",
+                    "title": "ID Exclude List"
+                },
+                "hide_branch_names": {
+                    "description": "Whether to hide notebook names. If enabled, the notebook name is replaced with the notebook ID<br/>Corresponds to <code class='fn__code'>hide_branch_names</code> in Wakapi/WakaTime configuration",
+                    "title": "Hide notebook names"
+                },
+                "hide_file_names": {
+                    "description": "Whether to hide document titles. If enabled, the document title is replaced with the document block ID<br/>Corresponds to <code class='fn__code'>hide_file_names</code> in Wakapi/WakaTime configuration",
+                    "title": "Hide document titles"
+                },
+                "hostname": {
+                    "description": "Custom current host name<br/>Corresponds to <code class='fn__code'>hostname</code> in Wakapi/WakaTime configuration",
+                    "title": "Hostname"
+                },
+                "include": {
+                    "description": "Only include documents with fields listed in the submission path.<br/>Each entry should be on a separate line. Use <code class='fn__code'>/</code> to enclose regular expressions.<br/>Corresponds to the <code class='fn__code'>include</code> option in the Wakapi/WakaTime configuration.",
+                    "placeholder": "Include all notebooks and documents",
+                    "title": "Include List"
+                },
+                "includeID": {
+                    "description": "Only include documents with fields listed in the submission ID path.<br/>Each entry should be on a separate line. Use <code class='fn__code'>/</code> to enclose regular expressions.",
+                    "placeholder": "Include all notebooks and documents",
+                    "title": "ID Include List"
+                },
+                "offline": {
+                    "description": "Whether to enable offline caching<br/>When the Wakapi/WakaTime service accesses abnormally or the heartbeat connection is not enabled, the action information will be cached to the ${1} directory<br/>Corresponds to the <code class='fn__code'>offline</code> option in the Wakapi/WakaTime configuration.",
+                    "title": "Offline caching"
+                },
+                "test": {
+                    "description": "Test if connected to Wakapi/WakaTime service correctly",
+                    "messages": {
+                        "error": "Cannot establish connection to ${1} service",
+                        "success": "Connection to ${1} service is successful"
+                    },
+                    "text": "Test",
+                    "title": "Test Wakapi/WakaTime service"
+                },
+                "timeout": {
+                    "description": "Wakapi/WakaTime API request timeout<br/>Corresponds to <code class='fn__code'>timeout</code> in Wakapi/WakaTime configuration",
+                    "title": "Timeout"
+                },
+                "title": "Service"
+            },
+            "title": "Wakapi/WakaTime"
+        }
+    }
+}
