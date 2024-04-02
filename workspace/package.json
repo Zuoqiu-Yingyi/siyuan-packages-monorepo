@@ -11,31 +11,31 @@
         "format": "prettier --write \"**/*.{ts,tsx,md}\""
     },
     "dependencies": {
-        "@siyuan-community/siyuan-sdk": "^0.3.7",
+        "@siyuan-community/siyuan-sdk": "^0.3.8",
         "@workspace/eslint-config-custom": "workspace:*",
         "@workspace/tsconfig": "workspace:*",
-        "siyuan": "^0.9.3"
+        "siyuan": "^0.9.7"
     },
     "devDependencies": {
-        "@arco-design/web-vue": "^2.54.4",
+        "@arco-design/web-vue": "^2.55.1",
         "@arco-plugins/vite-vue": "^1.4.5",
         "@sveltejs/vite-plugin-svelte": "^3.0.2",
-        "@tsconfig/svelte": "^5.0.2",
-        "@types/node": "^20.11.17",
+        "@tsconfig/svelte": "^5.0.4",
+        "@types/node": "^20.12.2",
         "@vitejs/plugin-vue": "^5.0.4",
         "deepmerge": "^4.3.1",
-        "eslint": "^8.56.0",
+        "eslint": "^8.57.0",
         "less": "^4.2.0",
         "prettier": "^3.2.5",
-        "svelte": "^4.2.10",
-        "svelte-check": "^3.6.4",
+        "svelte": "^4.2.12",
+        "svelte-check": "^3.6.9",
         "svelte-preprocess-less": "^0.4.0",
         "ts-node": "^10.9.2",
         "tslib": "^2.6.2",
-        "turbo": "^1.12.3",
-        "typescript": "^5.3.3",
-        "vite": "^5.1.1",
-        "vite-plugin-static-copy": "^1.0.1",
-        "vue": "^3.4.18"
+        "turbo": "^1.13.1",
+        "typescript": "^5.4.3",
+        "vite": "^5.2.7",
+        "vite-plugin-static-copy": "^1.0.2",
+        "vue": "^3.4.21"
     }
 }

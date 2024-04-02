@@ -26,4 +26,4 @@ type IsEqual<T, U> =
 
 // REF https://github.com/millsp/ts-toolbelt/blob/master/tests/Any.ts
 export declare function i18nCheck<T, U>(): A.Equals<T, U>;
-export declare function i18nChecks(checks: true[]): void;
+export declare function i18nChecks(checks: 1[]): void;
