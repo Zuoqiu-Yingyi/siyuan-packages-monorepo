@@ -341,21 +341,25 @@ export default class TypewriterPlugin extends siyuan.Plugin {
                 let element: HTMLElement;
                 switch (block.dataset.type) {
                     case "NodeTable": {
-                        let cell = globalThis.getSelection()?.focusNode;
-                        while (true) {
-                            if (!cell) { // 元素不存在
-                                break;
-                            }
-                            else { // 元素存在
-                                if (cell instanceof HTMLElement) { // 元素为 HTML 元素
-                                    if (cell.localName === "td" || cell.localName === "th") { // 元素为表格单元格
-                                        break;
-                                    }
-                                }
-                            }
-                            cell = cell.parentElement;
-                        }
-                        element = cell ?? block;
+                        // ! 思源编辑器会监听表格中元素属性的变化, 一旦发生变化会重新渲染表格, 这会导致响应的 HTML 属性丢失且表格滚动至最左侧
+                        // let cell = globalThis.getSelection()?.focusNode;
+                        // while (true) {
+                        //     if (!cell) { // 元素不存在
+                        //         break;
+                        //     }
+                        //     else { // 元素存在
+                        //         if (cell instanceof HTMLElement) { // 元素为 HTML 元素
+                        //             if (cell.localName === "td" || cell.localName === "th") { // 元素为表格单元格
+                        //                 break;
+                        //             }
+                        //         }
+                        //     }
+                        //     cell = cell.parentElement;
+                        // }
+                        // element = cell ?? block;
+
+                        // FIX: https://github.com/Zuoqiu-Yingyi/siyuan-plugin-typewriter/issues/9
+                        element = block;
                         break;
                     }
                     case "NodeAttributeView": {
@@ -370,8 +374,13 @@ export default class TypewriterPlugin extends siyuan.Plugin {
 
                 /* 更新焦点的 ID */
                 const unique_focus = globalThis.document.getElementById(constants.FOCUS_ELEMENT_UNIQUE_ID);
-                if (element !== unique_focus) {
-                    unique_focus?.removeAttribute("id");
+                if (unique_focus) {
+                    if (element !== unique_focus) {
+                        unique_focus?.removeAttribute("id");
+                        element.id = constants.FOCUS_ELEMENT_UNIQUE_ID;
+                    }
+                }
+                else {
                     element.id = constants.FOCUS_ELEMENT_UNIQUE_ID;
                 }
 
