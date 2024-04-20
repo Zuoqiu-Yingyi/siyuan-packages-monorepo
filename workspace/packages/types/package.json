@@ -5,15 +5,18 @@
     "publishConfig": {
         "access": "public"
     },
+    "scripts": {
+        "pnpm:update": "pnpm update"
+    },
     "devDependencies": {
         "@types/katex": "^0.16.7",
         "@types/plantuml-encoder": "^1.4.2",
         "@types/viz.js": "^2.1.5",
         "abcjs": "^6.3.0",
-        "echarts": "^5.4.3",
+        "echarts": "^5.5.0",
         "highlight.js": "^11.9.0",
-        "mermaid": "^10.8.0",
-        "pdfjs-dist": "^4.0.379",
+        "mermaid": "^10.9.0",
+        "pdfjs-dist": "^4.1.392",
         "ts-toolbelt": "^9.6.0",
         "viewerjs": "^1.11.6"
     }
