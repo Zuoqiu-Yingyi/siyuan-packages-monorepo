@@ -134,12 +134,12 @@ const menu_actions: Props["menu-actions"] = [
 ]; // 聊天面板菜单 (派遣 menu-action-handler 事件)
 const message_actions: Props["message-actions"] = [
     {
-        // 复制消息
+        // 复制消息 (派遣 message-action-handler 时间)
         name: "message-copy",
         title: t("actions.message.copy"),
     },
     {
-        // 转发消息
+        // 转发消息 (派遣 message-action-handler 时间)
         name: "message-forward",
         title: t("actions.message.forward"),
     },
@@ -157,6 +157,12 @@ const message_actions: Props["message-actions"] = [
         // 编辑消息 (内部处理)
         name: "editMessage",
         title: t("actions.message.edit"),
+        onlyMe: true,
+    },
+    {
+        // 撤回消息 (派遣 message-action-handler 时间)
+        name: "message-withdraw",
+        title: t("actions.message.withdraw"),
         onlyMe: true,
     },
     {

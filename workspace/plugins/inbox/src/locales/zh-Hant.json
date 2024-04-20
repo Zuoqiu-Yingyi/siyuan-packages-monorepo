@@ -5,7 +5,7 @@
     "IS_TYPING": "正在輸入...",
     "LAST_SEEN": "上次出現 ",
     "MESSAGES_EMPTY": "無消息",
-    "MESSAGE_DELETED": "此消息已刪除",
+    "MESSAGE_DELETED": "此消息已撤回",
     "NEW_MESSAGES": "新消息",
     "ROOMS_EMPTY": "新討論組",
     "ROOM_EMPTY": "未選擇討論組",
@@ -38,7 +38,8 @@
             "edit": "編輯",
             "forward": "轉發",
             "reply": "回覆",
-            "select": "多選"
+            "select": "多選",
+            "withdraw": "撤回"
         },
         "messages": {
             "copy": "複製",

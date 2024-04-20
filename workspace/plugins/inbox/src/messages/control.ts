@@ -24,20 +24,24 @@ import * as Constants from "@/constant";
 import { id } from "@workspace/utils/siyuan/id";
 import { moment } from "@workspace/utils/date/moment";
 import { deshake } from "@workspace/utils/misc/deshake";
-import { isNone, isNumber, isString } from "@workspace/utils/misc/type";
+import {
+    isNone,
+    isNumber,
+    isString,
+} from "@workspace/utils/misc/type";
 import { deepEqual } from "@workspace/utils/misc/equal";
 import { deepClone } from "@workspace/utils/misc/clone";
 import { copyText } from "@workspace/utils/misc/copy";
 import { trimPrefix } from "@workspace/utils/misc/string";
-import { merge, mergeIgnoreArray } from "@workspace/utils/misc/merge";
+import { merge } from "@workspace/utils/misc/merge";
 import { contentTypeParse } from "@workspace/utils/file/content-type";
 
 import {
     MessageType,
+    MenuAction,
     type IBaseMessage,
     type IBaseBroadcastMessage,
     type IBaseResponseMessage,
-    MenuAction,
 } from ".";
 import { ConfirmModal } from "@/utils/modal";
 
@@ -137,8 +141,8 @@ export class Control {
     protected _resolve!: (value: void | PromiseLike<void>) => void;
     protected _resolve_ws!: (value: void | PromiseLike<void>) => void;
 
-    protected readonly _ws_control: WebSocket;
-    protected readonly _ws_data: WebSocket;
+    protected readonly _ws_control: WebSocket; // 控制信息广播通道
+    protected readonly _ws_data: WebSocket; // 数据信息广播通道 (Yjs CRDT)
 
     protected readonly _y_doc: Y.Doc;
     protected readonly _y_rooms: Y.Map<Room>; // 聊天室 ID -> 聊天室对象
@@ -791,8 +795,17 @@ export class Control {
                     message: Message; // 消息对象
                 } = e.detail[0];
 
-                detail.message.deleted = true;
-                this._y_messages.set(detail.message._id, detail.message);
+                /* 从聊天室消息列表中删除 */
+                const messages = this._y_room_messages.get(detail.roomId); // 消息 ID 列表
+                if (messages) {
+                    const message_index = messages.indexOf(detail.message._id);
+                    if (message_index >= 0) {
+                        this._y_room_messages.set(detail.roomId, messages.toSpliced(message_index, 1));
+                    }
+                }
+
+                /* 删除该消息内容 */
+                this._y_messages.delete(detail.message._id);
                 break;
             }
             /**
@@ -933,6 +946,11 @@ export class Control {
                     }
                     case "message-forward": { // 转发消息
                         await this.forwardMessages(detail.roomId, detail.message);
+                        break;
+                    }
+                    case "message-withdraw": { // 撤回消息
+                        detail.message.deleted = true;
+                        this._y_messages.set(detail.message._id, detail.message);
                         break;
                     }
                     default:
@@ -1850,12 +1868,7 @@ export class Control {
 
             case MenuAction.LOGOUT: { // 注销登录状态
                 try {
-                    // TODO: 使用 logoutAuth() 替代
-                    // await this._client.logoutAuth();
-                    await this._client._request(
-                        "/api/system/logoutAuth",
-                        "POST",
-                    );
+                    await this._client.logoutAuth();
                 } catch (error) {
                 }
                 this.offline();
