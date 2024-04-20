@@ -24,6 +24,7 @@ import { isStaticPathname } from "@workspace/utils/siyuan/url";
 import type { Client } from "@siyuan-community/siyuan-sdk";
 
 const client = inject("client") as Client;
+const root_pathname = inject("root-pathname") as string;
 
 const avatar = defineModel<string>("avatar", { required: true });
 
@@ -92,7 +93,7 @@ function onInputChange(value: string): void {
 
     if (isStaticPathname(value) && !value.startsWith("/")) {
         // 处理静态资源相对路径
-        value = `./../../../${value}`;
+        value = `${root_pathname}${value}`;
         input_value.value = value;
     }
     avatar.value = value;

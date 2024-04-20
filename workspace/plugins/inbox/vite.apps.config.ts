@@ -70,7 +70,7 @@ export default {
     build: {
         rollupOptions: {
             input: {
-                inbox: resolve(__dirname, "./apps/inbox.html"),
+                inbox: resolve(__dirname, "./apps/inbox/index.html"),
             },
         },
     },

@@ -31,8 +31,8 @@ import type { RoomUser } from "vue-advanced-chat";
 
 import { Client } from "@siyuan-community/siyuan-sdk";
 import { mapLang } from "@workspace/utils/locale/language";
-import { trimSuffix } from "@workspace/utils/misc/string";
 import { UA } from "@workspace/utils/misc/user-agent";
+import { relative } from "@workspace/utils/path/browserify";
 import { auth } from "@workspace/utils/siyuan/url";
 import { id } from "@workspace/utils/siyuan/id";
 
@@ -53,7 +53,14 @@ import * as Constants from "~/src/constant";
     }
 
     /* 客户端 */
-    const baseURL = trimSuffix(globalThis.location.origin, `plugins/${manifest.name}/apps/client.html`);
+    const pathname_prefix = `/plugins/${manifest.name}/`; // 路径前缀
+    const pathname_parts = globalThis.location.pathname.split(pathname_prefix, 1);
+    const root_pathname = `${pathname_parts[0]}/`; // 思源内核服务根路径 (绝对路径)
+    const plugin_root_pathname = `${pathname_parts[0]}${pathname_prefix}`; // 插件目录根路径 (绝对路径)
+    const root_pathname_relative = `./${relative(globalThis.location.pathname, root_pathname)}/`; // 思源内核服务根路径 (相对路径)
+    const plugin_root_pathname_relative = `./${relative(globalThis.location.pathname, plugin_root_pathname)}/`; // 插件目录根路径 (相对路径)
+
+    const baseURL = new URL(root_pathname, location.origin).href;
     const client = new Client({
         baseURL,
     }, "fetch");
@@ -89,27 +96,27 @@ import * as Constants from "~/src/constant";
     const avatar = ((browser: string) => {
         switch (true) {
             case browser.includes("chrome"):
-                return "./../icons/chrome.svg";
+                return `${plugin_root_pathname_relative}icons/chrome.svg`;
             case browser.includes("chromium"):
-                return "./../icons/chromium.svg";
+                return `${plugin_root_pathname_relative}icons/chromium.svg`;
             case browser.includes("edge"):
-                return "./../icons/edge.svg";
+                return `${plugin_root_pathname_relative}icons/edge.svg`;
             case browser.includes("electron"):
-                return "./../icons/electron.svg";
+                return `${plugin_root_pathname_relative}icons/electron.svg`;
             case browser.includes("firefox"):
-                return "./../icons/firefox.svg";
+                return `${plugin_root_pathname_relative}icons/firefox.svg`;
             case browser.includes("opera"):
-                return "./../icons/opera.svg";
+                return `${plugin_root_pathname_relative}icons/opera.svg`;
             case browser.includes("safari"):
-                return "./../icons/safari.svg";
+                return `${plugin_root_pathname_relative}icons/safari.svg`;
             case browser.includes("uc"):
-                return "./../icons/uc.svg";
+                return `${plugin_root_pathname_relative}icons/uc.svg`;
             case browser.includes("vivaldi"):
-                return "./../icons/vivaldi.svg";
+                return `${plugin_root_pathname_relative}icons/vivaldi.svg`;
             case browser.includes("webkit"):
-                return "./../icons/webkit.svg";
+                return `${plugin_root_pathname_relative}icons/webkit.svg`;
             default:
-                return "./../icons/siyuan.svg";
+                return `${plugin_root_pathname_relative}icons/siyuan.svg`;
         }
     })(String(UA.browser.name).toLowerCase());
 
@@ -167,6 +174,8 @@ import * as Constants from "~/src/constant";
     app.provide("locale", locale);
     app.provide("logger", logger);
     app.provide("client", client);
+    app.provide("root-pathname", root_pathname_relative);
+    app.provide("plugin-root-pathname", plugin_root_pathname_relative);
 
     /**
      * 设置全局组件上下文
