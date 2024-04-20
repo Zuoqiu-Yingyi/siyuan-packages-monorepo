@@ -6,6 +6,9 @@
     "publishConfig": {
         "access": "public"
     },
+    "scripts": {
+        "pnpm:update": "pnpm update"
+    },
     "dependencies": {
         "@workspace/tsconfig": "workspace:^",
         "@workspace/types": "workspace:^",
