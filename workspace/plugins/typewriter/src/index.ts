@@ -332,13 +332,13 @@ export default class TypewriterPlugin extends siyuan.Plugin {
     /* 编辑事件监听 */
     protected readonly editorEventListener = async (e: Event) => {
         // this.logger.debug(e);
+        const block = getCurrentBlock(); // 当前光标所在块
 
         if (this.config.focus.enable) { // 已开启焦点显示功能
-            const block = getCurrentBlock(); // 当前光标所在块
             const doc = getCurrentProtyleWysiwyg(); // 当前广播所在文档块
 
             if (block && doc) {
-                let element: HTMLElement;
+                let element: HTMLElement = block;
                 switch (block.dataset.type) {
                     case "NodeTable": {
                         // ! 思源编辑器会监听表格中元素属性的变化, 一旦发生变化会重新渲染表格, 这会导致响应的 HTML 属性丢失且表格滚动至最左侧
@@ -402,7 +402,6 @@ export default class TypewriterPlugin extends siyuan.Plugin {
         }
 
         if (this.config.typewriter.enable) { // 已开启打字机模式
-            const block = getCurrentBlock(); // 当前光标所在块
             if (block) {
                 let element: HTMLElement | null = block;
 
