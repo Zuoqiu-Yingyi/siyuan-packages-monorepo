@@ -16,53 +16,28 @@
  */
 
 import browserify from "path-browserify";
-import type {
-    FormatInputPathObject,
-    ParsedPath,
-} from "path";
+import type path from "node:path";
 
 export default browserify;
 
-export function basename(path: string, suffix?: string): string {
-    return browserify.basename(path, suffix);
-}
+export const basename: typeof path.basename = browserify.basename.bind(browserify);
 
-export function dirname(path: string): string {
-    return browserify.dirname(path);
-}
+export const dirname: typeof path.dirname = browserify.dirname.bind(browserify);
 
-export function extname(path: string): string {
-    return browserify.extname(path);
-}
+export const extname: typeof path.extname = browserify.extname.bind(browserify);
 
-export function format(pathObject: FormatInputPathObject): string {
-    return browserify.format(pathObject);
-}
+export const format: typeof path.format = browserify.format.bind(browserify);
 
-export function isAbsolute(path: string): boolean {
-    return browserify.isAbsolute(path);
-}
+export const isAbsolute: typeof path.isAbsolute = browserify.isAbsolute.bind(browserify);
 
-export function join(...paths: string[]): string {
-    return browserify.join(...paths);
-}
+export const join: typeof path.join = browserify.join.bind(browserify);
 
-export function normalize(path: string): string {
-    return browserify.normalize(path);
-}
+export const normalize: typeof path.normalize = browserify.normalize.bind(browserify);
 
-export function parse(path: string): ParsedPath {
-    return browserify.parse(path);
-}
+export const parse: typeof path.parse = browserify.parse.bind(browserify);
 
-export function resolve(...paths: string[]): string {
-    return browserify.resolve(...paths);
-}
+export const resolve: typeof path.resolve = browserify.resolve.bind(browserify);
 
-export function relative(from: string, to: string): string {
-    return browserify.relative(from, to);
-}
+export const relative: typeof path.relative = browserify.relative.bind(browserify);
 
-export function toNamespacedPath(path: string): string {
-    return browserify.toNamespacedPath(path);
-}
+// export const toNamespacedPath: typeof path.toNamespacedPath = browserify.toNamespacedPath.bind(browserify);

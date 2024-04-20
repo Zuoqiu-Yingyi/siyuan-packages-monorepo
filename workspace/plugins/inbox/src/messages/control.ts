@@ -175,6 +175,9 @@ export class Control {
      * @param _user 当前用户
      * @param _main 主聊天室
      * 
+     * @param _root_pathname 思源内核服务根目录路径
+     * @param _plugin_root_pathname 插件根目录路径
+     * 
      * @param _rooms 当前用户所在的聊天室列表
      * @param _messages 当前聊天室的消息列表
      * @param _room_id 当前聊天室 ID
@@ -190,6 +193,9 @@ export class Control {
         protected readonly _logger: Logger,
         protected readonly _user: RoomUser,
         protected readonly _main: Room,
+
+        protected readonly _root_pathname: string,
+        protected readonly _plugin_root_pathname: string,
 
         protected readonly _rooms: ShallowRef<Room[]>,
         protected readonly _messages: ShallowRef<Message[]>,
@@ -390,7 +396,7 @@ export class Control {
      * vue-advanced-chat 事件处理
      */
     public async handler(e: CustomEvent) {
-        this._logger.debug(e);
+        // this._logger.debug(e);
         await this._ready;
 
         switch (e.type) {
@@ -745,8 +751,8 @@ export class Control {
                 this._pushNotificationMessage(
                     room?.roomName ?? this.t("inbox"),
                     {
-                        badge: Constants.ICON_FILE_PATH,
-                        icon: Constants.ICON_FILE_PATH,
+                        badge: `${this._plugin_root_pathname}${Constants.ICON_FILE_PATH}`,
+                        icon: `${this._plugin_root_pathname}${Constants.ICON_FILE_PATH}`,
                         // @ts-ignore
                         image: (message.files ?? []).find(file => file.type.startsWith("image/"))?.url,
                         body: `${message.content}\n${(message.files ?? []).map(file => `[${file.name}.${file.extension}]`).join(" ")}`,
@@ -1067,7 +1073,7 @@ export class Control {
 
                 const asset_path = response.data.succMap[(file.blob as File)?.name];
                 file.url = asset_path
-                    ? `./../../../${asset_path}`
+                    ? `${this._root_pathname}${asset_path}`
                     : file.url;
             });
         }
@@ -1265,7 +1271,7 @@ export class Control {
             if (Array.isArray(message.files)) { // 存在附件
                 message.files.forEach(file => {
                     const anchor_text = file.name.replaceAll(/(?<!\\)([\[\]])/g, "\\$1"); // 超链接锚文本
-                    const asset_path = trimPrefix(file.url, "./../../../"); // 资源引用路径
+                    const asset_path = trimPrefix(file.url, this._root_pathname); // 资源引用路径
                     const content_type = contentTypeParse(file.type); // 文件类型
                     if (content_type) {
                         switch (content_type.maintype) {
@@ -1826,7 +1832,7 @@ export class Control {
                 this._openRoomInfoDialog({
                     roomId: id(),
                     roomName: `${this.t("inbox")} ${this._y_rooms.size + 1}`,
-                    avatar: Constants.ICON_FILE_PATH,
+                    avatar: `${this._plugin_root_pathname}${Constants.ICON_FILE_PATH}`,
                     users: [deepClone()(this._user)],
                 });
                 break;

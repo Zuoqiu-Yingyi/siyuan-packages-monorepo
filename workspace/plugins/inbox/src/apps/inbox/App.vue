@@ -44,6 +44,8 @@ const i18n = inject("i18n") as I18n;
 const locale = inject("locale") as string;
 const logger = inject("logger") as Logger;
 const client = inject("client") as Client;
+const root_pathname = inject("root-pathname") as string;
+const plugin_root_pathname = inject("plugin-root-pathname") as string;
 const t = i18n.global.t as VueI18nTranslation;
 
 /* emoji-picker-element-data 表情 emoji 数据语言标记 */
@@ -67,7 +69,9 @@ const picker_locale: string = (() => {
 
 /* Arco Design 本地化语言标记 */
 
-const emoji_data_source: string = globalThis.isSecureContext ? `./../libs/emoji-picker-element-data/${locale}/cldr/data.json` : `https://fastly.jsdelivr.net/npm/emoji-picker-element-data/${picker_locale}/cldr/data.json`; // 表情数据源, 非安全上下文中需要校验 ETag
+const emoji_data_source: string = globalThis.isSecureContext //
+    ? `${plugin_root_pathname}libs/emoji-picker-element-data/${locale}/cldr/data.json`
+    : `https://fastly.jsdelivr.net/npm/emoji-picker-element-data/${picker_locale}/cldr/data.json`; // 表情数据源, 非安全上下文中需要校验 ETag
 const text_messages = {
     // 界面文本本地化
     CANCEL_SELECT_MESSAGE: t("CANCEL_SELECT_MESSAGE"),
@@ -197,7 +201,7 @@ const username_options: Props["username-options"] = {
 const main = reactive<Room>({
     roomId: Constants.MAIN_ROOM_ID,
     roomName: t("inbox"),
-    avatar: Constants.ICON_FILE_PATH,
+    avatar: `${plugin_root_pathname}${Constants.ICON_FILE_PATH}`,
     users: [deepClone()(user)],
     index: 0,
 }); // 主收集箱
@@ -216,21 +220,24 @@ const roomSelectDialogVisible = shallowRef<boolean>(false); // 是否显示聊�
 const roomUserInfoDialogVisible = shallowRef<boolean>(false); // 是否显示用户信息对话框
 
 const control = new Control(
-    t, //
-    client, //
-    logger, //
-    user, //
-    main, //
+    t,
+    client,
+    logger,
+    user,
+    main,
 
-    rooms, //
-    messages, //
-    roomId, //
-    currentRoom, //
-    currentRoomUser, //
+    root_pathname,
+    plugin_root_pathname,
 
-    roomInfoDialogVisible, //
-    roomSelectDialogVisible, //
-    roomUserInfoDialogVisible, //
+    rooms,
+    messages,
+    roomId,
+    currentRoom,
+    currentRoomUser,
+
+    roomInfoDialogVisible,
+    roomSelectDialogVisible,
+    roomUserInfoDialogVisible,
 );
 
 /* 监听系统主题更改 */
@@ -314,6 +321,7 @@ function onSelectFiles(files: FileList | null): void {
         :rooms="rooms"
         @confirm="control.onRoomSelectConfirm"
     />
+    <!-- @vue-expect-error -->
     <vue-advanced-chat
         ref="vue_advanced_chat"
         height="100vh"

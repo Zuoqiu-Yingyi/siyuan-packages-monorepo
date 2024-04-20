@@ -52,7 +52,7 @@ const usersOptions = computed<SelectOptionData[]>(() => {
               disabled: user._id === props.user._id,
           })) // 不能修改当前用户
         : users; // 可以修改所有用户
-    console.debug(options);
+    // console.debug(options);
     return options;
 }); // 所有用户列表
 

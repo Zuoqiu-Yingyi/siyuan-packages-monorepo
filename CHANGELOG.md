@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-04-21
+
+- 改进静态资源引用方式 | Improve static resource reference method.
+
 ## 2024-04-20
 
 - 修复焦点显示功能导致在编辑表格时表格重新渲染问题 | Fix the issue that the table is re-rendered when editing the table due to the focus display function.

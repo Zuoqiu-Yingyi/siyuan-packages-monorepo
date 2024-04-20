@@ -41,13 +41,13 @@ declare var globalThis: ISiyuanGlobal;
 
 export default class InboxPlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "config.json";
-    
+
     declare public readonly i18n: I18N;
-    
+
     public readonly siyuan = siyuan;
     public readonly logger: InstanceType<typeof Logger>;
     public readonly client: InstanceType<typeof Client>;
-    
+
     protected readonly SETTINGS_DIALOG_ID: string;
     protected readonly INBOX_APP_PATH: string;
 
@@ -66,7 +66,7 @@ export default class InboxPlugin extends siyuan.Plugin {
         this.client = new Client(undefined, "fetch");
 
         this.SETTINGS_DIALOG_ID = `${this.name}-settings-dialog`;
-        this.INBOX_APP_PATH = `plugins/${this.name}/apps/inbox.html`;
+        this.INBOX_APP_PATH = `plugins/${this.name}/apps/inbox/`;
     }
 
     onload(): void {
