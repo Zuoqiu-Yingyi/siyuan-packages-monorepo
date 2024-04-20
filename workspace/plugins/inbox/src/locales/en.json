@@ -5,7 +5,7 @@
     "IS_TYPING": "is writing...",
     "LAST_SEEN": "last seen ",
     "MESSAGES_EMPTY": "No messages",
-    "MESSAGE_DELETED": "This message was deleted",
+    "MESSAGE_DELETED": "This message has been withdrawn",
     "NEW_MESSAGES": "New Messages",
     "ROOMS_EMPTY": "No rooms",
     "ROOM_EMPTY": "No room selected",
@@ -38,7 +38,8 @@
             "edit": "Edit",
             "forward": "Forward",
             "reply": "Reply",
-            "select": "Select"
+            "select": "Select",
+            "withdraw": "Withdraw"
         },
         "messages": {
             "copy": "Copy",

@@ -3,6 +3,7 @@
 ## 2024-04-20
 
 - 修复焦点显示功能导致在编辑表格时表格重新渲染问题 | Fix the issue that the table is re-rendered when editing the table due to the focus display function.
+- 添加消息撤回功能 | Add message withdraw function.
 
 ## 2024-04-02
 
