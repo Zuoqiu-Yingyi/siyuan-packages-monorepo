@@ -16,27 +16,33 @@
  */
 
 import deepmerge from "deepmerge";
-import { defineConfig, UserConfig } from "vite";
+import {
+    defineConfig,
+    UserConfig,
+} from "vite";
 
 import viteShareConfig from "./vite.share.config";
-import vitePluginConfig from "./vite.plugin.config";
-import viteAppsConfig from "./vite.apps.config";
+import viteAppsConfigFn from "./vite.apps.config";
+import vitePluginConfigFn from "./vite.plugin.config";
 
 // https://vitejs.dev/config/
-export default defineConfig(async env => {
+export default defineConfig(async (env) => {
     // console.log(env);
     var config: UserConfig;
 
     switch (env.mode) {
         case "apps":
-            config = deepmerge.all<UserConfig>([viteShareConfig, viteAppsConfig]);
+        case "apps-dev":
+            config = await viteAppsConfigFn(env);
             break;
 
         case "plugin":
+        case "plugin-dev":
         default:
-            config = deepmerge.all<UserConfig>([viteShareConfig, vitePluginConfig]);
+            config = await vitePluginConfigFn(env);
             break;
     }
+    config = deepmerge.all<UserConfig>([viteShareConfig, config]);
 
     // console.log(config);
     return config;

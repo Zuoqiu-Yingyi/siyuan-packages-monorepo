@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-04-26
+
+- 配置 Vite PWA 设置项 | Configure Vite PWA settings.
+
 ## 2024-04-21
 
 - 改进静态资源引用方式 | Improve static resource reference method.
