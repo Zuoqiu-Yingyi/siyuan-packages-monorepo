@@ -6,8 +6,8 @@
     "scripts": {
         "dev": "vite",
         "build:dev": "npm run build:dev:plugin && npm run build:dev:apps",
-        "build:dev:plugin": "vite build --mode plugin --sourcemap inline ",
-        "build:dev:apps": "vite build --mode apps --sourcemap inline ",
+        "build:dev:plugin": "vite build --mode plugin-dev",
+        "build:dev:apps": "vite build --mode apps-dev",
         "build": "npm run build:plugin && npm run build:apps",
         "build:plugin": "vite build --mode plugin",
         "build:apps": "vite build --mode apps",
@@ -24,6 +24,7 @@
         "emoji-picker-element-data": "^1.6.0",
         "recordrtc": "^5.6.2",
         "videojs-record": "^4.8.0",
+        "vite-plugin-pwa": "^0.19.8",
         "vue-advanced-chat": "^2.0.11",
         "vue-i18n": "^9.13.0",
         "yjs": "^13.6.14"

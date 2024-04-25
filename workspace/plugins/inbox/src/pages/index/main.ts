@@ -55,10 +55,19 @@ import * as Constants from "~/src/constant";
     /* 客户端 */
     const pathname_prefix = `/plugins/${manifest.name}/`; // 路径前缀
     const pathname_parts = globalThis.location.pathname.split(pathname_prefix, 1);
+
     const root_pathname = `${pathname_parts[0]}/`; // 思源内核服务根路径 (绝对路径)
     const plugin_root_pathname = `${pathname_parts[0]}${pathname_prefix}`; // 插件目录根路径 (绝对路径)
-    const root_pathname_relative = `./${relative(globalThis.location.pathname, root_pathname)}/`; // 思源内核服务根路径 (相对路径)
-    const plugin_root_pathname_relative = `./${relative(globalThis.location.pathname, plugin_root_pathname)}/`; // 插件目录根路径 (相对路径)
+
+    const root_pathname_relative_ = relative(globalThis.location.pathname, root_pathname);
+    const plugin_root_pathname_relative_ = relative(globalThis.location.pathname, plugin_root_pathname);
+
+    const root_pathname_relative = root_pathname_relative_
+        ? `./${root_pathname_relative_}/`
+        : `./`; // 思源内核服务根路径 (相对路径)
+    const plugin_root_pathname_relative = plugin_root_pathname_relative_
+        ? `./${plugin_root_pathname_relative_}/`
+        : `./`; // 插件目录根路径 (相对路径)
 
     const baseURL = new URL(root_pathname, location.origin).href;
     const client = new Client({

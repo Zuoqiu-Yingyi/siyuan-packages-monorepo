@@ -15,48 +15,60 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { UserConfig } from "vite";
+import {
+    type UserConfig,
+    type UserConfigFnObject,
+} from "vite";
 import { resolve } from "node:path";
 
 // https://vitejs.dev/config/
-export default {
-    plugins: [
-    ],
-    build: {
-        emptyOutDir: true,
-        copyPublicDir: true,
-        lib: {
-            entry: resolve(__dirname, "src/index.ts"),
-            fileName: "index",
-            formats: ["cjs"],
-        },
-        rollupOptions: {
-            input: {
-                index: resolve(__dirname, "src/index.ts"),
+export const userConfigFn: UserConfigFnObject = function (env) {
+    const dev = env.mode.endsWith("dev");
+    const config = {
+        plugins: [
+        ],
+        build: {
+            sourcemap: dev
+                ? "inline"
+                : false,
+            emptyOutDir: true,
+            copyPublicDir: true,
+            lib: {
+                entry: resolve(__dirname, "src/index.ts"),
+                fileName: "index",
+                formats: ["cjs"],
             },
-            output: {
-                entryFileNames: chunkInfo => {
-                    // console.log(chunkInfo);
-                    switch (chunkInfo.name) {
-                        case "index":
-                            return "[name].js";
-
-                        default:
-                            return "assets/[name]-[hash].js";
-                    }
+            rollupOptions: {
+                input: {
+                    index: resolve(__dirname, "src/index.ts"),
                 },
-                assetFileNames: assetInfo => {
-                    // console.log(chunkInfo);
-                    switch (assetInfo.name) {
-                        case "style.css":
-                        case "index.css":
-                            return "index.css";
+                output: {
+                    entryFileNames: chunkInfo => {
+                        // console.log(chunkInfo);
+                        switch (chunkInfo.name) {
+                            case "index":
+                                return "[name].js";
 
-                        default:
-                            return "assets/[name]-[hash][extname]";
-                    }
+                            default:
+                                return "assets/[name]-[hash].js";
+                        }
+                    },
+                    assetFileNames: assetInfo => {
+                        // console.log(chunkInfo);
+                        switch (assetInfo.name) {
+                            case "style.css":
+                            case "index.css":
+                                return "index.css";
+
+                            default:
+                                return "assets/[name]-[hash][extname]";
+                        }
+                    },
                 },
             },
         },
-    },
-} as UserConfig;
+    } as UserConfig;
+
+    return config;
+}
+export default userConfigFn;

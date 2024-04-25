@@ -66,7 +66,7 @@ export default class InboxPlugin extends siyuan.Plugin {
         this.client = new Client(undefined, "fetch");
 
         this.SETTINGS_DIALOG_ID = `${this.name}-settings-dialog`;
-        this.INBOX_APP_PATH = `plugins/${this.name}/apps/inbox/`;
+        this.INBOX_APP_PATH = `plugins/${this.name}/`;
     }
 
     onload(): void {
