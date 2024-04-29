@@ -65,7 +65,7 @@ export const manifest = {
     prefer_related_applications: false,
     protocol_handlers: [
         {
-            protocol: "web+siyuan-index",
+            protocol: "web+syinbox",
             url: `${plugin_root_pathname}?url=%s`,
         },
     ],
@@ -89,8 +89,15 @@ export const manifest = {
         {
             src: "./preview.png",
             sizes: "1800x860",
-            label: "Preview image",
+            label: "Wide screenshot",
             form_factor: "wide",
+            type: "image/png",
+        },
+        {
+            src: "./preview-mobile.png",
+            sizes: "720x1543",
+            label: "Narrow screenshot",
+            form_factor: "narrow",
             type: "image/png",
         },
     ],
@@ -102,7 +109,8 @@ export const manifest = {
     iarc_rating_id: "",
     share_target: {
         action: plugin_root_pathname,
-        method: "GET",
+        method: "POST",
+        enctype: "multipart/form-data",
         params: {
             title: "title",
             text: "text",
@@ -203,11 +211,23 @@ export const userConfigFn: UserConfigFnObject = function (env) {
                     : "production",
                 filename: "service-worker.js",
                 manifestFilename: "manifest.webmanifest",
+                strategies: "generateSW",
                 registerType: "autoUpdate",
                 minify: dev
                     ? false
                     : true,
                 manifest,
+                workbox: {
+                    globIgnores: [
+                        "index.css",
+                        "index.js",
+                        "i18n/**/*.json",
+                    ],
+                    globPatterns: [
+                        "**/*.{js,css,html,ico,png,svg,json}",
+                    ],
+                },
+                includeAssets: [],
                 devOptions: {
                     enabled: dev,
                 },

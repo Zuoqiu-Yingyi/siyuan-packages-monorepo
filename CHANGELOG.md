@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-04-29
+
+- 实现嵌入块内容反转义功能 | Implement embedded block content unescape function.
+
 ## 2024-04-26
 
 - 配置 Vite PWA 设置项 | Configure Vite PWA settings.
