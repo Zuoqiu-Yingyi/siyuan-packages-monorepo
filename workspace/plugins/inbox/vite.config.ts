@@ -18,7 +18,7 @@
 import deepmerge from "deepmerge";
 import {
     defineConfig,
-    UserConfig,
+    type UserConfig,
 } from "vite";
 
 import viteShareConfig from "./vite.share.config";
