@@ -16,6 +16,6 @@
         "eslint-config-turbo": "^1.13.3",
         "eslint-plugin-svelte3": "^4.0.0",
         "eslint-plugin-tsdoc": "^0.2.17",
-        "eslint-plugin-vue": "^9.25.0"
+        "eslint-plugin-vue": "^9.26.0"
     }
 }

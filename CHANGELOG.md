@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-05-17
+
+- 兼容发布服务 | Compatible with publishing service.
+
 ## 2024-04-29
 
 - 实现嵌入块内容反转义功能 | Implement embedded block content unescape function.

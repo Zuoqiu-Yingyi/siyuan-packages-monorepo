@@ -15,8 +15,8 @@
         "abcjs": "^6.3.0",
         "echarts": "^5.5.0",
         "highlight.js": "^11.9.0",
-        "mermaid": "^10.9.0",
-        "pdfjs-dist": "^4.1.392",
+        "mermaid": "^10.9.1",
+        "pdfjs-dist": "^4.2.67",
         "ts-toolbelt": "^9.6.0",
         "viewerjs": "^1.11.6"
     }
