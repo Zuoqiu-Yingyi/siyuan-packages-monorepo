@@ -209,7 +209,7 @@ export default class WakaTimePlugin extends siyuan.Plugin {
             {
                 type: "module",
                 name: this.name,
-                credentials: "same-origin",
+                credentials: "include",
             },
         );
     }
