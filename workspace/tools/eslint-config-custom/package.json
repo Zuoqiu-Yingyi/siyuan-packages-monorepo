@@ -6,16 +6,14 @@
     "publishConfig": {
         "access": "public"
     },
-    "scripts": {
-        "pnpm:update": "pnpm update"
-    },
+    "scripts": {},
     "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^6.21.0",
-        "@typescript-eslint/parser": "^6.21.0",
-        "eslint-config-prettier": "^8.10.0",
-        "eslint-config-turbo": "^1.13.3",
+        "@typescript-eslint/eslint-plugin": "^7.16.0",
+        "@typescript-eslint/parser": "^7.16.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-config-turbo": "^2.0.6",
         "eslint-plugin-svelte3": "^4.0.0",
-        "eslint-plugin-tsdoc": "^0.2.17",
-        "eslint-plugin-vue": "^9.26.0"
+        "eslint-plugin-tsdoc": "^0.3.0",
+        "eslint-plugin-vue": "^9.27.0"
     }
 }

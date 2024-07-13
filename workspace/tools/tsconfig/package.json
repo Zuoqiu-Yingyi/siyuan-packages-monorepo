@@ -6,6 +6,5 @@
         "access": "public"
     },
     "scripts": {
-        "pnpm:update": "pnpm update"
     }
 }
