@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-07-13
+
+- 添加依赖更新脚本 | Add dependency update script.
+
 ## 2024-05-17
 
 - 兼容发布服务 | Compatible with publishing service.

@@ -7,7 +7,6 @@
         "access": "public"
     },
     "scripts": {
-        "pnpm:update": "pnpm update"
     },
     "dependencies": {
         "@workspace/tsconfig": "workspace:^",
