@@ -55,7 +55,7 @@ export default class TemplatePlugin extends siyuan.Plugin {
         this.SETTINGS_DIALOG_ID = `${this.name}-settings-dialog`;
     }
 
-    onload(): void {
+    public override onload(): void {
         // this.logger.debug(this);
 
         /* 注册图标 */
@@ -77,13 +77,13 @@ export default class TemplatePlugin extends siyuan.Plugin {
             });
     }
 
-    onLayoutReady(): void {
+    public override onLayoutReady(): void {
     }
 
-    onunload(): void {
+    public override onunload(): void {
     }
 
-    openSetting(): void {
+    public override openSetting(): void {
         const that = this;
         const dialog = new siyuan.Dialog({
             title: `${this.displayName} <code class="fn__code">${this.name}</code>`,
@@ -100,6 +100,7 @@ export default class TemplatePlugin extends siyuan.Plugin {
                     plugin: this,
                 },
             });
+            void settings;
         }
     }
 

@@ -20,7 +20,6 @@
 <script lang="ts">
     import Panels from "@workspace/components/siyuan/setting/panel/Panels.svelte";
     import Panel from "@workspace/components/siyuan/setting/panel/Panel.svelte";
-    import Tabs from "@workspace/components/siyuan/setting/tab/Tabs.svelte";
     import Item from "@workspace/components/siyuan/setting/item/Item.svelte";
     import Input from "@workspace/components/siyuan/setting/item/Input.svelte";
 
@@ -37,7 +36,7 @@
 
     const i18n = plugin.i18n as unknown as I18N;
 
-    async function updated() {
+    async function _updated() {
         await plugin.updateConfig(config);
     }
 
