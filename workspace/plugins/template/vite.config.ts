@@ -19,23 +19,20 @@ import { defineConfig } from "vite";
 import { resolve } from "node:path";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { less } from "svelte-preprocess-less";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 // https://vitejs.dev/config/
 export default defineConfig({
     base: `./`,
     plugins: [
+        // REF: https://www.npmjs.com/package/vite-tsconfig-paths
+        tsconfigPaths(),
         svelte({
             preprocess: {
                 style: less(),
             },
         }),
     ],
-    resolve: {
-        alias: {
-            "~": resolve(__dirname, "./"),
-            "@": resolve(__dirname, "./src"),
-        }
-    },
     build: {
         minify: true,
         // sourcemap: "inline",

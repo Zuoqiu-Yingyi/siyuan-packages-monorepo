@@ -1,0 +1,62 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig.json",
+    "compilerOptions": {
+        /* Type Checking */
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noUncheckedIndexedAccess": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "strict": true,
+
+        /* Modules */
+        "allowArbitraryExtensions": true,
+        "allowImportingTsExtensions": true,
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        // "baseUrl": "./",
+        // "paths": {
+        //     "~/*": [
+        //         "./*",
+        //     ],
+        //     "@/*": [
+        //         "./src/*",
+        //     ],
+        // },
+        "resolveJsonModule": true,
+
+        /* Emit */
+        "noEmit": true,
+
+        /* JavaScript Support */
+        "allowJs": true,
+        "checkJs": true,
+
+        /* Editor Support */
+        "disableSizeLimit": true,
+        "verbatimModuleSyntax": true,
+
+        /* Interop Constraints */
+        "isolatedModules": true,
+
+        /* Backwards Compatibility */
+
+        /* Language and Environment */
+        "lib": [
+            "ESNext",
+            "DOM",
+        ],
+        "target": "ESNext",
+
+        /* Compiler Diagnostics */
+
+        /* Projects */
+        "composite": true,
+
+        /* Output Formatting */
+
+        /* Completeness */
+        "skipLibCheck": true,
+    },
+}
