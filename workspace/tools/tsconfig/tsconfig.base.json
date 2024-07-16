@@ -1,18 +1,12 @@
 {
     "$schema": "https://json.schemastore.org/tsconfig.json",
     "compilerOptions": {
-        /* Type Checking */
-        "noImplicitOverride": true,
-        "noImplicitReturns": true,
-        "noPropertyAccessFromIndexSignature": true,
-        "noUncheckedIndexedAccess": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "strict": true,
-
-        /* Modules */
-        "allowArbitraryExtensions": true,
-        "allowImportingTsExtensions": true,
+        "composite": true,
+        "target": "ESNext",
+        "lib": [
+            "ESNext",
+            "DOM"
+        ],
         "module": "ESNext",
         "moduleResolution": "Bundler",
         // "baseUrl": "./",
@@ -24,39 +18,30 @@
         //         "./src/*",
         //     ],
         // },
+        /* Modules */
         "resolveJsonModule": true,
-
-        /* Emit */
-        "noEmit": true,
-
+        "allowArbitraryExtensions": true,
+        "allowImportingTsExtensions": true,
         /* JavaScript Support */
         "allowJs": true,
         "checkJs": true,
-
+        "strict": true,
+        /* Type Checking */
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noUncheckedIndexedAccess": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        /* Emit */
+        "noEmit": true,
         /* Editor Support */
         "disableSizeLimit": true,
-        "verbatimModuleSyntax": true,
-
         /* Interop Constraints */
         "isolatedModules": true,
-
-        /* Backwards Compatibility */
-
-        /* Language and Environment */
-        "lib": [
-            "ESNext",
-            "DOM",
-        ],
-        "target": "ESNext",
-
-        /* Compiler Diagnostics */
-
-        /* Projects */
-        "composite": true,
-
+        "verbatimModuleSyntax": true,
         /* Output Formatting */
-
         /* Completeness */
-        "skipLibCheck": true,
-    },
+        "skipLibCheck": true
+    }
 }

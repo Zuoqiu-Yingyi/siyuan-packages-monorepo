@@ -1,19 +1,21 @@
 {
     "name": "@workspace/eslint-config-custom",
+    "type": "module",
     "version": "0.0.0",
-    "main": "index.js",
     "private": true,
+    "main": "index.js",
+    "module": "index.js",
     "publishConfig": {
         "access": "public"
     },
-    "scripts": {},
+    "scripts": {
+        "format": "eslint --fix ."
+    },
     "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^7.16.0",
-        "@typescript-eslint/parser": "^7.16.0",
-        "eslint-config-prettier": "^9.1.0",
-        "eslint-config-turbo": "^2.0.6",
-        "eslint-plugin-svelte3": "^4.0.0",
+        "@antfu/eslint-config": "^2.22.4",
+        "eslint-plugin-format": "^0.1.2",
+        "eslint-plugin-svelte": "^2.42.0",
         "eslint-plugin-tsdoc": "^0.3.0",
-        "eslint-plugin-vue": "^9.27.0"
+        "eslint-plugin-turbo": "^2.0.6"
     }
 }

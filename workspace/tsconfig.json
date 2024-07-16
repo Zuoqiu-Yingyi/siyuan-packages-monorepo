@@ -1,3 +1,6 @@
 {
-    "extends": "@workspace/tsconfig/tsconfig.base.json"
+    "extends": "@workspace/tsconfig/tsconfig.base.json",
+    "files": [
+        "eslint.config.js",
+    ],
 }

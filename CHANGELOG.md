@@ -1,11 +1,15 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-07-17
+
+- 调整 `eslint` 配置 | Adjust `eslint` configuration
+
 ## 2024-07-15
 
 - 调整全局 `tsconfig.json` 配置 | Adjust the global `tsconfig.json` configuration
 
 ## 2024-07-13
-
+**
 - 添加依赖更新脚本 | Add dependency update script.
 
 ## 2024-05-17

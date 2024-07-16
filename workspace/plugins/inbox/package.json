@@ -1,8 +1,8 @@
 {
     "name": "inbox",
-    "private": true,
-    "version": "0.1.1",
     "type": "module",
+    "version": "0.1.1",
+    "private": true,
     "scripts": {
         "dev": "vite",
         "build:dev": "npm run build:dev:plugin && npm run build:dev:apps",
