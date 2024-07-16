@@ -1,7 +1,7 @@
 {
     "name": "@workspace/components",
-    "version": "0.0.0",
     "type": "module",
+    "version": "0.0.0",
     "private": true,
     "publishConfig": {
         "access": "public"

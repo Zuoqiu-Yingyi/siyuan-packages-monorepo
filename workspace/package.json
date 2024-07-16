@@ -1,10 +1,11 @@
 {
     "name": "workspace",
+    "type": "module",
     "private": true,
+    "packageManager": "pnpm@9.4.0",
     "author": "Zuoqiu Yingyi",
-    "repository": "https://github.com/Zuoqiu-Yingyi/siyuan-plugins-dev",
     "license": "AGPL-3.0-or-later",
-    "packageManager": "pnpm@9.0.0",
+    "repository": "https://github.com/Zuoqiu-Yingyi/siyuan-plugins-dev",
     "scripts": {
         "outdated:all": "nu ./scripts/outdated.nu",
         "update:all": "nu ./scripts/update.nu",

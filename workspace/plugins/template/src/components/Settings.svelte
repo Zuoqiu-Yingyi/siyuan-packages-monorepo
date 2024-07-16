@@ -1,23 +1,24 @@
 <!--
- Copyright (C) 2023 Zuoqiu Yingyi
- 
+ Copyright (C) 2024 Zuoqiu Yingyi
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <!-- 设置面板 -->
 
 <script lang="ts">
+    /* eslint-disable no-unused-vars, unused-imports/no-unused-vars */
     import Panels from "@workspace/components/siyuan/setting/panel/Panels.svelte";
     import Panel from "@workspace/components/siyuan/setting/panel/Panel.svelte";
     import Item from "@workspace/components/siyuan/setting/item/Item.svelte";
@@ -36,7 +37,8 @@
 
     const i18n = plugin.i18n as unknown as I18N;
 
-    async function _updated() {
+    // @ts-expect-error
+    async function updated() {
         await plugin.updateConfig(config);
     }
 
@@ -55,12 +57,7 @@
         general, // 常规设置
     }
 
-    enum TabKey {
-        general, // 常规设置
-        service, // 服务设置
-    }
-
-    let panels_focus_key = PanelKey.general;
+    const panels_focus_key = PanelKey.general;
     const panels: ITab[] = [
         {
             key: PanelKey.general,
@@ -77,7 +74,7 @@
     let:focus={focusPanel}
 >
     <!-- 常规设置面板 -->
-    <Panel display={panels[0].key === focusPanel}>
+    <Panel display={panels[0]?.key === focusPanel}>
         <!-- 重置设置 -->
         <Item
             title={i18n.settings.generalSettings.reset.title}
