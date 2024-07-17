@@ -1,19 +1,17 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import type siyuan from "siyuan";
 
@@ -33,7 +31,7 @@ export interface ISiyuan {
 
 // REF: https://github.com/siyuan-note/siyuan-android/blob/fix/open-link-use-js/app/src/main/java/org/b3log/siyuan/JSAndroid.java
 export interface IJSAndroid {
-    openExternal(url: string): void;
+    openExternal: (url: string) => void;
 }
 
 export interface ISiyuanVariable {
@@ -57,7 +55,6 @@ export interface ISiyuanVariable {
 
 export interface ISiyuanElectron {
     /* Electron */
-    require: Function;
     process: NodeJS.Process;
 
     __filename: string;
@@ -70,7 +67,7 @@ export interface ISiyuanElectron {
 export interface ISiyuanExtends extends ISiyuanVariable, Partial<ISiyuanElectron> { }
 
 export type TWindow = typeof window;
-export type TGlobal = typeof global;
+export type TGlobal = typeof globalThis;
 
 export interface ISiyuanGlobal extends ISiyuanExtends, TWindow, TGlobal { }
 

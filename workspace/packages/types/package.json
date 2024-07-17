@@ -6,7 +6,12 @@
     "publishConfig": {
         "access": "public"
     },
-    "scripts": {},
+    "scripts": {
+        "lint": "eslint --max-warnings 0 .",
+        "format": "run-p format:eslint format:prettier",
+        "format:eslint": "eslint --fix .",
+        "format:prettier": "prettier -w ./electron"
+    },
     "devDependencies": {
         "@types/katex": "^0.16.7",
         "@types/plantuml-encoder": "^1.4.2",
