@@ -1,19 +1,17 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { UA } from "./../misc/user-agent";
 
@@ -32,9 +30,9 @@ export class Logger {
 
     /**
      * 输出
-     * @param func: 所使用的输出函数
-     * @param multiple: 是否进行多次输出
-     * @param args: 输出函数的参数
+     * @param func - 所使用的输出函数
+     * @param multiple - 是否进行多次输出
+     * @param args - 输出函数的参数
      */
     protected stdout(
         func: (message?: any, ...optionalParams: any[]) => void,
@@ -43,7 +41,7 @@ export class Logger {
     ): void {
         const label = this.FLAG_FIREFOX
             ? `[${this.label}] - <${func.name.toUpperCase()}>`
-            : `[\x1b[4m${this.label}\x1b[0m] - <\x1b[1m${func.name.toUpperCase()}\x1b[0m>`; // 日志组标签
+            : `[\x1B[4m${this.label}\x1B[0m] - <\x1B[1m${func.name.toUpperCase()}\x1B[0m>`; // 日志组标签
 
         if (this.collapsed) {
             globalThis.console.groupCollapsed(label); // 启用折叠日志组
@@ -54,7 +52,12 @@ export class Logger {
 
         if (multiple) {
             for (const arg of args) {
-                Array.isArray(arg) ? func(...arg) : func(arg); // 输出多日志
+                if (Array.isArray(arg)) {
+                    func(...arg);
+                }
+                else {
+                    func(arg);
+                }
             }
         }
         else {

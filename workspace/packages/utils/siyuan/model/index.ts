@@ -1,25 +1,24 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import type siyuan from "siyuan";
-import type { IProtyle } from "@workspace/types/siyuan/protyle";
-import type { ISiyuanGlobal } from "@workspace/types/siyuan";
 
-declare var globalThis: ISiyuanGlobal;
+import type { ISiyuanGlobal } from "@workspace/types/siyuan";
+import type { IProtyle } from "@workspace/types/siyuan/protyle";
+
+declare let globalThis: ISiyuanGlobal;
 
 export interface IApp {
     plugins: InstanceType<typeof siyuan.Plugin>[];
@@ -52,7 +51,7 @@ export type TModel = IEditorModel | IPdfModel;
 
 /**
  * 获取页面内的编辑器
- * @param globalSiyuan 思源全局变量
+ * @param globalSiyuan - 思源全局变量
  * @returns 编辑器列表
  */
 export function getEditorsFromLayout(globalSiyuan = globalThis.siyuan): IEditor[] {
@@ -70,9 +69,11 @@ export function getEditorsFromLayout(globalSiyuan = globalThis.siyuan): IEditor[
         while (layouts.length > 0) {
             const layout = layouts.pop();
             if (layout.children.length > 0) {
-                for (let child of layout.children) {
-                    if (child.model?.editor) editors.push(child.model.editor);
-                    else if (child.children) layouts.push(child);
+                for (const child of layout.children) {
+                    if (child.model?.editor)
+                        editors.push(child.model.editor);
+                    else if (child.children)
+                        layouts.push(child);
                 }
             }
         }
@@ -83,7 +84,7 @@ export function getEditorsFromLayout(globalSiyuan = globalThis.siyuan): IEditor[
 
 /**
  * 获取悬浮窗口的编辑器
- * @param globalSiyuan 思源全局变量
+ * @param globalSiyuan - 思源全局变量
  * @returns 编辑器列表
  */
 export function getEditorsFromBlockPanels(globalSiyuan = globalThis.siyuan): IEditor[] {
@@ -98,7 +99,7 @@ export function getEditorsFromBlockPanels(globalSiyuan = globalThis.siyuan): IEd
 
 /**
  * 获取所有加载完成的编辑器
- * @param globalSiyuan 思源全局变量
+ * @param globalSiyuan - 思源全局变量
  * @returns 编辑器列表
  */
 export function getEditors(globalSiyuan = globalThis.siyuan): IEditor[] {

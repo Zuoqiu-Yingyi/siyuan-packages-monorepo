@@ -1,23 +1,23 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import { Buffer } from "node:buffer";
 
 import parser from "parse-data-url";
-import { Buffer } from "buffer";
 
+// eslint-disable-next-line node/prefer-global/buffer
 globalThis.Buffer = Buffer;
 
 export function dataURL2str(dataURL: string): string | undefined {
@@ -25,7 +25,7 @@ export function dataURL2str(dataURL: string): string | undefined {
     if (result) {
         return result.toBuffer().toString();
     }
-    return;
+    return undefined;
 }
 
 export function dataURL2blob(dataURL: string): Blob | undefined {
@@ -36,7 +36,7 @@ export function dataURL2blob(dataURL: string): Blob | undefined {
             { type: result.contentType },
         );
     }
-    return;
+    return undefined;
 }
 
 export function base64ToDataURL(
@@ -65,7 +65,7 @@ export function base64ToFile(
             type: mime,
         });
     }
-    return;
+    return undefined;
 }
 
 export async function blob2dataURL(blob: Blob): Promise<string> {
@@ -73,11 +73,11 @@ export async function blob2dataURL(blob: Blob): Promise<string> {
         // REF: https://developer.mozilla.org/zh-CN/docs/Web/API/FileReader
         const reader = new FileReader();
 
-        reader.addEventListener("load", e => resolve(reader.result as string), {
+        reader.addEventListener("load", (_e) => resolve(reader.result as string), {
             once: true,
             passive: true,
         });
-        reader.addEventListener("error", e => reject(e), {
+        reader.addEventListener("error", (e) => reject(e), {
             once: true,
             passive: true,
         });

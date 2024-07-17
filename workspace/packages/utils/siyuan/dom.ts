@@ -1,38 +1,38 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import siyuan from "siyuan";
-import {
-    BlockID,
-    SnippetID,
-    ShorthandID,
-    HistoryPath,
-    HistoryCreated,
-    SnapshotID,
-    ISiyuanGlobal,
-} from "@workspace/types/siyuan";
 import regexp from "./../regexp";
 
-declare var globalThis: ISiyuanGlobal;
+import type siyuan from "siyuan";
+
+import type {
+    BlockID,
+    HistoryCreated,
+    HistoryPath,
+    ISiyuanGlobal,
+    ShorthandID,
+    SnapshotID,
+    SnippetID,
+} from "@workspace/types/siyuan";
+
+declare let globalThis: ISiyuanGlobal;
 
 /**
  * 查询块节点 ID
- * @param e: 事件
- * @return: ID
+ * @param e - 事件
+ * @returns ID
  */
 export function getNodeID(e: Event): BlockID | void {
     const path = e.composedPath();
@@ -41,21 +41,21 @@ export function getNodeID(e: Event): BlockID | void {
         const dataset = electron.dataset;
         if (dataset) {
             switch (true) {
+                // eslint-disable-next-line ts/no-use-before-define
                 case isSiyuanBlock(electron):
                     return dataset.nodeId;
 
                 default:
-                    break
+                    break;
             }
         }
     }
-    return;
 }
 
 /**
  * 查询块 ID
- * @param e: 事件
- * @return: 块 ID
+ * @param e - 事件
+ * @returns 块 ID
  */
 export function getBlockID(e: Event): BlockID | void {
     const path = e.composedPath();
@@ -77,17 +77,16 @@ export function getBlockID(e: Event): BlockID | void {
                     return dataset.rootId;
 
                 default:
-                    break
+                    break;
             }
         }
     }
-    return;
 }
 
 /**
  * 获取代码片段 ID
- * @param e: 事件
- * @return: 收集箱 ID
+ * @param e - 事件
+ * @returns 收集箱 ID
  */
 export function getSnippetID(e: Event): SnippetID | void {
     const path = e.composedPath();
@@ -100,19 +99,18 @@ export function getSnippetID(e: Event): SnippetID | void {
                     if (dataset.type === "css" || dataset.type === "js") {
                         return dataset.id;
                     }
-                    break
+                    break;
                 default:
-                    break
+                    break;
             }
         }
     }
-    return;
 }
 
 /**
  * 获取收集箱项 ID
- * @param e: 事件
- * @return: 收集箱 ID
+ * @param e - 事件
+ * @returns 收集箱 ID
  */
 export function getShorthandID(e: Event): ShorthandID | void {
     const path = e.composedPath();
@@ -128,29 +126,28 @@ export function getShorthandID(e: Event): ShorthandID | void {
                             ?.classList
                             ?.contains
                             ?.("sy_inbox") // 收集箱项内容
-                        || element
-                            ?.parentElement
-                            ?.parentElement
-                            ?.parentElement
-                            ?.classList
-                            ?.contains
-                            ?.("sy__inbox") // 收集箱项标题
+                            || element
+                                ?.parentElement
+                                ?.parentElement
+                                ?.parentElement
+                                ?.classList
+                                ?.contains
+                                ?.("sy__inbox") // 收集箱项标题
                     ) {
                         return dataset.id;
                     }
-                    break
+                    break;
                 default:
-                    break
+                    break;
             }
         }
     }
-    return;
 }
 
 /**
  * 获取文档历史创建时间
- * @param e: 事件
- * @return: 文档历史创建时间
+ * @param e - 事件
+ * @returns 文档历史创建时间
  */
 export function getHistoryCreated(e: Event): HistoryCreated | void {
     const path = e.composedPath();
@@ -167,29 +164,28 @@ export function getHistoryCreated(e: Event): HistoryCreated | void {
                             ?.classList
                             ?.contains
                             ?.("history__panel") // 文件历史面板
-                        && !element
-                            ?.parentElement
-                            ?.parentElement
-                            ?.parentElement
-                            ?.classList
-                            ?.contains
-                            ?.("history__repo") // 非数据历史面板
+                            && !element
+                                ?.parentElement
+                                ?.parentElement
+                                ?.parentElement
+                                ?.classList
+                                ?.contains
+                                ?.("history__repo") // 非数据历史面板
                     ) {
                         return dataset.created;
                     }
-                    break
+                    break;
                 default:
-                    break
+                    break;
             }
         }
     }
-    return;
 }
 
 /**
  * 获取历史文档路径
- * @param e: 事件
- * @return: 历史文档路径
+ * @param e - 事件
+ * @returns 历史文档路径
  */
 export function getHistoryPath(e: Event): HistoryPath | void {
     const path = e.composedPath();
@@ -202,21 +198,24 @@ export function getHistoryPath(e: Event): HistoryPath | void {
                     if (dataset.type === "doc") {
                         return dataset.path;
                     }
-                    break
+                    break;
                 default:
-                    break
+                    break;
             }
         }
     }
-    return;
 }
 
 /**
  * 获取快照对象 ID
- * @param e: 事件
- * @return: 快照对象 ID 与快照原文件名/标题
+ * @param e - 事件
+ * @returns 快照对象 ID 与快照原文件名/标题
  */
-export function getSnapshotIDs(e: Event): { id: SnapshotID | void, id2: SnapshotID | void, name: string | void } {
+export function getSnapshotIDs(e: Event): {
+    id?: SnapshotID;
+    id2?: SnapshotID;
+    name?: string;
+} {
     const path = e.composedPath();
     for (let i = 0; i < path.length; ++i) {
         const element = path[i] as HTMLElement;
@@ -235,12 +234,12 @@ export function getSnapshotIDs(e: Event): { id: SnapshotID | void, id2: Snapshot
                         return {
                             id: dataset.id, // 较早的快照
                             id2: dataset.id2, // 较晚的快照
-                            name: (element.firstElementChild as HTMLElement)?.innerText, // 文件名/文档标题
+                            name: (element.firstElementChild as HTMLElement)?.textContent ?? undefined, // 文件名/文档标题
                         };
                     }
-                    break
+                    break;
                 default:
-                    break
+                    break;
             }
         }
     }
@@ -262,13 +261,13 @@ export function updateBlockID(
     element.innerHTML = html;
     element
         .querySelectorAll<HTMLDivElement>("div[data-node-id]")
-        ?.forEach(block => block.dataset.nodeId = Lute.NewNodeID());
+        ?.forEach((block) => block.dataset.nodeId = Lute.NewNodeID());
     return element.innerHTML;
 }
 
 /**
  * 判断一个元素是否为思源块元素
- * @param element 元素
+ * @param element -元素
  * @returns 是否为思源块元素
  */
 export function isSiyuanBlock(element: any): boolean {
@@ -282,7 +281,7 @@ export function isSiyuanBlock(element: any): boolean {
 
 /**
  * 判断一个元素是否为思源文档背景
- * @param element 元素
+ * @param element -元素
  * @returns 是否为思源文档背景
  */
 export function isSiyuanProtyleBackground(element: any): boolean {
@@ -300,7 +299,7 @@ export const isSiyuanDocumentBackground = isSiyuanProtyleBackground;
 
 /**
  * 判断一个元素是否为思源文档标题
- * @param element 元素
+ * @param element -元素
  * @returns 是否为思源文档标题
  */
 export function isSiyuanProtyleTitle(element: any): boolean {
@@ -318,7 +317,7 @@ export const isSiyuanDocumentTitle = isSiyuanProtyleTitle;
 
 /**
  * 判断一个元素是否为思源文档块元素
- * @param element 元素
+ * @param element -元素
  * @returns 是否为思源文档块元素
  */
 export function isSiyuanProtyleWysiwyg(element: any): boolean {
@@ -334,7 +333,7 @@ export const isSiyuanDocument = isSiyuanProtyleWysiwyg;
 
 /**
  * 判断一个元素是否为思源编辑器面板
- * @param element 元素
+ * @param element -元素
  * @returns 是否为思源编辑器面板
  */
 export function isSiyuanProtyleContent(element: any): boolean {
@@ -346,7 +345,7 @@ export function isSiyuanProtyleContent(element: any): boolean {
 
 /**
  * 判断一个元素是否为思源顶层元素
- * @param element 元素
+ * @param element -元素
  * @returns 是否为思源文档块元素
  */
 export function isSiyuanTopBlock(element: any): boolean {
@@ -370,10 +369,10 @@ export function getSelectedBlocks(): HTMLElement[] {
  */
 export function getCurrentBlock(): HTMLElement | null | undefined {
     const selection = document.getSelection();
-    var element = selection?.focusNode;
+    let element = selection?.focusNode;
     while (element // 元素存在
         && (!(element instanceof HTMLElement) // 元素非 HTMLElement
-            || !isSiyuanBlock(element) // 元素非思源块元素
+        || !isSiyuanBlock(element) // 元素非思源块元素
         )
     ) {
         element = element.parentElement;
@@ -399,10 +398,10 @@ export function getCurrentBlockID(): BlockID | void {
  * @returns 当前光标所在的编辑器的 HTML 元素
  */
 export function getCurrentProtyleWysiwyg(): HTMLElement | null {
-    var element = globalThis.document.activeElement;
+    let element = globalThis.document.activeElement;
     while (element // 元素存在
         && (!(element instanceof HTMLElement) // 元素非 HTMLElement
-            || !isSiyuanDocument(element) // 元素非思源编辑器元素
+        || !isSiyuanDocument(element) // 元素非思源编辑器元素
         )
     ) {
         element = element.parentElement;
@@ -433,7 +432,8 @@ export function getActiveBlocks(): HTMLElement[] {
     }
     else {
         const block = getCurrentBlock();
-        if (block) return [block];
+        if (block)
+            return [block];
         else return [];
     }
 }
@@ -459,13 +459,13 @@ export interface ICodeBlockCursorPosition {
 
 /**
  * 获取代码块容器元素
- * @param element 代码块内的元素
+ * @param element -代码块内的元素
  * @returns 代码块容器元素
  */
 export function getCodeBlockContainer(element = globalThis.document.getSelection()?.focusNode): HTMLElement | null | undefined {
     while (element // 元素存在
         && (!(element instanceof HTMLElement) // 元素非 HTMLElement
-            || !element.classList.contains("hljs") // 元素非代码块容器
+        || !element.classList.contains("hljs") // 元素非代码块容器
         )
     ) {
         element = element.parentElement;
@@ -504,15 +504,13 @@ export function getCodeBlockCursorPosition(): ICodeBlockCursorPosition | void {
                  */
                 const order = anchorNode === focusNode // 位于同一个元素内, 等价于 anchorNode.compareDocumentPosition(focusNode) === 0
                     ? anchorOffset <= focusOffset // 根据 offset 判断光标起点与终点的顺序
-                    : (anchorNode.compareDocumentPosition(focusNode) & Node.DOCUMENT_POSITION_FOLLOWING // 判断 focusNode 是否在 anchorNode 之后
-                        ? true
-                        : false
-                    );
+                    : (!!(anchorNode.compareDocumentPosition(focusNode) & Node.DOCUMENT_POSITION_FOLLOWING)
+                        );
 
-                before.setStartBefore(container.firstChild)
+                before.setStartBefore(container.firstChild);
                 after.setEndAfter(container.lastChild);
 
-                prefix.setStartBefore(container.firstChild)
+                prefix.setStartBefore(container.firstChild);
                 suffix.setEndAfter(container.lastChild);
                 if (order) { // 起点在终点之前
                     before.setEnd(anchorNode, anchorOffset); // 设置光标选择范围 前方的终点

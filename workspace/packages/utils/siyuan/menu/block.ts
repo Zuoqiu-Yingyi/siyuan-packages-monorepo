@@ -1,28 +1,26 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/* 块菜单 */
-import siyuan from "siyuan";
-
-import type { BlockID } from "@workspace/types/siyuan";
-import type { IProtyle } from "@workspace/types/siyuan/protyle";
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // import { BlockType } from "./../block";
 import * as sdk from "@siyuan-community/siyuan-sdk";
+
+/* 块菜单 */
+import type siyuan from "siyuan";
+
+import type { BlockID } from "@workspace/types/siyuan";
+import type { IProtyle } from "@workspace/types/siyuan/protyle";
 
 /* 块菜单上下文 */
 export interface IBlockMenuDetail {
@@ -79,11 +77,11 @@ export interface IDocumentBlockMenuContext extends IBaseBlockMenuContext {
     data: siyuan.IGetDocInfo; // 文档数据
 }
 
-export type IBlockMenuContext = IOtherBlockMenuContext | IDocumentBlockMenuContext;
+export type IBlockMenuContext = IDocumentBlockMenuContext | IOtherBlockMenuContext;
 
 /* 划选内容的上下文 */
 export interface ISelectedMenuContext {
-    block: IBlockContext,
+    block: IBlockContext;
     range: Range;
 }
 
@@ -104,7 +102,7 @@ export function getBlockMenuContext(detail: BlockMenuDetail): IBlockMenuContext 
             blocks: [context],
             protyle,
             data,
-        }
+        };
     }
     else if (blockElements) { // 其他块
         if (blockElements.length > 0) {
@@ -118,12 +116,12 @@ export function getBlockMenuContext(detail: BlockMenuDetail): IBlockMenuContext 
                 });
             });
             return {
-                ...blocks[0],
+                ...blocks[0]!,
                 isDocumentBlock: false,
                 isMultiBlock: blocks.length > 1,
                 blocks,
                 protyle,
-            }
+            };
         }
     }
 

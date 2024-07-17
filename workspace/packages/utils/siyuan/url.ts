@@ -1,33 +1,32 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { BlockID } from "@workspace/types/siyuan";
 import { EditorType } from ".";
-import regexp from "../regexp";
 import { trimPrefix } from "../misc/string";
+import regexp from "../regexp";
+
+import type { BlockID } from "@workspace/types/siyuan";
 
 export interface ISiyuanUrlParams {
-    id: BlockID, // 块 ID
-    focus: boolean, // 是否聚焦
+    id: BlockID; // 块 ID
+    focus: boolean; // 是否聚焦
 }
 
 export interface ISiyuanUrlSearchParams {
-    id: BlockID, // 块 ID
-    focus: number, // 是否聚焦
+    id: BlockID; // 块 ID
+    focus: number; // 是否聚焦
 }
 
 /* 思源各 web 端路径 */
@@ -51,14 +50,23 @@ export function editorType2Pathname(editorEype: EditorType): Pathname {
     }
 }
 
+/* eslint-disable tsdoc/syntax */
 /**
- * @param pathname: web 端路径
- * @param params: URL 查询参数
+ * @param pathname - web 端路径
+ * @param params - URL 查询参数
+ * @param params.id - 块 ID
+ * @param params.focus - 是否聚焦至块
+ * @param params.url - siyuan:// URL
  * @returns URL
  */
+/* eslint-enable tsdoc/syntax */
 export function buildSiyuanWebURL(
     pathname: Pathname,
-    params?: { id?: BlockID, focus?: boolean, url?: string },
+    params?: {
+        id?: BlockID;
+        focus?: boolean;
+        url?: string;
+    },
     origin = globalThis.origin,
 ): URL {
     const url = new URL(origin);
@@ -82,14 +90,14 @@ export function buildSiyuanWebURL(
 
 /**
  * 解析思源超链接 URL
- * @param url: URL
+ * @param url - URL
  */
 export function parseSiyuanURL(url: URL): ISiyuanUrlParams | null {
     if (regexp.url.test(url.href)) { // 思源块超链接 URL
         return {
-            id: regexp.url.exec(url.href)![1],
+            id: regexp.url.exec(url.href)![1]!,
             focus: url.searchParams.get("focus") === "1",
-        }
+        };
     }
     else {
         return null;
@@ -98,14 +106,14 @@ export function parseSiyuanURL(url: URL): ISiyuanUrlParams | null {
 
 /**
  * 解析思源超链接 URL
- * @param url: URL
+ * @param url - URL
  */
 export function parseSiyuanWebURL(url: URL): ISiyuanUrlParams | null {
     if (regexp.id.test(url.searchParams.get("id")!)) { // 思源页面访问 URL
         return {
             id: url.searchParams.get("id")!,
             focus: url.searchParams.get("focus") === "1",
-        }
+        };
     }
     else {
         return null;
@@ -114,14 +122,15 @@ export function parseSiyuanWebURL(url: URL): ISiyuanUrlParams | null {
 
 /**
  * 判断一个超链接是否为思源静态文件服务
- * @param href: 超链接地址
- * @param workspace: 是否为工作空间下的目录
+ * @param href - 超链接地址
+ * @param workspace - 是否为工作空间下的目录
  */
 export function isStaticPathname(
     href: string,
     workspace: boolean = true,
 ): boolean {
-    if (href.startsWith("/")) href = href.substring(1);
+    if (href.startsWith("/"))
+        href = href.substring(1);
     switch (true) {
         case href.startsWith("stage/"): // 安装目录/resources/stage
             return !workspace;
@@ -129,7 +138,7 @@ export function isStaticPathname(
         case href.startsWith("appearance/"): // 工作空间/conf/appearance
         case href.startsWith("export/"): // 工作空间/temp/export
         case href.startsWith("history/"): // 工作空间/history
-
+            // fall through
         case href.startsWith("assets/"): // 工作空间/data/assets
         case href.startsWith("emojis/"): // 工作空间/data/emojis
         case href.startsWith("plugins/"): // 工作空间/data/plugins
@@ -146,15 +155,14 @@ export function isStaticPathname(
 
 /**
  * 判断一个相对于工作空间目录的路径是否为思源静态文件服务
- * @param href: 超链接地址
- * @param workspace: 是否为工作空间下的目录
+ * @param path - 超链接地址
  */
 export function isStaticWebFileServicePath(path: string): boolean {
     switch (true) {
         case path.startsWith("conf/appearance/"):
         case path.startsWith("temp/export/"):
         case path.startsWith("history/"):
-
+            // fall through
         case path.startsWith("data/assets/"):
         case path.startsWith("data/emojis/"):
         case path.startsWith("data/plugins/"):
@@ -171,11 +179,12 @@ export function isStaticWebFileServicePath(path: string): boolean {
 
 /**
  * 思源静态 web 文件路径 👉 相对于工作空间的路径
- * @param pathname: 思源静态 web 文件路径
+ * @param pathname - 思源静态 web 文件路径
  * @returns 工作空间路径
  */
 export function staticPathname2WorkspacePath(pathname: string): string {
-    if (pathname.startsWith("/")) pathname = pathname.substring(1);
+    if (pathname.startsWith("/"))
+        pathname = pathname.substring(1);
     switch (true) {
         case pathname.startsWith("assets/"): // 工作空间/data/assets
         case pathname.startsWith("emojis/"): // 工作空间/data/emojis
@@ -198,7 +207,7 @@ export function staticPathname2WorkspacePath(pathname: string): string {
 
 /**
  * 相对于工作空间目录的路径 👉 思源静态 web 文件路径
- * @param pathname: 思源静态 web 文件路径
+ * @param path - 思源静态 web 文件路径
  * @returns 工作空间路径
  */
 export function workspacePath2StaticPathname(path: string): string {
@@ -234,7 +243,7 @@ export const BASE_PATHNAME = getSiyuanBasePathname();
 
 /**
  * 跳转到认证页面
- * @param to 认证完成后跳转到的页面
+ * @param to - 认证完成后跳转到的页面
  */
 export function auth(to: string = trimPrefix(globalThis.location.href, globalThis.location.origin)): void {
     const url = new URL(globalThis.location.origin);

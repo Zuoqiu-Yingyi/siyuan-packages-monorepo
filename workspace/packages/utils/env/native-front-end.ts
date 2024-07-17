@@ -1,22 +1,21 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import type { ISiyuanGlobal } from "@workspace/types/siyuan";
-declare var globalThis: ISiyuanGlobal;
+
+declare let globalThis: ISiyuanGlobal;
 
 export const MEDIA_QUERY_LIST = {
     get light() {
@@ -27,17 +26,6 @@ export const MEDIA_QUERY_LIST = {
     },
 };
 
-export const FLAG_ELECTRON = isElectron();
-export const FLAG_IFRAME = isIframe();
-export const FLAG_POPUP = isPopup();
-
-export const FLAG_LIGHT = isLight();
-export const FLAG_DARK = isDark();
-
-export const FLAG_SIYUAN = isSiyuan();
-export const FLAG_SIYUAN_PARENT = isSiyuanParent();
-export const FLAG_SIYUAN_TOP = isSiyuanTop();
-
 export function hasNodeRequire(): boolean {
     return !!globalThis.require;
 }
@@ -47,6 +35,7 @@ export function hasNodeProcess(): boolean {
 }
 
 export function hasElectron(): boolean {
+    // eslint-disable-next-line no-prototype-builtins
     return !!globalThis.process?.versions?.hasOwnProperty("electron");
 }
 
@@ -129,3 +118,14 @@ export function isIOS(): boolean {
             ?.system
             ?.container === "ios";
 };
+
+export const FLAG_ELECTRON = isElectron();
+export const FLAG_IFRAME = isIframe();
+export const FLAG_POPUP = isPopup();
+
+export const FLAG_LIGHT = isLight();
+export const FLAG_DARK = isDark();
+
+export const FLAG_SIYUAN = isSiyuan();
+export const FLAG_SIYUAN_PARENT = isSiyuanParent();
+export const FLAG_SIYUAN_TOP = isSiyuanTop();

@@ -6,7 +6,10 @@
     "publishConfig": {
         "access": "public"
     },
-    "scripts": {},
+    "scripts": {
+        "lint": "eslint --max-warnings 0 .",
+        "format": "eslint --fix ."
+    },
     "dependencies": {
         "@workspace/types": "workspace:^"
     },

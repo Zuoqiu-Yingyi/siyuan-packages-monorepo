@@ -1,19 +1,17 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 export interface ISnippet {
     id: string;
@@ -25,11 +23,10 @@ export interface ISnippet {
 
 /**
  * 渲染代码片段
- * @param snippets 代码片段列表
- * @returns 无
+ * @param snippets - 代码片段列表
  */
 export function renderSnippets(snippets: ISnippet[]): void {
-    snippets.forEach(item => {
+    snippets.forEach((item) => {
         // TODO: 使用新 ID 格式
         const id = `snippet${item.type === "css" ? "CSS" : "JS"}${item.id}`;
         let exitElement = document.getElementById(id) as HTMLScriptElement;
@@ -47,7 +44,8 @@ export function renderSnippets(snippets: ISnippet[]): void {
         }
         if (item.type === "css") {
             document.head.insertAdjacentHTML("beforeend", `<style id="${id}">${item.content}</style>`);
-        } else if (item.type === "js") {
+        }
+        else if (item.type === "js") {
             exitElement = document.createElement("script");
             exitElement.type = "text/javascript";
             exitElement.text = item.content;

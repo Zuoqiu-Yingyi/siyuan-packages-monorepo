@@ -1,28 +1,26 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import type { Logger } from "./../../logger";
 import type {
-    IHandlers,
     ICallMessageData,
-    IReturnMessageData,
     IErrorMessageData,
     IHandler,
+    IHandlers,
+    IReturnMessageData,
 } from ".";
+import type { Logger } from "./../../logger";
 
 export interface PromiseParameter<T = any> {
     resolve: (value?: T) => void;
@@ -48,14 +46,14 @@ export class WorkerBridgeBase<
         this.port.addEventListener("message", this.messageEventListener);
     }
 
-    protected readonly errerEventListener = async (e: MessageEvent | ErrorEvent) => {
+    protected readonly errerEventListener = async (e: ErrorEvent | MessageEvent) => {
         this.logger.warn(e);
-    }
+    };
 
     protected readonly messageEventListener = async (e: MessageEvent<
         ICallMessageData<LH>
-        | IReturnMessageData<RH>
         | IErrorMessageData
+        | IReturnMessageData<RH>
     >) => {
         // this.logger.debug(e);
 
@@ -64,10 +62,14 @@ export class WorkerBridgeBase<
             case "call": {
                 try {
                     /* 指定了非本端的 uuid */
-                    if (data.uuid && data.uuid !== this.uuid) break;
+                    if (data.uuid && data.uuid !== this.uuid)
+                        break;
 
                     if (data.handler.name in this.handlers) {
                         const handler = this.handlers[data.handler.name];
+                        if (!handler) {
+                            throw new Error(`Handler "${String(data.handler.name)}" not found`);
+                        }
                         const result = await handler.func.call(handler.this, ...data.handler.args);
                         const message: IReturnMessageData<LH, typeof handler> = {
                             type: "return",
@@ -79,7 +81,8 @@ export class WorkerBridgeBase<
                         };
                         this.port.postMessage(message);
                     }
-                } catch (error) {
+                }
+                catch (error) {
                     const message: IErrorMessageData = {
                         type: "error",
                         id: data.id,
@@ -108,12 +111,12 @@ export class WorkerBridgeBase<
             default:
                 break;
         }
-    }
+    };
 
     /**
      * 调用远程函数
-     * @param name 函数名称
-     * @param args 函数参数
+     * @param name - 函数名称
+     * @param args - 函数参数
      * @returns 函数返回值
      */
     public async call<
@@ -145,9 +148,9 @@ export class WorkerBridgeBase<
 
     /**
      * 调用指定客户端的远程函数
-     * @param uuid 客户端 UUID
-     * @param name 函数名称
-     * @param args 函数参数
+     * @param name - 函数名称
+     * @param uuid - 客户端 UUID
+     * @param args - 函数参数
      * @returns 函数返回值
      */
     public async singleCall<
