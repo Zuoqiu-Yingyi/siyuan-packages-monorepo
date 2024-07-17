@@ -3,4 +3,8 @@
     "files": [
         "eslint.config.js",
     ],
+    "include": [
+        "packages",
+        "tools",
+    ],
 }

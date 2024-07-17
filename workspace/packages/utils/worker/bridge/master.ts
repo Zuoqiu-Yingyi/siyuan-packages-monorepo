@@ -1,36 +1,34 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Logger } from "./../../logger";
-import { WorkerBridgeBase } from "./base";
 import { id } from "../../siyuan/id";
+import { WorkerBridgeBase } from "./base";
 
 import type {
     IHandlers,
 } from ".";
+import type { Logger } from "./../../logger";
 
 export class WorkerBridgeMaster<
     T extends EventTarget = EventTarget,
     LH extends IHandlers = IHandlers,
     RH extends IHandlers = IHandlers,
 > extends WorkerBridgeBase<
-    LH,
-    RH
-> {
+        LH,
+        RH
+    > {
     constructor(
         worker: T,
         logger: InstanceType<typeof Logger>, // 日志记录器 
@@ -38,7 +36,7 @@ export class WorkerBridgeMaster<
         uuid: string = id(),
     ) {
         super(
-            // @ts-ignore
+            // @ts-expect-error -- cross-environment
             worker,
             logger,
             handlers,
@@ -48,7 +46,7 @@ export class WorkerBridgeMaster<
 
     /**
      * ping
-     * @param timeout 超时时间
+     * @param timeout - 超时时间
      * @returns 耗时
      */
     public async ping(timeout: number = 1_000): Promise<number> {
@@ -70,11 +68,10 @@ export class WorkerBridgeMaster<
     public terminate() {
         switch (true) {
             case "terminate" in this.port:
-                // @ts-ignore
                 this.port.terminate();
                 break;
             case "close" in this.port:
-                // @ts-ignore
+                // @ts-expect-error -- cross-environment
                 this.port.close();
                 break;
         }

@@ -57,12 +57,19 @@ export default antfu({
     },
     typescript: {
         overrides: {
+            "accessor-pairs": ["off"],
             "sort-imports": ["off"],
             "import/order": ["off"],
             "ts/no-empty-object-type": [
                 "warn",
                 {
                     allowInterfaces: "always",
+                },
+            ],
+            "ts/no-use-before-define": [
+                "error",
+                {
+                    allowNamedExports: true,
                 },
             ],
             "perfectionist/sort-array-includes": [

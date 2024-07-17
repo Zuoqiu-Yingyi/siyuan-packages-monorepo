@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-07-18
+
+- 将 `eslint` 配置应用于 `@workspace/utils` 模块 | Apply `eslint` configuration to `@workspace/utils` module
+
 ## 2024-07-17
 
 - 调整 `eslint` 配置 | Adjust `eslint` configuration

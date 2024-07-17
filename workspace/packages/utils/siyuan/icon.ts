@@ -1,24 +1,23 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { trimPrefix } from "../misc/string";
+
 import type { siyuan } from "@siyuan-community/siyuan-sdk";
 
-export type TSiyuanBlockType = siyuan.NodeType | siyuan.BlockType | siyuan.BlockSubType;
+export type TSiyuanBlockType = siyuan.BlockSubType | siyuan.BlockType | siyuan.NodeType;
 
 const MAP_PATH_ICON = new Map<string, string>([
     ["stage", "iconFolder"], // 安装目录/resources/stage
@@ -72,7 +71,7 @@ const MAP_TYPE_ICON = new Map<string | TSiyuanBlockType, string>([
     ["NodeWidget", "iconBoth"],
     ["query_embed", "iconSQL"],
     ["NodeBlockQueryEmbed", "iconSQL"],
-    
+
     ["h1", "iconH1"],
     ["h2", "iconH2"],
     ["h3", "iconH3"],
@@ -86,20 +85,8 @@ const MAP_TYPE_ICON = new Map<string | TSiyuanBlockType, string>([
 ]);
 
 /**
- * 思源静态 web 文件路径 👉 图标
- * @param pathname 思源静态 web 文件路径
- * @returns 图标 ID
- */
-export function pathname2icon(pathname: string): string {
-    if (pathname.startsWith("/")) pathname = pathname.substring(1);
-    const path = trimPrefix(pathname, "/").split("/")[0];
-    return path2icon(path);
-}
-
-
-/**
  * 思源静态 web 文件目录 👉 图标
- * @param path 思源静态 web 文件目录
+ * @param path - 思源静态 web 文件目录
  * @returns 图标 ID
  */
 export function path2icon(path: string): string {
@@ -107,10 +94,22 @@ export function path2icon(path: string): string {
 }
 
 /**
+ * 思源静态 web 文件路径 👉 图标
+ * @param pathname - 思源静态 web 文件路径
+ * @returns 图标 ID
+ */
+export function pathname2icon(pathname: string): string {
+    if (pathname.startsWith("/"))
+        pathname = pathname.substring(1);
+    const path = trimPrefix(pathname, "/").split("/")[0]!;
+    return path2icon(path);
+}
+
+/**
  * 思源块类型 👉 图标
- * @param type 思源块类型
+ * @param type - 思源块类型
  * @returns 图标 ID
  */
 export function type2icon(type: string | TSiyuanBlockType): string {
-    return MAP_TYPE_ICON.get(type) ?? "iconHelp"
+    return MAP_TYPE_ICON.get(type) ?? "iconHelp";
 }

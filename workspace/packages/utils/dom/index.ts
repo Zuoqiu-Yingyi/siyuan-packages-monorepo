@@ -1,23 +1,21 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * 删除 DOM 节点
- * @params node: 要删除的节点
+ * @param node - 要删除的节点
  */
 export function removeNode(node: Node): void {
     if (node.parentNode) {
@@ -27,8 +25,9 @@ export function removeNode(node: Node): void {
 
 /**
  * 根据 ID 删除 HTML 元素节点
- * @params id: 要删除的节点 ID
- * @return: 是否删除成功
+ * 
+ * @param id - 要删除的节点 ID
+ * @returns 是否删除成功
  */
 export function removeElementById(id: string): boolean {
     const node = document.getElementById(id);
@@ -39,10 +38,9 @@ export function removeElementById(id: string): boolean {
     return false;
 }
 
-
 /**
  * 移动 style 节点到 head 标签末尾
- * @params element: DOM 节点
+ * @param element - DOM 节点
  */
 export function moveElementToHead(element: HTMLElement | null): void {
     if (element) {
@@ -52,7 +50,7 @@ export function moveElementToHead(element: HTMLElement | null): void {
 
 /**
  * 通过 ID 移动 DOM 节点到 head 标签末尾
- * @params id: 标签 ID
+ * @param id - 标签 ID
  */
 export function moveElementToHeadById(id: string): void {
     moveElementToHead(document.getElementById(id));
