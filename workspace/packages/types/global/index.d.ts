@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Zuoqiu Yingyi
+// Copyright (C) 2024 Zuoqiu Yingyi
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -13,18 +13,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-/* 列表项 */
-export interface IListItem {
-    text: string; // 内容
-    icon?: string; // 图标 (Unicode 字符 / svg ID)
-    src?: string; // 图标 (图片 URL)
-    meta?: string; // 元信息
-    style?: string; // 样式
+import type { ISiyuan, ISiyuanExtends } from "./../siyuan";
 
-    narrow?: boolean; // 是否为紧凑布局
-    border?: boolean; // 是否显示下级列表边框
-
-    fold?: boolean; // 是否折叠
-    children?: IListItem[]; // 下级列表
-    indent?: string; // 下级列表缩进
+declare global {
+    interface Window extends ISiyuanExtends {
+        siyuan: ISiyuan;
+    }
 }

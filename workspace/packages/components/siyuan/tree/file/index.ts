@@ -1,19 +1,17 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import type { createEventDispatcher } from "svelte";
 import type { Writable } from "svelte/store";
@@ -42,18 +40,18 @@ export interface IFileTreeEventDetails<E extends Event> {
 
 /* 文档树派遣的事件 */
 export interface IFileTreeEvent {
-    dragstart: IFileTreeEventDetails<DragEvent>, // 拖拽开始
-    drag: IFileTreeEventDetails<DragEvent>, // 拖拽中 (...)
-    dragenter: IFileTreeEventDetails<DragEvent>, // 拖拽进入
-    dragover: IFileTreeEventDetails<DragEvent>, // 拖拽悬停 (...)
-    dragleave: IFileTreeEventDetails<DragEvent>, // 拖拽离开
-    dragend: IFileTreeEventDetails<DragEvent>, // 拖拽结束
-    drop: IFileTreeEventDetails<DragEvent>, // 放置在有效位置 (dragover e.preventDefault())
+    dragstart: IFileTreeEventDetails<DragEvent>; // 拖拽开始
+    drag: IFileTreeEventDetails<DragEvent>; // 拖拽中 (...)
+    dragenter: IFileTreeEventDetails<DragEvent>; // 拖拽进入
+    dragover: IFileTreeEventDetails<DragEvent>; // 拖拽悬停 (...)
+    dragleave: IFileTreeEventDetails<DragEvent>; // 拖拽离开
+    dragend: IFileTreeEventDetails<DragEvent>; // 拖拽结束
+    drop: IFileTreeEventDetails<DragEvent>; // 放置在有效位置 (dragover e.preventDefault())
 
-    open: IFileTreeEventDetails<MouseEvent>, // 打开文件
-    menu: IFileTreeEventDetails<MouseEvent>, // 打开菜单
-    fold: IFileTreeEventDetails<MouseEvent>, // 折叠文件夹
-    unfold: IFileTreeEventDetails<MouseEvent> // 展开文件夹
+    open: IFileTreeEventDetails<MouseEvent>; // 打开文件
+    menu: IFileTreeEventDetails<MouseEvent>; // 打开菜单
+    fold: IFileTreeEventDetails<MouseEvent>; // 折叠文件夹
+    unfold: IFileTreeEventDetails<MouseEvent>; // 展开文件夹
 }
 
 /* 文档树节点 */
@@ -104,7 +102,7 @@ export interface IFileTreeNode {
 /* 响应式状态变量 */
 export type IFileTreeNodeStores = {
     [P in keyof Required<IFileTreeNode>]: Writable<IFileTreeNode[P]>
-}
+};
 
 /* 根节点 */
 export interface IFileTreeRootNode extends IFileTreeFolderNode {

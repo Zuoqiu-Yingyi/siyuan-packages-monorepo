@@ -1,25 +1,27 @@
 <!--
  Copyright (C) 2023 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
+
     import type { Action } from "svelte/action";
-    export let src: string | undefined = undefined; // iframe 资源路径
-    export let title: string | undefined = undefined; // iframe 标题路径
+
+    export let src: string = ""; // iframe 资源路径
+    export let title: string = ""; // iframe 标题路径
 
     interface IEvent {
         iframe: HTMLIFrameElement;
@@ -34,50 +36,50 @@
 
     /**
      * 控制 iframe 的权限策略
-     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#allow allow - MDN}
-     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Permissions_Policy 权限策略 - MDN}
+     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#allow | allow - MDN}
+     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Permissions_Policy | 权限策略 - MDN}
      */
-    export let allow: string | undefined = undefined;
+    export let allow: string | null = null;
     /**
      * 控制 iframe 的内容安全策略
-     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#csp csp - MDN}
-     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CSP 内容安全策略 - MDN}
+     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#csp | csp - MDN}
+     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CSP | 内容安全策略 - MDN}
      */
-    export let csp: string | undefined = undefined;
+    export let csp: string | null = null;
     /**
      * 控制 iframe 内容加载优先级
-     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#importance importance - MDN}
+     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#importance | importance - MDN}
      */
-    export let importance: "auto" | "high" | "low" | undefined = undefined;
+    export let importance: "auto" | "high" | "low" | null = null;
     /**
      * 嵌入的浏览上下文的名称
-     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#name name - MDN}
+     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#name | name - MDN}
      */
-    export let name: string | undefined = undefined;
+    export let name: string | null = null;
     /**
      * 获取 iframe 资源时如何发送 referrer 首部
-     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#referrerpolicy referrerpolicy - MDN}
+     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#referrerpolicy | referrerpolicy - MDN}
      */
-    export let referrerpolicy: ReferrerPolicy | undefined = undefined;
+    export let referrerpolicy: ReferrerPolicy | null = null;
     /**
      * 控制应用于嵌入在 <iframe> 中的内容的限制
-     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#sandbox sandbox - MDN}
+     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#sandbox | sandbox - MDN}
      */
-    export let sandbox: string | undefined = undefined;
+    export let sandbox: string | null = null;
     /**
      * 需要渲染的 HTML 代码
-     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#srcdoc srcdoc - MDN}
+     * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#srcdoc | srcdoc - MDN}
      */
-    export let srcdoc: string | undefined = undefined; // iframe 资源路径
+    export let srcdoc: string | null = null; // iframe 资源路径
 
     /**
      * 在 iframe 元素创建时调用
      * https://svelte.dev/docs/element-directives#use-action
      */
-    const action: Action<HTMLIFrameElement> = node => {
+    const action: Action<HTMLIFrameElement> = (node) => {
         dispatcher("create", { iframe: node });
         return {
-            update(parameter) {
+            update(_parameter) {
                 dispatcher("update", { iframe });
             },
             destroy() {
@@ -89,17 +91,17 @@
 
 <iframe
     bind:this={iframe}
-    use:action
-    {src}
-    {title}
+    {name}
+    class="fn__flex fn__flex-1 iframe"
     {allow}
     {csp}
     {importance}
-    {name}
     {referrerpolicy}
     {sandbox}
+    {src}
     {srcdoc}
-    class="fn__flex fn__flex-1 iframe"
+    {title}
+    use:action
 />
 
 <style>

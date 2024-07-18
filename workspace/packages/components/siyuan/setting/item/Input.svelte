@@ -1,16 +1,16 @@
 <!--
  Copyright (C) 2023 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
@@ -20,7 +20,12 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
 
-    import { ItemType, type ILimits, type IOptions } from "./item";
+    import {
+        ItemType,
+        type ILimits,
+        type IOptions,
+    } from "./item";
+
     import type { IInputEvent } from "./../event";
 
     export let type: ItemType; // Setting Type
@@ -50,10 +55,10 @@
 {#if type === ItemType.checkbox}
     <!-- Checkbox -->
     <input
-        {disabled}
         class="b3-switch"
         class:fn__block={block}
         class:fn__flex-center={!block}
+        {disabled}
         type="checkbox"
         bind:checked={settingValue}
         on:change={changed}
@@ -61,11 +66,11 @@
 {:else if type === ItemType.text}
     <!-- Text Input -->
     <input
-        {disabled}
         class="b3-text-field"
         class:fn__block={block}
-        class:fn__size200={!block && normal}
         class:fn__flex-center={!block}
+        class:fn__size200={!block && normal}
+        {disabled}
         {placeholder}
         bind:value={settingValue}
         on:change={changed}
@@ -73,41 +78,41 @@
 {:else if type === ItemType.number}
     <!-- Number Input -->
     <input
-        {disabled}
         class="b3-text-field"
         class:fn__block={block}
-        class:fn__size200={!block && normal}
         class:fn__flex-center={!block}
-        type="number"
-        {placeholder}
-        min={limits.min}
+        class:fn__size200={!block && normal}
+        {disabled}
         max={limits.max}
+        min={limits.min}
+        {placeholder}
         step={limits.step}
+        type="number"
         bind:value={settingValue}
         on:change={changed}
     />
 {:else if type === ItemType.slider}
     <!-- Slider -->
     <input
-        {disabled}
         class="b3-slider"
         class:fn__block={block}
         class:fn__size200={!block && normal}
-        type="range"
-        min={limits.min}
+        {disabled}
         max={limits.max}
+        min={limits.min}
         step={limits.step}
+        type="range"
         bind:value={settingValue}
         on:change={changed}
     />
 {:else if type === ItemType.button}
     <!-- Button Input -->
     <button
-        {disabled}
         class="b3-button b3-button--outline"
         class:fn__block={block}
-        class:fn__size200={!block && normal}
         class:fn__flex-center={!block}
+        class:fn__size200={!block && normal}
+        {disabled}
         on:click={clicked}
     >
         {settingValue}
@@ -115,18 +120,18 @@
 {:else if type === ItemType.select}
     <!-- Dropdown select -->
     <select
-        {disabled}
         class="b3-select"
         class:fn__block={block}
-        class:fn__size200={!block && normal}
         class:fn__flex-center={!block}
+        class:fn__size200={!block && normal}
+        {disabled}
         bind:value={settingValue}
         on:change={changed}
     >
         {#each options as option (option.key)}
             <option
-                value={option.key}
                 title={option.title}
+                value={option.key}
             >
                 {option.text}
             </option>
@@ -135,12 +140,12 @@
 {:else if type === ItemType.textarea}
     <!-- Text Area -->
     <textarea
-        {disabled}
+        style:height={height > 0 ? `${height}px` : undefined}
+        style:font-family={fontFamily || undefined}
         class="b3-text-field"
         class:fn__block={block}
         class:fn__size200={!block && normal}
-        style:height={height > 0 ? `${height}px` : undefined}
-        style:font-family={fontFamily ? fontFamily : undefined}
+        {disabled}
         {placeholder}
         bind:value={settingValue}
         on:change={changed}

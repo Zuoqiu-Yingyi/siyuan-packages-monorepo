@@ -1,16 +1,16 @@
 <!--
  Copyright (C) 2024 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
@@ -20,9 +20,7 @@
     REF: https://arco.design/vue/component/config-provider
 -->
 <script setup lang="ts">
-import { defineProps, computed } from "vue";
 import { ConfigProvider } from "@arco-design/web-vue";
-
 import ar_EG from "@arco-design/web-vue/es/locale/lang/ar-eg";
 import de_DE from "@arco-design/web-vue/es/locale/lang/de-de";
 import en_US from "@arco-design/web-vue/es/locale/lang/en-us";
@@ -39,6 +37,7 @@ import th_TH from "@arco-design/web-vue/es/locale/lang/th-th";
 import vi_VN from "@arco-design/web-vue/es/locale/lang/vi-vn";
 import zh_CN from "@arco-design/web-vue/es/locale/lang/zh-cn";
 import zh_TW from "@arco-design/web-vue/es/locale/lang/zh-tw";
+import { computed, defineProps } from "vue";
 
 const props = defineProps<{
     locale: string; // 地区标记
@@ -96,4 +95,5 @@ const locale = computed(() => {
     />
 </template>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+</style>

@@ -1,22 +1,26 @@
 <!--
  Copyright (C) 2023 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
-    import { createEventDispatcher, onMount } from "svelte";
+    import {
+        createEventDispatcher,
+        onMount,
+    } from "svelte";
+
     import type { IMenuItemEvent } from ".";
 
     export let icon: string = ""; // 图标
@@ -39,7 +43,7 @@
     let element: HTMLInputElement;
 
     /* 动态设置 webkitdirectory */
-    function setWebkitdirectory(enable): void {
+    function setWebkitdirectory(enable: boolean): void {
         if (element) {
             element.webkitdirectory = enable;
         }
@@ -89,11 +93,11 @@
         <div class="fn__hr--small" />
         <input
             bind:this={element}
-            bind:value
+            class="b3-text-field fn__size200"
             {disabled}
             placeholder={label}
+            bind:value
             on:change={changed}
-            class="b3-text-field fn__size200"
         />
         <div class="fn__hr--small" />
     {/if}
@@ -101,14 +105,14 @@
     {#if file}
         <!-- 文件上传输入框 -->
         <input
-            type="file"
             bind:this={element}
-            bind:files
+            class="file-input"
             {accept}
             {disabled}
             {multiple}
+            type="file"
+            bind:files
             on:change={selected}
-            class="file-input"
         />
     {/if}
 </span>
