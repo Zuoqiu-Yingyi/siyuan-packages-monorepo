@@ -1,28 +1,27 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import Prompt from "./Prompt.svelte";
 
 import type siyuan from "siyuan";
-import Prompt from "./Prompt.svelte";
 
 export type PromptCallback<T> = (
     value: string,
     dialog: InstanceType<typeof siyuan.Dialog>,
     component: InstanceType<typeof Prompt>,
-) => T | Promise<T>;
+) => Promise<T> | T;
 
 export interface IPromptOptions {
     title: string; // 标题
@@ -56,15 +55,18 @@ export async function asyncPrompt(Dialog: typeof siyuan.Dialog, options: IPrompt
 
         options.confirm = async (value, ...args) => {
             const result = await confirm?.call(options, value, ...args) ?? true;
-            if (result) resolve(value);
+            if (result)
+                resolve(value);
             return result;
         };
         options.cancel = async (value, ...args) => {
             const result = await cancel?.call(options, value, ...args) ?? true;
-            if (result) reject(value);
+            if (result)
+                reject(value);
             return result;
         };
 
+        // eslint-disable-next-line ts/no-use-before-define
         prompt(Dialog, options);
     });
 }
@@ -78,11 +80,12 @@ export function prompt(Dialog: typeof siyuan.Dialog, options: IPromptOptions): I
         content: `<div id="${id}" class="fn__flex-column" />`,
         width: options.width || undefined,
         height: options.height || undefined,
+        // eslint-disable-next-line ts/no-use-before-define
         destroyCallback: () => component?.$destroy(),
     });
 
     const component = new Prompt({
-        target: dialog.element.querySelector(`#${id}`),
+        target: dialog.element.querySelector(`#${id}`) as HTMLElement,
         props: {
             text: options.text,
             value: options.value,
@@ -95,7 +98,7 @@ export function prompt(Dialog: typeof siyuan.Dialog, options: IPromptOptions): I
         },
     });
 
-    component.$on("input", async e => {
+    component.$on("input", async (e) => {
         if (options.input) {
             const tips = await options.input(
                 e.detail.value,
@@ -105,7 +108,7 @@ export function prompt(Dialog: typeof siyuan.Dialog, options: IPromptOptions): I
             component.$set({ tips });
         }
     });
-    component.$on("change", async e => {
+    component.$on("change", async (e) => {
         if (options.change) {
             const tips = await options.change(
                 e.detail.value,
@@ -115,7 +118,7 @@ export function prompt(Dialog: typeof siyuan.Dialog, options: IPromptOptions): I
             component.$set({ tips });
         }
     });
-    component.$on("confirm", async e => {
+    component.$on("confirm", async (e) => {
         const close = options.confirm
             ? await options.confirm(
                 e.detail.value,
@@ -127,7 +130,7 @@ export function prompt(Dialog: typeof siyuan.Dialog, options: IPromptOptions): I
             dialog.destroy();
         }
     });
-    component.$on("cancel", async e => {
+    component.$on("cancel", async (e) => {
         const close = options.cancel
             ? await options.cancel(
                 e.detail.value,

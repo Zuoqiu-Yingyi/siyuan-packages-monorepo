@@ -7,6 +7,8 @@
         "access": "public"
     },
     "scripts": {
+        "lint": "eslint --max-warnings 0 .",
+        "format": "eslint --fix ."
     },
     "dependencies": {
         "@workspace/tsconfig": "workspace:^",

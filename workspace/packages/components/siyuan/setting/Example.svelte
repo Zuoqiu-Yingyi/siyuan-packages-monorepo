@@ -1,16 +1,16 @@
 <!--
  Copyright (C) 2023 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
@@ -20,25 +20,27 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
 -->
 
 <script lang="ts">
-    import { onMount, onDestroy } from "svelte";
-
     import { showMessage } from "siyuan";
-    import { ItemType } from "./item/item";
+    import {
+        onDestroy,
+        onMount,
+    } from "svelte";
 
-    import Panels from "./panel/Panels.svelte";
-    import Panel from "./panel/Panel.svelte";
-    import Tabs from "./tab/Tabs.svelte";
-    import Group from "./item/Group.svelte";
-    import MiniItem from "./item/MiniItem.svelte";
-    import Item from "./item/Item.svelte";
-    import Input from "./item/Input.svelte";
     import Svg from "./../misc/Svg.svelte";
+    import Group from "./item/Group.svelte";
+    import Input from "./item/Input.svelte";
+    import { ItemType } from "./item/item";
+    import Item from "./item/Item.svelte";
+    import MiniItem from "./item/MiniItem.svelte";
+    import Panel from "./panel/Panel.svelte";
+    import Panels from "./panel/Panels.svelte";
+    import Tabs from "./tab/Tabs.svelte";
 
     let block = false;
     let normal = false;
 
-    let panel_focus_key = 1;
-    let panels = [
+    const panel_focus_key = 1;
+    const panels = [
         {
             key: 1,
             text: "panel-example",
@@ -52,8 +54,8 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
             icon: "",
         },
     ];
-    let tab_focus_key = 1;
-    let tabs = [
+    const tab_focus_key = 1;
+    const tabs = [
         {
             key: 1,
             text: "tab-example",
@@ -93,11 +95,11 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
     with the same UI style in SiYuan
 -->
 <Panels
-    {panels}
     focus={panel_focus_key}
+    {panels}
     let:focus={panel_focus}
 >
-    <Panel display={panels[0].key === panel_focus}>
+    <Panel display={panels[0]?.key === panel_focus}>
         <Tabs
             focus={tab_focus_key}
             {tabs}
@@ -105,8 +107,8 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
         >
             <!-- 标签页 1 内容 -->
             <div
-                data-type={tabs[0].name}
-                class:fn__none={tabs[0].key !== focus}
+                class:fn__none={tabs[0]?.key !== focus}
+                data-type={tabs[0]?.name}
             >
                 <Item>
                     <h4 slot="title">This setting panel is provided by a svelte component</h4>
@@ -118,17 +120,17 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
 
                 <Item
                     {block}
-                    title="Checkbox"
                     text="This is a checkbox"
+                    title="Checkbox"
                 >
                     <Input
                         slot="input"
                         {block}
                         {normal}
-                        type={ItemType.checkbox}
                         settingKey="Checkbox"
                         settingValue={block}
-                        on:changed={event => {
+                        type={ItemType.checkbox}
+                        on:changed={(event) => {
                             showMessage(`Checkbox changed: ${event.detail.key} = ${event.detail.value}`);
                             setTimeout(() => (block = !block), 0);
                         }}
@@ -137,18 +139,18 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
 
                 <Item
                     {block}
-                    title="Input"
                     text="This is a text input"
+                    title="Input"
                 >
                     <Input
                         slot="input"
                         {block}
                         {normal}
-                        type={ItemType.text}
+                        placeholder="Input something"
                         settingKey="Text"
                         settingValue=""
-                        placeholder="Input something"
-                        on:changed={event => {
+                        type={ItemType.text}
+                        on:changed={(event) => {
                             showMessage(`Input changed: ${event.detail.key} = ${event.detail.value}`);
                         }}
                     />
@@ -156,18 +158,18 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
 
                 <Item
                     {block}
-                    title="Slide"
                     text="This is a number input"
+                    title="Slide"
                 >
                     <Input
                         slot="input"
                         {block}
+                        {limits}
                         {normal}
-                        type={ItemType.number}
                         settingKey="Number"
                         settingValue={50}
-                        {limits}
-                        on:changed={event => {
+                        type={ItemType.number}
+                        on:changed={(event) => {
                             showMessage(`Slide changed: ${event.detail.key} = ${event.detail.value}`);
                         }}
                     />
@@ -175,18 +177,18 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
 
                 <Item
                     {block}
-                    title="Slide"
                     text="This is a slide"
+                    title="Slide"
                 >
                     <Input
                         slot="input"
                         {block}
+                        {limits}
                         {normal}
-                        type={ItemType.slider}
                         settingKey="Slide"
                         settingValue={50}
-                        {limits}
-                        on:changed={event => {
+                        type={ItemType.slider}
+                        on:changed={(event) => {
                             showMessage(`Slide changed: ${event.detail.key} = ${event.detail.value}`);
                         }}
                     />
@@ -194,16 +196,16 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
 
                 <Item
                     {block}
-                    title="Button"
                     text="This is a button"
+                    title="Button"
                 >
                     <Input
                         slot="input"
                         {block}
                         {normal}
-                        type={ItemType.button}
                         settingKey="Button"
                         settingValue="Click me"
+                        type={ItemType.button}
                         on:clicked={() => {
                             showMessage("Button clicked");
                             setTimeout(() => (normal = !normal), 0);
@@ -213,18 +215,18 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
 
                 <Item
                     {block}
-                    title="Select"
                     text="This is a select"
+                    title="Select"
                 >
                     <Input
                         slot="input"
                         {block}
                         {normal}
-                        type={ItemType.select}
+                        {options}
                         settingKey="Select"
                         settingValue="left"
-                        {options}
-                        on:changed={event => {
+                        type={ItemType.select}
+                        on:changed={(event) => {
                             showMessage(`Select changed: ${event.detail.key} = ${event.detail.value}`);
                         }}
                     />
@@ -232,18 +234,18 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
 
                 <Item
                     {block}
-                    title="Textarea"
                     text="This is a textarea"
+                    title="Textarea"
                 >
                     <Input
                         slot="input"
                         {block}
                         {normal}
-                        type={ItemType.textarea}
+                        placeholder="Input something"
                         settingKey="Textarea"
                         settingValue=""
-                        placeholder="Input something"
-                        on:changed={event => {
+                        type={ItemType.textarea}
+                        on:changed={(event) => {
                             showMessage(`Input changed: ${event.detail.key} = ${event.detail.value}`);
                         }}
                     />
@@ -252,23 +254,23 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
 
             <!-- 标签页 2 内容 -->
             <div
-                data-type={tabs[1].name}
-                class:fn__none={tabs[1].key !== focus}
+                class:fn__none={tabs[1]?.key !== focus}
+                data-type={tabs[1]?.name}
             >
                 <Group title="group-title <code class='fn__code'>code style</code>">
                     <MiniItem>
                         <Svg
                             slot="icon"
-                            icon="#iconSettings"
                             className="svg"
+                            icon="#iconSettings"
                         />
                         <span slot="title">mini checkbox</span>
                         <Input
                             slot="input"
-                            type={ItemType.checkbox}
                             settingKey="Checkbox"
                             settingValue={block}
-                            on:changed={event => {
+                            type={ItemType.checkbox}
+                            on:changed={(event) => {
                                 showMessage(`Checkbox changed: ${event.detail.key} = ${event.detail.value}`);
                                 setTimeout(() => (block = !block), 0);
                             }}
@@ -277,17 +279,17 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
                     <MiniItem>
                         <Svg
                             slot="icon"
-                            icon="#iconParagraph"
                             className="svg"
+                            icon="#iconParagraph"
                         />
                         <span slot="title">mini text</span>
                         <Input
                             slot="input"
-                            type={ItemType.text}
+                            placeholder="Input something"
                             settingKey="Text"
                             settingValue=""
-                            placeholder="Input something"
-                            on:changed={event => {
+                            type={ItemType.text}
+                            on:changed={(event) => {
                                 showMessage(`Input changed: ${event.detail.key} = ${event.detail.value}`);
                             }}
                         />
@@ -295,17 +297,17 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
                     <MiniItem>
                         <Svg
                             slot="icon"
-                            icon="#iconSpreadOdd"
                             className="svg"
+                            icon="#iconSpreadOdd"
                         />
                         <span slot="title">mini number</span>
                         <Input
                             slot="input"
-                            type={ItemType.number}
+                            {limits}
                             settingKey="Number"
                             settingValue={50}
-                            {limits}
-                            on:changed={event => {
+                            type={ItemType.number}
+                            on:changed={(event) => {
                                 showMessage(`Slide changed: ${event.detail.key} = ${event.detail.value}`);
                             }}
                         />
@@ -313,17 +315,17 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
                     <MiniItem>
                         <Svg
                             slot="icon"
-                            icon="#iconScrollHoriz"
                             className="svg"
+                            icon="#iconScrollHoriz"
                         />
                         <span slot="title">mini slide</span>
                         <Input
                             slot="input"
-                            type={ItemType.slider}
+                            {limits}
                             settingKey="Slide"
                             settingValue={50}
-                            {limits}
-                            on:changed={event => {
+                            type={ItemType.slider}
+                            on:changed={(event) => {
                                 showMessage(`Slide changed: ${event.detail.key} = ${event.detail.value}`);
                             }}
                         />
@@ -331,15 +333,15 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
                     <MiniItem>
                         <Svg
                             slot="icon"
-                            icon="#iconSelectText"
                             className="svg"
+                            icon="#iconSelectText"
                         />
                         <span slot="title">mini button</span>
                         <Input
                             slot="input"
-                            type={ItemType.button}
                             settingKey="Button"
                             settingValue="Click me"
+                            type={ItemType.button}
                             on:clicked={() => {
                                 showMessage("Button clicked");
                                 setTimeout(() => (normal = !normal), 0);
@@ -349,17 +351,17 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
                     <MiniItem>
                         <Svg
                             slot="icon"
-                            icon="#iconDown"
                             className="svg"
+                            icon="#iconDown"
                         />
                         <span slot="title">mini select</span>
                         <Input
                             slot="input"
-                            type={ItemType.select}
+                            {options}
                             settingKey="Select"
                             settingValue="left"
-                            {options}
-                            on:changed={event => {
+                            type={ItemType.select}
+                            on:changed={(event) => {
                                 showMessage(`Select changed: ${event.detail.key} = ${event.detail.value}`);
                             }}
                         />
@@ -367,17 +369,17 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
                     <MiniItem>
                         <Svg
                             slot="icon"
-                            icon="#iconAlignLeft"
                             className="svg"
+                            icon="#iconAlignLeft"
                         />
                         <span slot="title">mini textarea</span>
                         <Input
                             slot="input"
-                            type={ItemType.textarea}
+                            placeholder="Input something"
                             settingKey="Textarea"
                             settingValue=""
-                            placeholder="Input something"
-                            on:changed={event => {
+                            type={ItemType.textarea}
+                            on:changed={(event) => {
                                 showMessage(`Input changed: ${event.detail.key} = ${event.detail.value}`);
                             }}
                         />
@@ -387,5 +389,5 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
         </Tabs>
     </Panel>
 
-    <Panel display={panels[1].key === panel_focus}>Empty Panel</Panel>
+    <Panel display={panels[1]?.key === panel_focus}>Empty Panel</Panel>
 </Panels>

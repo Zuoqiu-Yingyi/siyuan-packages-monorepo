@@ -26,7 +26,8 @@ export type openTabParameters = Parameters<siyuan.openTab>;
 export type openTabParametersOptions = openTabParameters[0];
 export type openTabParametersOptionsCustom = openTabParametersOptions.custom;
 
-export interface ISiyuan {
+export interface ISiyuan extends siyuan.ISiyuan {
+    languages: Record<string, string>;
 }
 
 // REF: https://github.com/siyuan-note/siyuan-android/blob/fix/open-link-use-js/app/src/main/java/org/b3log/siyuan/JSAndroid.java
@@ -37,7 +38,8 @@ export interface IJSAndroid {
 export interface ISiyuanVariable {
     /* Siyuan */
     Lute: typeof siyuan.Lute;
-    siyuan: any;
+    siyuan: ISiyuan;
+
     pdfjsLib: typeof import("pdfjs-dist");
 
     ABCJS?: typeof import("abcjs");
@@ -70,11 +72,3 @@ export type TWindow = typeof window;
 export type TGlobal = typeof globalThis;
 
 export interface ISiyuanGlobal extends ISiyuanExtends, TWindow, TGlobal { }
-
-declare global {
-    interface Window extends ISiyuanExtends {
-    }
-
-    interface globalThis extends ISiyuanGlobal {
-    }
-}
