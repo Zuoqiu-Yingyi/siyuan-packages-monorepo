@@ -13,10 +13,10 @@
         "format": "eslint --fix ."
     },
     "devDependencies": {
-        "@antfu/eslint-config": "^2.23.0",
+        "@antfu/eslint-config": "^2.23.2",
         "eslint-plugin-format": "^0.1.2",
-        "eslint-plugin-svelte": "^2.42.0",
+        "eslint-plugin-svelte": "^2.43.0",
         "eslint-plugin-tsdoc": "^0.3.0",
-        "eslint-plugin-turbo": "^2.0.7"
+        "eslint-plugin-turbo": "^2.0.9"
     }
 }

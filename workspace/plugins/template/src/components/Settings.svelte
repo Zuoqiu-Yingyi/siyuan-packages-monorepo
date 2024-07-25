@@ -18,17 +18,15 @@
 <!-- 设置面板 -->
 
 <script lang="ts">
-    /* eslint-disable no-unused-vars, unused-imports/no-unused-vars */
-    import Panels from "@workspace/components/siyuan/setting/panel/Panels.svelte";
-    import Panel from "@workspace/components/siyuan/setting/panel/Panel.svelte";
-    import Item from "@workspace/components/siyuan/setting/item/Item.svelte";
     import Input from "@workspace/components/siyuan/setting/item/Input.svelte";
-
     import { ItemType } from "@workspace/components/siyuan/setting/item/item";
-    import { type ITab } from "@workspace/components/siyuan/setting/tab";
+    import Item from "@workspace/components/siyuan/setting/item/Item.svelte";
+    import Panel from "@workspace/components/siyuan/setting/panel/Panel.svelte";
+    import Panels from "@workspace/components/siyuan/setting/panel/Panels.svelte";
+
+    import type { ITab } from "@workspace/components/siyuan/setting/tab";
 
     import type Plugin from "@/index";
-
     import type { IConfig } from "@/types/config";
     import type { I18N } from "@/utils/i18n";
 
@@ -38,6 +36,7 @@
     const i18n = plugin.i18n as unknown as I18N;
 
     // @ts-expect-error
+    // eslint-disable-next-line no-unused-vars, unused-imports/no-unused-vars
     async function updated() {
         await plugin.updateConfig(config);
     }
@@ -54,6 +53,7 @@
     }
 
     enum PanelKey {
+        // eslint-disable-next-line no-unused-vars
         general, // 常规设置
     }
 
@@ -69,22 +69,22 @@
 </script>
 
 <Panels
-    {panels}
     focus={panels_focus_key}
+    {panels}
     let:focus={focusPanel}
 >
     <!-- 常规设置面板 -->
     <Panel display={panels[0]?.key === focusPanel}>
         <!-- 重置设置 -->
         <Item
-            title={i18n.settings.generalSettings.reset.title}
             text={i18n.settings.generalSettings.reset.description}
+            title={i18n.settings.generalSettings.reset.title}
         >
             <Input
                 slot="input"
-                type={ItemType.button}
                 settingKey="Reset"
                 settingValue={i18n.settings.generalSettings.reset.text}
+                type={ItemType.button}
                 on:clicked={resetOptions}
             />
         </Item>
