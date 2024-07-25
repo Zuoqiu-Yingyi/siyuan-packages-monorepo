@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-07-25
+
+- 将 `eslint` 配置应用于 `template` 模块 | Apply `eslint` configuration to `template` module
+
 ## 2024-07-19
 
 - 将 `eslint` 配置应用于 `@workspace/components` 模块 | Apply `eslint` configuration to `@workspace/components` module
