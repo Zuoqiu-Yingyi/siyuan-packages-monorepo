@@ -3,9 +3,10 @@
         "composite": true,
         "module": "ESNext",
         "moduleResolution": "bundler",
-        "skipLibCheck": true
+        "skipLibCheck": true,
     },
     "include": [
-        "vite.config.ts"
-    ]
+        "svelte.config.js",
+        "vite.config.ts",
+    ],
 }

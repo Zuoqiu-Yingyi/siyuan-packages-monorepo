@@ -1,31 +1,30 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import siyuan from "siyuan";
-import type { ISiyuanGlobal } from "@workspace/types/siyuan";
-
-import { normalize } from "@workspace/utils/path/normalize";
-import { Logger } from "@workspace/utils/logger";
 import {
     Client,
     SiyuanFileSystem,
 } from "@siyuan-community/siyuan-sdk";
+import siyuan from "siyuan";
 
-declare var globalThis: ISiyuanGlobal;
+import { Logger } from "@workspace/utils/logger";
+import { normalize } from "@workspace/utils/path/normalize";
+
+import type { ISiyuanGlobal } from "@workspace/types/siyuan";
+
+declare let globalThis: ISiyuanGlobal;
 
 export default class OpenApiPlugin extends siyuan.Plugin {
     private static readonly GLOBAL: Record<string, any> = globalThis;
@@ -46,7 +45,7 @@ export default class OpenApiPlugin extends siyuan.Plugin {
         );
     }
 
-    onload() {
+    public override onload() {
         OpenApiPlugin.GLOBAL[OpenApiPlugin.PROPERTY_NAME] = {
             siyuan,
             plugin: this,
@@ -59,7 +58,7 @@ export default class OpenApiPlugin extends siyuan.Plugin {
         };
     }
 
-    onunload() {
+    public override onunload() {
         delete OpenApiPlugin.GLOBAL[OpenApiPlugin.PROPERTY_NAME];
     }
 }
