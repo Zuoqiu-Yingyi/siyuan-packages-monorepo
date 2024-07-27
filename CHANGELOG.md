@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-07-27
+
+- 将换行符 `crlf` 替换为 `lf` | Replace the line break `crlf` with `lf`
+
 ## 2024-07-26
 
 - 将 `eslint` 配置应用于 `open-api` 模块 | Apply `eslint` configuration to `open-api` module
