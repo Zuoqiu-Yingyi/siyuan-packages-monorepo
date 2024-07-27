@@ -1,11 +1,13 @@
 {
     "name": "open-api",
-    "private": true,
-    "version": "1.0.5",
     "type": "module",
+    "version": "1.0.5",
+    "private": true,
     "scripts": {
         "build": "vite build",
-        "build:dev": "vite build --sourcemap inline"
+        "build:dev": "vite build --sourcemap inline",
+        "lint": "eslint --max-warnings 0 .",
+        "format": "eslint --fix ."
     },
     "dependencies": {
         "@workspace/types": "workspace:^",

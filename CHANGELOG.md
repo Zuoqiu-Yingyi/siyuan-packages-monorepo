@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-07-26
+
+- 将 `eslint` 配置应用于 `open-api` 模块 | Apply `eslint` configuration to `open-api` module
+
 ## 2024-07-25
 
 - 将 `eslint` 配置应用于 `template` 模块 | Apply `eslint` configuration to `template` module
