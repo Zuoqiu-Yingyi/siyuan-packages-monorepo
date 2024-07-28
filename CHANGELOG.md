@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-07-28
+
+- 将 `eslint` 配置应用于 `webview` 模块 | Apply `eslint` configuration to `webview` module
+
 ## 2024-07-27
 
 - 将换行符 `crlf` 替换为 `lf` | Replace the line break `crlf` with `lf`

@@ -108,8 +108,8 @@ export function parseSiyuanURL(url: URL): ISiyuanUrlParams | null {
  * 解析思源超链接 URL
  * @param url - URL
  */
-export function parseSiyuanWebURL(url: URL): ISiyuanUrlParams | null {
-    if (regexp.id.test(url.searchParams.get("id")!)) { // 思源页面访问 URL
+export function parseSiyuanWebURL(url?: URL): ISiyuanUrlParams | null {
+    if (url && regexp.id.test(url.searchParams.get("id")!)) { // 思源页面访问 URL
         return {
             id: url.searchParams.get("id")!,
             focus: url.searchParams.get("focus") === "1",

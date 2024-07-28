@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Zuoqiu Yingyi
+// Copyright (C) 2024 Zuoqiu Yingyi
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -13,18 +13,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import {
-    i18nCheck,
-    i18nChecks,
-} from "@workspace/types/siyuan/i18n";
+import type { ISiyuan, ISiyuanExtends } from "@workspace/types/siyuan";
 
-import type zh_Hant from "~/public/i18n/zh_CHT.json";
-import type zh_Hans from "~/public/i18n/zh_CN.json";
-
-export type I18N = typeof zh_Hans;
-
-i18nChecks([
-    i18nCheck<I18N, typeof zh_Hans>(),
-    i18nCheck<I18N, typeof zh_Hant>(),
-    i18nCheck<I18N, typeof en>(),
-]);
+declare global {
+    interface Window extends ISiyuanExtends {
+        siyuan: ISiyuan;
+    }
+}
