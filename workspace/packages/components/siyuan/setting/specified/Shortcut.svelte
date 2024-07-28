@@ -42,8 +42,8 @@
     export let shortcut: IMouseStatus; // 快捷键
 
     /* 最小宽度 */
-    export let minWidth;
-    export let marginRight;
+    export let minWidth: string;
+    export let marginRight: string;
 
     /* 是否显示 */
     export let displayCtrlKey = true;

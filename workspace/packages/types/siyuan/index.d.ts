@@ -28,6 +28,14 @@ export type openTabParametersOptionsCustom = openTabParametersOptions.custom;
 
 export interface ISiyuan extends siyuan.ISiyuan {
     languages: Record<string, string>;
+    coordinates?: {
+        pageX: number;
+        pageY: number;
+        clientX: number;
+        clientY: number;
+        screenX: number;
+        screenY: number;
+    };
 }
 
 // REF: https://github.com/siyuan-note/siyuan-android/blob/fix/open-link-use-js/app/src/main/java/org/b3log/siyuan/JSAndroid.java
