@@ -1,24 +1,22 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * 清洗字体名称
- * @params font: 字体名称
- * @return: 清洗后的字体名称(有效的 CSS 字体名称)
+ * @param font - 字体名称
+ * @returns 清洗后的字体名称(有效的 CSS 字体名称)
  */
 export function washFontName(font: string): string {
     font = font.trim();
@@ -35,30 +33,32 @@ export function washFontName(font: string): string {
 
 /**
  * 清洗字体列表
- * @params fonts: 字体名称列表
- * @return: 清洗后的字体名称(有效的 CSS 字体名称)
+ * @param fonts - 字体名称列表
+ * @returns 清洗后的字体名称(有效的 CSS 字体名称)
  */
 export function washFontList(fonts: string[]): string[] {
-    return fonts.filter(font => !/^\s*$/.test(font)).map(washFontName);
+    return fonts.filter((font) => !/^\s*$/.test(font)).map(washFontName);
 }
 
+/* eslint-disable tsdoc/syntax */
 /**
  * 字体样式
- * @params fontList.base: 基础字体列表
- * @params fontList.editor: 编辑器字体列表
- * @params fontList.code: 代码字体列表
- * @params fontList.graph: 关系图字体列表
- * @params fontList.math: 数学公式字体列表
- * @params fontList.emoji: 表情符号字体列表
+ * @param fontList - 字体列表配置
+ * @param fontList.base - 基础字体列表
+ * @param fontList.editor - 编辑器字体列表
+ * @param fontList.code - 代码字体列表
+ * @param fontList.graph - 关系图字体列表
+ * @param fontList.math - 数学公式字体列表
+ * @param fontList.emoji - 表情符号字体列表
  * @return: css 代码
  */
 export function fontFamilyStyle(fontList: {
-    base?: string[],
-    editor?: string[],
-    code?: string[],
-    graph?: string[],
-    math?: string[],
-    emoji?: string[],
+    base?: string[];
+    editor?: string[];
+    code?: string[];
+    graph?: string[];
+    math?: string[];
+    emoji?: string[];
 }): string {
     const css: string[] = [];
     css.push(":root {");
@@ -95,3 +95,4 @@ export function fontFamilyStyle(fontList: {
     css.push("}");
     return css.join("\n");
 }
+/* eslint-enable tsdoc/syntax */

@@ -25,7 +25,7 @@ import type zh_Hans from "~/public/i18n/zh_CN.json";
 export type I18N = typeof zh_Hans;
 
 i18nChecks([
-    i18nCheck<I18N, typeof zh_Hans>(),
-    i18nCheck<I18N, typeof zh_Hant>(),
     i18nCheck<I18N, typeof en_US>(),
+    i18nCheck<I18N, typeof zh_Hant>(),
+    i18nCheck<I18N, typeof zh_Hans>(),
 ]);

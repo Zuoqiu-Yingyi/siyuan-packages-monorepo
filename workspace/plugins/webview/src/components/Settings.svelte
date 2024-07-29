@@ -73,7 +73,7 @@
     /* eslint-enable no-unused-vars */
 
     const panels_focus_key = PanelKey.general;
-    const panels: [ITab, ITab, ITab] = [
+    const panels = [
         {
             key: PanelKey.general,
             text: i18n.settings.generalSettings.title,
@@ -92,7 +92,7 @@
             name: i18n.settings.openWindow,
             icon: "#iconOpenWindow",
         },
-    ];
+    ] as const satisfies ITab[];
 
     const tab_settings_tabs_focus_key = TabKey.general;
     const window_settings_tabs_focus_key = TabKey.general;
@@ -116,7 +116,7 @@
                 name: i18n.settings.shortcut,
                 icon: "⌨",
             },
-        ] as [ITab, ITab, ITab],
+        ] as const satisfies ITab[],
         window: [
             {
                 key: TabKey.general,
@@ -142,7 +142,7 @@
                 name: i18n.settings.siyuan.title,
                 icon: "📝",
             },
-        ] as [ITab, ITab, ITab, ITab],
+        ] as const satisfies ITab[],
     };
 </script>
 

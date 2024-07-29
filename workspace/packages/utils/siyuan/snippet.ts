@@ -16,7 +16,7 @@
 export interface ISnippet {
     id: string;
     name: string;
-    type: string;
+    type: "css" | "js";
     enabled: boolean;
     content: string;
 }
