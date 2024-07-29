@@ -58,14 +58,14 @@
     }
 
     const panels_focus_key = PanelKey.general;
-    const panels: ITab[] = [
+    const panels = [
         {
             key: PanelKey.general,
             text: i18n.settings.generalSettings.title,
             name: i18n.settings.generalSettings.title,
             icon: "#iconSettings",
         },
-    ];
+    ] as const satisfies ITab[];
 </script>
 
 <Panels
@@ -74,7 +74,7 @@
     let:focus={focusPanel}
 >
     <!-- 常规设置面板 -->
-    <Panel display={panels[0]?.key === focusPanel}>
+    <Panel display={panels[0].key === focusPanel}>
         <!-- 重置设置 -->
         <Item
             text={i18n.settings.generalSettings.reset.description}

@@ -42,8 +42,10 @@
     export let shortcut: IMouseStatus; // 快捷键
 
     /* 最小宽度 */
-    export let minWidth: string;
-    export let marginRight: string;
+    /* eslint-disable no-undef-init */
+    export let minWidth: string | undefined = undefined;
+    export let marginRight: string | undefined = undefined;
+    /* eslint-enable no-undef-init */
 
     /* 是否显示 */
     export let displayCtrlKey = true;

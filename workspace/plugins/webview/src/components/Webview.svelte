@@ -57,7 +57,7 @@
     let address = globalThis.decodeURIComponent(src); // 地址栏
     let devtools_opened = false; // 开发者工具是否已打开
 
-    let iframe: HTMLIFrameElement; // iframe 标签
+    let iframe: HTMLIFrameElement | null = null; // iframe 标签
     let webview: Electron.WebviewTag; // webview 标签
     let webview_pointer_events_disable = false; // 是否禁用 webview 的鼠标事件
 
@@ -66,6 +66,8 @@
 
     let status_display = false; // 状态栏显示状态
     let status = ""; // 状态栏内容
+
+    void iframe;
 
     /* 加载 URL */
     function loadURL(href: string): void {
@@ -110,7 +112,7 @@
     }
 
     /* 地址栏存在来自外部更改 */
-    function onAddressChange(_e) {
+    function onAddressChange(_e: Event) {
         // plugin.logger.debug(e);
 
         if (address) {
@@ -234,7 +236,7 @@
             tab.tab.headElement.querySelector(".item__graphic")?.remove();
 
             if (favicons.length > 0) {
-                const favicon = favicons[0]; // 图标地址
+                const favicon = favicons[0]!; // 图标地址
                 const iconElement = tab.tab.headElement.querySelector(".item__icon"); // 图标容器
 
                 /* 图标容器不存在或者图标地址更改时插入/更新图标 */
@@ -255,7 +257,7 @@
             }
             else {
                 /* 设置默认图标 */
-                tab.tab.setDocIcon("🌐".codePointAt(0).toString(16));
+                tab.tab.setDocIcon("🌐".codePointAt(0)!.toString(16));
             }
         });
 
@@ -376,7 +378,7 @@
                     icon: "iconOpenWindow",
                     label: i18n.menu.openByNewWindow.label,
                     action,
-                    click: (_element, event) => plugin.openWebpageWindow(url, title, {
+                    click: (_element, event) => void plugin.openWebpageWindow(url, title, {
                         screenX: event.screenX,
                         screenY: event.screenY,
                     }),
@@ -469,7 +471,7 @@
                 return items;
             }
 
-            function buildMarkdownLink(text: string, url: string, title: string): string {
+            function buildMarkdownLink(text: string | undefined, url: string, title: string | undefined): string {
                 text = text || "🔗";
                 const markdown: string[] = [];
                 markdown.push("[");
@@ -879,11 +881,11 @@
                 menu = new plugin.siyuan.Menu("plugin-webview-menu", () => {
                     mask_active = false;
                 });
-                _items.forEach((item) => menu.addItem(item));
+                _items.forEach((item) => menu?.addItem(item));
 
                 mask_active = true;
-                mask.focus();
-                menu.open({
+                mask?.focus();
+                menu?.open({
                     x: params.x,
                     y: params.y,
                 });
@@ -891,7 +893,7 @@
         });
     });
 
-    function onmouseenter(_e: MouseEvent): void {
+    function onmouseenter(e: MouseEvent): void {
         webview_pointer_events_disable = e.button !== 0;
     }
     function onmouseleave(_e: MouseEvent): void {

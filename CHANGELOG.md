@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-07-29
+
+- 将 `eslint` 配置应用于 `custom-fonts` 模块 | Apply `eslint` configuration to `custom-fonts` module
+
 ## 2024-07-28
 
 - 将 `eslint` 配置应用于 `webview` 模块 | Apply `eslint` configuration to `webview` module
