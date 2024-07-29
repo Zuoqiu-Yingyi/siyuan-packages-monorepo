@@ -289,10 +289,10 @@ export default class WebviewPlugin extends siyuan.Plugin {
             width: FLAG_MOBILE ? "92vw" : "720px",
             height: FLAG_MOBILE ? undefined : "640px",
         });
-        const dialog_content = dialog.element.querySelector(`#${plugin.SETTINGS_DIALOG_ID}`);
-        if (dialog_content) {
+        const target = dialog.element.querySelector(`#${plugin.SETTINGS_DIALOG_ID}`);
+        if (target) {
             void new Settings({
-                target: dialog_content,
+                target,
                 props: {
                     config: this.config,
                     plugin: this,

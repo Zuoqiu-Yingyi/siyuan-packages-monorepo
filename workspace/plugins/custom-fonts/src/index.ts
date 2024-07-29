@@ -137,15 +137,18 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
             width: FLAG_MOBILE ? "92vw" : "960px",
             height: FLAG_MOBILE ? undefined : "720px",
         });
-        const settings = new Settings({
-            target: dialog.element.querySelector(`#${plugin.SETTINGS_DIALOG_ID}`)!,
-            props: {
-                config: this.config,
-                plugin: this,
-                textareaHeight: 320,
-            },
-        });
-        void settings;
+        const target = dialog.element.querySelector(`#${plugin.SETTINGS_DIALOG_ID}`);
+        if (target) {
+            const settings = new Settings({
+                target,
+                props: {
+                    config: this.config,
+                    plugin: this,
+                    textareaHeight: 320,
+                },
+            });
+            void settings;
+        }
     }
 
     /* 更新样式 */
