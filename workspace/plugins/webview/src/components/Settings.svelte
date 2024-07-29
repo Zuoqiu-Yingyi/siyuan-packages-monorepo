@@ -26,12 +26,13 @@
     import Panel from "@workspace/components/siyuan/setting/panel/Panel.svelte";
     import Panels from "@workspace/components/siyuan/setting/panel/Panels.svelte";
     import Shortcut from "@workspace/components/siyuan/setting/specified/Shortcut.svelte";
-    import { type ITab } from "@workspace/components/siyuan/setting/tab";
     import Tabs from "@workspace/components/siyuan/setting/tab/Tabs.svelte";
     import { MouseButton } from "@workspace/utils/shortcut";
     import { EditorType } from "@workspace/utils/siyuan";
 
     import { MenuBarStatus } from "@/utils/window";
+
+    import type { ITab } from "@workspace/components/siyuan/setting/tab";
 
     import type WebviewPlugin from "@/index";
     import type { IConfig } from "@/types/config";
