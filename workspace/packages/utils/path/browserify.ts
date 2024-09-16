@@ -19,24 +19,24 @@ import type path from "node:path";
 
 export default browserify;
 
-export const basename: typeof path.basename = browserify.basename.bind(browserify);
+export const basename: typeof path.basename = browserify.basename;
 
-export const dirname: typeof path.dirname = browserify.dirname.bind(browserify);
+export const dirname: typeof path.dirname = browserify.dirname;
 
-export const extname: typeof path.extname = browserify.extname.bind(browserify);
+export const extname: typeof path.extname = browserify.extname;
 
-export const format: typeof path.format = browserify.format.bind(browserify);
+export const format: typeof path.format = browserify.format;
 
-export const isAbsolute: typeof path.isAbsolute = browserify.isAbsolute.bind(browserify);
+export const isAbsolute: typeof path.isAbsolute = browserify.isAbsolute;
 
-export const join: typeof path.join = browserify.join.bind(browserify);
+export const join: typeof path.join = browserify.join;
 
-export const normalize: typeof path.normalize = browserify.normalize.bind(browserify);
+export const normalize: typeof path.normalize = browserify.normalize;
 
-export const parse: typeof path.parse = browserify.parse.bind(browserify);
+export const parse: typeof path.parse = browserify.parse;
 
-export const resolve: typeof path.resolve = browserify.resolve.bind(browserify);
+export const resolve: typeof path.resolve = browserify.resolve;
 
-export const relative: typeof path.relative = browserify.relative.bind(browserify);
+export const relative: typeof path.relative = browserify.relative;
 
 // export const toNamespacedPath: typeof path.toNamespacedPath = browserify.toNamespacedPath.bind(browserify);

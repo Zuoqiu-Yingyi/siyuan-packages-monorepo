@@ -1,40 +1,38 @@
 <!--
  Copyright (C) 2023 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
-    import { onMount, createEventDispatcher } from "svelte";
-
-    import type {
-        //
-        default as Monaco,
-        editor as Editor,
-    } from "monaco-editor";
     import loader from "@monaco-editor/loader";
+    import { createEventDispatcher, onMount } from "svelte";
 
-    import { merge } from "@workspace/utils/misc/merge";
-    import { saveFileAs } from "@workspace/utils/misc/save";
     import {
         //
         FLAG_ELECTRON,
         FLAG_IFRAME,
     } from "@workspace/utils/env/native-front-end";
+    import { merge } from "@workspace/utils/misc/merge";
+    import { saveFileAs } from "@workspace/utils/misc/save";
 
-    import { mapLocale } from "@/utils/locale";
     import { DEFAULT_EDITOR_PROPS } from "@/configs/editor";
+    import { Languages } from "@/editor/language";
+    import { mapLocale } from "@/utils/locale";
+
+    import type { editor as Editor } from "monaco-editor";
+    import type Monaco from "monaco-editor";
 
     import type {
         //
@@ -42,7 +40,6 @@
         IEditorProps,
         IStandaloneEditorOptions,
     } from "@/types/editor";
-    import { Languages } from "@/editor/language";
 
     export let plugin: IEditorProps["plugin"];
 
@@ -53,7 +50,7 @@
     export let locale: IEditorProps["locale"] = DEFAULT_EDITOR_PROPS.locale;
 
     export let savable: IEditorProps["savable"] = DEFAULT_EDITOR_PROPS.savable;
-    export let changable: IEditorProps["changable"] = DEFAULT_EDITOR_PROPS.changable;
+    export let changeable: IEditorProps["changeable"] = DEFAULT_EDITOR_PROPS.changeable;
 
     export let original: IEditorProps["original"] = DEFAULT_EDITOR_PROPS.original;
     export let modified: IEditorProps["modified"] = DEFAULT_EDITOR_PROPS.modified;
@@ -64,25 +61,26 @@
 
     let editorElement: HTMLDivElement; // 编辑器挂载的元素
 
-    var monaco: typeof Monaco; // monaco-editor 实例
-    var editor: Editor.IStandaloneCodeEditor; // 常规编辑器实例 (差异对比模式下的修改编辑器)
-    var diffEditor: Editor.IStandaloneDiffEditor; // 差异对比编辑器实例
-    var languages: InstanceType<typeof Languages>; // 语言包实例
+    let monaco: typeof Monaco; // monaco-editor 实例
+    let editor: Editor.IStandaloneCodeEditor; // 常规编辑器实例 (差异对比模式下的修改编辑器)
+    let diffEditor: Editor.IStandaloneDiffEditor; // 差异对比编辑器实例
+    let languages: InstanceType<typeof Languages>; // 语言包实例
 
-    var inited = false; // 编辑器是否初始化完成
+    let inited = false; // 编辑器是否初始化完成
 
     const i18n = plugin.i18n;
     const dispatch = createEventDispatcher<IEditorEvents>();
 
     /* 设置保存功能 (闭包) */
     const setSaveAction = (() => {
-        var disposable: Monaco.IDisposable | void;
+        let disposable: Monaco.IDisposable | void;
         return (savable: boolean) => {
             if (savable) {
                 /* 可保存 */
                 if (disposable) {
-                    /* 存在保存菜单项 */
-                } else {
+                /* 存在保存菜单项 */
+                }
+                else {
                     /* 不存在保存菜单项 */
                     disposable = editor?.addAction({
                         id: "18730D32-5451-4102-B299-BE281BA929B9",
@@ -97,25 +95,20 @@
                         },
                     });
                 }
-            } else {
+            }
+            else {
                 /* 不可保存 */
                 if (disposable) {
                     /* 存在保存菜单项 */
                     disposable.dispose();
                     disposable = undefined;
-                } else {
-                    /* 不存在保存菜单项 */
+                }
+                else {
+                /* 不存在保存菜单项 */
                 }
             }
         };
     })();
-
-    function updateOptions(options: IStandaloneEditorOptions) {
-        if (inited && options) {
-            updateOriginalOptions(options);
-            updateModifiedOptions(options);
-        }
-    }
 
     function updateOriginalOptions(options: IStandaloneEditorOptions) {
         if (inited && options) {
@@ -129,7 +122,8 @@
         if (inited && options) {
             if (diff) {
                 diffEditor?.getModifiedEditor().updateOptions(options);
-            } else {
+            }
+            else {
                 editor?.updateOptions(options);
             }
         }
@@ -143,19 +137,22 @@
         }
     }
 
-    function setModelLanguage(lang: string) {
-        if (inited) {
-            setOriginalModelLanguage(lang);
-            setModifiedModelLanguage(lang);
+    function updateOptions(options: IStandaloneEditorOptions) {
+        if (inited && options) {
+            updateOriginalOptions(options);
+            updateModifiedOptions(options);
         }
     }
 
     function setOriginalModelLanguage(lang: string) {
         if (inited && diffEditor) {
-            monaco?.editor.setModelLanguage(
-                diffEditor.getOriginalEditor().getModel(), //
-                lang, //
-            );
+            const model = diffEditor.getOriginalEditor().getModel();
+            if (model) {
+                monaco?.editor.setModelLanguage(
+                    model,
+                    lang,
+                );
+            }
         }
     }
 
@@ -163,19 +160,33 @@
         if (inited) {
             if (diff) {
                 if (diffEditor) {
-                    monaco?.editor.setModelLanguage(
-                        diffEditor.getModifiedEditor().getModel(), //
-                        lang, //
-                    );
-                }
-            } else {
-                if (editor) {
-                    monaco?.editor.setModelLanguage(
-                        editor.getModel(), //
-                        lang, //
-                    );
+                    const model = diffEditor.getModifiedEditor().getModel();
+                    if (model) {
+                        monaco?.editor.setModelLanguage(
+                            model,
+                            lang,
+                        );
+                    }
                 }
             }
+            else {
+                if (editor) {
+                    const model = editor.getModel();
+                    if (model) {
+                        monaco?.editor.setModelLanguage(
+                            model,
+                            lang,
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    function setModelLanguage(lang: string) {
+        if (inited) {
+            setOriginalModelLanguage(lang);
+            setModifiedModelLanguage(lang);
         }
     }
 
@@ -189,16 +200,17 @@
 
     /* 更改编辑器内容 */
     $: {
-        const temp = changable;
+        const temp = changeable;
         if (inited) {
-            changable = false; // 避免触发 changed 监听器
+            changeable = false; // 避免触发 changed 监听器
             if (diff) {
                 original && diffEditor.getOriginalEditor().setValue(original.value);
                 modified && diffEditor.getModifiedEditor().setValue(modified.value);
-            } else {
+            }
+            else {
                 modified && editor.setValue(modified.value);
             }
-            changable = temp;
+            changeable = temp;
         }
     }
 
@@ -230,8 +242,8 @@
                     switch (true) {
                         case FLAG_ELECTRON: {
                             // Electron 环境
-                            return globalThis.require("node:path").resolve(globalThis.siyuan.config.system.workspaceDir, `./data/plugins/${plugin.name}/libs/monaco-editor/min/vs`);
-                            // return `${globalThis.siyuan.system.workspaceDir}/data/plugins/${plugin.name}/libs/monaco-editor/min/vs`;
+                            return globalThis.require("node:path").resolve(window.siyuan.config.system.workspaceDir, `./data/plugins/${plugin.name}/libs/monaco-editor/min/vs`);
+                        // return `${window.siyuan.system.workspaceDir}/data/plugins/${plugin.name}/libs/monaco-editor/min/vs`;
                         }
                         default: {
                             // 浏览器环境
@@ -239,7 +251,8 @@
                             return url.pathname;
                         }
                     }
-                } else {
+                }
+                else {
                     // 通过 iframe/BrowserWindow 加载
                     switch (true) {
                         case FLAG_ELECTRON: // Electron BrowserWindow 环境
@@ -254,7 +267,7 @@
     // plugin.logger.debug(vs);
 
     loader.config({
-        paths: {
+        "paths": {
             vs,
         },
         // monaco,
@@ -267,7 +280,7 @@
     const init = loader.init();
 
     onMount(() => {
-        init.then(instance => {
+        init.then((instance) => {
             monaco = instance;
             // plugin.logger.debug(monaco.languages.getLanguages());
             languages = new Languages(plugin, monaco, dispatch);
@@ -289,14 +302,16 @@
                     ),
                 });
                 editor = diffEditor.getModifiedEditor();
-            } else {
+            }
+            else {
                 // 常规编辑器
                 if (modified) {
                     editor = monaco.editor.create(
                         editorElement, //
                         merge(options, modified, { language: languages.map(modified?.language ?? "") }), //
                     );
-                } else {
+                }
+                else {
                     editor = monaco.editor.create(
                         editorElement, //
                         options, //
@@ -308,8 +323,8 @@
              * 监听编辑器内容变更事件
              * REF: https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.IStandaloneCodeEditor.html#onDidChangeModelContent
              */
-            editor.onDidChangeModelContent(e => {
-                if (changable) {
+            editor.onDidChangeModelContent((e) => {
+                if (changeable) {
                     dispatch("changed", {
                         value: editor.getValue(),
                         event: e,
@@ -334,8 +349,8 @@
                 contextMenuOrder: 1, // 菜单分组内排序
                 run: () => {
                     // 点击后执行的操作
-                    const wordWrap: Editor.EditorOption.wordWrap = 132;
-                    const wordWrapOverride1: Editor.EditorOption.wordWrapOverride1 = 136;
+                    const wordWrap: Editor.EditorOption.wordWrap = 133;
+                    const wordWrapOverride1: Editor.EditorOption.wordWrapOverride1 = 137;
                     let word_wrap_status: boolean;
                     switch (editor.getOption(wordWrapOverride1)) {
                         case "off":
@@ -374,15 +389,18 @@
                 contextMenuGroupId: "3_file",
                 contextMenuOrder: 2,
                 run: () => {
-                    saveFileAs({
-                        data: editor.getValue(),
-                        filetype: languages.getMimeType(editor.getModel().getLanguageId()),
-                    });
+                    const model = editor.getModel();
+                    if (model) {
+                        saveFileAs({
+                            data: editor.getValue(),
+                            filetype: languages.getMimeType(model.getLanguageId()),
+                        });
+                    }
                 },
             });
 
             /* 语言模式切换命令 */
-            monaco.languages.getLanguages().forEach(lang => {
+            monaco.languages.getLanguages().forEach((lang) => {
                 editor.addAction({
                     id: `set-model-language-${lang.id}`,
                     label: `${i18n.editor.action.setModelLanguage.label}: ${lang.id}`,
@@ -393,7 +411,7 @@
             });
 
             inited = true;
-        }).catch(err => {
+        }).catch((err) => {
             inited = false;
             plugin.logger.error(err);
         });
@@ -403,8 +421,8 @@
 <!-- REF: https://www.svelte.cn/docs#bind_element -->
 <div
     bind:this={editorElement}
-    class:fn__flex-1={embed}
     class:editor={!embed}
+    class:fn__flex-1={embed}
 />
 
 <style lang="less">

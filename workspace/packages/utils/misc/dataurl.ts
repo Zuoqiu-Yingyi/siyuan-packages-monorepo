@@ -13,12 +13,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Buffer } from "node:buffer";
-
 import parser from "parse-data-url";
-
-// eslint-disable-next-line node/prefer-global/buffer
-globalThis.Buffer = Buffer;
 
 export function dataURL2str(dataURL: string): string | undefined {
     const result = parser(dataURL);

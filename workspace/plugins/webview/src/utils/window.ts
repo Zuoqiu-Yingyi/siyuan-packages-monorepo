@@ -56,7 +56,7 @@ export function openNewWindow(
     overwriteParams: IOverwrite | IWindowParams, // 覆盖参数
     webPreferences: IWebPreferences, // 页面参数
     plugin: InstanceType<typeof WebviewPlugin>, // 插件对象
-): Electron.BrowserWindow | Window | null {
+): Electron.BrowserWindow | null | Window {
     overwriteParams.webPreferences = merge(overwriteParams.webPreferences || {}, webPreferences) as IWebPreferences;
     const params = merge(windowParams, overwriteParams) as IOverwrite & IWindowParams;
 

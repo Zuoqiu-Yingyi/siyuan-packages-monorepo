@@ -1,75 +1,72 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /* 处理器门面 */
 
-import type MonacoEditorPlugin from "@/index";
-
-import type {
-    Handler,
-    IBaseHandlerOptions,
-    IHandler,
-} from "@/handlers/handler";
-import {
-    BlockHandler,
-    type IBlockHandler,
-    type IBlockHandlerOptions,
-} from "@/handlers/block";
-import {
-    AssetHandler,
-    type IAssetHandler,
-    type IAssetHandlerOptions,
-} from "@/handlers/asset";
-import {
-    LocalHandler,
-    type ILocalHandler,
-    type ILocalHandlerOptions,
-} from "@/handlers/local";
-
-import type {
-    Breadcrumb,
-    IBaseBreadcrumbOptions,
-    IBreadcrumb,
-} from "@/breadcrumb/breadcrumb";
-import {
-    BlockBreadcrumb,
-    type IBlockBreadcrumbOptions,
-    type IBlockStore,
-} from "@/breadcrumb/block";
 import {
     AssetBreadcrumb,
     type IAssetBreadcrumbOptions,
     type IAssetStore,
 } from "@/breadcrumb/asset";
 import {
+    BlockBreadcrumb,
+    type IBlockBreadcrumbOptions,
+    type IBlockStore,
+} from "@/breadcrumb/block";
+import { HistoryBreadcrumb, type IHistoryBreadcrumbOptions } from "@/breadcrumb/history";
+import { InboxBreadcrumb, type IInboxBreadcrumbOptions } from "@/breadcrumb/inbox";
+import {
     LocalBreadcrumb,
     type ILocalBreadcrumbOptions,
     type ILocalStore,
 } from "@/breadcrumb/local";
-import { NetworkHandler, type INetworkHandlerOptions, type INetworkHandler } from "@/handlers/network";
 import { NetworkBreadcrumb, type INetworkBreadcrumbOptions, type INetworkStore } from "@/breadcrumb/network";
-import { SnippetHandler, type ISnippetHandlerOptions } from "@/handlers/snippet";
-import { SnippetBreadcrumb, type ISnippetBreadcrumbOptions } from "@/breadcrumb/snippet";
-import { InboxHandler, type IInboxHandlerOptions } from "@/handlers/inbox";
-import { InboxBreadcrumb, type IInboxBreadcrumbOptions } from "@/breadcrumb/inbox";
-import { HistoryHandler, type IHistoryHandlerOptions } from "@/handlers/history";
-import { HistoryBreadcrumb, type IHistoryBreadcrumbOptions } from "@/breadcrumb/history";
-import { SnapshotHandler, type ISnapshotHandlerOptions } from "@/handlers/snapshot";
 import { SnapshotBreadcrumb, type ISnapshotBreadcrumbOptions } from "@/breadcrumb/snapshot";
+import { SnippetBreadcrumb, type ISnippetBreadcrumbOptions } from "@/breadcrumb/snippet";
+import {
+    AssetHandler,
+    type IAssetHandler,
+    type IAssetHandlerOptions,
+} from "@/handlers/asset";
+import {
+    BlockHandler,
+    type IBlockHandler,
+    type IBlockHandlerOptions,
+} from "@/handlers/block";
+import { HistoryHandler, type IHistoryHandlerOptions } from "@/handlers/history";
+import { InboxHandler, type IInboxHandlerOptions } from "@/handlers/inbox";
+import {
+    LocalHandler,
+    type ILocalHandler,
+    type ILocalHandlerOptions,
+} from "@/handlers/local";
+import { NetworkHandler, type INetworkHandler, type INetworkHandlerOptions } from "@/handlers/network";
+import { SnapshotHandler, type ISnapshotHandlerOptions } from "@/handlers/snapshot";
+import { SnippetHandler, type ISnippetHandlerOptions } from "@/handlers/snippet";
+
+import type {
+    Breadcrumb,
+    IBaseBreadcrumbOptions,
+    IBreadcrumb,
+} from "@/breadcrumb/breadcrumb";
+import type {
+    Handler,
+    IBaseHandlerOptions,
+    IHandler,
+} from "@/handlers/handler";
+import type MonacoEditorPlugin from "@/index";
 
 /* 处理器类型 */
 export enum HandlerType {
@@ -91,70 +88,70 @@ export type IFacadeOptions = IFacadeAssetOptions
     | IFacadeNetworkOptions
     | IFacadeSnapshotOptions
     | IFacadeSnippetOptions;
-export type IStore = IBlockStore
-    | IAssetStore
+export type IStore = IAssetStore
+    | IBlockStore
     | ILocalStore
     | INetworkStore;
-export type IFacadeHandler = IBlockHandler
-    | IAssetHandler
+export type IFacadeHandler = IAssetHandler
+    | IBlockHandler
     | ILocalHandler
     | INetworkHandler;
 
-export type IFacadeWindowOptions = Pick<IFacadeOptions, "type" | "handler">;
+export type IFacadeWindowOptions = Pick<IFacadeOptions, "handler" | "type">;
 
 /* 门面参数 */
 export interface IFacadeBaseOptions {
-    type: HandlerType,
-    handler: IBaseHandlerOptions,
-    breadcrumb: IBaseBreadcrumbOptions,
+    type: HandlerType;
+    handler: IBaseHandlerOptions;
+    breadcrumb: IBaseBreadcrumbOptions;
 }
 
 export interface IFacadeAssetOptions extends IFacadeBaseOptions {
-    type: HandlerType.asset,
-    handler: IAssetHandlerOptions,
-    breadcrumb: IAssetBreadcrumbOptions,
+    type: HandlerType.asset;
+    handler: IAssetHandlerOptions;
+    breadcrumb: IAssetBreadcrumbOptions;
 }
 
 export interface IFacadeBlockOptions extends IFacadeBaseOptions {
-    type: HandlerType.block,
-    handler: IBlockHandlerOptions,
-    breadcrumb: IBlockBreadcrumbOptions,
+    type: HandlerType.block;
+    handler: IBlockHandlerOptions;
+    breadcrumb: IBlockBreadcrumbOptions;
 }
 
 export interface IFacadeHistoryOptions extends IFacadeBaseOptions {
-    type: HandlerType.history,
-    handler: IHistoryHandlerOptions,
-    breadcrumb: IHistoryBreadcrumbOptions,
+    type: HandlerType.history;
+    handler: IHistoryHandlerOptions;
+    breadcrumb: IHistoryBreadcrumbOptions;
 }
 
 export interface IFacadeInboxOptions extends IFacadeBaseOptions {
-    type: HandlerType.inbox,
-    handler: IInboxHandlerOptions,
-    breadcrumb: IInboxBreadcrumbOptions,
+    type: HandlerType.inbox;
+    handler: IInboxHandlerOptions;
+    breadcrumb: IInboxBreadcrumbOptions;
 }
 
 export interface IFacadeLocalOptions extends IFacadeBaseOptions {
-    type: HandlerType.local,
-    handler: ILocalHandlerOptions,
-    breadcrumb: ILocalBreadcrumbOptions,
+    type: HandlerType.local;
+    handler: ILocalHandlerOptions;
+    breadcrumb: ILocalBreadcrumbOptions;
 }
 
 export interface IFacadeNetworkOptions extends IFacadeBaseOptions {
-    type: HandlerType.network,
-    handler: INetworkHandlerOptions,
-    breadcrumb: INetworkBreadcrumbOptions,
+    type: HandlerType.network;
+    handler: INetworkHandlerOptions;
+    breadcrumb: INetworkBreadcrumbOptions;
 }
 
 export interface IFacadeSnapshotOptions extends IFacadeBaseOptions {
-    type: HandlerType.snapshot,
-    handler: ISnapshotHandlerOptions,
-    breadcrumb: ISnapshotBreadcrumbOptions,
+    type: HandlerType.snapshot;
+    handler: ISnapshotHandlerOptions;
+    breadcrumb: ISnapshotBreadcrumbOptions;
 }
 
 export interface IFacadeSnippetOptions extends IFacadeBaseOptions {
-    type: HandlerType.snippet,
-    handler: ISnippetHandlerOptions,
-    breadcrumb: ISnippetBreadcrumbOptions,
+    type: HandlerType.snippet;
+    handler: ISnippetHandlerOptions;
+    breadcrumb: ISnippetBreadcrumbOptions;
 }
 
 export interface ITabOptions {
@@ -167,29 +164,29 @@ export interface IWindowOptions {
 }
 
 export class Facade {
-    protected assetHandler: InstanceType<typeof AssetHandler>;
-    protected assetBreadcrumb: InstanceType<typeof AssetBreadcrumb>;
+    protected assetHandler?: InstanceType<typeof AssetHandler>;
+    protected assetBreadcrumb?: InstanceType<typeof AssetBreadcrumb>;
 
-    protected blockHandler: InstanceType<typeof BlockHandler>;
-    protected blockBreadcrumb: InstanceType<typeof BlockBreadcrumb>;
+    protected blockHandler?: InstanceType<typeof BlockHandler>;
+    protected blockBreadcrumb?: InstanceType<typeof BlockBreadcrumb>;
 
-    protected historyHandler: InstanceType<typeof HistoryHandler>;
-    protected historyBreadcrumb: InstanceType<typeof HistoryBreadcrumb>;
+    protected historyHandler?: InstanceType<typeof HistoryHandler>;
+    protected historyBreadcrumb?: InstanceType<typeof HistoryBreadcrumb>;
 
-    protected inboxHandler: InstanceType<typeof InboxHandler>;
-    protected inboxBreadcrumb: InstanceType<typeof InboxBreadcrumb>;
+    protected inboxHandler?: InstanceType<typeof InboxHandler>;
+    protected inboxBreadcrumb?: InstanceType<typeof InboxBreadcrumb>;
 
-    protected localHandler: InstanceType<typeof LocalHandler>;
-    protected localBreadcrumb: InstanceType<typeof LocalBreadcrumb>;
+    protected localHandler?: InstanceType<typeof LocalHandler>;
+    protected localBreadcrumb?: InstanceType<typeof LocalBreadcrumb>;
 
-    protected networkHandler: InstanceType<typeof NetworkHandler>;
-    protected networkBreadcrumb: InstanceType<typeof NetworkBreadcrumb>;
+    protected networkHandler?: InstanceType<typeof NetworkHandler>;
+    protected networkBreadcrumb?: InstanceType<typeof NetworkBreadcrumb>;
 
-    protected snapshotHandler: InstanceType<typeof SnapshotHandler>;
-    protected snapshotBreadcrumb: InstanceType<typeof SnapshotBreadcrumb>;
+    protected snapshotHandler?: InstanceType<typeof SnapshotHandler>;
+    protected snapshotBreadcrumb?: InstanceType<typeof SnapshotBreadcrumb>;
 
-    protected snippetHandler: InstanceType<typeof SnippetHandler>;
-    protected snippetBreadcrumb: InstanceType<typeof SnippetBreadcrumb>;
+    protected snippetHandler?: InstanceType<typeof SnippetHandler>;
+    protected snippetBreadcrumb?: InstanceType<typeof SnippetBreadcrumb>;
 
     constructor(
         protected readonly plugin: InstanceType<typeof MonacoEditorPlugin>,
@@ -308,13 +305,14 @@ export class Facade {
         const handlerMaker = this.dispatchHandlerMaker(options.type);
         const breadcrumbMaker = this.dispatchBreadcrumbMaker(options.type);
 
-        if (stores) options.breadcrumb.stores = stores;
+        if (stores)
+            options.breadcrumb.stores = stores;
         const promises: [Promise<IHandler>, Promise<IBreadcrumb>] = [
             handlerMaker.makeHandler(options.handler),
             breadcrumbMaker.makeBreadcrumb(options.breadcrumb),
         ];
         const [handler, breadcrumb] = await Promise.all(promises) as [IFacadeHandler, IBreadcrumb];
-        breadcrumb.breadcrumbIcons.forEach(icon => {
+        breadcrumb.breadcrumbIcons.forEach((icon) => {
             switch (icon.type) {
                 case "refresh":
                     icon.disabled = !handler.update;

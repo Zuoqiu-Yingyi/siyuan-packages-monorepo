@@ -105,7 +105,7 @@ export function openBrowserWindow(options: IOpenWindowOptins): Electron.BrowserW
  * @param options - 窗口设置项
  * @returns 窗口对象
  */
-export function openPopupWindow(options: IOpenWindowOptins): Window | null {
+export function openPopupWindow(options: IOpenWindowOptins): null | Window {
     if (options.base.center) {
         if (options.base.width) {
             options.base.x = (globalThis.screen.width - options.base.width) / 2;
@@ -119,14 +119,12 @@ export function openPopupWindow(options: IOpenWindowOptins): Window | null {
         `popup = true`,
     ];
 
-    /* eslint-disable ts/no-unused-expressions */
     (options.base.x !== undefined) && features.push(`left = ${options.base.x}`);
     (options.base.y !== undefined) && features.push(`top = ${options.base.y}`);
     (options.base.width !== undefined) && features.push(`width = ${options.base.width}`);
     (options.base.height !== undefined) && features.push(`height = ${options.base.height}`);
     (options.extra?.noopener !== undefined) && features.push(`noopener = ${options.extra.noopener}`);
     (options.extra?.noreferrer !== undefined) && features.push(`noreferrer = ${options.extra.noreferrer}`);
-    /* eslint-enable ts/no-unused-expressions */
 
     const popup = globalThis.open(
         options.url.toString(),
@@ -142,7 +140,7 @@ export function openPopupWindow(options: IOpenWindowOptins): Window | null {
  * @param options - 窗口设置项
  * @returns 窗口对象
  */
-export function openWindow(options: IOpenWindowOptins): Electron.BrowserWindow | Window | null {
+export function openWindow(options: IOpenWindowOptins): Electron.BrowserWindow | null | Window {
     return FLAG_ELECTRON
         ? openBrowserWindow(options)
         : openPopupWindow(options);

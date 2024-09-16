@@ -1,25 +1,26 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /* 快照项处理器 */
 import { Handler, type IBaseHandlerOptions, type IHandler } from "./handler";
 
-import type { IEditorModel } from "@/types/editor";
+import type MonacoEditorPlugin from "@/index";
 import type { IMonacoEditorOptions } from "@/types/config";
+import type { IEditorModel } from "@/types/editor";
+
+type Plugin = InstanceType<typeof MonacoEditorPlugin>;
 
 export interface ISnapshotHandler extends IHandler {
     original: IEditorModel; // 原始编辑器模式
@@ -37,7 +38,7 @@ export class SnapshotHandler extends Handler {
     protected customTabSize: number; // 用户定义的缩进大小,
 
     constructor(
-        plugin,
+        plugin: Plugin,
     ) {
         super(plugin);
         this.customTabSize = this.plugin.config.editor.options.tabSize;

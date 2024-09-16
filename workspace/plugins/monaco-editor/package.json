@@ -1,8 +1,8 @@
 {
     "name": "monaco-editor",
-    "private": true,
-    "version": "0.2.5",
     "type": "module",
+    "version": "0.2.5",
+    "private": true,
     "scripts": {
         "dev": "vite",
         "build:dev": "npm run build:dev:plugin && npm run build:dev:iframes",
@@ -13,7 +13,9 @@
         "build:plugin": "vite build --mode plugin",
         "build:iframes": "vite build --mode iframes",
         "preview": "vite preview",
-        "check": "svelte-check --tsconfig ./tsconfig.json"
+        "lint": "eslint --max-warnings 0 .",
+        "format": "eslint --fix .",
+        "check:svelte": "svelte-check --tsconfig ./tsconfig.json"
     },
     "dependencies": {
         "@workspace/components": "workspace:^",
@@ -23,9 +25,9 @@
     "devDependencies": {
         "@monaco-editor/loader": "^1.4.0",
         "@siyuan-community/vditor": "^3.9.6",
-        "@types/streamsaver": "^2.0.4",
-        "material-icon-theme": "^5.0.0",
-        "monaco-editor": "^0.48.0",
+        "@types/streamsaver": "^2.0.5",
+        "material-icon-theme": "^5.10.0",
+        "monaco-editor": "^0.51.0",
         "streamsaver": "^2.0.6",
         "xml-js": "^1.6.11"
     }

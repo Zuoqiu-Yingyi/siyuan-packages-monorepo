@@ -39,13 +39,13 @@
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#allow | allow - MDN}
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Permissions_Policy | 权限策略 - MDN}
      */
-    export let allow: string | null = null;
+    export let allow: null | string = null;
     /**
      * 控制 iframe 的内容安全策略
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#csp | csp - MDN}
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CSP | 内容安全策略 - MDN}
      */
-    export let csp: string | null = null;
+    export let csp: null | string = null;
     /**
      * 控制 iframe 内容加载优先级
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#importance | importance - MDN}
@@ -55,22 +55,22 @@
      * 嵌入的浏览上下文的名称
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#name | name - MDN}
      */
-    export let name: string | null = null;
+    export let name: null | string = null;
     /**
      * 获取 iframe 资源时如何发送 referrer 首部
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#referrerpolicy | referrerpolicy - MDN}
      */
-    export let referrerpolicy: ReferrerPolicy | null = null;
+    export let referrerpolicy: null | ReferrerPolicy = null;
     /**
      * 控制应用于嵌入在 <iframe> 中的内容的限制
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#sandbox | sandbox - MDN}
      */
-    export let sandbox: string | null = null;
+    export let sandbox: null | string = null;
     /**
      * 需要渲染的 HTML 代码
      * - {@link https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/iframe#srcdoc | srcdoc - MDN}
      */
-    export let srcdoc: string | null = null; // iframe 资源路径
+    export let srcdoc: null | string = null; // iframe 资源路径
 
     /**
      * 在 iframe 元素创建时调用

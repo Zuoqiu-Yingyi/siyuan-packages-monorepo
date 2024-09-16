@@ -1,90 +1,94 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-/* 插件入口 */
+import "./styles/plugin.less";
+
+import { Client } from "@siyuan-community/siyuan-sdk";
 import siyuan from "siyuan";
 import streamsaver from "streamsaver";
 
-/* 静态资源 */
-import "./styles/plugin.less";
-
-import icon_plugin from "./assets/symbols/icon-monaco-editor.symbol?raw";
-import icon_time from "./assets/symbols/icon-monaco-editor-time.symbol?raw";
-import icon_slash from "./assets/symbols/icon-monaco-editor-slash.symbol?raw";
-import icon_file_tree from "./assets/symbols/icon-monaco-editor-file-tree.symbol?raw";
-import icon_folder_opend from "./assets/symbols/icon-monaco-editor-folder-opend.symbol?raw";
-import icon_folder_closed from "./assets/symbols/icon-monaco-editor-folder-closed.symbol?raw";
-import icon_material_icons from "./assets/symbols/icon-monaco-editor-material-icons.symbol?raw";
-
-/* SDK */
-import { Client } from "@siyuan-community/siyuan-sdk";
-
-/* 工作空间资源 */
+import { FileTreeNodeType } from "@workspace/components/siyuan/tree/file";
+import { showSaveDialog } from "@workspace/utils/electron/remote/dialog";
+import { showItemInFolder } from "@workspace/utils/electron/shell";
+import { FLAG_ELECTRON } from "@workspace/utils/env/front-end";
+import { isBinaryPath } from "@workspace/utils/file/binary";
 import { Logger } from "@workspace/utils/logger";
+import { merge } from "@workspace/utils/misc/merge";
+import { trimPrefix } from "@workspace/utils/misc/string";
 import {
-    getNodeID,
+    basename,
+    parse,
+} from "@workspace/utils/path/browserify";
+import { normalize } from "@workspace/utils/path/normalize";
+import { isMatchedMouseEvent } from "@workspace/utils/shortcut/match";
+import {
     getHistoryCreated,
     getHistoryPath,
-    getShorthandID,
+    getNodeID,
     getSnapshotIDs,
     getSnippetID,
     isSiyuanProtyleWysiwyg,
 } from "@workspace/utils/siyuan/dom";
 import {
+    getBlockMenuContext,
+    type BlockMenuDetail,
+} from "@workspace/utils/siyuan/menu/block";
+import { fn__code } from "@workspace/utils/siyuan/text/span";
+import {
     isStaticPathname,
     isStaticWebFileServicePath,
     workspacePath2StaticPathname,
 } from "@workspace/utils/siyuan/url";
-import { merge } from "@workspace/utils/misc/merge";
-import {
-    getBlockMenuContext,
-    type BlockMenuDetail,
-} from "@workspace/utils/siyuan/menu/block";
-import { FLAG_ELECTRON } from "@workspace/utils/env/front-end";
-import { isMatchedMouseEvent } from "@workspace/utils/shortcut/match";
-import { normalize } from "@workspace/utils/path/normalize";
-import { isBinaryPath } from "@workspace/utils/file/binary";
 
-/* 组件 */
-import EditorTab from "./components/EditorTab.svelte";
-import VditorTab from "./components/VditorTab.svelte";
-import PreviewTab from "./components/PreviewTab.svelte";
+import icon_file_tree from "./assets/symbols/icon-monaco-editor-file-tree.symbol?raw";
+import icon_folder_closed from "./assets/symbols/icon-monaco-editor-folder-closed.symbol?raw";
+import icon_folder_opend from "./assets/symbols/icon-monaco-editor-folder-opend.symbol?raw";
+import icon_material_icons from "./assets/symbols/icon-monaco-editor-material-icons.symbol?raw";
+import icon_slash from "./assets/symbols/icon-monaco-editor-slash.symbol?raw";
+import icon_time from "./assets/symbols/icon-monaco-editor-time.symbol?raw";
+import icon_plugin from "./assets/symbols/icon-monaco-editor.symbol?raw";
 import EditorDock from "./components/EditorDock.svelte";
+import EditorTab from "./components/EditorTab.svelte";
 import ExplorerDock from "./components/ExplorerDock.svelte";
+import PreviewTab from "./components/PreviewTab.svelte";
 import Settings from "./components/Settings.svelte";
-
-/* 项目资源 */
+import VditorTab from "./components/VditorTab.svelte";
 import {
     DEFAULT_CONFIG,
     getCodeFontFamily,
     siyuanConfig2EditorOptions,
 } from "./configs/default";
-import {
-    Inline,
-    Language,
-} from "./handlers/block";
 import { EditorWindow } from "./editor/window";
 import {
     HandlerType,
     type IFacadeAssetOptions,
     type IFacadeOptions,
 } from "./facades/facade";
+import {
+    Inline,
+    Language,
+} from "./handlers/block";
+import {
+    OpenMode,
+    OpenScheme,
+} from "./utils/url";
+import { VditorWindow } from "./vditor/window";
 
-/* 类型 */
+import type {
+    BlockID,
+} from "@workspace/types/siyuan";
 import type {
     IClickEditorContentEvent,
     IOpenMenuDocTreeEvent,
@@ -92,33 +96,15 @@ import type {
     IOpenMenuLinkEvent,
     IOpenSiyuanUrlPluginEvent,
 } from "@workspace/types/siyuan/events";
-import type {
-    BlockID,
-    ISiyuanGlobal,
-} from "@workspace/types/siyuan";
 
-import type {
-    IConfig, IEditorOptions,
-} from "./types/config";
 import type { I18N } from "@/utils/i18n";
-import type { IDockData } from "./types/dock";
-import { trimPrefix } from "@workspace/utils/misc/string";
-import {
-    OpenMode,
-    OpenScheme,
-} from "./utils/url";
-import { FileTreeNodeType } from "@workspace/components/siyuan/tree/file";
-import {
-    basename,
-    parse,
-} from "@workspace/utils/path/browserify";
-import { showSaveDialog } from "@workspace/utils/electron/remote/dialog";
-import { fn__code } from "@workspace/utils/siyuan/text/span";
-import { showItemInFolder } from "@workspace/utils/electron/shell";
-import { VditorWindow } from "./vditor/window";
-import type { IVditorEvents } from "./types/vditor";
 
-declare var globalThis: ISiyuanGlobal;
+import type {
+    IConfig,
+    IEditorOptions,
+} from "./types/config";
+import type { IDockData } from "./types/dock";
+import type { IVditorEvents } from "./types/vditor";
 
 export interface IEditorTab extends siyuan.ITabModel {
     component?: InstanceType<typeof EditorTab>;
@@ -145,7 +131,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
     public readonly logger: InstanceType<typeof Logger>;
     public readonly client: InstanceType<typeof Client>;
     public readonly lute: ReturnType<typeof siyuan.Lute["New"]>;
-    public config: IConfig;
+    public config!: IConfig;
 
     protected readonly EDITOR_URL: URL;
     protected readonly SETTINGS_DIALOG_ID: string;
@@ -157,17 +143,18 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
     protected readonly vditorTab: ReturnType<siyuan.Plugin["addTab"]>;
     protected readonly previewTab: ReturnType<siyuan.Plugin["addTab"]>;
 
-    protected editorDock: {
+    protected editorDock!: {
         // editor: InstanceType<typeof Editor>,
-        dock: ReturnType<siyuan.Plugin["addDock"]>,
-        model?: siyuan.ICustomModel,
-        component?: InstanceType<typeof EditorDock>,
+        dock: ReturnType<siyuan.Plugin["addDock"]>;
+        model?: siyuan.ICustomModel;
+        component?: InstanceType<typeof EditorDock>;
     }; // 编辑器面板
-    protected explorerDock: {
+
+    protected explorerDock!: {
         // editor: InstanceType<typeof Editor>,
-        dock: ReturnType<siyuan.Plugin["addDock"]>,
-        model?: siyuan.IModel,
-        component?: InstanceType<typeof ExplorerDock>,
+        dock: ReturnType<siyuan.Plugin["addDock"]>;
+        model?: siyuan.IModel;
+        component?: InstanceType<typeof ExplorerDock>;
     }; // 资源管理器面板
 
     constructor(options: any) {
@@ -176,7 +163,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
         this.streamsaver.mitm = `plugins/${this.name}/libs/streamsaver/mitm.html?version=2.0.0`;
         this.logger = new Logger(this.name);
         this.client = new Client(undefined, "fetch");
-        this.lute = globalThis.Lute.New();
+        this.lute = window.Lute.New();
 
         this.EDITOR_URL = new URL(`${globalThis.document.baseURI}plugins/${this.name}/editor`);
         this.SETTINGS_DIALOG_ID = `${this.name}-settings-dialog`;
@@ -184,6 +171,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
         this.CUSTOM_TAB_ID_VDITOR = `${this.name}${MonacoEditorPlugin.CUSTOM_TAB_TYPE_VDITOR}`;
         this.CUSTOM_TAB_ID_PREVIEW = `${this.name}${MonacoEditorPlugin.CUSTOM_TAB_TYPE_PREVIEW}`;
 
+        // eslint-disable-next-line ts/no-this-alias
         const plugin = this;
         this.editorTab = this.addTab({
             type: MonacoEditorPlugin.CUSTOM_TAB_TYPE_EDITOR,
@@ -200,7 +188,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                 // plugin.logger.debug("tab-init");
                 // plugin.logger.debug(this);
 
-                const tab: IEditorTab = this;
+                const tab = this as IEditorTab;
                 tab.component = new EditorTab({
                     // target,
                     target: tab.element,
@@ -213,7 +201,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
             destroy() {
                 // plugin.logger.debug("tab-destroy");
 
-                const tab: IEditorTab = this;
+                const tab = this as IEditorTab;
                 tab.component?.$destroy();
             },
         });
@@ -224,7 +212,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                 // plugin.logger.debug("tab-init");
                 // plugin.logger.debug(this);
 
-                const tab: IVditorTab = this;
+                const tab = this as IVditorTab;
                 tab.component = new VditorTab({
                     target: tab.element,
                     props: {
@@ -236,7 +224,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
             destroy() {
                 // plugin.logger.debug("tab-destroy");
 
-                const tab: IVditorTab = this;
+                const tab = this as IVditorTab;
                 tab.component?.$destroy();
             },
         });
@@ -247,7 +235,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                 // plugin.logger.debug("tab-init");
                 // plugin.logger.debug(this);
 
-                const tab: IPreviewTab = this;
+                const tab = this as IPreviewTab;
                 tab.component = new PreviewTab({
                     target: tab.element,
                     props: {
@@ -259,13 +247,13 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
             destroy() {
                 // plugin.logger.debug("tab-destroy");
 
-                const tab: IPreviewTab = this;
+                const tab = this as IPreviewTab;
                 tab.component?.$destroy();
             },
         });
     }
 
-    onload(): void {
+    public override onload(): void {
         // this.logger.debug(this);
         /* 注册图标 */
         this.addIcons([
@@ -279,12 +267,13 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
         ].join(""));
 
         this.loadData(MonacoEditorPlugin.GLOBAL_CONFIG_NAME)
-            .then(config => {
+            .then((config) => {
                 this.config = merge(DEFAULT_CONFIG, config || {}) as IConfig;
                 this.updateConfigBySiyuanConfig();
             })
-            .catch(error => this.logger.error(error))
+            .catch((error) => this.logger.error(error))
             .finally(() => {
+                // eslint-disable-next-line ts/no-this-alias
                 const plugin = this;
 
                 /* 添加编辑器侧边面板 */
@@ -347,7 +336,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                                 show: true,
                             },
                             data: {
-                                workspace: normalize(globalThis.siyuan.config.system.workspaceDir),
+                                workspace: normalize(window.siyuan.config.system.workspaceDir),
                             },
                             type: "-dock-explorer",
                             init() {
@@ -374,7 +363,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                 }
 
                 /* 注册触发打开窗口动作的监听器 */
-                globalThis.addEventListener(this.config.operates.menu.open.mouse.type, this.contextmenuEventListener, true);
+                globalThis.addEventListener(this.config.operates.menu.open.mouse.type, this.contextmenuEventListener as EventListener, true);
 
                 /* 编辑区点击 */
                 this.eventBus.on("click-editorcontent", this.clickEditorContentEventListener);
@@ -415,11 +404,10 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                 //         this.openSiyuanMobileWindow();
                 //     },
                 // });
-
-            })
+            });
     }
 
-    onLayoutReady(): void {
+    public override onLayoutReady(): void {
         // this.openSetting();
         /* 若之前未查询到 --b3-font-family-code */
         if (this.config?.editor?.options) {
@@ -427,8 +415,8 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
         }
     }
 
-    onunload(): void {
-        globalThis.removeEventListener(this.config.operates.menu.open.mouse.type, this.contextmenuEventListener, true);
+    public override onunload(): void {
+        globalThis.removeEventListener(this.config.operates.menu.open.mouse.type, this.contextmenuEventListener as EventListener, true);
 
         this.eventBus.off("click-editorcontent", this.clickEditorContentEventListener);
 
@@ -443,20 +431,24 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
         this.eventBus.off("open-siyuan-url-plugin", this.openSiyuanUrlEventListener);
     }
 
-    openSetting(): void {
+    public override openSetting(): void {
         const dialog = new siyuan.Dialog({
             title: `${this.displayName} <code class="fn__code">${this.name}</code>`,
             content: `<div id="${this.SETTINGS_DIALOG_ID}" class="fn__flex-column" />`,
             width: "720px",
             height: "640px",
         });
-        const settings = new Settings({
-            target: dialog.element.querySelector(`#${this.SETTINGS_DIALOG_ID}`),
-            props: {
-                config: this.config,
-                plugin: this,
-            },
-        });
+        const target = dialog.element.querySelector(`#${this.SETTINGS_DIALOG_ID}`);
+        if (target) {
+            const settings = new Settings({
+                target,
+                props: {
+                    config: this.config,
+                    plugin: this,
+                },
+            });
+            void settings;
+        }
     }
 
     /* 捕获错误 */
@@ -467,7 +459,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
 
     /* 确认框 */
     public async confirm(title: string, text: string): Promise<boolean> {
-        return new Promise((resolve, reject) => siyuan.confirm(
+        return new Promise((resolve, _reject) => siyuan.confirm(
             title,
             text,
             () => resolve(true),
@@ -505,15 +497,17 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
 
     /* 在浮窗打开块 */
     public openFloatLayer(options: { id: BlockID }): void {
-        this.addFloatLayer({
-            ids: [options.id],
-            x: globalThis.siyuan.coordinates.clientX,
-            y: globalThis.siyuan.coordinates.clientY,
-        });
+        if (window.siyuan.coordinates) {
+            this.addFloatLayer({
+                ids: [options.id],
+                x: window.siyuan.coordinates.clientX,
+                y: window.siyuan.coordinates.clientY,
+            });
+        }
     }
 
     /* 在新页签打开块 */
-    public async openDocTab(options: { id: BlockID, focus?: number }): Promise<siyuan.ITab> {
+    public async openDocTab(options: { id: BlockID; focus?: number }): Promise<siyuan.ITab> {
         return siyuan.openTab({
             app: this.app,
             doc: {
@@ -552,7 +546,6 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
         }
     }
 
-
     /* 处理打开事件 */
     protected openEventHandler(e: MouseEvent) {
         // this.logger.debug(e);
@@ -579,10 +572,12 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                         },
                     ),
                 });
-                menu.open({
-                    x: globalThis.siyuan.coordinates.clientX,
-                    y: globalThis.siyuan.coordinates.clientY,
-                });
+                if (window.siyuan.coordinates) {
+                    menu.open({
+                        x: window.siyuan.coordinates.clientX,
+                        y: window.siyuan.coordinates.clientY,
+                    });
+                }
                 return;
             }
         }
@@ -619,7 +614,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                                         handler: {
                                             kramdown: false,
                                         },
-                                    } as unknown,
+                                    } as any,
                                 )),
                             },
                             /* 添加编辑 kramdown 菜单项 */
@@ -633,16 +628,18 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                                         handler: {
                                             kramdown: true,
                                         },
-                                    } as unknown,
+                                    } as any,
                                 )),
                             },
                         ],
                     });
 
-                    menu.open({
-                        x: globalThis.siyuan.coordinates.clientX,
-                        y: globalThis.siyuan.coordinates.clientY,
-                    });
+                    if (window.siyuan.coordinates) {
+                        menu.open({
+                            x: window.siyuan.coordinates.clientX,
+                            y: window.siyuan.coordinates.clientY,
+                        });
+                    }
                     return;
                 }
             }
@@ -685,7 +682,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                                         handler: {
                                             kramdown: false,
                                         },
-                                    } as unknown,
+                                    } as any,
                                 )),
                             },
                             /* 添加编辑 kramdown 菜单项 */
@@ -699,16 +696,18 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                                         handler: {
                                             kramdown: true,
                                         },
-                                    } as unknown,
+                                    } as any,
                                 )),
                             },
                         ],
                     });
 
-                    menu.open({
-                        x: globalThis.siyuan.coordinates.clientX,
-                        y: globalThis.siyuan.coordinates.clientY,
-                    });
+                    if (window.siyuan.coordinates) {
+                        menu.open({
+                            x: window.siyuan.coordinates.clientX,
+                            y: window.siyuan.coordinates.clientY,
+                        });
+                    }
                     return;
                 }
             }
@@ -752,7 +751,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                                     handler: {
                                         kramdown: false,
                                     },
-                                } as unknown,
+                                } as any,
                             )),
                         },
                         /* 添加编辑 kramdown 菜单项 */
@@ -766,17 +765,20 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                                     handler: {
                                         kramdown: true,
                                     },
-                                } as unknown,
+                                } as any,
                             )),
                         },
                     ],
                 });
 
-                menu.open({
-                    x: globalThis.siyuan.coordinates.clientX,
-                    y: globalThis.siyuan.coordinates.clientY,
-                });
-                return;
+                if (window.siyuan.coordinates) {
+                    if (window.siyuan.coordinates) {
+                        menu.open({
+                            x: window.siyuan.coordinates.clientX,
+                            y: window.siyuan.coordinates.clientY,
+                        });
+                    }
+                }
             }
         }
     }
@@ -787,24 +789,25 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
             // this.logger.debug(e);
 
             /* 判断功能是否已启用 */
-            if (!this.config.operates.menu.open.enable) return;
+            if (!this.config.operates.menu.open.enable)
+                return;
 
             /* 判断事件是否为目标事件 */
             if (isMatchedMouseEvent(e, this.config.operates.menu.open.mouse)) {
                 this.openEventHandler(e);
             };
-
-        } catch (e) {
+        }
+        catch (e) {
             this.logger.warn(e);
         }
-    }
+    };
 
     /* 编辑器点击事件监听器 */
     protected readonly clickEditorContentEventListener = (e: IClickEditorContentEvent) => {
         // this.logger.debug(e);
         // this.logger.debug(this.dock);
 
-        var block_id: string | void;
+        let block_id: string | void;
         if (isSiyuanProtyleWysiwyg(e.detail.event.target)) { // 文档块
             block_id = e.detail.protyle.block.rootID;
         }
@@ -814,7 +817,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
         if (block_id) {
             this.updateDockEditor(block_id);
         }
-    }
+    };
 
     /* 文档树菜单弹出事件监听器 */
     protected readonly doctreeMenuEventListener = (e: IOpenMenuDocTreeEvent) => {
@@ -903,7 +906,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                 submenu,
             });
         }
-    }
+    };
 
     /* 收集箱菜单弹出事件监听器 */
     protected readonly inobxMenuEventListener = (e: IOpenMenuInboxEvent) => {
@@ -913,7 +916,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
 
         /* 收集箱速记 */
         if (this.config.operates.menu.shorthand) {
-            const shorthand_id = e.detail.ids.find(id => id === e.detail.element.dataset.id);
+            const shorthand_id = e.detail.ids.find((id) => id === e.detail.element.dataset.id);
             if (shorthand_id) {
                 submenu.push({
                     icon: "iconMarkdown",
@@ -958,13 +961,13 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                 submenu,
             });
         }
-    }
+    };
 
     /* 块菜单弹出事件监听器 */
     protected readonly blockMenuEventListener = (e: CustomEvent<BlockMenuDetail>) => {
         const context = getBlockMenuContext(e.detail);
 
-        if (!context.isMultiBlock) { // 非多个块
+        if (context && !context.isMultiBlock) { // 非多个块
             /* 更新侧边栏编辑器 */
             this.updateDockEditor(context.id);
 
@@ -1071,7 +1074,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                 submenu,
             });
         }
-    }
+    };
 
     /* 超链接菜单打开事件监听器 */
     protected readonly linkMenuEventListener = (e: IOpenMenuLinkEvent) => {
@@ -1081,7 +1084,8 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
         try {
             switch (true) {
                 case isStaticPathname(href): { // 静态文件资源
-                    if (isBinaryPath(href)) break; // 不打开二进制文件
+                    if (isBinaryPath(href))
+                        break; // 不打开二进制文件
 
                     submenu.push({
                         icon: "iconFile",
@@ -1101,7 +1105,8 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                 }
                 case href.startsWith("file://"): { // 本地文件
                     if (FLAG_ELECTRON) { // 仅 Electron 环境可访问本地文件
-                        if (isBinaryPath(href)) break; // 不打开二进制文件
+                        if (isBinaryPath(href))
+                            break; // 不打开二进制文件
 
                         submenu.push({
                             icon: "iconFile",
@@ -1128,9 +1133,10 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                     const url = new URL(
                         href.startsWith("//")
                             ? `https:${href}`
-                            : href
+                            : href,
                     );
-                    if (isBinaryPath(url.pathname)) break; // 不打开二进制文件
+                    if (isBinaryPath(url.pathname))
+                        break; // 不打开二进制文件
 
                     submenu.push({
                         icon: "iconLanguage",
@@ -1165,18 +1171,19 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                 });
             }
         }
-    }
+    };
 
     /* 思源 URL 打开事件监听器 */
     protected readonly openSiyuanUrlEventListener = async (e: IOpenSiyuanUrlPluginEvent) => {
         // this.logger.debug(e);
         const url = new URL(e.detail.url);
         if (url.pathname.startsWith(`//plugins/${this.name}/open/workspace/`)) { // 打开文件
-            const scheme = (url.searchParams.get("scheme") as OpenScheme | null);
-            const mode = (url.searchParams.get("mode") as OpenMode | null);
+            const scheme = url.searchParams.get("scheme") as null | OpenScheme;
+            const mode = url.searchParams.get("mode") as null | OpenMode;
             const relative = globalThis.decodeURI(trimPrefix(url.pathname, `//plugins/${this.name}/open/workspace/`));
 
             switch (scheme) {
+                // eslint-disable-next-line default-case-last
                 default:
                 case OpenScheme.Editor: { // 文本编辑器
                     const custom = {
@@ -1199,6 +1206,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                     }; // 自定义页签参数
 
                     switch (mode) {
+                        // eslint-disable-next-line default-case-last
                         default:
                         case OpenMode.Tab:
                             siyuan.openTab({
@@ -1235,16 +1243,18 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                             });
                             break;
                         case OpenMode.Window: {
-                            const { screenX: x, screenY: y } = globalThis.siyuan.coordinates;
+                            if (window.siyuan.coordinates) {
+                                const { screenX: x, screenY: y } = window.siyuan.coordinates;
 
-                            const editor = new EditorWindow(this);
-                            await editor.init(custom.data);
-                            editor.open({
-                                x,
-                                y,
-                                title: custom.title,
-                                ...this.config.window.options,
-                            });
+                                const editor = new EditorWindow(this);
+                                await editor.init(custom.data);
+                                editor.open({
+                                    x,
+                                    y,
+                                    title: custom.title,
+                                    ...this.config.window.options,
+                                });
+                            }
                             break;
                         }
                     }
@@ -1271,6 +1281,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                     }; // 自定义页签参数
 
                     switch (mode) {
+                        // eslint-disable-next-line default-case-last
                         default:
                         case OpenMode.Tab:
                             siyuan.openTab({
@@ -1307,16 +1318,18 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                             });
                             break;
                         case OpenMode.Window: {
-                            const { screenX: x, screenY: y } = globalThis.siyuan.coordinates;
+                            if (window.siyuan.coordinates) {
+                                const { screenX: x, screenY: y } = window.siyuan.coordinates;
 
-                            const vditor = new VditorWindow(this);
-                            await vditor.init(custom.data);
-                            vditor.open({
-                                x,
-                                y,
-                                title: custom.title,
-                                ...this.config.window.options,
-                            });
+                                const vditor = new VditorWindow(this);
+                                await vditor.init(custom.data);
+                                vditor.open({
+                                    x,
+                                    y,
+                                    title: custom.title,
+                                    ...this.config.window.options,
+                                });
+                            }
                             break;
                         }
                     }
@@ -1336,6 +1349,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                         }; // 自定义页签参数
 
                         switch (mode) {
+                            // eslint-disable-next-line default-case-last
                             default:
                             case OpenMode.Tab:
                                 siyuan.openTab({
@@ -1404,15 +1418,15 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                     break;
             }
         }
-    }
+    };
 
     /**
      * 构建打开子菜单
-     * @param facadeOptions: 门面参数
-     * @param icon: 页签图标
-     * @param title: 页签标题
-     * @param disabled: 是否禁用
-     * @param options: 编辑器初始配置
+     * @param facadeOptions - 门面参数
+     * @param icon - 页签图标
+     * @param title - 页签标题
+     * @param disabled - 是否禁用
+     * @param options - 编辑器初始配置
      */
     public buildOpenSubmenu(
         facadeOptions: IFacadeOptions,
@@ -1507,16 +1521,18 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
             label: this.i18n.menu.openByNewWindow.label,
             disabled,
             click: async () => {
-                const { screenX: x, screenY: y } = globalThis.siyuan.coordinates;
+                if (window.siyuan.coordinates) {
+                    const { screenX: x, screenY: y } = window.siyuan.coordinates;
 
-                const editor = new EditorWindow(this);
-                await editor.init(custom.data);
-                editor.open({
-                    x,
-                    y,
-                    title,
-                    ...this.config.window.options,
-                });
+                    const editor = new EditorWindow(this);
+                    await editor.init(custom.data);
+                    editor.open({
+                        x,
+                        y,
+                        title,
+                        ...this.config.window.options,
+                    });
+                }
             },
         });
         return submenu;
@@ -1524,10 +1540,10 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
 
     /**
      * 构建 vditor 子菜单
-     * @param path: 资源路径
-     * @param icon: 页签图标
-     * @param title: 页签标题
-     * @param disabled: 是否禁用
+     * @param path - 资源路径
+     * @param icon - 页签图标
+     * @param title - 页签标题
+     * @param disabled - 是否禁用
      */
     public buildOpenVditorSubmenu(
         path: string,
@@ -1629,16 +1645,18 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
             label: this.i18n.menu.openByNewWindow.label,
             disabled,
             click: async () => {
-                const { screenX: x, screenY: y } = globalThis.siyuan.coordinates;
+                if (window.siyuan.coordinates) {
+                    const { screenX: x, screenY: y } = window.siyuan.coordinates;
 
-                const vditor = new VditorWindow(this);
-                await vditor.init(custom.data);
-                vditor.open({
-                    x,
-                    y,
-                    title,
-                    ...this.config.window.options,
-                });
+                    const vditor = new VditorWindow(this);
+                    await vditor.init(custom.data);
+                    vditor.open({
+                        x,
+                        y,
+                        title,
+                        ...this.config.window.options,
+                    });
+                }
             },
         });
 
@@ -1647,10 +1665,10 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
 
     /**
      * 构建资源预览子菜单
-     * @param pathname: 资源路径
-     * @param icon: 页签图标
-     * @param title: 页签标题
-     * @param disabled: 是否禁用
+     * @param pathname - 资源路径
+     * @param icon - 页签图标
+     * @param title - 页签标题
+     * @param disabled - 是否禁用
      */
     public buildOpenPreviewSubmenu(
         pathname: string,
@@ -1738,14 +1756,16 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
         return submenu;
     }
 
+    /* eslint-disable jsdoc/check-param-names */
+
     /**
      * 打开工作空间目录下的文件
-     * @param path 相对于工作空间目录的文件路径
-     * @param icon 页签图标
-     * @param title 页签标题
-     * @param updatable 是否可更改
-     * @param scheme 打开方案
-     * @param options 页签选项
+     * @param path - 相对于工作空间目录的文件路径
+     * @param title - 页签标题
+     * @param icon - 页签图标
+     * @param updatable - 是否可更改
+     * @param scheme - 打开方案
+     * @param options - 页签选项
      */
     public openWorkspaceFile(
         path: string,
@@ -1754,9 +1774,9 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
         updatable: boolean = true,
         scheme: OpenScheme = this.config.open.default,
         options: {
-            position?: "right" | "bottom",
-            keepCursor?: boolean // 是否跳转到新 tab 上
-            removeCurrentTab?: boolean // 在当前页签打开时需移除原有页签
+            position?: "bottom" | "right";
+            keepCursor?: boolean; // 是否跳转到新 tab 上
+            removeCurrentTab?: boolean; // 在当前页签打开时需移除原有页签
         } = {},
     ): void {
         icon = icon.startsWith("#")
@@ -1775,6 +1795,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                 },
             };
             switch (scheme) {
+                // eslint-disable-next-line default-case-last
                 default:
                 case OpenScheme.Editor:
                     return {
@@ -1794,7 +1815,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                         },
                     };
             }
-        })()
+        })();
 
         this.siyuan.openTab({
             app: this.app,
@@ -1806,6 +1827,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
             ...options,
         });
     }
+    /* eslint-enable jsdoc/check-param-names */
 
     /**
      * 下载文件/文件夹
@@ -1858,9 +1880,9 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
             ? this.i18n.menu.exportFile
             : this.i18n.menu.exportFolder;
 
-        const asyncFs = globalThis.require("node:fs/promises") as typeof import("fs/promises");
+        const asyncFs = globalThis.require!("node:fs/promises") as typeof import("fs/promises");
         const result = await showSaveDialog({
-            title: i10n_save_as.title.replaceAll("${1}", path),
+            title: i10n_save_as.title.replaceAll("{{1}}", path),
             defaultPath: name,
             properties: [
                 "showHiddenFiles",
@@ -1871,9 +1893,9 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
         });
         if (!result.canceled && result.filePath) {
             // this.logger.debugs(path, result.filePath);
-            const { join } = globalThis.require("node:path") as typeof import("path");
+            const { join } = globalThis.require!("node:path") as typeof import("path");
             const source = join(
-                globalThis.siyuan.config.system.workspaceDir,
+                window.siyuan.config.system.workspaceDir,
                 path,
             );
             await asyncFs.cp(
@@ -1886,12 +1908,12 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
             this.siyuan.confirm(
                 i10n_save_as.label,
                 i10n_save_as.message
-                    .replaceAll("${1}", fn__code(path))
-                    .replaceAll("${2}", fn__code(result.filePath)),
+                    .replaceAll("{{1}}", fn__code(path))
+                    .replaceAll("{{2}}", fn__code(result.filePath)),
                 () => {
                     showItemInFolder(result.filePath);
                 },
-            )
+            );
         }
     }
 }

@@ -20,7 +20,7 @@ import { escapeHTML } from "./../misc/html";
  * @param ial - 属性表对象
  * @returns IAL token 字符串, 格式: `{: key="value" key="value" ...}`
  */
-export function createIAL(ial: Record<string, string | null | undefined>): string {
+export function createIAL(ial: Record<string, null | string | undefined>): string {
     const IAL = [];
     for (const [key, value] of Object.entries(ial)) {
         if (value) {
