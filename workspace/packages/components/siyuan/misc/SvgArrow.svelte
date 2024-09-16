@@ -19,7 +19,7 @@
     export let open: boolean = false;
 
     export let icon: string = "#iconRight";
-    export let style: string | null = null;
+    export let style: null | string = null;
     export let className: string = "b3-list-item__arrow";
 </script>
 

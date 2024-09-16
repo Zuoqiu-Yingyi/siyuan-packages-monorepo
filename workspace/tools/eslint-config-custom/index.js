@@ -138,6 +138,10 @@ export default antfu({
         quotes: "double",
         semi: true,
         overrides: {
+            "style/indent-binary-ops": [
+                "off",
+                "tab",
+            ],
             "style/arrow-parens": [
                 "warn",
                 "always",

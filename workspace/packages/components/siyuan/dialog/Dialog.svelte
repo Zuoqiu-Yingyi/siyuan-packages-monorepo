@@ -25,8 +25,11 @@
     export let cancelButtonText: string = window.siyuan?.languages?.cancel ?? "Cancel"; // 取消按钮文本
     export let confirmButtonText: string = window.siyuan?.languages?.confirm ?? "Confirm"; // 确定按钮文本
 
-    let cancel: HTMLButtonElement; // 取消按钮
-    let confirm: HTMLButtonElement; // 确认按钮
+    let cancel: HTMLButtonElement | undefined; // 取消按钮
+    let confirm: HTMLButtonElement | undefined; // 确认按钮
+
+    void cancel;
+    void confirm;
 
     const dispatcher = createEventDispatcher<IDialogEvent>();
 

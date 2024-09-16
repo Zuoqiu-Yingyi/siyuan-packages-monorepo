@@ -372,7 +372,7 @@ export function getCurrentBlock(): HTMLElement | null | undefined {
     let element = selection?.focusNode;
     while (element // 元素存在
         && (!(element instanceof HTMLElement) // 元素非 HTMLElement
-        || !isSiyuanBlock(element) // 元素非思源块元素
+            || !isSiyuanBlock(element) // 元素非思源块元素
         )
     ) {
         element = element.parentElement;
@@ -401,7 +401,7 @@ export function getCurrentProtyleWysiwyg(): HTMLElement | null {
     let element = globalThis.document.activeElement;
     while (element // 元素存在
         && (!(element instanceof HTMLElement) // 元素非 HTMLElement
-        || !isSiyuanDocument(element) // 元素非思源编辑器元素
+            || !isSiyuanDocument(element) // 元素非思源编辑器元素
         )
     ) {
         element = element.parentElement;
@@ -465,7 +465,7 @@ export interface ICodeBlockCursorPosition {
 export function getCodeBlockContainer(element = globalThis.document.getSelection()?.focusNode): HTMLElement | null | undefined {
     while (element // 元素存在
         && (!(element instanceof HTMLElement) // 元素非 HTMLElement
-        || !element.classList.contains("hljs") // 元素非代码块容器
+            || !element.classList.contains("hljs") // 元素非代码块容器
         )
     ) {
         element = element.parentElement;

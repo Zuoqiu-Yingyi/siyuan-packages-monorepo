@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-09-16
+
+- 将 `eslint` 配置应用于 `monaco-editor` 模块 | Apply `eslint` configuration to `monaco-editor` module
+
 ## 2024-07-30
 
 - 将 `eslint` 配置应用于 `custom-block` 模块 | Apply `eslint` configuration to `custom-block` module

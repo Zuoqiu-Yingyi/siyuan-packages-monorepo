@@ -1,34 +1,37 @@
 <!--
  Copyright (C) 2023 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
-    import type { ComponentEvents } from "svelte";
     import { get } from "svelte/store";
 
     import Bar from "@workspace/components/siyuan/dock/Bar.svelte";
+    import { TooltipsDirection } from "@workspace/components/siyuan/misc/tooltips";
+    import regexp from "@workspace/utils/regexp";
+
+    import { BlockHandler, Inline, Language, type IBlockHandler } from "@/handlers/block";
+
     import EditorIframe from "./EditorIframe.svelte";
 
-    import regexp from "@workspace/utils/regexp";
-    import { TooltipsDirection } from "@workspace/components/siyuan/misc/tooltips";
+    import type { ComponentEvents } from "svelte";
 
     import type { IBar } from "@workspace/components/siyuan/dock/index";
+
     import type MonacoEditorPlugin from "@/index";
     import type { IDockEditor } from "@/types/editor";
-    import { BlockHandler, Language, Inline, type IBlockHandler } from "@/handlers/block";
 
     export let plugin: InstanceType<typeof MonacoEditorPlugin>; // 插件对象
     export let editor: IDockEditor; // 编辑器配置
@@ -51,10 +54,10 @@
                 ariaLabel: plugin.i18n.dock.refresh.ariaLabel,
                 tooltipsDirection: TooltipsDirection.sw,
                 onClick: (_e, _element, props) => {
-                    let active = get(props.active);
+                    let active = get(props.active!);
                     active = !active;
                     realTime = active;
-                    props.active.set(active);
+                    props.active!.set(active);
                 },
             },
             {
@@ -65,14 +68,15 @@
                 ariaLabel: plugin.i18n.dock.inline.ariaLabel,
                 tooltipsDirection: TooltipsDirection.sw,
                 onClick: (_e, _element, props) => {
-                    let active = get(props.active);
+                    let active = get(props.active!);
                     active = !active;
                     if (active) {
                         inline = Inline.span;
-                    } else {
+                    }
+                    else {
                         inline = Inline.mark;
                     }
-                    props.active.set(active);
+                    props.active!.set(active);
                 },
             },
             {
@@ -83,20 +87,21 @@
                 ariaLabel: plugin.i18n.dock.kramdown.ariaLabel,
                 tooltipsDirection: TooltipsDirection.sw,
                 onClick: (_e, _element, props) => {
-                    let active = get(props.active);
+                    let active = get(props.active!);
                     active = !active;
                     if (active) {
                         language = Language.kramdown;
-                    } else {
+                    }
+                    else {
                         language = Language.markdown;
                     }
-                    props.active.set(active);
+                    props.active!.set(active);
                 },
             },
             {
                 icon: "#iconMin",
                 type: "min",
-                ariaLabel: `${globalThis.siyuan.languages.min} ${plugin.siyuan.adaptHotkey("⌘W")}`,
+                ariaLabel: `${window.siyuan.languages.min} ${plugin.siyuan.adaptHotkey("⌘W")}`,
                 tooltipsDirection: TooltipsDirection.sw,
             },
         ],
@@ -108,7 +113,7 @@
 
     $: {
         if (regexp.id.test(id)) {
-            blockHandler.makeHandler({ id, inline, language }).then(h => (handler = h));
+            blockHandler.makeHandler({ id, inline, language }).then((h) => (handler = h));
         }
     }
 
@@ -121,7 +126,7 @@
     }
 
     /* 保存内容 */
-    function update(e: ComponentEvents<EditorIframe>["save"] | ComponentEvents<EditorIframe>["changed"]) {
+    function update(e: ComponentEvents<EditorIframe>["changed"] | ComponentEvents<EditorIframe>["save"]) {
         handler.update?.(e.detail.value);
     }
 
@@ -139,13 +144,14 @@
 </script>
 
 <Bar {...bar} />
+
 <EditorIframe
+    changeable={realTime}
+    {plugin}
+    {savable}
     on:save={update}
     on:changed={update}
     on:hover={hover}
     on:open={open}
-    {plugin}
-    {savable}
-    changable={realTime}
     {...editor}
 />

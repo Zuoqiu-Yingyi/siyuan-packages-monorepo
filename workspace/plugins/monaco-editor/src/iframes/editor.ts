@@ -1,24 +1,21 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /* 界面入口 */
 import "@/styles/editor.less";
-import manifest from "~/public/plugin.json";
-import i18n from "~/public/i18n/en_US.json";
+
 import {
     FLAG_ELECTRON,
     FLAG_IFRAME,
@@ -26,8 +23,11 @@ import {
 } from "@workspace/utils/env/native-front-end";
 import { Logger } from "@workspace/utils/logger";
 
-import Editor from "@/components/Editor.svelte";
+import i18n from "~/public/i18n/en_US.json";
+import manifest from "~/public/plugin.json";
+
 import { EditorBridgeSlave } from "@/bridge/EditorSlave";
+import Editor from "@/components/Editor.svelte";
 
 const logger = new Logger(`${manifest.name}-editor-${(() => {
     switch (true) {
@@ -42,7 +42,7 @@ const logger = new Logger(`${manifest.name}-editor-${(() => {
     }
 })()}`);
 
-var editor: InstanceType<typeof Editor> = !FLAG_ELECTRON
+let editor: InstanceType<typeof Editor> | null = !FLAG_ELECTRON
     ? new Editor({
         target: globalThis.document.body,
         props: {
@@ -60,7 +60,7 @@ const bridge = new EditorBridgeSlave(
         /* 编辑器初始化 */
         bridge.addEventListener(
             "editor-init",
-            e => {
+            (e) => {
                 const { data } = e.data;
                 // logger.debug(data);
 
@@ -76,29 +76,29 @@ const bridge = new EditorBridgeSlave(
                         plugin: {
                             name: data.name,
                             i18n: data.i18n,
-                            logger: logger,
+                            logger,
                         },
                         path: data.path,
                         diff: data.diff,
                         locale: data.locale,
                         savable: data.savable,
-                        changable: data.changable,
+                        changeable: data.changeable,
                         original: data.original,
                         modified: data.modified,
                         options: data.options,
                     },
                 });
                 /* 监听更改与保存事件 */
-                editor.$on("changed", e => bridge.changed(e.detail));
-                editor.$on("save", e => bridge.save(e.detail));
-                editor.$on("hover", e => bridge.hover(e.detail));
-                editor.$on("open", e => bridge.open(e.detail));
+                editor.$on("changed", (e) => bridge.changed(e.detail));
+                editor.$on("save", (e) => bridge.save(e.detail));
+                editor.$on("hover", (e) => bridge.hover(e.detail));
+                editor.$on("open", (e) => bridge.open(e.detail));
             },
         );
         /* 更改编辑器配置 */
         bridge.addEventListener(
             "editor-set",
-            e => {
+            (e) => {
                 const { data } = e.data;
 
                 if (editor) {
