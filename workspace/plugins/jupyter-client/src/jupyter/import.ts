@@ -1,31 +1,33 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import { base64ToFile } from "@workspace/utils/misc/dataurl";
+import { createIAL } from "@workspace/utils/siyuan/ial";
+import { id } from "@workspace/utils/siyuan/id";
 
 import CONSTANTS from "@/constants";
-import { createIAL } from "@workspace/utils/siyuan/ial";
-import { base64ToFile } from "@workspace/utils/misc/dataurl";
+
 import {
-    parseText,
     parseData,
+    parseText,
 } from "./parse";
+
 import type { Client } from "@siyuan-community/siyuan-sdk";
+
 import type { IConfig } from "@/types/config";
 import type * as Ipynb from "@/types/nbformat";
-import { id } from "@workspace/utils/siyuan/id";
 
 export interface IAttachment {
     [mime: string]: string | string[];
@@ -105,19 +107,19 @@ export class IpynbImport {
      * REF: https://jupyter-client.readthedocs.io/en/stable/kernels.html#kernel-specs
      */
     parseMetadata(): this {
-        this.language =
-            this.metadata.kernelspec?.language
+        this.language
+            = this.metadata.kernelspec?.language
             ?? this.metadata.language_info?.name
             ?? this.metadata.language_info?.nbconvert_exporter;
         this.attributes[CONSTANTS.attrs.kernel.language] = this.language;
 
-        const kernel_name =
-            this.metadata.kernelspec?.name
+        const kernel_name
+            = this.metadata.kernelspec?.name
             ?? this.metadata.kernel_info.name;
         this.attributes[CONSTANTS.attrs.kernel.name] = kernel_name;
 
-        const display_name =
-            this.metadata.kernelspec?.display_name
+        const display_name
+            = this.metadata.kernelspec?.display_name
             ?? this.metadata.kernelspec?.name
             ?? this.metadata.kernel_info.name;
         this.attributes[CONSTANTS.attrs.kernel.display_name] = display_name;
@@ -128,7 +130,7 @@ export class IpynbImport {
     /* 解析单元格 */
     async parseCells(): Promise<this> {
         for (let i = 0; i < this.cells.length; ++i) {
-            this.kramdowns.push(await this.parseCell(this.cells[i]));
+            this.kramdowns.push(await this.parseCell(this.cells[i]!));
         }
         return this;
     }
@@ -173,7 +175,7 @@ export class IpynbImport {
             let top_level = 7; // 当前级别最高的标题级别
             if (Array.isArray(cell.source)) { // 多行
                 for (let i = 0; i < cell.source.length; ++i) {
-                    const line = cell.source[i];
+                    const line = cell.source[i]!;
                     if (/^#{1,6}\s/.test(line)) { // 是否为标题块
                         for (let j = 0; j < line.length && j < 6; ++j) {
                             if (line.charAt(j) !== "#") {
@@ -186,19 +188,20 @@ export class IpynbImport {
                         }
                     }
                 }
-                if (index >= 0 && 1 <= top_level && top_level <= 6) { // 存在待折叠的标题
-                    cell.source[index] = `${cell.source[index].trim()}\n${createIAL({ fold: "1" })}\n`;
+                if (index >= 0 && top_level >= 1 && top_level <= 6) { // 存在待折叠的标题
+                    cell.source[index] = `${cell.source[index]!.trim()}\n${createIAL({ fold: "1" })}\n`;
                 }
             }
         }
-        var markdown = this.parseSource(cell.source);
+        let markdown = this.parseSource(cell.source);
         const attachments = await this.parseAttachments(cell.attachments); // 附件
         for (const [filename, filepath] of Object.entries(attachments)) {
             markdown = markdown.replace(`attachment:${filename}`, filepath);
         }
 
         // TODO: 解析 metadata 为块属性, 属性嵌套使用 `-` 展开
-        /**幻灯片类型
+        /**
+         * 幻灯片类型
          * slideshow.slide_type.slide
          * slideshow.slide_type.subslide
          * slideshow.slide_type.fragment
@@ -275,9 +278,8 @@ export class IpynbImport {
      * REF: https://nbformat.readthedocs.io/en/latest/format_description.html#raw-nbconvert-cells
      */
     async parseRaw(cell: Ipynb.Cell): Promise<string> {
-        var mime_main, mime_sub;
         const mime = cell.metadata?.raw_mimetype ?? "/";
-        [mime_main, mime_sub] = mime.split("/");
+        const [mime_main, mime_sub] = mime.split("/");
         const markdown = [];
         switch (mime_main) {
             case "text":
@@ -337,15 +339,15 @@ export class IpynbImport {
     /**
      * 解析附件
      * REF: https://nbformat.readthedocs.io/en/latest/format_description.html#cell-attachments
-     * @returns 附件引用名(attachment:xxx.ext) -> 附件文件引用(assets/xxx.ext)
+     * @returns 附件引用名(attachment:xxx.ext) → 附件文件引用(assets/xxx.ext)
      */
     async parseAttachments(attachments: IAttachments | undefined): Promise<Map<string, string>> {
-        const map = new Map<string, string>; // attachment -> assets
+        const map = new Map<string, string>(); // attachment -> assets
         if (attachments) {
             for (const [filename, attachment] of Object.entries(attachments)) {
                 for (const [mine, source] of Object.entries(attachment)) {
                     const base64 = Array.isArray(source)
-                        ? source[0]
+                        ? source[0]!
                         : source;
                     const file = base64ToFile(base64, mine, filename);
                     if (file) {
@@ -362,13 +364,13 @@ export class IpynbImport {
 
     /**
      * 解析输出
-     * @param outputs 输出对象列表
-     * @return 最终结果
+     * @param outputs - 输出对象列表
+     * @returns 最终结果
      */
     async parseOutputs(outputs: Ipynb.Output[]): Promise<string> {
         const markdowns = [];
         for (let i = 0; i < outputs.length; ++i) {
-            const output = outputs[i];
+            const output = outputs[i]!;
             switch (output.output_type) {
                 case "stream": {
                     const markdown = parseText(

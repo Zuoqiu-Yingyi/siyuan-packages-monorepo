@@ -1,45 +1,43 @@
 <!--
  Copyright (C) 2023 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-
-<script
-    context="module"
-    lang="ts"
->
-    import type { ISiyuanGlobal } from "@workspace/types/siyuan";
-    declare var globalThis: ISiyuanGlobal;
-</script>
 
 <script lang="ts">
     import { onDestroy, type ComponentEvents } from "svelte";
     import { get } from "svelte/store";
 
     import Bar from "@workspace/components/siyuan/dock/Bar.svelte";
+    import { TooltipsDirection } from "@workspace/components/siyuan/misc/tooltips";
+    import {
+        FileTreeNodeType,
+        type IFileTreeFileNode,
+        type IFileTreeFolderNode,
+        type IFileTreeRootNode,
+    } from "@workspace/components/siyuan/tree/file";
     import FileTree from "@workspace/components/siyuan/tree/file/FileTree.svelte";
     import Node from "@workspace/components/siyuan/tree/file/Node.svelte";
-
-    import { TooltipsDirection } from "@workspace/components/siyuan/misc/tooltips";
-    import { washMenuItems } from "@workspace/utils/siyuan/menu/wash";
-    import { utf32Decode } from "@workspace/utils/misc/string";
     import moment from "@workspace/utils/date/moment";
+    import { utf32Decode } from "@workspace/utils/misc/string";
+    import { washMenuItems } from "@workspace/utils/siyuan/menu/wash";
+
+    import type { Kernel, KernelSpec, Session } from "@jupyterlab/services";
 
     import type { IBar } from "@workspace/components/siyuan/dock/index";
+
     import type JupyterClientPlugin from "@/index";
-    import { FileTreeNodeType, type IFileTreeFileNode, type IFileTreeFolderNode, type IFileTreeRootNode } from "@workspace/components/siyuan/tree/file";
-    import type { KernelSpec, Kernel, Session } from "@jupyterlab/services";
     import type { WorkerHandlers } from "@/workers/jupyter";
 
     export let plugin: InstanceType<typeof JupyterClientPlugin>; // 插件对象
@@ -71,6 +69,50 @@
 
     const DATETIME_FORMAT = "YYYY-MM-DD hh:mm:ss"; // 日期时间格式
 
+    /* 根节点列表 */
+    const roots: IFileTreeRootNode[] = [
+        {
+            type: FileTreeNodeType.Root,
+            name: "respurces",
+            path: RESOURCES_DIRECTORY,
+            directory: ROOT_DIRECTORY,
+            depth: 0,
+            folded: false,
+            icon: RESOURCES_ICON,
+            text: plugin.i18n.dock.resources.text,
+        },
+        {
+            type: FileTreeNodeType.Root,
+            name: "kernelspec",
+            path: KERNELSPECS_DIRECTORY,
+            directory: ROOT_DIRECTORY,
+            depth: 0,
+            folded: false,
+            icon: KERNELSPECS_ICON,
+            text: plugin.i18n.dock.kernelspecs.text,
+        },
+        {
+            type: FileTreeNodeType.Root,
+            name: "kernels",
+            path: KERNELS_DIRECTORY,
+            directory: ROOT_DIRECTORY,
+            depth: 0,
+            folded: false,
+            icon: KERNELS_ICON,
+            text: plugin.i18n.dock.kernels.text,
+        },
+        {
+            type: FileTreeNodeType.Root,
+            name: "sessions",
+            path: SESSIONS_DIRECTORY,
+            directory: ROOT_DIRECTORY,
+            depth: 0,
+            folded: false,
+            icon: SESSIONS_ICON,
+            text: plugin.i18n.dock.sessions.text,
+        },
+    ];
+
     /* 将 jupyter 资源转换为节点 */
     async function resources2node(
         kernelspecs: KernelSpec.ISpecModels, //
@@ -79,8 +121,9 @@
     ): Promise<IFileTreeFolderNode[]> {
         /* 内核清单列表 */
         const spec_nodes: IFileTreeFolderNode[] = [];
-        for (const [name, spec] of Object.entries(kernelspecs.kernelspecs)) {
-            if (!spec) continue;
+        for (const spec of Object.values(kernelspecs.kernelspecs)) {
+            if (!spec)
+                continue;
 
             const spec_path = `${RESOURCES_DIRECTORY}/${spec.name}`;
             const spec_node: IFileTreeFolderNode = {
@@ -213,7 +256,8 @@
     async function kernelspecs2node(kernelspecs: KernelSpec.ISpecModels): Promise<IFileTreeFileNode[]> {
         const nodes: IFileTreeFileNode[] = [];
         for (const [name, spec] of Object.entries(kernelspecs.kernelspecs)) {
-            if (!spec) continue;
+            if (!spec)
+                continue;
 
             const node: IFileTreeFileNode = {
                 type: FileTreeNodeType.File,
@@ -231,7 +275,8 @@
             const icon = plugin.kernelName2logoObjectURL.get(name);
             if (icon) {
                 node.icon = icon;
-            } else {
+            }
+            else {
                 node.icon = await plugin.loadKernelSpecIcon(spec);
             }
 
@@ -305,7 +350,7 @@
         // plugin.logger.debug(documentID, sessionID);
 
         /* 遍历内核清单 */
-        roots[0].children?.forEach((spec, i) => {
+        roots[0]!.children?.forEach((spec, i) => {
             /* 遍历内核 */
             spec.children?.forEach((kernel, j) => {
                 /* 遍历会话 */
@@ -313,37 +358,37 @@
                     /* 遍历文档 */
                     session.children?.forEach((document, l) => {
                         // 高亮当前文档
-                        roots[0].children![i].children![j].children![k].children![l].focus = document.name === documentID;
+                        roots[0]!.children![i]!.children![j]!.children![k]!.children![l]!.focus = document.name === documentID;
                     });
                     // 高亮当前会话
-                    roots[0].children![i].children![j].children![k].focus = session.name === sessionID;
+                    roots[0]!.children![i]!.children![j]!.children![k]!.focus = session.name === sessionID;
                 });
                 // 高亮当前内核
-                roots[0].children![i].children![j].focus = kernel.name === kernelID;
+                roots[0]!.children![i]!.children![j]!.focus = kernel.name === kernelID;
             });
             // 高亮当前定义
-            roots[0].children![i].focus = spec.name === specName;
+            roots[0]!.children![i]!.focus = spec.name === specName;
         });
     }
 
     /* 动态更新当前内核定义 */
     function updateCurrentSpec(specName: string): void {
-        roots[1].children?.forEach((spec, i) => {
-            roots[1].children![i].focus = spec.name === specName;
+        roots[1]!.children?.forEach((spec, i) => {
+            roots[1]!.children![i]!.focus = spec.name === specName;
         });
     }
 
     /* 动态更新当前内核 */
     function updateCurrentKernel(kernelID: string): void {
-        roots[2].children?.forEach((kernel, i) => {
-            roots[2].children![i].focus = kernel.name === kernelID;
+        roots[2]!.children?.forEach((kernel, i) => {
+            roots[2]!.children![i]!.focus = kernel.name === kernelID;
         });
     }
 
     /* 动态更新当前会话 */
     function updateCurrentSession(sessionID: string): void {
-        roots[3].children?.forEach((session, i) => {
-            roots[3].children![i].focus = session.name === sessionID;
+        roots[3]!.children?.forEach((session, i) => {
+            roots[3]!.children![i]!.focus = session.name === sessionID;
         });
     }
 
@@ -369,85 +414,41 @@
                 // 最小化
                 icon: "#iconMin",
                 type: "min",
-                ariaLabel: `${globalThis.siyuan.languages.min} ${plugin.siyuan.adaptHotkey("⌘W")}`,
+                ariaLabel: `${window.siyuan.languages.min} ${plugin.siyuan.adaptHotkey("⌘W")}`,
                 tooltipsDirection: TooltipsDirection.sw,
             },
         ],
     };
 
-    /* 根节点列表 */
-    let roots: IFileTreeRootNode[] = [
-        {
-            type: FileTreeNodeType.Root,
-            name: "respurces",
-            path: RESOURCES_DIRECTORY,
-            directory: ROOT_DIRECTORY,
-            depth: 0,
-            folded: false,
-            icon: RESOURCES_ICON,
-            text: plugin.i18n.dock.resources.text,
-        },
-        {
-            type: FileTreeNodeType.Root,
-            name: "kernelspec",
-            path: KERNELSPECS_DIRECTORY,
-            directory: ROOT_DIRECTORY,
-            depth: 0,
-            folded: false,
-            icon: KERNELSPECS_ICON,
-            text: plugin.i18n.dock.kernelspecs.text,
-        },
-        {
-            type: FileTreeNodeType.Root,
-            name: "kernels",
-            path: KERNELS_DIRECTORY,
-            directory: ROOT_DIRECTORY,
-            depth: 0,
-            folded: false,
-            icon: KERNELS_ICON,
-            text: plugin.i18n.dock.kernels.text,
-        },
-        {
-            type: FileTreeNodeType.Root,
-            name: "sessions",
-            path: SESSIONS_DIRECTORY,
-            directory: ROOT_DIRECTORY,
-            depth: 0,
-            folded: false,
-            icon: SESSIONS_ICON,
-            text: plugin.i18n.dock.sessions.text,
-        },
-    ];
-
     /* 动态更新 jupyter 服务状态 */
     $: {
-        roots[0].count = Object.keys(kernelspecs.kernelspecs).length;
-        resources2node(kernelspecs, kernels, sessions).then(children => {
-            roots[0].children = children;
+        roots[0]!.count = Object.keys(kernelspecs.kernelspecs).length;
+        resources2node(kernelspecs, kernels, sessions).then((children) => {
+            roots[0]!.children = children;
         });
     }
 
     /* 动态更新内核清单 */
     $: {
-        roots[1].count = Object.keys(kernelspecs.kernelspecs).length;
-        kernelspecs2node(kernelspecs).then(async children => {
+        roots[1]!.count = Object.keys(kernelspecs.kernelspecs).length;
+        kernelspecs2node(kernelspecs).then(async (children) => {
             /* 确保内核图标已加载 */
-            roots[1].children = children;
-            roots[2].children = kernels2node(kernels);
-            roots[3].children = sessions2node(sessions);
+            roots[1]!.children = children;
+            roots[2]!.children = kernels2node(kernels);
+            roots[3]!.children = sessions2node(sessions);
         });
     }
 
     /* 动态更新活跃的内核 */
     $: {
-        roots[2].count = kernels.length;
-        roots[2].children = kernels2node(kernels);
+        roots[2]!.count = kernels.length;
+        roots[2]!.children = kernels2node(kernels);
     }
 
     /* 动态更新活跃的会话 */
     $: {
-        roots[3].count = sessions.length;
-        roots[3].children = sessions2node(sessions);
+        roots[3]!.count = sessions.length;
+        roots[3]!.children = sessions2node(sessions);
     }
 
     $: {
@@ -483,13 +484,13 @@
     function open(e: ComponentEvents<Node>["open"]) {
         // plugin.logger.debug(e);
         const node = e.detail.props;
-        const name = get<string>(node.name)!;
-        const path = get<string>(node.path)!;
-        const depth = get<number>(node.depth)!;
+        const name = get(node.name)!;
+        const path = get(node.path)!;
+        const depth = get(node.depth)!;
 
         if (
-            path.startsWith(RESOURCES_DIRECTORY) &&
-            depth === 4 // /资源目录/内核清单/内核/会话/文档
+            path.startsWith(RESOURCES_DIRECTORY)
+            && depth === 4 // /资源目录/内核清单/内核/会话/文档
         ) {
             plugin.siyuan.openTab({
                 app: plugin.app,
@@ -510,16 +511,16 @@
     async function menu(e: ComponentEvents<Node>["menu"]) {
         // plugin.logger.debug(e);
         const node = e.detail.props;
-        const name = get<string>(node.name)!;
-        const path = get<string>(node.path)!;
-        const depth = get<number>(node.depth)!;
-        const directory = get<string>(node.directory)!;
+        const name = get(node.name)!;
+        const path = get(node.path)!;
+        const depth = get(node.depth)!;
+        const directory = get(node.directory)!;
 
         const items: import("siyuan").IMenuItemOption[] = [];
 
         if (
-            path === KERNELSPECS_DIRECTORY || // 可用内核目录
-            (path.startsWith(RESOURCES_DIRECTORY) && depth === 0) // 资源目录
+            path === KERNELSPECS_DIRECTORY // 可用内核目录
+            || (path.startsWith(RESOURCES_DIRECTORY) && depth === 0) // 资源目录
         ) {
             items.push({
                 icon: "iconRefresh",
@@ -562,8 +563,8 @@
         }
 
         if (
-            directory === KERNELS_DIRECTORY || // /内核目录/内核
-            (path.startsWith(RESOURCES_DIRECTORY) && depth === 2) // 资源目录/内核目录/内核
+            directory === KERNELS_DIRECTORY // /内核目录/内核
+            || (path.startsWith(RESOURCES_DIRECTORY) && depth === 2) // 资源目录/内核目录/内核
         ) {
             //
             items.push({
@@ -614,8 +615,8 @@
         }
 
         if (
-            directory === SESSIONS_DIRECTORY || // /会话目录/会话
-            (path.startsWith(RESOURCES_DIRECTORY) && depth === 3) // /资源目录/内核清单/内核/会话
+            directory === SESSIONS_DIRECTORY // /会话目录/会话
+            || (path.startsWith(RESOURCES_DIRECTORY) && depth === 3) // /资源目录/内核清单/内核/会话
         ) {
             items.push({
                 icon: "iconClose",
@@ -635,8 +636,8 @@
         }
 
         if (
-            path.startsWith(RESOURCES_DIRECTORY) &&
-            depth === 4 // /资源目录/内核清单/内核/会话/文档
+            path.startsWith(RESOURCES_DIRECTORY)
+            && depth === 4 // /资源目录/内核清单/内核/会话/文档
         ) {
             const response = await plugin.client.getBlockAttrs({ id: name });
             const ial = response.data;
@@ -663,7 +664,7 @@
         washMenuItems(items);
         if (items.length > 0) {
             const menu = new plugin.siyuan.Menu();
-            items.forEach(item => menu.addItem(item));
+            items.forEach((item) => menu.addItem(item));
 
             const event = e.detail.e;
             menu.open({
@@ -677,9 +678,9 @@
 
 <Bar {...bar} />
 <FileTree
+    {roots}
     on:open={open}
     on:menu={menu}
     on:fold={fold}
     on:unfold={unfold}
-    {roots}
 />

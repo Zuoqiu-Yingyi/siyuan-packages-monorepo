@@ -28,6 +28,7 @@ export type openTabParametersOptionsCustom = openTabParametersOptions.custom;
 
 export interface ISiyuan extends siyuan.ISiyuan {
     languages: Record<string, string>;
+    storage: Record<string, any>;
     coordinates?: {
         pageX: number;
         pageY: number;

@@ -1,58 +1,48 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import "xterm/css/xterm.css";
-import manifest from "~/public/plugin.json";
+import "@xterm/xterm/css/xterm.css";
 
+import { FitAddon } from "@xterm/addon-fit";
 import {
     Terminal,
     type ITheme,
-} from "xterm";
-import { FitAddon } from "xterm-addon-fit";
+} from "@xterm/xterm";
 
-import { isLightTheme } from "@workspace/utils/siyuan/theme";
-import { deshake } from "@workspace/utils/misc/deshake";
 import { decode } from "@workspace/utils/misc/base64";
 import { copyText } from "@workspace/utils/misc/copy";
+import { deshake } from "@workspace/utils/misc/deshake";
 import { isMatchedKeyboardEvent } from "@workspace/utils/shortcut/match";
+import { isLightTheme } from "@workspace/utils/siyuan/theme";
+
+import manifest from "~/public/plugin.json";
 
 import type JupyterClientPlugin from "@/index";
-import type { ISiyuanGlobal } from "@workspace/types/siyuan";
-
-declare var globalThis: ISiyuanGlobal;
 
 export type TObservedAttributes = "data-stream";
-
-export default function (plugin: InstanceType<typeof JupyterClientPlugin>) {
-    return class extends XtermOutputElement {
-        constructor() {
-            super(plugin);
-        }
-    };
-}
 
 /**
  * REF: https://developer.mozilla.org/zh-CN/docs/Web/API/Web_components
  */
 export class XtermOutputElement extends HTMLElement {
+    static plugin: InstanceType<typeof JupyterClientPlugin>;
+
     /**
      * REF: https://github.com/mdn/web-components-examples/blob/main/life-cycle-callbacks/main.js
      * 
-     * Specify observed attributes so that {@link XtermOutputElement.attributeChangedCallback attributeChangedCallback} will work
+     * Specify observed attributes so that {@link XtermOutputElement.attributeChangedCallback | attributeChangedCallback} will work
      */
     static get observedAttributes(): TObservedAttributes[] {
         return [
@@ -68,7 +58,7 @@ export class XtermOutputElement extends HTMLElement {
     protected readonly save?: string; // 是否保存渲染结果
     protected readonly blockId?: string; // 块 ID
     protected readonly linkHref: string; // 样式表引用地址
-    public readonly shadowRoot: ShadowRoot; // 样式表引用地址
+    public override readonly shadowRoot: ShadowRoot; // 样式表引用地址
 
     protected link?: HTMLLinkElement | null; // 样式表引用标签
     protected content?: HTMLPreElement | null; // 存放输出流文本的标签 (data-stream 保存 base 64 编码的数据)
@@ -80,21 +70,19 @@ export class XtermOutputElement extends HTMLElement {
     protected resizeObserver?: InstanceType<typeof ResizeObserver>; // xterm 终端实例
 
     public get fontSize(): number | undefined {
-        return parseFloat(globalThis.getComputedStyle(this).getPropertyValue("font-size"))
-            || globalThis.siyuan?.config?.editor?.fontSize;
+        return Number.parseFloat(globalThis.getComputedStyle(this).getPropertyValue("font-size"))
+            || window.siyuan?.config?.editor?.fontSize;
     }
 
     public get terminal(): InstanceType<typeof Terminal> | undefined {
         return this._terminal;
     }
 
-    constructor(
-        protected readonly plugin: InstanceType<typeof JupyterClientPlugin>,
-    ) {
+    constructor() {
         super();
         this.save = this.dataset.save;
         this.blockId = this.dataset.blockId;
-        this.linkHref = `plugins/${this.plugin.name}/index.css?v=${manifest.version}`;
+        this.linkHref = `plugins/${XtermOutputElement.plugin.name}/index.css?v=${manifest.version}`;
 
         this.shadowRoot = this.attachShadow({ mode: "open" });
     }
@@ -104,7 +92,7 @@ export class XtermOutputElement extends HTMLElement {
      * REF: https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#using_the_lifecycle_callbacks
      */
     connectedCallback(): void {
-        this.plugin.xtermElements.add(this);
+        XtermOutputElement.plugin.xtermElements.add(this);
         this.link = this.querySelector(`link#${XtermOutputElement.ELEMENT_ID_STYLE}`);
         this.content = this.querySelector(`pre#${XtermOutputElement.ELEMENT_ID_CONTENT}`);
         this.preview = this.querySelector(`div#${XtermOutputElement.ELEMENT_ID_PREVIEW}`);
@@ -138,14 +126,16 @@ export class XtermOutputElement extends HTMLElement {
 
             this.shadowRoot.appendChild(this.preview);
             const theme = isLightTheme()
+                // eslint-disable-next-line ts/no-use-before-define
                 ? light_theme
-                : dark_theme
+                // eslint-disable-next-line ts/no-use-before-define
+                : dark_theme;
 
             this._terminal = new Terminal({
                 rows: 0,
                 theme,
                 fontSize: this.fontSize,
-                ...this.plugin.config.xterm.options,
+                ...XtermOutputElement.plugin.config.xterm.options,
             });
             this.fitAddon = new FitAddon();
 
@@ -158,13 +148,13 @@ export class XtermOutputElement extends HTMLElement {
     }
 
     protected async write(data: Parameters<Terminal["write"]>[0]): Promise<void> {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             this._terminal?.write(data, resolve);
         });
     }
 
     protected async writeln(data: Parameters<Terminal["writeln"]>[0]): Promise<void> {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             this._terminal?.writeln(data, resolve);
         });
     }
@@ -173,7 +163,7 @@ export class XtermOutputElement extends HTMLElement {
         activate: (terminal: Terminal) => {
             // TODO: 注册一个渲染完成后保存功能
             // if (this.save && this.blockId) {
-            //     this.plugin.client.updateBlock({
+            //     XtermOutputElement.plugin.client.updateBlock({
             //         id: this.blockId,
             //         data: `<div>\n${this.outerHTML}\n</div>`,
             //         dataType: "markdown",
@@ -181,8 +171,8 @@ export class XtermOutputElement extends HTMLElement {
             // }
 
             /* 注册复制功能 */
-            terminal.attachCustomKeyEventHandler(e => {
-                // this.plugin.logger.debug(e);
+            terminal.attachCustomKeyEventHandler((e) => {
+                // XtermOutputElement.plugin.logger.debug(e);
 
                 if (
                     isMatchedKeyboardEvent(e, {
@@ -193,8 +183,7 @@ export class XtermOutputElement extends HTMLElement {
                         altKey: false,
                         shiftKey: false,
                     })
-                    ||
-                    isMatchedKeyboardEvent(e, {
+                    || isMatchedKeyboardEvent(e, {
                         type: "keydown",
                         key: "c",
                         ctrlKey: false,
@@ -212,20 +201,21 @@ export class XtermOutputElement extends HTMLElement {
         },
         dispose() { },
         fit: () => {
-            // this.plugin.logger.debug(this._terminal.buffer);
+            // XtermOutputElement.plugin.logger.debug(this._terminal.buffer);
             this._terminal?.resize(
                 this._terminal.cols,
                 this._terminal.buffer.active.baseY
                 + this._terminal.buffer.active.cursorY
                 + 1,
             );
-        }
+        },
     };
 
     protected readonly fit = () => {
         try {
             if (this._terminal) {
-                if (this._terminal.options.fontSize !== this.fontSize) this._terminal.options.fontSize = this.fontSize;
+                if (this._terminal.options.fontSize !== this.fontSize)
+                    this._terminal.options.fontSize = this.fontSize;
             }
 
             // ! 错误无法被捕获
@@ -233,9 +223,9 @@ export class XtermOutputElement extends HTMLElement {
             this.customAddon?.fit();
         }
         catch (error) {
-            this.plugin.logger.warn(error);
+            XtermOutputElement.plugin.logger.warn(error);
         }
-    }
+    };
 
     protected sizeObserver(element: HTMLElement): void {
         /**
@@ -260,7 +250,7 @@ export class XtermOutputElement extends HTMLElement {
      * 当 custom element 从文档 DOM 中删除时调用
      */
     disconnectedCallback(): void {
-        this.plugin.xtermElements.delete(this);
+        XtermOutputElement.plugin.xtermElements.delete(this);
         this.resizeObserver?.disconnect();
         this._terminal?.dispose();
     }
@@ -275,14 +265,14 @@ export class XtermOutputElement extends HTMLElement {
     /**
      * 当 custom element 增加、删除、修改自身属性时调用
      * 
-     * 需要设置 {@link XtermOutputElement.observedAttributes observedAttributes}
+     * 需要设置 {@link XtermOutputElement.observedAttributes | observedAttributes}
      */
     async attributeChangedCallback(
         name: TObservedAttributes,
         _oldValue: string,
         newValue: string,
     ): Promise<void> {
-        // this.plugin.logger.debug(arguments);
+        // XtermOutputElement.plugin.logger.debug(arguments);
 
         switch (name) {
             case "data-stream":

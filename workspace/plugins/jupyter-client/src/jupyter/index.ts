@@ -1,88 +1,80 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import * as jupyterlab from "@jupyterlab/services";
+
 import { makeSettings } from "./settings";
 
 import type { Logger } from "@workspace/utils/logger";
+
 import type { IJupyterServerSettings } from "@/types/config";
 
 /**
  * 裁剪后的 {@link jupyterlab.ServiceManager}
  */
 export class Jupyter
-    implements Omit<
-        jupyterlab.ServiceManager,
-        "connectionFailure"
-        | "settings"
-        | "builder"
+implements Omit<
+    jupyterlab.ServiceManager,
+        "builder"
+        | "connectionFailure"
         | "contents"
         | "events"
+        | "nbconvert"
+        | "settings"
         | "terminals"
         | "user"
         | "workspaces"
-        | "nbconvert"
-    > {
-
+> {
     /**
      * 服务设置
-     * {@inheritDoc jupyterlab.ServiceManager.serverSettings}
      * @see {@link jupyterlab.ServiceManager.serverSettings}
      */
     public readonly serverSettings: jupyterlab.ServerConnection.ISettings;
 
     /**
      * 内核清单管理
-     * {@inheritDoc jupyterlab.ServiceManager.kernelspecs}
      * @see {@link jupyterlab.ServiceManager.kernelspecs}
      */
     public readonly kernelspecs: jupyterlab.KernelSpec.IManager;
 
     /**
      * 内核管理
-     * {@inheritDoc jupyterlab.ServiceManager.kernels}
      * @see {@link jupyterlab.ServiceManager.kernels}
      */
     public readonly kernels: jupyterlab.Kernel.IManager;
 
     /**
      * 会话管理
-     * {@inheritDoc jupyterlab.ServiceManager.sessions}
      * @see {@link jupyterlab.ServiceManager.sessions}
      */
     public readonly sessions: jupyterlab.Session.IManager;
 
     /**
      * 实例是否销毁
-     * {@inheritDoc jupyterlab.ServiceManager._isDisposed}
      * @see {@link jupyterlab.ServiceManager._isDisposed}
      */
     protected _isDisposed = false;
 
     /**
      * 实例是否就绪
-     * {@inheritDoc jupyterlab.ServiceManager._readyPromise}
      * @see {@link jupyterlab.ServiceManager._readyPromise}
      */
     protected _readyPromise: Promise<void>;
 
     /**
      * 实例是否就绪
-     * {@inheritDoc jupyterlab.ServiceManager._isReady}
      * @see {@link jupyterlab.ServiceManager._isReady}
      */
     protected _isReady = false;
@@ -119,7 +111,6 @@ export class Jupyter
 
     /**
      * 实例是否销毁
-     * {@inheritDoc jupyterlab.ServiceManager.ready}
      * @see {@link jupyterlab.ServiceManager.ready}
      */
     public get ready(): Promise<void> {
@@ -128,7 +119,6 @@ export class Jupyter
 
     /**
      * 实例是否销毁
-     * {@inheritDoc jupyterlab.ServiceManager.isReady}
      * @see {@link jupyterlab.ServiceManager.isReady}
      */
     public get isReady(): boolean {
@@ -137,21 +127,19 @@ export class Jupyter
 
     /**
      * 实例是否销毁
-     * {@inheritDoc jupyterlab.ServiceManager.isDisposed}
      * @see {@link jupyterlab.ServiceManager.isDisposed}
      */
     public get isDisposed(): boolean {
         return this._isDisposed;
     }
 
-
     /**
      * 资源销毁
-     * {@inheritDoc jupyterlab.ServiceManager.dispose}
      * @see {@link jupyterlab.ServiceManager.dispose}
      */
     public dispose(): void {
-        if (this._isDisposed) return;
+        if (this._isDisposed)
+            return;
 
         this.unload();
 
@@ -164,10 +152,11 @@ export class Jupyter
             // this.contents,
             // this.events,
             // this.terminals,
-        ].forEach(prop => {
+        ].forEach((prop) => {
             try {
                 prop.dispose();
-            } catch (error) {
+            }
+            catch (error) {
                 this.logger.warn(error);
             }
         });
@@ -207,5 +196,5 @@ export class Jupyter
 
     protected readonly errorEventListener = (...args: any[]) => {
         this.logger.warn(...args);
-    }
+    };
 }

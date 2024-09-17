@@ -1,15 +1,15 @@
 // Copyright (C) 2023 Zuoqiu Yingyi
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
 // published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Affero General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -17,12 +17,11 @@
 
 :root {
     // jupyter 主题色
-    --jupyter-client-jupyter-theme-color: #F37726;
+    --jupyter-client-jupyter-theme-color: #f37726;
 }
 
 /* 👇代码块与输出块样式👇 */
 .protyle-wysiwyg {
-
     // 文档提示
     // &[custom-prompt],
     &[custom-jupyter-kernel-language],
@@ -30,7 +29,6 @@
     &[custom-jupyter-kernel-display-name],
     &[custom-jupyter-kernel-connection-status],
     &[custom-jupyter-kernel-status] {
-
         &::after {
             content: "#️⃣" attr(custom-jupyter-kernel-language) // 内核语言
                 " ⚛" attr(custom-jupyter-kernel-name) // 内核名称
@@ -64,8 +62,7 @@
         }
 
         // 代码块
-        &[custom-jupyter-block-type=code] {
-
+        &[custom-jupyter-block-type="code"] {
             &::before {
                 /* 运行完成 */
                 // color: var(--b3-card-success-color);
@@ -98,7 +95,7 @@
         }
 
         // 输出块
-        &[custom-jupyter-block-type=output] {
+        &[custom-jupyter-block-type="output"] {
             font-family: var(--b3-font-family-code); // 输出内容使用等宽字体
 
             &::before {
@@ -112,14 +109,14 @@
             }
 
             // 分割线
-            >.hr[data-node-id] {
+            > .hr[data-node-id] {
                 margin-top: 0;
                 margin-bottom: 0;
 
                 padding-top: 0;
                 padding-bottom: 0;
 
-                >div {
+                > div {
                     height: 1em;
 
                     &::after {

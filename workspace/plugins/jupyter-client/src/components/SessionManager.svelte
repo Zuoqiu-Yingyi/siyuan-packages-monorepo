@@ -1,16 +1,16 @@
 <!--
  Copyright (C) 2023 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
@@ -19,17 +19,19 @@
     import { createEventDispatcher, type ComponentEvents } from "svelte";
 
     import Dialog from "@workspace/components/siyuan/dialog/Dialog.svelte";
-    import Panel from "@workspace/components/siyuan/setting/panel/Panel.svelte";
-    import Item from "@workspace/components/siyuan/setting/item/Item.svelte";
     import Input from "@workspace/components/siyuan/setting/item/Input.svelte";
-
     import { ItemType } from "@workspace/components/siyuan/setting/item/item";
+    import Item from "@workspace/components/siyuan/setting/item/Item.svelte";
+    import Panel from "@workspace/components/siyuan/setting/panel/Panel.svelte";
     import uuid from "@workspace/utils/misc/uuid";
 
-    import type Plugin from "@/index";
     import type { Session } from "@jupyterlab/services";
+
     import type { BlockID } from "@workspace/types/siyuan";
+
+    import type Plugin from "@/index";
     import type { ISessionModel } from "@/types/jupyter";
+
     import type { WorkerHandlers } from "../workers/jupyter";
 
     export let docID: BlockID; // 文档 ID
@@ -56,8 +58,11 @@
     let flag_session_new: boolean = true; // 当前会话是否为新建会话
     let flag_session_running: boolean = false; // 当前会话是否为正在运行的会话
     let flag_session_connected: boolean = false; // 当前会话是否为已连接的会话
+
+    // eslint-disable-next-line ts/no-use-before-define
     updateFlag(session);
 
+    // eslint-disable-next-line ts/no-use-before-define
     $: updateFlag(session);
 
     function updateFlag(s: ISessionModel) {
@@ -68,7 +73,7 @@
     }
 
     /* 可选的会话列表 */
-    const session_options = plugin.sessions.map(s => ({
+    const session_options = plugin.sessions.map((s) => ({
         key: s.id,
         text: s.name,
     }));
@@ -82,8 +87,9 @@
             key: session_new.id,
             text: i18n.settings.sessionSettings.connect.options.new.text,
         });
-        session = plugin.sessions.find(s => s.id === session.id) ?? session; // 获取对应的会话
-    } else {
+        session = plugin.sessions.find((s) => s.id === session.id) ?? session; // 获取对应的会话
+    }
+    else {
         // 非运行的会话
         /* 以文档属性中保存的信息创建会话 */
         session_options.unshift({
@@ -103,8 +109,8 @@
     /* 启动内核 */
     kernel_options.push(
         ...Array.from(Object.values(plugin.kernelspecs.kernelspecs))
-            .filter(k => k !== undefined)
-            .map(k => ({
+            .filter((k) => k !== undefined)
+            .map((k) => ({
                 key: k!.name,
                 text: `▶ ${i18n.settings.sessionSettings.kernel.options.new.text} [${k!.language}] ${k!.name}: ${k!.display_name}`,
             })),
@@ -113,8 +119,8 @@
     /* 使用内核 */
     kernel_options.push(
         ...plugin.sessions
-            .filter(s => s.kernel)
-            .map(s => {
+            .filter((s) => s.kernel)
+            .map((s) => {
                 const spec = plugin.kernelspecs.kernelspecs[s.kernel!.name];
                 return {
                     key: s.kernel!.id,
@@ -135,7 +141,7 @@
     /* 点击确认按钮 */
     async function onConfirm(e: ComponentEvents<Dialog>["confirm"]) {
         try {
-            var session_model: Session.IModel | undefined = session;
+            let session_model: Session.IModel | undefined = session;
             if (flag_session_new) {
                 if (session.kernel) {
                     // 创建会话并连接
@@ -156,7 +162,8 @@
                         },
                     );
                 }
-            } else if (!flag_session_connected) {
+            }
+            else if (!flag_session_connected) {
                 if (session.kernel) {
                     // 连接已有会话
                     session_model = await plugin.bridge?.call<WorkerHandlers["jupyter.sessions.connectTo"]>(
@@ -169,7 +176,8 @@
                         },
                     );
                 }
-            } else {
+            }
+            else {
                 // 更新发生更改的会话信息
                 const session_old = plugin.doc2session.get(docID);
                 if (session_old) {
@@ -205,7 +213,8 @@
                                 session.id, //
                                 { name: session.kernel.name }, //
                             );
-                        } else if (!session_old.kernel || session.kernel.id !== session_old.kernel.id) {
+                        }
+                        else if (!session_old.kernel || session.kernel.id !== session_old.kernel.id) {
                             // 更换内核为其他会话的内核
                             session_model = await plugin.bridge?.call<WorkerHandlers["jupyter.session.connection.changeKernel"]>(
                                 "jupyter.session.connection.changeKernel", //
@@ -213,7 +222,8 @@
                                 { id: session.kernel.id }, //
                             );
                         }
-                    } else {
+                    }
+                    else {
                         // 禁用内核
                         session_model = await plugin.bridge?.call<WorkerHandlers["jupyter.session.connection.changeKernel"]>(
                             "jupyter.session.connection.changeKernel", //
@@ -228,7 +238,8 @@
                 // 会话创建并连接成功
                 session = session_model;
                 plugin.relateDoc2Session(docID, session_model);
-            } else {
+            }
+            else {
                 // 客户端未初始化
                 plugin.siyuan.showMessage(i18n.messages.uninitialized.text, undefined, "error");
                 return;
@@ -239,7 +250,8 @@
                 id: docID,
                 attrs: plugin.session2ial(session, true),
             });
-        } catch (error) {
+        }
+        catch (error) {
             // 会话创建/连接失败
             plugin.logger.warn(error);
             plugin.siyuan.showMessage(String(error), undefined, "error");
@@ -255,32 +267,33 @@
 </script>
 
 <Dialog
-    on:cancel={onCancle}
-    on:confirm={onConfirm}
     confirmButtonText={flag_session_new // 是否新建
         ? i18n.settings.sessionSettings.confirm.new
         : !flag_session_connected // 是否未连接
         ? i18n.settings.sessionSettings.confirm.connect
         : i18n.settings.sessionSettings.confirm.update}
+    on:cancel={onCancle}
+    on:confirm={onConfirm}
 >
     <Panel>
         <!-- 连接会话 -->
         <Item
-            title={i18n.settings.sessionSettings.connect.title}
             text={i18n.settings.sessionSettings.connect.description}
+            title={i18n.settings.sessionSettings.connect.title}
         >
             <Input
                 slot="input"
-                type={ItemType.select}
+                options={session_options}
                 settingKey="session.id"
                 settingValue={session.id}
-                options={session_options}
-                on:changed={async e => {
+                type={ItemType.select}
+                on:changed={async (e) => {
                     const session_id = e.detail.value;
-                    if (session_id === session_options[0].key) {
+                    if (session_id === session_options[0]?.key) {
                         session = session_new;
-                    } else {
-                        const session_selected = plugin.sessions.find(s => s.id === session_id);
+                    }
+                    else {
+                        const session_selected = plugin.sessions.find((s) => s.id === session_id);
                         if (session_selected) {
                             // 连接已存在的会话
                             session = session_selected;
@@ -292,22 +305,20 @@
 
         <!-- 会话名称 -->
         <Item
-            title={i18n.settings.sessionSettings.name.title}
-            text={i18n.settings.sessionSettings.name.description}
             block={true}
+            text={i18n.settings.sessionSettings.name.description}
+            title={i18n.settings.sessionSettings.name.title}
         >
             <Input
                 slot="input"
                 block={true}
-                type={ItemType.text}
-                settingKey="session.name"
-                settingValue={session.name}
                 disabled={flag_session_new // 若为新建会话, 可以编辑
                     ? false
-                    : !flag_session_connected // 若为未连接且正在运行的会话, 不能编辑
-                    ? true
-                    : false}
-                on:changed={async e => {
+                    : !flag_session_connected}
+                settingKey="session.name"
+                settingValue={session.name}
+                type={ItemType.text}
+                on:changed={async (e) => {
                     const name = e.detail.value;
                     session.name = name;
                     if (flag_session_new) {
@@ -319,22 +330,20 @@
 
         <!-- 会话路径 -->
         <Item
-            title={i18n.settings.sessionSettings.path.title}
-            text={i18n.settings.sessionSettings.path.description}
             block={true}
+            text={i18n.settings.sessionSettings.path.description}
+            title={i18n.settings.sessionSettings.path.title}
         >
             <Input
                 slot="input"
                 block={true}
-                type={ItemType.text}
-                settingKey="session.path"
-                settingValue={session.path}
                 disabled={flag_session_new // 若为新建会话, 可以编辑
                     ? false
-                    : !flag_session_connected // 若为未连接且正在运行的会话, 不能编辑
-                    ? true
-                    : false}
-                on:changed={async e => {
+                    : !flag_session_connected}
+                settingKey="session.path"
+                settingValue={session.path}
+                type={ItemType.text}
+                on:changed={async (e) => {
                     const path = e.detail.value;
                     session.path = path;
                     if (flag_session_new) {
@@ -346,24 +355,22 @@
 
         <!-- 会话类型 -->
         <Item
-            title={i18n.settings.sessionSettings.type.title}
             text={i18n.settings.sessionSettings.type.description}
+            title={i18n.settings.sessionSettings.type.title}
         >
             <Input
                 slot="input"
-                type={ItemType.select}
-                settingKey="session.type"
-                settingValue={session.type}
+                disabled={flag_session_new // 若为新建会话, 可以编辑
+                    ? false
+                    : !flag_session_connected}
                 options={[
                     { key: "console", text: "console" }, //
                     { key: "notebook", text: "notebook" }, //
                 ]}
-                disabled={flag_session_new // 若为新建会话, 可以编辑
-                    ? false
-                    : !flag_session_connected // 若为未连接且正在运行的会话, 不能编辑
-                    ? true
-                    : false}
-                on:changed={async e => {
+                settingKey="session.type"
+                settingValue={session.type}
+                type={ItemType.select}
+                on:changed={async (e) => {
                     const type = e.detail.value;
                     session.type = type;
                     if (flag_session_new) {
@@ -375,27 +382,25 @@
 
         <!-- 内核选择 -->
         <Item
-            title={i18n.settings.sessionSettings.kernel.title}
-            text={i18n.settings.sessionSettings.kernel.description}
             block={true}
+            text={i18n.settings.sessionSettings.kernel.description}
+            title={i18n.settings.sessionSettings.kernel.title}
         >
             <Input
                 slot="input"
                 block={true}
-                type={ItemType.select}
-                settingKey="session.kernel"
-                settingValue={session.kernel // 是否禁用内核
-                    ? plugin.kernels.find(k => k.id === session.kernel?.id)?.id ?? // 使用内核
-                      session.kernel?.name ?? // 启动内核
-                      plugin.kernelspecs.default // 默认启动内核
-                    : ""}
-                options={flag_session_new ? kernel_options_new : kernel_options}
                 disabled={flag_session_new // 若为新建会话, 可以编辑
                     ? false
-                    : !flag_session_connected // 若为未连接且正在运行的会话, 不能编辑
-                    ? true
-                    : false}
-                on:changed={async e => {
+                    : !flag_session_connected}
+                options={flag_session_new ? kernel_options_new : kernel_options}
+                settingKey="session.kernel"
+                settingValue={session.kernel // 是否禁用内核
+                    ? plugin.kernels.find((k) => k.id === session.kernel?.id)?.id // 使用内核
+                        ?? session.kernel?.name // 启动内核
+                        ?? plugin.kernelspecs.default // 默认启动内核
+                    : ""}
+                type={ItemType.select}
+                on:changed={async (e) => {
                     const key = e.detail.value;
                     if (key === "") {
                         // 禁用内核
@@ -403,7 +408,8 @@
                         if (flag_session_new) {
                             session_new.kernel = null;
                         }
-                    } else if (plugin.kernels.some(k => k.id === key)) {
+                    }
+                    else if (plugin.kernels.some((k) => k.id === key)) {
                         // 使用内核
                         if (session.kernel) {
                             session.kernel.id = key;
@@ -413,7 +419,8 @@
                                 session_new.kernel.id = key;
                             }
                         }
-                    } else {
+                    }
+                    else {
                         // 新建内核, 为了避免 key 与已有内核重复, 重新生成内核 id
                         const kernel_id_new = uuid.v4();
                         if (session.kernel) {
