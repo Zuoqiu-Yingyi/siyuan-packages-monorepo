@@ -1,16 +1,16 @@
 <!--
  Copyright (C) 2023 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
@@ -18,23 +18,21 @@
 <!-- 设置面板 -->
 
 <script lang="ts">
-    import Panels from "@workspace/components/siyuan/setting/panel/Panels.svelte";
-    import Panel from "@workspace/components/siyuan/setting/panel/Panel.svelte";
-    import Tabs from "@workspace/components/siyuan/setting/tab/Tabs.svelte";
-    import Item from "@workspace/components/siyuan/setting/item/Item.svelte";
     import Input from "@workspace/components/siyuan/setting/item/Input.svelte";
-
     import { ItemType } from "@workspace/components/siyuan/setting/item/item";
-    import { fn__code } from "@workspace/utils/siyuan/text/span";
+    import Item from "@workspace/components/siyuan/setting/item/Item.svelte";
+    import Panel from "@workspace/components/siyuan/setting/panel/Panel.svelte";
+    import Panels from "@workspace/components/siyuan/setting/panel/Panels.svelte";
     import { type ITab } from "@workspace/components/siyuan/setting/tab";
-
-    import { Category } from "@/wakatime/heartbeats";
-
-    import type { IConfig } from "@/types/config";
-    import type { I18N } from "@/utils/i18n";
-    import type WakaTimePlugin from "@/index";
+    import Tabs from "@workspace/components/siyuan/setting/tab/Tabs.svelte";
+    import { fn__code } from "@workspace/utils/siyuan/text/span";
 
     import CONSTANTS from "@/constants";
+    import { Category } from "@/wakatime/heartbeats";
+
+    import type WakaTimePlugin from "@/index";
+    import type { IConfig } from "@/types/config";
+    import type { I18N } from "@/utils/i18n";
 
     export let config: IConfig; // 传入的配置项
     export let plugin: InstanceType<typeof WakaTimePlugin>; // 插件实例
@@ -76,16 +74,17 @@
         if (status) {
             plugin.siyuan.showMessage(
                 i18n.settings.wakatimeSettings.serviceTab.test.messages.success.replaceAll(
-                    "${1}", //
+                    "{{1}}", //
                     fn__code(plugin.wakatimeApiBaseUrl), //
                 ), //
                 undefined, //
                 "info", //
             );
-        } else {
+        }
+        else {
             plugin.siyuan.showMessage(
                 i18n.settings.wakatimeSettings.serviceTab.test.messages.error.replaceAll(
-                    "${1}", //
+                    "{{1}}", //
                     fn__code(plugin.wakatimeApiBaseUrl), //
                 ), //
                 undefined, //
@@ -95,6 +94,7 @@
         return status;
     }
 
+    /* eslint-disable no-unused-vars */
     enum PanelKey {
         general, // 常规设置
         wakatime, // WakaTime 设置
@@ -104,8 +104,9 @@
         general, // 常规设置
         service, // 服务设置
     }
+    /* eslint-enable no-unused-vars */
 
-    let panels_focus_key = PanelKey.general;
+    const panels_focus_key = PanelKey.general;
     const panels: ITab[] = [
         {
             key: PanelKey.general,
@@ -121,7 +122,7 @@
         },
     ];
 
-    let wakatime_settings_tabs_focus_key = TabKey.general;
+    const wakatime_settings_tabs_focus_key = TabKey.general;
     const tabs = {
         wakatime: [
             {
@@ -165,43 +166,43 @@
 </script>
 
 <Panels
-    {panels}
     focus={panels_focus_key}
+    {panels}
     let:focus={focusPanel}
 >
     <!-- 常规设置面板 -->
-    <Panel display={panels[0].key === focusPanel}>
+    <Panel display={panels[0]?.key === focusPanel}>
         <!-- 清理离线缓存 -->
         <Item
-            title={i18n.settings.generalSettings.cleanCache.title}
             text={i18n.settings.generalSettings.cleanCache.description}
+            title={i18n.settings.generalSettings.cleanCache.title}
         >
             <Input
                 slot="input"
-                type={ItemType.button}
                 settingKey="cleanCache"
                 settingValue={i18n.settings.generalSettings.cleanCache.text}
+                type={ItemType.button}
                 on:clicked={cleanCache}
             />
         </Item>
 
         <!-- 重置设置 -->
         <Item
-            title={i18n.settings.generalSettings.reset.title}
             text={i18n.settings.generalSettings.reset.description}
+            title={i18n.settings.generalSettings.reset.title}
         >
             <Input
                 slot="input"
-                type={ItemType.button}
                 settingKey="Reset"
                 settingValue={i18n.settings.generalSettings.reset.text}
+                type={ItemType.button}
                 on:clicked={resetOptions}
             />
         </Item>
     </Panel>
 
     <!-- 服务设置面板 -->
-    <Panel display={panels[1].key === focusPanel}>
+    <Panel display={panels[1]?.key === focusPanel}>
         <Tabs
             focus={wakatime_settings_tabs_focus_key}
             tabs={tabs.wakatime}
@@ -209,20 +210,20 @@
         >
             <!-- 标签页 1 - 常规设置 -->
             <div
-                data-type={tabs.wakatime[0].name}
-                class:fn__none={tabs.wakatime[0].key !== focusTab}
+                class:fn__none={tabs.wakatime[0]?.key !== focusTab}
+                data-type={tabs.wakatime[0]?.name}
             >
                 <!-- 心跳连接 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.generalTab.heartbeats.title}
                     text={i18n.settings.wakatimeSettings.generalTab.heartbeats.description}
+                    title={i18n.settings.wakatimeSettings.generalTab.heartbeats.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.checkbox}
                         settingKey="Heartbeats"
                         settingValue={config.wakatime.heartbeats}
-                        on:changed={async e => {
+                        type={ItemType.checkbox}
+                        on:changed={async (e) => {
                             config.wakatime.heartbeats = e.detail.value;
                             await updated();
                         }}
@@ -231,16 +232,16 @@
 
                 <!-- 工作空间名称 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.generalTab.project.title}
                     text={i18n.settings.wakatimeSettings.generalTab.project.description}
+                    title={i18n.settings.wakatimeSettings.generalTab.project.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.text}
+                        placeholder={plugin.wakatimeDefaultProject}
                         settingKey="project"
                         settingValue={config.wakatime.project}
-                        placeholder={plugin.wakatimeDefaultProject}
-                        on:changed={async e => {
+                        type={ItemType.text}
+                        on:changed={async (e) => {
                             config.wakatime.project = e.detail.value;
                             await updated();
                         }}
@@ -249,16 +250,16 @@
 
                 <!-- 语言名称 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.generalTab.language.title}
                     text={i18n.settings.wakatimeSettings.generalTab.language.description}
+                    title={i18n.settings.wakatimeSettings.generalTab.language.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.text}
+                        placeholder={plugin.wakatimeDefaultLanguage}
                         settingKey="language"
                         settingValue={config.wakatime.language}
-                        placeholder={plugin.wakatimeDefaultLanguage}
-                        on:changed={async e => {
+                        type={ItemType.text}
+                        on:changed={async (e) => {
                             config.wakatime.language = e.detail.value;
                             await updated();
                         }}
@@ -267,16 +268,16 @@
 
                 <!-- 推送时间间隔 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.generalTab.interval.title}
                     text={i18n.settings.wakatimeSettings.generalTab.interval.description}
+                    title={i18n.settings.wakatimeSettings.generalTab.interval.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.number}
+                        limits={time_limits}
                         settingKey="interval"
                         settingValue={config.wakatime.interval}
-                        limits={time_limits}
-                        on:changed={async e => {
+                        type={ItemType.number}
+                        on:changed={async (e) => {
                             config.wakatime.interval = e.detail.value;
                             await updated();
                         }}
@@ -285,16 +286,16 @@
 
                 <!-- 查看操作标签 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.generalTab.viewCategory.title}
                     text={i18n.settings.wakatimeSettings.generalTab.viewCategory.description}
+                    title={i18n.settings.wakatimeSettings.generalTab.viewCategory.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.select}
+                        options={category_options}
                         settingKey="view.category"
                         settingValue={config.wakatime.view.category}
-                        options={category_options}
-                        on:changed={async e => {
+                        type={ItemType.select}
+                        on:changed={async (e) => {
                             config.wakatime.view.category = e.detail.value;
                             await updated();
                         }}
@@ -303,16 +304,16 @@
 
                 <!-- 编辑操作标签 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.generalTab.editCategory.title}
                     text={i18n.settings.wakatimeSettings.generalTab.editCategory.description}
+                    title={i18n.settings.wakatimeSettings.generalTab.editCategory.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.select}
+                        options={category_options}
                         settingKey="edit.category"
                         settingValue={config.wakatime.edit.category}
-                        options={category_options}
-                        on:changed={async e => {
+                        type={ItemType.select}
+                        on:changed={async (e) => {
                             config.wakatime.edit.category = e.detail.value;
                             await updated();
                         }}
@@ -321,16 +322,16 @@
 
                 <!-- 系统名称 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.generalTab.systemName.title}
                     text={i18n.settings.wakatimeSettings.generalTab.systemName.description}
+                    title={i18n.settings.wakatimeSettings.generalTab.systemName.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.text}
+                        placeholder={plugin.wakatimeDefaultSystemName}
                         settingKey="system_name"
                         settingValue={config.wakatime.system_name}
-                        placeholder={plugin.wakatimeDefaultSystemName}
-                        on:changed={async e => {
+                        type={ItemType.text}
+                        on:changed={async (e) => {
                             config.wakatime.system_name = e.detail.value;
                             await updated();
                         }}
@@ -339,16 +340,16 @@
 
                 <!-- 系统版本 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.generalTab.systemVersion.title}
                     text={i18n.settings.wakatimeSettings.generalTab.systemVersion.description}
+                    title={i18n.settings.wakatimeSettings.generalTab.systemVersion.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.text}
+                        placeholder={plugin.wakatimeDefaultSystemVersion}
                         settingKey="system_version"
                         settingValue={config.wakatime.system_version}
-                        placeholder={plugin.wakatimeDefaultSystemVersion}
-                        on:changed={async e => {
+                        type={ItemType.text}
+                        on:changed={async (e) => {
                             config.wakatime.system_version = e.detail.value;
                             await updated();
                         }}
@@ -357,16 +358,16 @@
 
                 <!-- 系统内核 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.generalTab.systemArch.title}
                     text={i18n.settings.wakatimeSettings.generalTab.systemArch.description}
+                    title={i18n.settings.wakatimeSettings.generalTab.systemArch.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.text}
+                        placeholder={plugin.wakatimeDefaultSystemArch}
                         settingKey="system_arch"
                         settingValue={config.wakatime.system_arch}
-                        placeholder={plugin.wakatimeDefaultSystemArch}
-                        on:changed={async e => {
+                        type={ItemType.text}
+                        on:changed={async (e) => {
                             config.wakatime.system_arch = e.detail.value;
                             await updated();
                         }}
@@ -375,18 +376,18 @@
 
                 <!-- UserAgent -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.generalTab.userAgent.title}
-                    text={i18n.settings.wakatimeSettings.generalTab.userAgent.description}
                     block={true}
+                    text={i18n.settings.wakatimeSettings.generalTab.userAgent.description}
+                    title={i18n.settings.wakatimeSettings.generalTab.userAgent.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.textarea}
+                        block={true}
+                        placeholder={useragent_placeholder}
                         settingKey="useragent"
                         settingValue={config.wakatime.useragent}
-                        placeholder={useragent_placeholder}
-                        block={true}
-                        on:changed={async e => {
+                        type={ItemType.textarea}
+                        on:changed={async (e) => {
                             config.wakatime.useragent = e.detail.value;
                             await updated();
                         }}
@@ -396,37 +397,37 @@
 
             <!-- 标签页 2 - 服务设置 -->
             <div
-                data-type={tabs.wakatime[1].name}
-                class:fn__none={tabs.wakatime[1].key !== focusTab}
+                class:fn__none={tabs.wakatime[1]?.key !== focusTab}
+                data-type={tabs.wakatime[1]?.name}
             >
                 <!-- 测试连接状态 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.serviceTab.test.title}
                     text={i18n.settings.wakatimeSettings.serviceTab.test.description}
+                    title={i18n.settings.wakatimeSettings.serviceTab.test.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.button}
                         settingKey="Test"
                         settingValue={i18n.settings.wakatimeSettings.serviceTab.test.text}
+                        type={ItemType.button}
                         on:clicked={testService}
                     />
                 </Item>
 
                 <!-- API URL -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.serviceTab.apiURL.title}
-                    text={i18n.settings.wakatimeSettings.serviceTab.apiURL.description}
                     block={true}
+                    text={i18n.settings.wakatimeSettings.serviceTab.apiURL.description}
+                    title={i18n.settings.wakatimeSettings.serviceTab.apiURL.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.text}
+                        block={true}
+                        placeholder={plugin.wakatimeDefaultApiUrl}
                         settingKey="api_url"
                         settingValue={config.wakatime.api_url}
-                        placeholder={plugin.wakatimeDefaultApiUrl}
-                        block={true}
-                        on:changed={async e => {
+                        type={ItemType.text}
+                        on:changed={async (e) => {
                             config.wakatime.api_url = e.detail.value;
                             await updated();
                             await testService();
@@ -436,18 +437,18 @@
 
                 <!-- API KEY -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.serviceTab.apiKey.title}
-                    text={i18n.settings.wakatimeSettings.serviceTab.apiKey.description}
                     block={true}
+                    text={i18n.settings.wakatimeSettings.serviceTab.apiKey.description}
+                    title={i18n.settings.wakatimeSettings.serviceTab.apiKey.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.text}
+                        block={true}
+                        placeholder="API KEY"
                         settingKey="api_key"
                         settingValue={config.wakatime.api_key}
-                        placeholder="API KEY"
-                        block={true}
-                        on:changed={async e => {
+                        type={ItemType.text}
+                        on:changed={async (e) => {
                             config.wakatime.api_key = e.detail.value;
                             await updated();
                             await testService();
@@ -457,16 +458,16 @@
 
                 <!-- 主机名称 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.serviceTab.hostname.title}
                     text={i18n.settings.wakatimeSettings.serviceTab.hostname.description}
+                    title={i18n.settings.wakatimeSettings.serviceTab.hostname.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.text}
+                        placeholder={plugin.wakatimeDefaultHostname}
                         settingKey="hostname"
                         settingValue={config.wakatime.hostname}
-                        placeholder={plugin.wakatimeDefaultHostname}
-                        on:changed={async e => {
+                        type={ItemType.text}
+                        on:changed={async (e) => {
                             config.wakatime.hostname = e.detail.value;
                             await updated();
                         }}
@@ -475,16 +476,16 @@
 
                 <!-- 超时时间 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.serviceTab.timeout.title}
                     text={i18n.settings.wakatimeSettings.serviceTab.timeout.description}
+                    title={i18n.settings.wakatimeSettings.serviceTab.timeout.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.number}
+                        limits={time_limits}
                         settingKey="timeout"
                         settingValue={config.wakatime.timeout}
-                        limits={time_limits}
-                        on:changed={async e => {
+                        type={ItemType.number}
+                        on:changed={async (e) => {
                             config.wakatime.timeout = e.detail.value;
                             await updated();
                         }}
@@ -493,15 +494,15 @@
 
                 <!-- 隐藏笔记本名 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.serviceTab.hide_branch_names.title}
                     text={i18n.settings.wakatimeSettings.serviceTab.hide_branch_names.description}
+                    title={i18n.settings.wakatimeSettings.serviceTab.hide_branch_names.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.checkbox}
                         settingKey="hide_branch_names"
                         settingValue={config.wakatime.hide_branch_names}
-                        on:changed={async e => {
+                        type={ItemType.checkbox}
+                        on:changed={async (e) => {
                             config.wakatime.hide_branch_names = e.detail.value;
                             await updated();
                         }}
@@ -510,15 +511,15 @@
 
                 <!-- 隐藏文件名 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.serviceTab.hide_file_names.title}
                     text={i18n.settings.wakatimeSettings.serviceTab.hide_file_names.description}
+                    title={i18n.settings.wakatimeSettings.serviceTab.hide_file_names.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.checkbox}
                         settingKey="hide_file_names"
                         settingValue={config.wakatime.hide_file_names}
-                        on:changed={async e => {
+                        type={ItemType.checkbox}
+                        on:changed={async (e) => {
                             config.wakatime.hide_file_names = e.detail.value;
                             await updated();
                         }}
@@ -527,18 +528,18 @@
 
                 <!-- 离线缓存 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.serviceTab.offline.title}
                     text={i18n.settings.wakatimeSettings.serviceTab.offline.description.replaceAll(
-                        "${1}", //
+                        "{{1}}", //
                         fn__code(CONSTANTS.OFFLINE_CACHE_PATH), //
                     )}
+                    title={i18n.settings.wakatimeSettings.serviceTab.offline.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.checkbox}
                         settingKey="offline"
                         settingValue={config.wakatime.offline}
-                        on:changed={async e => {
+                        type={ItemType.checkbox}
+                        on:changed={async (e) => {
                             config.wakatime.offline = e.detail.value;
                             await updated();
                         }}
@@ -547,18 +548,18 @@
 
                 <!-- ID 包含列表 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.serviceTab.includeID.title}
-                    text={i18n.settings.wakatimeSettings.serviceTab.includeID.description}
                     block={true}
+                    text={i18n.settings.wakatimeSettings.serviceTab.includeID.description}
+                    title={i18n.settings.wakatimeSettings.serviceTab.includeID.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.textarea}
+                        block={true}
+                        placeholder={i18n.settings.wakatimeSettings.serviceTab.includeID.placeholder}
                         settingKey="includeID"
                         settingValue={config.wakatime.includeID.join("\n")}
-                        placeholder={i18n.settings.wakatimeSettings.serviceTab.includeID.placeholder}
-                        block={true}
-                        on:changed={async e => {
+                        type={ItemType.textarea}
+                        on:changed={async (e) => {
                             config.wakatime.includeID = e.detail.value.split("\n");
                             await updated();
                         }}
@@ -567,18 +568,18 @@
 
                 <!-- ID 排除列表 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.serviceTab.excludeID.title}
-                    text={i18n.settings.wakatimeSettings.serviceTab.excludeID.description}
                     block={true}
+                    text={i18n.settings.wakatimeSettings.serviceTab.excludeID.description}
+                    title={i18n.settings.wakatimeSettings.serviceTab.excludeID.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.textarea}
+                        block={true}
+                        placeholder={i18n.settings.wakatimeSettings.serviceTab.excludeID.placeholder}
                         settingKey="excludeID"
                         settingValue={config.wakatime.excludeID.join("\n")}
-                        placeholder={i18n.settings.wakatimeSettings.serviceTab.excludeID.placeholder}
-                        block={true}
-                        on:changed={async e => {
+                        type={ItemType.textarea}
+                        on:changed={async (e) => {
                             config.wakatime.excludeID = e.detail.value.split("\n");
                             await updated();
                         }}
@@ -587,18 +588,18 @@
 
                 <!-- 包含列表 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.serviceTab.include.title}
-                    text={i18n.settings.wakatimeSettings.serviceTab.include.description}
                     block={true}
+                    text={i18n.settings.wakatimeSettings.serviceTab.include.description}
+                    title={i18n.settings.wakatimeSettings.serviceTab.include.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.textarea}
+                        block={true}
+                        placeholder={i18n.settings.wakatimeSettings.serviceTab.include.placeholder}
                         settingKey="include"
                         settingValue={config.wakatime.include.join("\n")}
-                        placeholder={i18n.settings.wakatimeSettings.serviceTab.include.placeholder}
-                        block={true}
-                        on:changed={async e => {
+                        type={ItemType.textarea}
+                        on:changed={async (e) => {
                             config.wakatime.include = e.detail.value.split("\n");
                             await updated();
                         }}
@@ -607,18 +608,18 @@
 
                 <!-- 排除列表 -->
                 <Item
-                    title={i18n.settings.wakatimeSettings.serviceTab.exclude.title}
-                    text={i18n.settings.wakatimeSettings.serviceTab.exclude.description}
                     block={true}
+                    text={i18n.settings.wakatimeSettings.serviceTab.exclude.description}
+                    title={i18n.settings.wakatimeSettings.serviceTab.exclude.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.textarea}
+                        block={true}
+                        placeholder={i18n.settings.wakatimeSettings.serviceTab.exclude.placeholder}
                         settingKey="exclude"
                         settingValue={config.wakatime.exclude.join("\n")}
-                        placeholder={i18n.settings.wakatimeSettings.serviceTab.exclude.placeholder}
-                        block={true}
-                        on:changed={async e => {
+                        type={ItemType.textarea}
+                        on:changed={async (e) => {
                             config.wakatime.exclude = e.detail.value.split("\n");
                             await updated();
                         }}

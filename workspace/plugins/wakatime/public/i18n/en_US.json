@@ -100,14 +100,14 @@
                     "title": "ID Include List"
                 },
                 "offline": {
-                    "description": "Whether to enable offline caching<br/>When the Wakapi/WakaTime service accesses abnormally or the heartbeat connection is not enabled, the action information will be cached to the ${1} directory<br/>Corresponds to the <code class='fn__code'>offline</code> option in the Wakapi/WakaTime configuration.",
+                    "description": "Whether to enable offline caching<br/>When the Wakapi/WakaTime service accesses abnormally or the heartbeat connection is not enabled, the action information will be cached to the {{1}} directory<br/>Corresponds to the <code class='fn__code'>offline</code> option in the Wakapi/WakaTime configuration.",
                     "title": "Offline caching"
                 },
                 "test": {
                     "description": "Test if connected to Wakapi/WakaTime service correctly",
                     "messages": {
-                        "error": "Cannot establish connection to ${1} service",
-                        "success": "Connection to ${1} service is successful"
+                        "error": "Cannot establish connection to {{1}} service",
+                        "success": "Connection to {{1}} service is successful"
                     },
                     "text": "Test",
                     "title": "Test Wakapi/WakaTime service"

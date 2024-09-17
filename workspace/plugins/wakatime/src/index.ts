@@ -1,58 +1,57 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-import siyuan from "siyuan";
-import type { ISiyuanGlobal } from "@workspace/types/siyuan";
-
-import icon_wakatime from "./assets/symbols/icon-wakatime.symbol?raw";
-import icon_wakatime_wakapi from "./assets/symbols/icon-wakatime-wakapi.symbol?raw";
-import manifest from "~/public/plugin.json";
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { Client } from "@siyuan-community/siyuan-sdk";
-
-import Settings from "./components/Settings.svelte";
+import siyuan from "siyuan";
 
 import {
     FLAG_MOBILE,
 } from "@workspace/utils/env/front-end";
 import { Logger } from "@workspace/utils/logger";
 import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
+import { sleep } from "@workspace/utils/misc/sleep";
 import { parse } from "@workspace/utils/path/browserify";
 import { normalize } from "@workspace/utils/path/normalize";
 import { WorkerBridgeMaster } from "@workspace/utils/worker/bridge/master";
-import CONSTANTS from "./constants";
+
+import manifest from "~/public/plugin.json";
+
+import icon_wakatime_wakapi from "./assets/symbols/icon-wakatime-wakapi.symbol?raw";
+import icon_wakatime from "./assets/symbols/icon-wakatime.symbol?raw";
+import Settings from "./components/Settings.svelte";
 import { DEFAULT_CONFIG } from "./configs/default";
+import CONSTANTS from "./constants";
+
+import type { ISiyuanGlobal } from "@workspace/types/siyuan";
+import type {
+    IClickEditorContentEvent,
+    IDestroyProtyleEvent,
+    ILoadedProtyleDynamicEvent,
+    ILoadedProtyleStaticEvent,
+    ISwitchProtyleEvent,
+    IWebSocketMainEvent,
+} from "@workspace/types/siyuan/events";
+import type { ITransaction } from "@workspace/types/siyuan/transaction";
+
 import type { IConfig } from "./types/config";
-import type { THandlers } from "./workers/wakatime";
 import type {
     Context,
 } from "./types/wakatime";
-import type {
-    IWebSocketMainEvent,
-    IClickEditorContentEvent,
-    ILoadedProtyleStaticEvent,
-    ILoadedProtyleDynamicEvent,
-    IDestroyProtyleEvent,
-    ISwitchProtyleEvent,
-} from "@workspace/types/siyuan/events";
-import type { ITransaction } from "@workspace/types/siyuan/transaction";
-import { sleep } from "@workspace/utils/misc/sleep";
+import type { THandlers } from "./workers/wakatime";
 
-declare var globalThis: ISiyuanGlobal;
+declare let globalThis: ISiyuanGlobal;
 
 export default class WakaTimePlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "global-config";
@@ -79,7 +78,7 @@ export default class WakaTimePlugin extends siyuan.Plugin {
         this.SETTINGS_DIALOG_ID = `${this.name}-settings-dialog`;
     }
 
-    onload(): void {
+    public override onload(): void {
         // this.logger.debug(this);
 
         /* 注册图标 */
@@ -90,10 +89,10 @@ export default class WakaTimePlugin extends siyuan.Plugin {
 
         /* 加载配置文件 */
         this.loadData(WakaTimePlugin.GLOBAL_CONFIG_NAME)
-            .then(config => {
+            .then((config) => {
                 this.config = mergeIgnoreArray(DEFAULT_CONFIG, config || {}) as IConfig;
             })
-            .catch(error => this.logger.error(error))
+            .catch((error) => this.logger.error(error))
             .finally(async () => {
                 /* 初始化 channel */
                 this.initBridge();
@@ -105,7 +104,7 @@ export default class WakaTimePlugin extends siyuan.Plugin {
 
                     /* 等待 worker 正常运行 */
                     while (await this.isWorkerRunning()) {
-                        await sleep(1_000)
+                        await sleep(1_000);
                     }
 
                     /* 初始化 worker 配置 */
@@ -127,10 +126,10 @@ export default class WakaTimePlugin extends siyuan.Plugin {
             });
     }
 
-    onLayoutReady(): void {
+    public override onLayoutReady(): void {
     }
 
-    onunload(): void {
+    public override onunload(): void {
         this.eventBus.off("ws-main", this.webSocketMainEventListener);
         this.eventBus.off("loaded-protyle-static", this.protyleEventListener);
         this.eventBus.off("loaded-protyle-dynamic", this.protyleEventListener);
@@ -151,21 +150,24 @@ export default class WakaTimePlugin extends siyuan.Plugin {
         }
     }
 
-    openSetting(): void {
-        const that = this;
+    public override openSetting(): void {
         const dialog = new siyuan.Dialog({
             title: `${this.i18n.displayName} <code class="fn__code">${this.name}</code>`,
-            content: `<div id="${that.SETTINGS_DIALOG_ID}" class="fn__flex-column" />`,
+            content: `<div id="${this.SETTINGS_DIALOG_ID}" class="fn__flex-column" />`,
             width: FLAG_MOBILE ? "92vw" : "720px",
             height: FLAG_MOBILE ? undefined : "640px",
         });
-        const settings = new Settings({
-            target: dialog.element.querySelector(`#${that.SETTINGS_DIALOG_ID}`)!,
-            props: {
-                config: this.config,
-                plugin: this,
-            },
-        });
+        const target = dialog.element.querySelector(`#${this.SETTINGS_DIALOG_ID}`);
+        if (target) {
+            const settings = new Settings({
+                target,
+                props: {
+                    config: this.config,
+                    plugin: this,
+                },
+            });
+            void settings;
+        }
     }
 
     /* 重置插件配置 */
@@ -178,8 +180,10 @@ export default class WakaTimePlugin extends siyuan.Plugin {
         try {
             await this.client.removeFile({ path: directory });
             return true;
-        } catch (error) {
-            return false
+        }
+        catch (error) {
+            void error;
+            return false;
         }
     }
 
@@ -218,13 +222,15 @@ export default class WakaTimePlugin extends siyuan.Plugin {
     protected async isWorkerRunning(): Promise<boolean> {
         try {
             /* 若 bridge 未初始化, 需要初始化 */
-            if (!this.bridge) this.initBridge();
+            if (!this.bridge)
+                this.initBridge();
 
             /* 检测 Worker 是否已加载完成 */
             await this.bridge!.ping();
             return true;
         }
         catch (error) {
+            void error;
             return false;
         }
     }
@@ -251,8 +257,8 @@ export default class WakaTimePlugin extends siyuan.Plugin {
             const transactions = e.detail.data as ITransaction[];
 
             /* 获取所有更改的块 ID */
-            transactions?.forEach(transaction => {
-                transaction.doOperations?.forEach(operation => {
+            transactions?.forEach((transaction) => {
+                transaction.doOperations?.forEach((operation) => {
                     // this.logger.debug(operation);
                     switch (operation.action) {
                         case "create":
@@ -283,10 +289,10 @@ export default class WakaTimePlugin extends siyuan.Plugin {
                 // });
             });
         }
-    }
+    };
 
     /* 编辑器加载事件监听器 */
-    protected readonly protyleEventListener = (e: ILoadedProtyleStaticEvent | ILoadedProtyleDynamicEvent | ISwitchProtyleEvent | IDestroyProtyleEvent) => {
+    protected readonly protyleEventListener = (e: IDestroyProtyleEvent | ILoadedProtyleDynamicEvent | ILoadedProtyleStaticEvent | ISwitchProtyleEvent) => {
         // this.logger.debug(e);
 
         const protyle = e.detail.protyle;
@@ -301,7 +307,7 @@ export default class WakaTimePlugin extends siyuan.Plugin {
                 },
             );
         }
-    }
+    };
 
     /* 编辑器点击事件监听器 */
     protected readonly clickEditorContentEventListener = (e: IClickEditorContentEvent) => {
@@ -317,7 +323,7 @@ export default class WakaTimePlugin extends siyuan.Plugin {
                 },
             );
         }
-    }
+    };
 
     /* 测试服务状态 */
     public async testService(): Promise<boolean> {
@@ -328,19 +334,22 @@ export default class WakaTimePlugin extends siyuan.Plugin {
                 headers: [this.wakatimeHeaders],
                 timeout: this.config.wakatime.timeout * 1_000,
             });
-            if (200 <= response.data.status && response.data.status < 300) return true;
+            if (response.data.status >= 200 && response.data.status < 300) {
+                return true;
+            }
             else {
                 this.logger.warn(response);
                 return false;
             };
-        } catch (error) {
+        }
+        catch (error) {
+            void error;
             return false;
         }
     }
 
     /* 获取一个新 ID */
     public get newId(): string {
-        // @ts-ignore
         return globalThis.Lute.NewNodeID();
     }
 
@@ -361,7 +370,6 @@ export default class WakaTimePlugin extends siyuan.Plugin {
 
     /* default hostname */
     public get wakatimeDefaultHostname(): string {
-        // @ts-ignore
         return globalThis.siyuan?.config?.system?.name
             || globalThis.process?.env?.COMPUTERNAME
             || globalThis.process?.env?.USERDOMAIN
@@ -371,22 +379,22 @@ export default class WakaTimePlugin extends siyuan.Plugin {
     /* wakatime user agent */
     public get wakatimeDefaultUserAgent(): string {
         return `${CONSTANTS.WAKATIME_CLIENT_NAME // wakatime 客户端名称
-            }/${CONSTANTS.WAKATIME_CLIENT_VERSION // wakatime 客户端版本
-            } (${this.wakatimeSystemName // 操作系统名称
-            }-${this.wakatimeSystemVersion // 操作系统版本
-            }-${this.wakatimeSystemArch // 内核 CPU 架构
-            }) ${CONSTANTS.WAKATIME_EDITOR_NAME // 编辑器名称
-            }/${this.wakatimeKernelVersion // 编辑器版本
-            } ${CONSTANTS.WAKATIME_PLUGIN_NAME // 插件名称
-            }/${manifest.version // 插件版本
-            }`;
+        }/${CONSTANTS.WAKATIME_CLIENT_VERSION // wakatime 客户端版本
+        } (${this.wakatimeSystemName // 操作系统名称
+        }-${this.wakatimeSystemVersion // 操作系统版本
+        }-${this.wakatimeSystemArch // 内核 CPU 架构
+        }) ${CONSTANTS.WAKATIME_EDITOR_NAME // 编辑器名称
+        }/${this.wakatimeKernelVersion // 编辑器版本
+        } ${CONSTANTS.WAKATIME_PLUGIN_NAME // 插件名称
+        }/${manifest.version // 插件版本
+        }`;
     }
 
     /* 操作系统名称 */
     public get wakatimeDefaultSystemName(): string {
         return globalThis.siyuan?.config?.system?.os
             || globalThis.process?.platform
-            // @ts-ignore userAgentData 为实验性特性
+            // @ts-expect-error userAgentData 为实验性特性
             || globalThis.navigator.userAgentData?.platform
             || globalThis.navigator.platform
             || "unknown";

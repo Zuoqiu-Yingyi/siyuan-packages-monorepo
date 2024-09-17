@@ -1,23 +1,23 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import type { types } from "@siyuan-community/siyuan-sdk";
 
 import type { BlockID } from "@workspace/types/siyuan";
+
 import type { Category, Type } from "@/wakatime/heartbeats";
-import type { types } from "@siyuan-community/siyuan-sdk";
 
 /**
  * 心跳连接
@@ -75,9 +75,9 @@ export namespace Heartbeats {
     export interface IRequest extends types.kernel.api.network.forwardProxy.IPayload {
         headers: [
             Context.IHeaders,
-        ],
+        ];
         timeout: number;
-        payload: IAction | IAction[],
+        payload: IAction | IAction[];
     }
 }
 
@@ -109,10 +109,10 @@ export namespace Context {
         project: string;
         language: string;
 
-        includeID: (string | RegExp)[],
-        excludeID: (string | RegExp)[],
-        include: (string | RegExp)[],
-        exclude: (string | RegExp)[],
+        includeID: (RegExp | string)[];
+        excludeID: (RegExp | string)[];
+        include: (RegExp | string)[];
+        exclude: (RegExp | string)[];
 
         blocks: Map<BlockID, BlockID>; // block -> root
         roots: Map<BlockID, IRoot>; // root -> { box, path }

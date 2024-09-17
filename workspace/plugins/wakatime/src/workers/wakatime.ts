@@ -1,28 +1,32 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+/* eslint-disable no-restricted-globals */
+/* eslint-disable ts/no-use-before-define */
+/* eslint-disable jsdoc/check-param-names */
 
 import {
     Client,
     KernelError,
     type types,
 } from "@siyuan-community/siyuan-sdk";
-import { WorkerBridgeSlave } from "@workspace/utils/worker/bridge/slave";
+
 import { Logger } from "@workspace/utils/logger";
+import { sleep } from "@workspace/utils/misc/sleep";
 import { trimSuffix } from "@workspace/utils/misc/string";
+import { WorkerBridgeSlave } from "@workspace/utils/worker/bridge/slave";
 
 import { DEFAULT_CONFIG } from "@/configs/default";
 import CONSTANTS from "@/constants";
@@ -30,19 +34,18 @@ import {
     WakaTimeCache,
     type TCacheDatum,
 } from "@/wakatime/cache";
+import { Type } from "@/wakatime/heartbeats";
+
+import type { BlockID } from "@workspace/types/siyuan";
+import type {
+    THandlersWrapper,
+} from "@workspace/utils/worker/bridge";
 
 import type { IConfig } from "@/types/config";
 import type {
     Context,
     Heartbeats,
 } from "@/types/wakatime";
-import type { BlockID } from "@workspace/types/siyuan";
-import { Type } from "@/wakatime/heartbeats";
-import { sleep } from "@workspace/utils/misc/sleep";
-import type {
-    IHandlers,
-    THandlersWrapper,
-} from "@workspace/utils/worker/bridge";
 
 type INotebook = types.kernel.api.notebook.lsNotebooks.INotebook;
 
@@ -95,11 +98,11 @@ async function createCacheDirectory(directory: string = CONSTANTS.OFFLINE_CACHE_
 function updateTimer(interval: number = config.wakatime.interval) {
     /* 心跳定时器 */
     clearInterval(timer.heartbeat);
-    timer.heartbeat = setInterval(commit, interval * 1_000);
+    timer.heartbeat = window.setInterval(commit, interval * 1_000);
 
     /* 缓存检查定时器 */
     clearInterval(timer.cacheCheck);
-    timer.cacheCheck = setInterval(checkCache, CONSTANTS.CACHE_CHECK_INTERVAL);
+    timer.cacheCheck = window.setInterval(checkCache, CONSTANTS.CACHE_CHECK_INTERVAL);
 }
 
 /* 更新 wakatime 请求上下文 */
@@ -115,7 +118,7 @@ function updateContext(): void {
 async function updateNotebook(): Promise<INotebook[]> {
     const response = await client.lsNotebooks();
     const notebooks = response.data.notebooks;
-    notebooks.forEach(n => notebook.set(n.id, n));
+    notebooks.forEach((n) => notebook.set(n.id, n));
     return notebooks;
 }
 
@@ -127,7 +130,7 @@ async function commit(): Promise<void> {
 
     /* 在 ID 中进行过滤 */
     const valid_roots = roots
-        .filter(root => {
+        .filter((root) => {
             const entity = `${root.box}${root.path}`;
             return filter(
                 entity,
@@ -140,7 +143,7 @@ async function commit(): Promise<void> {
 
     /* 在 entity 中进行过滤 */
     const valid_actions = actions
-        .filter(action => {
+        .filter((action) => {
             const entity = action.entity;
             return filter(
                 entity,
@@ -159,24 +162,24 @@ async function commit(): Promise<void> {
         const requests: Heartbeats.IRequest[] = [];
         for (let i = 0; i < actions.length; i += CONSTANTS.WAKATIME_HEARTBEATS_BULK) {
             // WakaTime 限制一次最多提交 25 条记录
-            requests.push(buildHeartbeatsRequest(actions.slice(i, i + CONSTANTS.WAKATIME_HEARTBEATS_BULK)))
+            requests.push(buildHeartbeatsRequest(actions.slice(i, i + CONSTANTS.WAKATIME_HEARTBEATS_BULK)));
         }
 
         if (config.wakatime.heartbeats) { // 提交数据
             for (const request of requests) {
                 await sentHeartbeats(
                     request,
-                    request => {
+                    (request) => {
                         if (config.wakatime.offline) {
                             cache.push(request.payload);
                         }
-                    }
+                    },
                 ); // 发送载荷
             }
         }
         else { // 不提交数据
             if (config.wakatime.offline) { // 若开启离线缓存
-                cache.push(...requests.map(request => request.payload)); // 写入缓存
+                cache.push(...requests.map((request) => request.payload)); // 写入缓存
             }
         }
         await cache.save(); // 缓存持久化
@@ -189,7 +192,7 @@ async function checkCache(): Promise<void> {
 
     /* 初始化历史缓存对象列表 */
     caches.length = 0;
-    caches.push(...cache_files_name.map(filename => new WakaTimeCache(
+    caches.push(...cache_files_name.map((filename) => new WakaTimeCache(
         client,
         CONSTANTS.OFFLINE_CACHE_PATH,
         filename,
@@ -205,12 +208,12 @@ async function checkCache(): Promise<void> {
 
                 /* 依次提交缓存内容 */
                 for (let index = 0; index < cache.length; ++index) {
-                    const payload = cache.at(index);
+                    const payload = cache.at(index)!;
 
                     /* 提交缓存 */
                     await sentHeartbeats(
                         buildHeartbeatsRequest(payload),
-                        request => exceptions.push(request.payload),
+                        (request) => exceptions.push(request.payload),
                     );
 
                     if (index === 0 && exceptions.length > 0) {
@@ -253,14 +256,14 @@ async function checkCache(): Promise<void> {
 
 /**
  * 构建一个心跳连接
- * @param doc 文档信息
- * @param time 时间
- * @param is_write 是否写入
+ * @param doc - - 文档信息
+ * @param time - - 时间
+ * @param is_write - - 是否写入
  */
 async function buildHeartbeat(
     doc: {
-        box: BlockID,
-        path: string,
+        box: BlockID;
+        path: string;
     },
     time: number,
     is_write: boolean,
@@ -292,12 +295,12 @@ async function buildHeartbeat(
 
 /**
  * 构造心跳连接
- * @param roots 文档信息
+ * @param roots - 文档信息
  * @returns 心跳连接活动
  */
 async function buildHeartbeats(roots: Context.IRoot[]): Promise<Heartbeats.IAction[]> {
-    return Promise.all(roots.flatMap(root => {
-        return root.events.map(event => buildHeartbeat(
+    return Promise.all(roots.flatMap((root) => {
+        return root.events.map((event) => buildHeartbeat(
             root,
             event.time,
             event.is_write,
@@ -306,44 +309,8 @@ async function buildHeartbeats(roots: Context.IRoot[]): Promise<Heartbeats.IActi
 }
 
 /**
- * 从块 ID 构造心跳连接
- * @deprecated
- * @param id 块 ID
- * @param is_write 是否为编辑活动
- * @returns 心跳连接活动
- */
-async function buildHeartbeatsFromID(id: BlockID | BlockID[], is_write: boolean): Promise<Heartbeats.IAction[]> {
-    const time = now; // 当前时间
-
-    if (!Array.isArray(id)) {
-        id = [id];
-    }
-
-    /* 获取块所在文档的信息 */
-    const ids = Array.from(new Set(id)); // 块去重
-    const blocks_info = await Promise.all(ids.map(id => client.getBlockInfo({ id })));
-
-    const root_set = new Set<BlockID>();
-    const root_blocks = blocks_info.filter(info => {
-        if (!root_set.has(info.data.rootID)) {
-            root_set.add(info.data.rootID);
-            return true;
-        }
-        return false;
-    }); // 文档块去重
-
-    return Promise.all(root_blocks.map(doc => {
-        return buildHeartbeat(
-            doc.data,
-            time(),
-            is_write,
-        );
-    }));
-}
-
-/**
  * 构造心跳连接请求
- * @param payload 心跳连接载荷
+ * @param payload - - 心跳连接载荷
  * @returns 心跳连接请求
  */
 function buildHeartbeatsRequest(payload: Heartbeats.IAction | Heartbeats.IAction[]): Heartbeats.IRequest {
@@ -364,37 +331,40 @@ function buildHeartbeatsRequest(payload: Heartbeats.IAction | Heartbeats.IAction
 /**
  * 发送心跳连接
  * REF: https://wakatime.com/developers#heartbeats
- * @param request 心跳连接请求
- * @param reject 心跳连接失败时的回调
+ * @param request - 心跳连接请求
+ * @param reject - 心跳连接失败时的回调
  */
 async function sentHeartbeats(
     request: Heartbeats.IRequest,
     reject: (request: Heartbeats.IRequest) => void,
-) {
+): Promise<null | types.kernel.api.network.forwardProxy.IResponse> {
     try {
         const response = await client.forwardProxy(request);
-        if (200 <= response.data.status && response.data.status < 300) {
+        if (response.data.status >= 200 && response.data.status < 300) {
+            return response;
         }
         else {
             reject(request);
         }
-        return response;
-    } catch (error) {
+    }
+    catch (error) {
+        void error;
         reject(request);
     }
+    return null;
 }
 
 /**
  * 黑白名单过滤
- * @param entity 文件路径
- * @param include 包含列表
- * @param exclude 排除列表
+ * @param entity - 文件路径
+ * @param include - 包含列表
+ * @param exclude - 排除列表
  * @returns 是否通过过滤
  */
 function filter(
     entity: string,
-    include: (string | RegExp)[],
-    exclude: (string | RegExp)[],
+    include: (RegExp | string)[],
+    exclude: (RegExp | string)[],
 ): boolean {
     if (include.length > 0) { // 白名单过滤
         let pass = false; // 是否通过白名单过滤
@@ -412,7 +382,8 @@ function filter(
                 }
             }
         }
-        if (!pass) return false;
+        if (!pass)
+            return false;
     }
     if (exclude.length > 0) { // 黑名单过滤
         let pass = true; // 是否通过黑名单过滤
@@ -446,42 +417,45 @@ function now(): number {
 }
 
 /* wakatime include */
-function wakatimeIncludeID(): (string | RegExp)[] {
+function wakatimeIncludeID(): (RegExp | string)[] {
     return washList(config.wakatime.includeID);
 }
-function wakatimeInclude(): (string | RegExp)[] {
+function wakatimeInclude(): (RegExp | string)[] {
     return washList(config.wakatime.include);
 }
 
 /* wakatime exclude */
-function wakatimeExcludeID(): (string | RegExp)[] {
+function wakatimeExcludeID(): (RegExp | string)[] {
     return washList(config.wakatime.excludeID);
 }
-function wakatimeExclude(): (string | RegExp)[] {
+function wakatimeExclude(): (RegExp | string)[] {
     return washList(config.wakatime.exclude);
 }
 
 /* 清洗列表 */
-function washList(list: string[]): (string | RegExp)[] {
+function washList(list: string[]): (RegExp | string)[] {
     return list
-        .filter(entry => {
+        .filter((entry) => {
             entry = entry.trim();
             if (entry !== "" && entry !== "//") {
                 /* 过滤无效的正则表达式 */
                 if (entry.startsWith("/") && entry.endsWith("/")) {
                     try {
-                        new RegExp(entry.slice(1, -1));
+                        void new RegExp(entry.slice(1, -1));
                         return true;
-                    } catch (error) {
+                    }
+                    catch (error) {
                         client.pushErrMsg({ msg: error as string });
                         return false;
                     }
                 }
                 return true;
             }
-            else return false;
+            else {
+                return false;
+            }
         })
-        .map(entry => {
+        .map((entry) => {
             if (entry.startsWith("/") && entry.endsWith("/")) {
                 return new RegExp(entry.slice(1, -1));
             }
@@ -551,7 +525,7 @@ export function restart(): void {
 /* 更新设置选项 */
 export function updateConfig(
     config_: IConfig,
-    context_: Pick<Context.IContext, "url" | "headers" | "project" | "language">,
+    context_: Pick<Context.IContext, "headers" | "language" | "project" | "url">,
 ): void {
     Object.assign(config, config_);
     Object.assign(context, context_);
@@ -559,9 +533,9 @@ export function updateConfig(
 
 /* 添加查看事件 */
 export function addViewEvent(info: {
-    id: string,
-    box: string,
-    path: string,
+    id: string;
+    box: string;
+    path: string;
 }): void {
     const time = now();
 
@@ -603,10 +577,11 @@ export async function addEditEvent(id: BlockID): Promise<void> {
             time,
             is_write: true,
         });
-    } catch (error) {
+    }
+    catch (error) {
         if (error instanceof KernelError) { // 块删除事件导致无法查询到对应的块
             // logger.warn(error);
-            return;
+
         }
         else {
             throw error;
@@ -649,3 +624,4 @@ const bridge = new WorkerBridgeSlave(
     logger,
     handlers,
 );
+void bridge;

@@ -1,8 +1,8 @@
 {
     "name": "wakatime",
-    "private": true,
-    "version": "0.3.6",
     "type": "module",
+    "version": "0.3.6",
+    "private": true,
     "scripts": {
         "dev": "vite",
         "build": "npm run build:plugin && npm run build:workers",
@@ -10,7 +10,9 @@
         "build:plugin": "vite build --mode plugin",
         "build:workers": "vite build --mode workers",
         "preview": "vite preview",
-        "check": "svelte-check --tsconfig ./tsconfig.json"
+        "lint": "eslint --max-warnings 0 .",
+        "format": "eslint --fix .",
+        "check:svelte": "svelte-check --tsconfig ./tsconfig.json"
     },
     "dependencies": {
         "@workspace/components": "workspace:^",
