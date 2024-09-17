@@ -100,14 +100,14 @@
                     "title": "ID 包含列表"
                 },
                 "offline": {
-                    "description": "是否開啟離線緩存功能<br/>開啟後當 Wakapi/WakaTime 服務訪問異常或未開啟心跳連接時會將活動信息緩存至 ${1} 目錄<br/>對應 Wakapi/WakaTime 配置中的 <code class='fn__code'>offline</code>",
+                    "description": "是否開啟離線緩存功能<br/>開啟後當 Wakapi/WakaTime 服務訪問異常或未開啟心跳連接時會將活動信息緩存至 {{1}} 目錄<br/>對應 Wakapi/WakaTime 配置中的 <code class='fn__code'>offline</code>",
                     "title": "離線緩存"
                 },
                 "test": {
                     "description": "測試是否正確連接到 Wakapi/WakaTime 服務",
                     "messages": {
-                        "error": "無法與 ${1} 服務建立連接",
-                        "success": "與 ${1} 服務的連接正常"
+                        "error": "無法與 {{1}} 服務建立連接",
+                        "success": "與 {{1}} 服務的連接正常"
                     },
                     "text": "測試",
                     "title": "測試 Wakapi/WakaTime 服務"

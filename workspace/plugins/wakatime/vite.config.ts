@@ -1,30 +1,32 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import {
-    defineConfig,
-    BuildOptions,
-} from "vite";
 import { resolve } from "node:path";
+
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { less } from "svelte-preprocess-less";
+import {
+    defineConfig,
+} from "vite";
+
+import type {
+    BuildOptions,
+} from "vite";
 
 // https://vitejs.dev/config/
-export default defineConfig(async env => ({
+export default defineConfig(async (env) => ({
     base: `./`,
     plugins: [
         svelte({
@@ -37,8 +39,9 @@ export default defineConfig(async env => ({
         alias: {
             "~": resolve(__dirname, "./"),
             "@": resolve(__dirname, "./src"),
-        }
+        },
     },
+    // eslint-disable-next-line ts/no-use-before-define
     build: build(env.mode),
 }));
 
@@ -51,7 +54,7 @@ function build(mode: string): BuildOptions {
                 /^@electron\/.*$/,
             ],
             output: {
-                entryFileNames: chunkInfo => {
+                entryFileNames: (chunkInfo) => {
                     // console.log(chunkInfo);
                     switch (chunkInfo.name) {
                         case "index":
@@ -63,7 +66,7 @@ function build(mode: string): BuildOptions {
                             return "assets/[name]-[hash].js";
                     }
                 },
-                assetFileNames: assetInfo => {
+                assetFileNames: (assetInfo) => {
                     // console.log(chunkInfo);
                     switch (assetInfo.name) {
                         case "style.css":
@@ -79,6 +82,15 @@ function build(mode: string): BuildOptions {
     };
 
     switch (mode) {
+        case "workers":
+            build.lib = {
+                entry: resolve(__dirname, "src/workers/wakatime.ts"),
+                fileName: "wakatime",
+                formats: ["es"],
+            };
+            build.emptyOutDir = false;
+            break;
+
         case "plugin":
         default:
             build.lib = {
@@ -87,15 +99,6 @@ function build(mode: string): BuildOptions {
                 formats: ["cjs"],
             };
             build.emptyOutDir = true;
-            break;
-
-        case "workers":
-            build.lib = {
-                entry: resolve(__dirname, "src/workers/wakatime.ts"),
-                fileName: "wakatime",
-                formats: ["es"],
-            };
-            build.emptyOutDir = false;
             break;
     }
 
