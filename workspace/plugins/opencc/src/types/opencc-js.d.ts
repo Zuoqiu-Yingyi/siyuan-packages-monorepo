@@ -1,19 +1,17 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 declare module "opencc-js" {
     // REF: https://www.npmjs.com/package/@types/opencc-js
@@ -22,7 +20,7 @@ declare module "opencc-js" {
     // Definitions by: Pig Fang <https://github.com/g-plane>
     // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-    export type Locale = 'cn' | 'tw' | 'twp' | 'hk' | 'jp' | 't';
+    export type Locale = "cn" | "hk" | "jp" | "t" | "tw" | "twp";
 
     export interface ConverterOptions {
         from?: Locale;
@@ -44,15 +42,15 @@ declare module "opencc-js" {
     ): HTMLConvertHandler;
 
     export interface HTMLConvertHandler {
-        convert(): void;
-        restore(): void;
+        convert: () => void;
+        restore: () => void;
     }
 
     /* 👇 Custom 👇 */
-    export type TDict = string[] // 字典 "foo1 bar1|foo2 bar2"
-        | [string, string][][]; // 字典 [[["foo1", "bar1"], ["foo2", "bar2"]]]
+    export type TDict = [string, string][][] // 字典 [[["foo1", "bar1"], ["foo2", "bar2"]]]
+        | string[]; // 字典 "foo1 bar1|foo2 bar2"
 
-    export interface IDicts {
+    export interface IDicts extends Record<Locale, TDict> {
         cn: TDict;
         hk: TDict;
         tw: TDict;
@@ -69,4 +67,3 @@ declare module "opencc-js" {
 
     export function ConverterFactory(...dicts: TDict[]): ConvertText;
 }
-
