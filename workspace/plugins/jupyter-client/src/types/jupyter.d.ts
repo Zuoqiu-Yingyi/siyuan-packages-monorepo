@@ -1,33 +1,32 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import type { Modify } from "@workspace/types/utils/readonly";
 import type {
-    KernelSpec,
     Kernel,
     Session,
 } from "@jupyterlab/services";
+
+import type { Modify } from "@workspace/types/utils/readonly";
+
 import type { IJupyterParserOptions } from "@/types/config";
 
 export type TKernelModel = Modify<Kernel.IModel>;
 export type TSessionModel = Modify<Session.IModel>;
 
 export interface ISessionModel extends TSessionModel {
-    kernel: TKernelModel | null;
+    kernel: null | TKernelModel;
 }
 
 export interface IExecuteHorizontalRule {
@@ -42,17 +41,17 @@ export interface IExecuteContext {
     };
     code: {
         id: string; // 代码块 ID
-        attrs: Record<string, string | null>; // 代码块 IAL
+        attrs: Record<string, null | string>; // 代码块 IAL
     };
     output: {
         id: string; // 输出块 ID
         new: boolean; // 是否为新的输出块
         reply: boolean; // 运行请求是否已回复
-        attrs: Record<string, string | null>; // 输出块 IAL
+        attrs: Record<string, null | string>; // 输出块 IAL
         stream: { // 输出流
             attrs: { // 输出流显示块
                 id: string; // 块 ID
-                [key: string]: string | null;
+                [key: string]: null | string;
             };
             content: string; // 之前输出流的所有内容
             initialized: boolean; // 该块是否已经初始化

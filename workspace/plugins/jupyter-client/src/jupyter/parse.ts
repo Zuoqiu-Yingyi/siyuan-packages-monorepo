@@ -1,29 +1,28 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-import { PriorityQueue } from "@workspace/utils/structure/priority-queue";
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { base64ToFile } from "@workspace/utils/misc/dataurl";
 import { isString } from "@workspace/utils/misc/object";
 import { createIAL, createStyle } from "@workspace/utils/siyuan/ial";
+import { PriorityQueue } from "@workspace/utils/structure/priority-queue";
 
 import { Output } from "./output";
-import type { IJupyterParserOptions as IJupyterParserOptions } from "@/types/config";
+
 import type { Client } from "@siyuan-community/siyuan-sdk";
+
+import type { IJupyterParserOptions } from "@/types/config";
 
 export interface IData {
     [key: string]: string | string[];
@@ -31,9 +30,9 @@ export interface IData {
 
 /**
  * 解析文本
- * @param text 文本
- * @param options 解析选项
- * @param blockId 生成的块 ID
+ * @param text - 文本
+ * @param options - 解析选项
+ * @param blockId - 生成的块 ID
  * @returns 解析后的文本
  */
 export function parseText(
@@ -46,8 +45,10 @@ export function parseText(
         output.buildXtermElement(blockId);
     }
     else {
-        if (options.escaped) output.escapeMark();
-        if (options.cntrl) output.parseCmdControlChars(options.escaped);
+        if (options.escaped)
+            output.escapeMark();
+        if (options.cntrl)
+            output.parseCmdControlChars(options.escaped);
         else output.removeCmdControlChars();
         // else output.stripAnsi();
     }
@@ -57,11 +58,11 @@ export function parseText(
 
 /**
  * 解析数据
- * @param client 思源 API 客户端
- * @param data 数据
- * @param metadata 元数据
- * @param options 解析选项
- * @param split 解析后的块是否分割
+ * @param client - 思源 API 客户端
+ * @param options - 解析选项
+ * @param data - 数据
+ * @param metadata - 元数据
+ * @param split - 解析后的块是否分割
  * @returns 解析后的文本
  */
 export async function parseData(
@@ -88,21 +89,22 @@ export async function parseData(
     let filedata: string;
     const markdowns = new PriorityQueue<string>();
     for (const [mime, datum] of Object.entries(data)) {
-        if (Array.isArray(datum) && datum.length === 0) continue;
+        if (Array.isArray(datum) && datum.length === 0)
+            continue;
 
         // REF: https://www.iana.org/assignments/media-types/media-types.xhtml
-        const types = mime.split(";")[0];
-        const main = types.split("/")[0];
-        const sub = types.split("/")[1];
-        const ext = sub.split("+")[0];
-        const serialized = sub.split("+")[1];
+        const types = mime.split(";")[0]!;
+        const main = types.split("/")[0]!;
+        const sub = types.split("/")[1]!;
+        const ext = sub.split("+")[0]!;
+        // const serialized = sub.split("+")[1]!;
 
         const value = Array.isArray(datum)
             ? datum.join("\n")
             : datum;
 
         switch (main) {
-            case "text":
+            case "text": {
                 const text = Array.isArray(value)
                     ? value.join("\n\n")
                     : value;
@@ -121,6 +123,7 @@ export async function parseData(
                         break;
                 }
                 break;
+            }
             case "image": {
                 switch (sub) {
                     case "svg+xml":
@@ -128,10 +131,10 @@ export async function parseData(
                         filedata = btoa(value);
                         break;
                     default:
-                        filedata = value.split("\n")[0];
+                        filedata = value.split("\n")[0]!;
                         break;
                 }
-                const text = data["text/plain"];
+                const text = data["text/plain"] ?? "";
                 const title = Array.isArray(text)
                     ? text.join(" ")
                     : text;
@@ -146,18 +149,19 @@ export async function parseData(
                             style: createStyle({
                                 background: metadata!.needs_background === "light"
                                     ? "white"
-                                    : "black"
-                            })
+                                    : "black",
+                            }),
                         })
                         : "";
-                    if (filepath) markdowns.enqueue(`![${filename}](${filepath}${isString(title) ? ` "${title.replaceAll("\"", "&quot;")}"` : ""})${style}`, 3);
+                    if (filepath)
+                        markdowns.enqueue(`![${filename}](${filepath}${isString(title) ? ` "${title.replaceAll("\"", "&quot;")}"` : ""})${style}`, 3);
                 }
                 break;
             }
             case "audio": {
                 switch (sub) {
                     default:
-                        filedata = value.split("\n")[0];
+                        filedata = value.split("\n")[0]!;
                         break;
                 }
                 const filename = `jupyter-output.${ext}`;
@@ -165,14 +169,15 @@ export async function parseData(
                 if (file) {
                     const response = await client.upload({ files: [file] });
                     const filepath = response.data.succMap[filename];
-                    if (filepath) markdowns.enqueue(`<audio controls="controls" src="${filepath}" data-src="${filepath}"/>`, 3);
+                    if (filepath)
+                        markdowns.enqueue(`<audio controls="controls" src="${filepath}" data-src="${filepath}"/>`, 3);
                 }
                 break;
             }
             case "video": {
                 switch (sub) {
                     default:
-                        filedata = value.split("\n")[0];
+                        filedata = value.split("\n")[0]!;
                         break;
                 }
                 const filename = `jupyter-output.${ext}`;
@@ -180,7 +185,8 @@ export async function parseData(
                 if (file) {
                     const response = await client.upload({ files: [file] });
                     const filepath = response.data.succMap[filename];
-                    if (filepath) markdowns.enqueue(`<video controls="controls" src="${filepath}" data-src="${filepath}"/>`, 3);
+                    if (filepath)
+                        markdowns.enqueue(`<video controls="controls" src="${filepath}" data-src="${filepath}"/>`, 3);
                 }
             }
                 break;

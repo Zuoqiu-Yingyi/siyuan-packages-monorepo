@@ -1,5 +1,14 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-09-18
+
+- 将 `eslint` 配置应用于 `jupyter-client` 模块 | Apply `eslint` configuration to `jupyter-client` module
+
+## 2024-09-17
+
+- 将 `eslint` 配置应用于 `wakatime` 模块 | Apply `eslint` configuration to `wakatime` module
+- 将 `eslint` 配置应用于 `opencc` 模块 | Apply `eslint` configuration to `opencc` module
+
 ## 2024-09-16
 
 - 将 `eslint` 配置应用于 `monaco-editor` 模块 | Apply `eslint` configuration to `monaco-editor` module

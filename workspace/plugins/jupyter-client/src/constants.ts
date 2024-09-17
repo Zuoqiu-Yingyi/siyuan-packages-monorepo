@@ -1,25 +1,19 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import type {
-    KernelSpec,
-    Kernel,
-    Session,
-} from "@jupyterlab/services";
+// import type * as Jupyter from "@jupyterlab/services";
 
 export default {
     JUPYTER_WORKER_FILE_NAME: "jupyter", // web worker 文件名称
@@ -33,68 +27,68 @@ export default {
         kernel: {
             /**
              * 内核 ID
-             * {@link KernelSpec.ISpecModel.id}
+             * {@link Jupyter.KernelSpec.ISpecModel.id}
              */
             id: "custom-jupyter-kernel-id",
 
             /**
              * 内核名称
-             * {@link KernelSpec.ISpecModel.name}
+             * {@link Jupyter.KernelSpec.ISpecModel.name}
              */
             name: "custom-jupyter-kernel-name",
 
             /**
              * 内核语言
-             * {@link KernelSpec.ISpecModel.language}
+             * {@link Jupyter.KernelSpec.ISpecModel.language}
              */
             language: "custom-jupyter-kernel-language",
 
             /**
              * 内核可读名称
-             * {@link KernelSpec.ISpecModel.display_name}
+             * {@link Jupyter.KernelSpec.ISpecModel.display_name}
              */
-            display_name: 'custom-jupyter-kernel-display-name',
+            display_name: "custom-jupyter-kernel-display-name",
 
             /**
              * 内核状态
-             * {@link Kernel.Status}
+             * {@link Jupyter.Kernel.Status}
              * ```ts
              * type Status = 'unknown' | 'starting' | 'idle' | 'busy' | 'terminating' | 'restarting' | 'autorestarting' | 'dead';
              * ```
              */
-            status: 'custom-jupyter-kernel-status',
+            status: "custom-jupyter-kernel-status",
 
             /**
              * 连接状态
-             * {@link Kernel.ConnectionStatus}
+             * {@link Jupyter.Kernel.ConnectionStatus}
              * ```ts
              * type ConnectionStatus = 'connected' | 'connecting' | 'disconnected';
              * ```
              */
-            connection_status: 'custom-jupyter-kernel-connection-status',
+            connection_status: "custom-jupyter-kernel-connection-status",
         },
         session: {
             /**
              * 会话 ID
-             * {@link Session.IModel.id}
+             * {@link Jupyter.Session.IModel.id}
              */
             id: "custom-jupyter-session-id",
 
             /**
              * 会话类型
-             * {@link Session.IModel.type}
+             * {@link Jupyter.Session.IModel."type"}
              */
             type: "custom-jupyter-session-type",
 
             /**
              * 会话名称
-             * {@link Session.IModel.name}
+             * {@link Jupyter.Session.IModel.name}
              */
             name: "custom-jupyter-session-name",
 
             /**
              * 会话路径
-             * {@link Session.IModel.path}
+             * {@link Jupyter.Session.IModel.path}
              */
             path: "custom-jupyter-session-path",
         },
@@ -125,9 +119,9 @@ export default {
         },
     } as const,
     styles: { // 样式
-        success: 'color: var(--b3-card-success-color); background-color: var(--b3-card-success-background);',
-        info: 'color: var(--b3-card-info-color); background-color: var(--b3-card-info-background);',
-        warning: 'color: var(--b3-card-warning-color); background-color: var(--b3-card-warning-background);',
-        error: 'color: var(--b3-card-error-color); background-color: var(--b3-card-error-background);',
+        success: "color: var(--b3-card-success-color); background-color: var(--b3-card-success-background);",
+        info: "color: var(--b3-card-info-color); background-color: var(--b3-card-info-background);",
+        warning: "color: var(--b3-card-warning-color); background-color: var(--b3-card-warning-background);",
+        error: "color: var(--b3-card-error-color); background-color: var(--b3-card-error-background);",
     } as const,
 };

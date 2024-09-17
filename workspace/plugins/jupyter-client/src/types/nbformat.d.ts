@@ -1,19 +1,17 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Jupyter Notebook v4.5 JSON schema.
@@ -48,7 +46,7 @@ export interface Notebook {
  * Notebook code cell.
  */
 export interface Cell {
-    attachments?: { [key: string]: { [key: string]: string[] | string } };
+    attachments?: { [key: string]: { [key: string]: string | string[] } };
     /**
      * String identifying the type of cell.
      */
@@ -58,11 +56,11 @@ export interface Cell {
      * Cell-level metadata.
      */
     metadata: CellMetadata;
-    source: string[] | string;
+    source: string | string[];
     /**
      * The code cell's prompt number. Will be null if the cell has not been run.
      */
-    execution_count?: number | null;
+    execution_count?: null | number;
     /**
      * Execution, display, or stream outputs.
      */
@@ -72,7 +70,7 @@ export interface Cell {
 /**
  * String identifying the type of cell.
  */
-export type CellType = "raw" | "markdown" | "code";
+export type CellType = "code" | "markdown" | "raw";
 
 /**
  * Cell-level metadata.
@@ -149,11 +147,11 @@ export type ScrolledEnum = "auto";
  * Output of an error that occurred during code cell execution.
  */
 export interface Output {
-    data?: { [key: string]: string[] | string };
+    data?: { [key: string]: string | string[] };
     /**
      * A result's prompt number.
      */
-    execution_count?: number | null;
+    execution_count?: null | number;
     metadata?: { [key: string]: any };
     /**
      * Type of cell output.
@@ -166,7 +164,7 @@ export interface Output {
     /**
      * The stream's text output, represented as an array of strings.
      */
-    text?: string[] | string;
+    text?: string | string[];
     /**
      * The name of the error.
      */
@@ -184,7 +182,7 @@ export interface Output {
 /**
  * Type of cell output.
  */
-export type OutputType = "execute_result" | "display_data" | "stream" | "error";
+export type OutputType = "display_data" | "error" | "execute_result" | "stream";
 
 /**
  * Notebook root-level metadata.

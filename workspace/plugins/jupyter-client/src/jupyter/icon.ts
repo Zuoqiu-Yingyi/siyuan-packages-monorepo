@@ -1,43 +1,17 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-import light_file from "@jupyter-lsp/theme-vscode/style/icons/light/file.svg?raw";
-import light_folder from "@jupyter-lsp/theme-vscode/style/icons/light/folder.svg?raw";
-import light_json from "@jupyter-lsp/theme-vscode/style/icons/light/json.svg?raw";
-import light_value from "@jupyter-lsp/theme-vscode/style/icons/light/note.svg?raw";
-import light_references from "@jupyter-lsp/theme-vscode/style/icons/light/references.svg?raw";
-import light_symbol_class from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-class.svg?raw";
-import light_symbol_color from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-color.svg?raw";
-import light_symbol_constant from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-constant.svg?raw";
-import light_symbol_enumerator_member from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-enumerator-member.svg?raw";
-import light_symbol_enumerator from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-enumerator.svg?raw";
-import light_symbol_event from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-event.svg?raw";
-import light_symbol_field from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-field.svg?raw";
-import light_symbol_interface from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-interface.svg?raw";
-import light_symbol_keyword from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-keyword.svg?raw";
-import light_symbol_method from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-method.svg?raw";
-import light_symbol_operator from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-operator.svg?raw";
-import light_symbol_parameter from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-parameter.svg?raw";
-import light_symbol_property from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-property.svg?raw";
-import light_symbol_ruler from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-ruler.svg?raw";
-import light_symbol_snippet from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-snippet.svg?raw";
-import light_symbol_string from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-string.svg?raw";
-import light_symbol_structure from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-structure.svg?raw";
-import light_symbol_variable from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-variable.svg?raw";
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import dark_file from "@jupyter-lsp/theme-vscode/style/icons/dark/file.svg?raw";
 import dark_folder from "@jupyter-lsp/theme-vscode/style/icons/dark/folder.svg?raw";
@@ -62,6 +36,29 @@ import dark_symbol_snippet from "@jupyter-lsp/theme-vscode/style/icons/dark/symb
 import dark_symbol_string from "@jupyter-lsp/theme-vscode/style/icons/dark/symbol-string.svg?raw";
 import dark_symbol_structure from "@jupyter-lsp/theme-vscode/style/icons/dark/symbol-structure.svg?raw";
 import dark_symbol_variable from "@jupyter-lsp/theme-vscode/style/icons/dark/symbol-variable.svg?raw";
+import light_file from "@jupyter-lsp/theme-vscode/style/icons/light/file.svg?raw";
+import light_folder from "@jupyter-lsp/theme-vscode/style/icons/light/folder.svg?raw";
+import light_json from "@jupyter-lsp/theme-vscode/style/icons/light/json.svg?raw";
+import light_value from "@jupyter-lsp/theme-vscode/style/icons/light/note.svg?raw";
+import light_references from "@jupyter-lsp/theme-vscode/style/icons/light/references.svg?raw";
+import light_symbol_class from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-class.svg?raw";
+import light_symbol_color from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-color.svg?raw";
+import light_symbol_constant from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-constant.svg?raw";
+import light_symbol_enumerator_member from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-enumerator-member.svg?raw";
+import light_symbol_enumerator from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-enumerator.svg?raw";
+import light_symbol_event from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-event.svg?raw";
+import light_symbol_field from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-field.svg?raw";
+import light_symbol_interface from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-interface.svg?raw";
+import light_symbol_keyword from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-keyword.svg?raw";
+import light_symbol_method from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-method.svg?raw";
+import light_symbol_operator from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-operator.svg?raw";
+import light_symbol_parameter from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-parameter.svg?raw";
+import light_symbol_property from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-property.svg?raw";
+import light_symbol_ruler from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-ruler.svg?raw";
+import light_symbol_snippet from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-snippet.svg?raw";
+import light_symbol_string from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-string.svg?raw";
+import light_symbol_structure from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-structure.svg?raw";
+import light_symbol_variable from "@jupyter-lsp/theme-vscode/style/icons/light/symbol-variable.svg?raw";
 
 function wash(svg: string): string {
     const element = document.createElement("span");

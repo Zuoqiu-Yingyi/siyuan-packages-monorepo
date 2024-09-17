@@ -1,8 +1,8 @@
 {
     "name": "jupyter-client",
-    "private": true,
-    "version": "0.2.2",
     "type": "module",
+    "version": "0.2.2",
+    "private": true,
     "scripts": {
         "dev": "vite",
         "build": "npm run build:plugin && npm run build:workers",
@@ -10,7 +10,9 @@
         "build:plugin": "vite build --mode plugin",
         "build:workers": "vite build --mode workers",
         "preview": "vite preview",
-        "check": "svelte-check --tsconfig ./tsconfig.json"
+        "lint": "eslint --max-warnings 0 .",
+        "format": "eslint --fix .",
+        "check:svelte": "svelte-check --tsconfig ./tsconfig.json"
     },
     "dependencies": {
         "@workspace/components": "workspace:^",
@@ -19,10 +21,10 @@
     },
     "devDependencies": {
         "@jupyter-lsp/theme-vscode": "^3.0.0",
-        "@jupyterlab/services": "^7.0.11",
-        "@jupyterlab/ui-components": "^4.0.11",
-        "strip-ansi": "^7.1.0",
-        "xterm": "^5.3.0",
-        "xterm-addon-fit": "^0.8.0"
+        "@jupyterlab/services": "^7.2.5",
+        "@jupyterlab/ui-components": "^4.2.5",
+        "@xterm/addon-fit": "^0.10.0",
+        "@xterm/xterm": "^5.5.0",
+        "strip-ansi": "^7.1.0"
     }
 }
