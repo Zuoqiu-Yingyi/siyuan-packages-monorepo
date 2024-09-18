@@ -54,7 +54,7 @@ export type TModel = IEditorModel | IPdfModel;
  * @param globalSiyuan - 思源全局变量
  * @returns 编辑器列表
  */
-export function getEditorsFromLayout(globalSiyuan = globalThis.siyuan): IEditor[] {
+export function getEditorsFromLayout(globalSiyuan = window.siyuan): IEditor[] {
     const editors: IEditor[] = [];
 
     /* 移动端编辑器 */
@@ -87,9 +87,9 @@ export function getEditorsFromLayout(globalSiyuan = globalThis.siyuan): IEditor[
  * @param globalSiyuan - 思源全局变量
  * @returns 编辑器列表
  */
-export function getEditorsFromBlockPanels(globalSiyuan = globalThis.siyuan): IEditor[] {
+export function getEditorsFromBlockPanels(globalSiyuan = window.siyuan): IEditor[] {
     const editors: IEditor[] = [];
-    for (const blockPanel of globalSiyuan.blockPanels) {
+    for (const blockPanel of globalSiyuan.blockPanels ?? []) {
         for (const editor of blockPanel.editors) {
             editors.push(editor);
         }

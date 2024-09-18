@@ -3,6 +3,7 @@
 ## 2024-09-18
 
 - 将 `eslint` 配置应用于 `jupyter-client` 模块 | Apply `eslint` configuration to `jupyter-client` module
+- 将 `eslint` 配置应用于 `typewriter` 模块 | Apply `eslint` configuration to `typewriter` module
 
 ## 2024-09-17
 
