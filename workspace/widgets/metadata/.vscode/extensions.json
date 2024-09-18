@@ -1,8 +1,8 @@
 {
-  "recommendations": [
-    "richie5um2.vscode-sort-json",
-    "tyriar.sort-lines",
-    "zixuanchen.vitest-explorer",
-    "esbenp.prettier-vscode"
-  ]
+    "recommendations": [
+        "richie5um2.vscode-sort-json",
+        "tyriar.sort-lines",
+        "zixuanchen.vitest-explorer",
+        "esbenp.prettier-vscode"
+    ]
 }

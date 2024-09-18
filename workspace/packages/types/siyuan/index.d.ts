@@ -45,6 +45,17 @@ export interface ISiyuan extends siyuan.ISiyuan {
     mobile?: {
         editor?: any;
     };
+    notebooks: {
+        id: string;
+        name: string;
+        icon: string;
+        sort: number;
+        sortMode: number;
+        closed: boolean;
+        newFlashcardCount: number;
+        dueFlashcardCount: number;
+        flashcardCount: number;
+    }[];
     storage: Record<string, any>;
 }
 

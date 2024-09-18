@@ -1,23 +1,25 @@
 <!--
  Copyright (C) 2023 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <script setup lang="ts">
-import { computed, UnwrapNestedRefs } from "vue";
-import { BreadcrumbRoute } from "@arco-design/web-vue";
+import { computed } from "vue";
+
+import type { BreadcrumbRoute } from "@arco-design/web-vue";
+import type { UnwrapNestedRefs } from "vue";
 
 const props = defineProps<{
     paths: UnwrapNestedRefs<string[]>; // 文档路径
@@ -38,7 +40,7 @@ const routes = computed(() => {
 });
 
 /* URL 生成 */
-function customURL(paths: string[]): string { 
+function customURL(paths: string[]): string {
     return `siyuan://blocks/${paths.at(-1)}`;
 }
 </script>
@@ -47,8 +49,8 @@ function customURL(paths: string[]): string {
     <a-breadcrumb
         :max-count="4"
         :routes="routes"
-        :separator="'/'"
         :custom-url="customURL"
+        separator="/"
     />
 </template>
 
