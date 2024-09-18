@@ -1,16 +1,16 @@
 <!--
  Copyright (C) 2023 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
@@ -18,17 +18,15 @@
 <!-- 设置面板 -->
 
 <script lang="ts">
-    import Panels from "@workspace/components/siyuan/setting/panel/Panels.svelte";
-    import Panel from "@workspace/components/siyuan/setting/panel/Panel.svelte";
-    import Tabs from "@workspace/components/siyuan/setting/tab/Tabs.svelte";
-    import Item from "@workspace/components/siyuan/setting/item/Item.svelte";
     import Input from "@workspace/components/siyuan/setting/item/Input.svelte";
-
     import { ItemType } from "@workspace/components/siyuan/setting/item/item";
+    import Item from "@workspace/components/siyuan/setting/item/Item.svelte";
+    import Panel from "@workspace/components/siyuan/setting/panel/Panel.svelte";
+    import Panels from "@workspace/components/siyuan/setting/panel/Panels.svelte";
     import { type ITab } from "@workspace/components/siyuan/setting/tab";
+    import Tabs from "@workspace/components/siyuan/setting/tab/Tabs.svelte";
 
     import type Plugin from "@/index";
-
     import type { IConfig } from "@/types/config";
     import type { I18N } from "@/utils/i18n";
 
@@ -62,6 +60,7 @@
         );
     }
 
+    /* eslint-disable no-unused-vars */
     enum PanelKey {
         general, // 常规设置
         keeweb, // KeeWeb 设置
@@ -71,8 +70,9 @@
         plugin, // 插件设置
         window, // 窗口设置
     }
+    /* eslint-enable no-unused-vars */
 
-    let panels_focus_key = PanelKey.general;
+    const panels_focus_key = PanelKey.general;
     const panels: ITab[] = [
         {
             key: PanelKey.general,
@@ -88,7 +88,7 @@
         },
     ];
 
-    let keeweb_settings_tabs_focus_key = TabKey.plugin;
+    const keeweb_settings_tabs_focus_key = TabKey.plugin;
     const tabs = {
         keeweb: [
             {
@@ -108,43 +108,43 @@
 </script>
 
 <Panels
-    {panels}
     focus={panels_focus_key}
+    {panels}
     let:focus={focusPanel}
 >
     <!-- 常规设置面板 -->
-    <Panel display={panels[0].key === focusPanel}>
+    <Panel display={panels[0]?.key === focusPanel}>
         <!-- 重置设置 -->
         <Item
-            title={i18n.settings.generalSettings.reset.title}
             text={i18n.settings.generalSettings.reset.description}
+            title={i18n.settings.generalSettings.reset.title}
         >
             <Input
                 slot="input"
-                type={ItemType.button}
                 settingKey="reset"
                 settingValue={i18n.settings.generalSettings.reset.text}
+                type={ItemType.button}
                 on:clicked={resetOptions}
             />
         </Item>
 
         <!-- 删除 KeeWeb 用户配置 -->
         <Item
-            title={i18n.settings.generalSettings.deleteKeeWebConfig.title}
             text={i18n.settings.generalSettings.deleteKeeWebConfig.description}
+            title={i18n.settings.generalSettings.deleteKeeWebConfig.title}
         >
             <Input
                 slot="input"
-                type={ItemType.button}
                 settingKey="deleteKeeWebConfig"
                 settingValue={i18n.settings.generalSettings.deleteKeeWebConfig.text}
+                type={ItemType.button}
                 on:clicked={deleteKeeWebConfig}
             />
         </Item>
     </Panel>
 
     <!-- KeeWeb 设置面板 -->
-    <Panel display={panels[1].key === focusPanel}>
+    <Panel display={panels[1]?.key === focusPanel}>
         <Tabs
             focus={keeweb_settings_tabs_focus_key}
             tabs={tabs.keeweb}
@@ -152,20 +152,20 @@
         >
             <!-- 标签页 1 - 插件设置 -->
             <div
-                data-type={tabs.keeweb[0].name}
-                class:fn__none={tabs.keeweb[0].key !== focusTab}
+                class:fn__none={tabs.keeweb[0]?.key !== focusTab}
+                data-type={tabs.keeweb[0]?.name}
             >
                 <!-- 思源插件 -->
                 <Item
-                    title={i18n.settings.keewebSettings.pluginTab.siyuan.title}
                     text={i18n.settings.keewebSettings.pluginTab.siyuan.description}
+                    title={i18n.settings.keewebSettings.pluginTab.siyuan.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.checkbox}
                         settingKey="siyuan"
                         settingValue={config.keeweb.plugin.siyuan.enable}
-                        on:changed={async e => {
+                        type={ItemType.checkbox}
+                        on:changed={async (e) => {
                             config.keeweb.plugin.siyuan.enable = e.detail.value;
                             await updated();
                         }}
@@ -175,21 +175,21 @@
 
             <!-- 标签页 2 - 窗口设置 -->
             <div
-                data-type={tabs.keeweb[1].name}
-                class:fn__none={tabs.keeweb[1].key !== focusTab}
+                class:fn__none={tabs.keeweb[1]?.key !== focusTab}
+                data-type={tabs.keeweb[1]?.name}
             >
                 <!-- 窗口宽度 -->
                 <Item
-                    title={i18n.settings.keewebSettings.windowTab.width.title}
                     text={i18n.settings.keewebSettings.windowTab.width.description}
+                    title={i18n.settings.keewebSettings.windowTab.width.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.number}
+                        limits={{ min: 320, max: 15360, step: 40 }}
                         settingKey="width"
                         settingValue={config.window.width}
-                        limits={{ min: 320, max: 15360, step: 40 }}
-                        on:changed={async e => {
+                        type={ItemType.number}
+                        on:changed={async (e) => {
                             config.window.width = e.detail.value;
                             await updated();
                         }}
@@ -198,16 +198,16 @@
 
                 <!-- 窗口高度 -->
                 <Item
-                    title={i18n.settings.keewebSettings.windowTab.height.title}
                     text={i18n.settings.keewebSettings.windowTab.height.description}
+                    title={i18n.settings.keewebSettings.windowTab.height.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.number}
+                        limits={{ min: 240, max: 8640, step: 40 }}
                         settingKey="height"
                         settingValue={config.window.height}
-                        limits={{ min: 240, max: 8640, step: 40 }}
-                        on:changed={async e => {
+                        type={ItemType.number}
+                        on:changed={async (e) => {
                             config.window.height = e.detail.value;
                             await updated();
                         }}
@@ -216,15 +216,15 @@
 
                 <!-- 窗口居中 -->
                 <Item
-                    title={i18n.settings.keewebSettings.windowTab.center.title}
                     text={i18n.settings.keewebSettings.windowTab.center.description}
+                    title={i18n.settings.keewebSettings.windowTab.center.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.checkbox}
                         settingKey="center"
                         settingValue={config.window.center}
-                        on:changed={async e => {
+                        type={ItemType.checkbox}
+                        on:changed={async (e) => {
                             config.window.center = e.detail.value;
                             await updated();
                         }}
@@ -233,15 +233,15 @@
 
                 <!-- 窗口置顶 -->
                 <Item
-                    title={i18n.settings.keewebSettings.windowTab.top.title}
                     text={i18n.settings.keewebSettings.windowTab.top.description}
+                    title={i18n.settings.keewebSettings.windowTab.top.title}
                 >
                     <Input
                         slot="input"
-                        type={ItemType.checkbox}
                         settingKey="alwaysOnTop"
                         settingValue={config.window.alwaysOnTop}
-                        on:changed={async e => {
+                        type={ItemType.checkbox}
+                        on:changed={async (e) => {
                             config.window.alwaysOnTop = e.detail.value;
                             await updated();
                         }}

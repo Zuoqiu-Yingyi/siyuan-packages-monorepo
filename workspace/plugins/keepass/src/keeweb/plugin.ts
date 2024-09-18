@@ -1,31 +1,28 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import * as sdk from "@siyuan-community/siyuan-sdk";
 
 /**
  * KeeWeb plugin: siyuan
- * @author Zuoqiu Yingyi
- * @license AGPL-3.0-or-later
  */
 import manifest from "~/public/keeweb/plugins/siyuan/manifest.json";
-import * as sdk from "@siyuan-community/siyuan-sdk";
 
 import * as locale from "./locale";
-import * as storage from "./storage";
 import * as settings from "./settings";
+import * as storage from "./storage";
 
 import type { IContext, TFileOpenSchema } from "~/src/keeweb";
 
@@ -47,6 +44,7 @@ async function install() {
     await storage.install(context);
     await settings.install(context);
 
+    // eslint-disable-next-line no-console
     console.log("Siyuan plugin installed");
 }
 
@@ -55,6 +53,7 @@ async function uninstall() {
     await storage.uninstall(context);
     await locale.uninstall(context);
 
+    // eslint-disable-next-line no-console
     console.log("Siyuan plugin uninstalled");
 }
 

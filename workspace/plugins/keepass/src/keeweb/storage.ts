@@ -1,33 +1,31 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-// @ts-ignore
+// @ts-expect-error 引用 keeweb 中的模块
 import { Storage } from "storage/index";
-// @ts-ignore
+// @ts-expect-error 引用 keeweb 中的模块
 import { StorageBase } from "storage/storage-base";
 
 import {
     join,
     parse,
 } from "@workspace/utils/path/browserify";
+
 import type {
     IContext,
     IStorageOpenConfig,
-    IStorageSettingsConfig,
 } from ".";
 
 export {
@@ -43,15 +41,14 @@ export interface IEntry {
     name: string; // 条目名
     path: string; // 条目路径
     rev: string; // 条目最后修改时间
-    dir: string | boolean; // 是否为目录
+    dir: boolean | string; // 是否为目录
 }
 
-export type TError<T = any> = T | null | undefined;
+export type TError<T = any> = null | T | undefined;
 export interface IStatError {
     notFound: boolean;
     msg?: string;
 };
-
 
 export class SiyuanStorage extends StorageBase {
     public readonly name: string;
@@ -97,10 +94,12 @@ export class SiyuanStorage extends StorageBase {
                 this.authorized = true;
             }
             catch (error) {
+                void error;
                 this.authorized = false;
             }
         }
         catch (error) {
+            void error;
             this.connected = false;
             this.authorized = false;
         }
@@ -108,7 +107,7 @@ export class SiyuanStorage extends StorageBase {
 
     /**
      * 通过数据库名生成文件保存路径
-     * @param fileName 文件名
+     * @param fileName - 文件名
      * @returns 文件路径
      */
     public getPathForName(fileName: string): string {
@@ -118,9 +117,9 @@ export class SiyuanStorage extends StorageBase {
 
     /**
      * 加载文件
-     * @param path 文件路径
-     * @param opts 选项
-     * @param callback 回调函数
+     * @param path - 文件路径
+     * @param opts - 选项
+     * @param callback - 回调函数
      */
     public load(
         path: string,
@@ -138,10 +137,10 @@ export class SiyuanStorage extends StorageBase {
             }
             else {
                 this._context.client.getFile({ path }, "arraybuffer")
-                    .then(response => {
+                    .then((response) => {
                         callback?.(null, response, stat);
                     })
-                    .catch(error => {
+                    .catch((error) => {
                         callback?.(error);
                     });
             }
@@ -150,13 +149,13 @@ export class SiyuanStorage extends StorageBase {
 
     /**
      * 获取文件状态
-     * @param path 文件路径
-     * @param opts 选项
-     * @param callback 回调函数
+     * @param path - 文件路径
+     * @param _opts - 选项
+     * @param callback - 回调函数
      */
     public stat(
         path: string,
-        opts: any,
+        _opts: any,
         callback?: (
             err?: TError<IStatError>,
             stat?: IStat,
@@ -165,8 +164,8 @@ export class SiyuanStorage extends StorageBase {
         // this._logger.debug("storage-stat", arguments);
         const info = parse(path);
         this._context.client.readDir({ path: info.dir })
-            .then(response => {
-                const entry = response.data.find(entry => entry.name === info.base);
+            .then((response) => {
+                const entry = response.data.find((entry) => entry.name === info.base);
                 if (entry) {
                     callback?.(null, {
                         rev: String(entry.updated),
@@ -180,17 +179,17 @@ export class SiyuanStorage extends StorageBase {
                     // callback?.(null);
                 }
             })
-            .catch(error => {
+            .catch((error) => {
                 callback?.(error);
             });
     }
 
     /**
      * 保存文件
-     * @param path 文件路径
-     * @param opts 选项
-     * @param data 文件内容
-     * @param callback 回调函数
+     * @param path - 文件路径
+     * @param opts - 选项
+     * @param data - 文件内容
+     * @param callback - 回调函数
      */
     public save(
         path: string,
@@ -200,22 +199,21 @@ export class SiyuanStorage extends StorageBase {
             err?: TError,
             stat?: IStat,
         ) => void,
-        rev?: string,
     ) {
         // this._logger.debug("storage-save", arguments);
         this._context.client.putFile({ path, file: data })
-            .then(response => {
+            .then((_response) => {
                 this.stat(path, opts, callback);
             })
-            .catch(error => {
+            .catch((error) => {
                 callback?.(error);
             });
     }
 
     /**
      * 创建目录
-     * @param path 目录路径
-     * @param callback 回调函数
+     * @param path - 目录路径
+     * @param callback - 回调函数
      */
     public mkdir(
         path: string,
@@ -225,18 +223,18 @@ export class SiyuanStorage extends StorageBase {
     ) {
         // this._logger.debug("storage-mkdir", arguments);
         this._context.client.putFile({ path, isDir: true })
-            .then(response => {
+            .then((_response) => {
                 callback?.(null);
             })
-            .catch(error => {
+            .catch((error) => {
                 callback?.(error);
             });
     }
 
     /**
      * 列出目录内容
-     * @param dir 目录路径
-     * @param callback 回调函数
+     * @param dir - 目录路径
+     * @param callback - 回调函数
      */
     public async list(
         dir: string | void,
@@ -245,25 +243,27 @@ export class SiyuanStorage extends StorageBase {
             entries?: IEntry[],
         ) => void,
     ) {
+        // eslint-disable-next-line prefer-rest-params
         this._logger.debug("storage-list", arguments);
         try {
             const path = dir || this._context.fileOpenPath;
             const response = await this._context.client.readDir({ path });
-            callback?.(null, response.data.map(entry => ({
+            callback?.(null, response.data.map((entry) => ({
                 name: entry.name,
                 path: join(path, entry.name),
                 dir: entry.isDir,
                 rev: String(entry.updated),
             })));
-        } catch (error) {
+        }
+        catch (error) {
             callback?.(error);
         }
     }
 
     /**
      * 删除资源
-     * @param path 资源路径
-     * @param callback 回调函数
+     * @param path - 资源路径
+     * @param callback - 回调函数
      */
     public remove(
         path: string,
@@ -273,10 +273,10 @@ export class SiyuanStorage extends StorageBase {
     ) {
         // this._logger.debug("storage-remove", arguments);
         this._context.client.removeFile({ path })
-            .then(response => {
+            .then((_response) => {
                 callback?.(null);
             })
-            .catch(error => {
+            .catch((error) => {
                 callback?.(error);
             });
     }
@@ -296,6 +296,7 @@ export class SiyuanStorage extends StorageBase {
     public getOpenConfig(): IStorageOpenConfig {
         // this._logger.debug("storage-getOpenConfig", arguments);
         switch (false) {
+            // eslint-disable-next-line default-case-last
             default:
             case this.connected:
                 return {
@@ -307,7 +308,7 @@ export class SiyuanStorage extends StorageBase {
                             title: "siyuanBaseURL",
                             placeholder: "http[s]://host[:port]/[pathname]",
                             required: true,
-                            pattern: "^https?://.*$"
+                            pattern: "^https?://.*$",
                         },
                     ],
                 };
@@ -332,8 +333,8 @@ export class SiyuanStorage extends StorageBase {
      */
     public async applyConfig(
         config: {
-            baseURL?: string,
-            token?: string,
+            baseURL?: string;
+            token?: string;
         },
         callback: (
             err?: TError,
@@ -384,9 +385,9 @@ export class SiyuanStorage extends StorageBase {
     // }
 
     /**
-     * 更改设置项 (设置 > 通用 > 储存)
-     * @param key 设置项键
-     * @param value 设置项值
+     * 更改设置项 (设置 - 通用 - 储存)
+     * @param key - 设置项键
+     * @param value - 设置项值
      */
     // public applySetting(
     //     key: string,
@@ -397,8 +398,9 @@ export class SiyuanStorage extends StorageBase {
 
     /**
      * 注销登录
-    */
+     */
     public logout() {
+        // eslint-disable-next-line prefer-rest-params
         this._logger.debug("storage-logout", arguments);
         // TODO: logoutAuth
     }
@@ -406,13 +408,12 @@ export class SiyuanStorage extends StorageBase {
 
 export function install(context: IContext) {
     // this._logger.debug("plugin:siyuan:storage-install");
-    const siyuanStorage = new SiyuanStorage(context);;
+    const siyuanStorage = new SiyuanStorage(context); ;
     context.storage = siyuanStorage;
     Storage.siyuan = siyuanStorage;
 }
 
-
-export function uninstall(context: IContext) {
+export function uninstall(_context: IContext) {
     // this._logger.debug("plugin:siyuan:storage-install");
     delete Storage.siyuanStorage;
 }

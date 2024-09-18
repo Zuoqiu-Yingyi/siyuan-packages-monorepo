@@ -1,8 +1,8 @@
 {
     "name": "keepass",
-    "private": true,
-    "version": "0.2.1",
     "type": "module",
+    "version": "0.2.1",
+    "private": true,
     "scripts": {
         "dev": "vite",
         "sign:dist": "cd ./dist/keeweb/plugins && keeweb-plugin sign siyuan --private-key=./../../../keys/keeweb-plugin-sign.pem.key",
@@ -13,7 +13,9 @@
         "build:dev:siyuan-plugin": "vite build --mode siyuan-plugin --sourcemap inline",
         "build:dev:keeweb-plugin": "vite build --mode keeweb-plugin --sourcemap inline && npm run sign:dist",
         "preview": "vite preview",
-        "check": "svelte-check --tsconfig ./tsconfig.json"
+        "lint": "eslint --ignore-pattern public/keeweb --max-warnings 0 .",
+        "format": "eslint --ignore-pattern public/keeweb --fix .",
+        "check:svelte": "svelte-check --tsconfig ./tsconfig.json"
     },
     "dependencies": {
         "@workspace/components": "workspace:^",
@@ -21,7 +23,7 @@
         "@workspace/utils": "workspace:^"
     },
     "devDependencies": {
-        "idb": "^7.1.1",
+        "idb": "^8.0.0",
         "keeweb-plugin": "^0.1.12"
     }
 }
