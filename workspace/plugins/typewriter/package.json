@@ -1,14 +1,16 @@
 {
     "name": "typewriter",
-    "private": true,
-    "version": "0.1.3",
     "type": "module",
+    "version": "0.1.3",
+    "private": true,
     "scripts": {
         "dev": "vite",
         "build": "vite build",
         "build:dev": "vite build --sourcemap inline",
         "preview": "vite preview",
-        "check": "svelte-check --tsconfig ./tsconfig.json"
+        "lint": "eslint --max-warnings 0 .",
+        "format": "eslint --fix .",
+        "check:svelte": "svelte-check --tsconfig ./tsconfig.json"
     },
     "dependencies": {
         "@workspace/components": "workspace:^",

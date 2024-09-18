@@ -27,8 +27,9 @@ export type openTabParametersOptions = openTabParameters[0];
 export type openTabParametersOptionsCustom = openTabParametersOptions.custom;
 
 export interface ISiyuan extends siyuan.ISiyuan {
-    languages: Record<string, string>;
-    storage: Record<string, any>;
+    blockPanels?: {
+        editors: any[];
+    }[];
     coordinates?: {
         pageX: number;
         pageY: number;
@@ -37,6 +38,14 @@ export interface ISiyuan extends siyuan.ISiyuan {
         screenX: number;
         screenY: number;
     };
+    languages: Record<string, string>;
+    layout?: {
+        centerLayout?: any;
+    };
+    mobile?: {
+        editor?: any;
+    };
+    storage: Record<string, any>;
 }
 
 // REF: https://github.com/siyuan-note/siyuan-android/blob/fix/open-link-use-js/app/src/main/java/org/b3log/siyuan/JSAndroid.java

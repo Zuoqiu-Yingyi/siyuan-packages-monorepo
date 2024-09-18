@@ -1,60 +1,56 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import "./index.less";
 
-import siyuan from "siyuan";
-import type { ISiyuanGlobal } from "@workspace/types/siyuan";
-
 import {
     Client,
-    type types,
 } from "@siyuan-community/siyuan-sdk";
-
-import Settings from "./components/Settings.svelte";
+import siyuan from "siyuan";
 
 import {
     FLAG_MOBILE,
 } from "@workspace/utils/env/front-end";
 import { Logger } from "@workspace/utils/logger";
-import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
-import { getEditors } from "@workspace/utils/siyuan/model";
 import { deshake } from "@workspace/utils/misc/deshake";
+import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
 import {
-    getCurrentBlock,
-    getCurrentProtyleWysiwyg,
-    getCurrentProtyleContent,
     getCodeBlockCursorPosition,
+    getCurrentBlock,
+    getCurrentProtyleContent,
+    getCurrentProtyleWysiwyg,
 } from "@workspace/utils/siyuan/dom";
+import { getEditors } from "@workspace/utils/siyuan/model";
 
+import Settings from "./components/Settings.svelte";
 import { DEFAULT_CONFIG } from "./configs/default";
 import constants from "./constants";
 
-import type {
-    IClickEditorContentEvent,
-    ILoadedProtyleStaticEvent,
-    IDestroyProtyleEvent,
-} from "@workspace/types/siyuan/events";
 import type { IProtyle } from "siyuan/types/protyle";
 
-import type { I18N } from "./utils/i18n";
-import type { IConfig } from "./types/config";
+import type { ISiyuanGlobal } from "@workspace/types/siyuan";
+import type {
+    IClickEditorContentEvent,
+    IDestroyProtyleEvent,
+    ILoadedProtyleStaticEvent,
+} from "@workspace/types/siyuan/events";
 
-declare var globalThis: ISiyuanGlobal;
+import type { IConfig } from "./types/config";
+import type { I18N } from "./utils/i18n";
+
+declare let globalThis: ISiyuanGlobal;
 
 export default class TypewriterPlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "global-config";
@@ -85,7 +81,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
         this.updateScrollFunction();
     }
 
-    onload(): void {
+    public override onload(): void {
         // this.logger.debug(this);
 
         /* 注册图标 */
@@ -105,17 +101,17 @@ export default class TypewriterPlugin extends siyuan.Plugin {
         });
 
         this.loadData(TypewriterPlugin.GLOBAL_CONFIG_NAME)
-            .then(config => {
+            .then((config) => {
                 this.config = mergeIgnoreArray(DEFAULT_CONFIG, config || {}) as IConfig;
                 this.updateScrollFunction();
             })
-            .catch(error => this.logger.error(error))
+            .catch((error) => this.logger.error(error))
             .finally(() => {
                 this.activate();
             });
     }
 
-    onLayoutReady(): void {
+    public override onLayoutReady(): void {
         /* 添加打字机模式功能开关 */
         this.topBarButton = this.addTopBar({
             icon: "iconKeymap",
@@ -126,19 +122,18 @@ export default class TypewriterPlugin extends siyuan.Plugin {
         this.updateTopBarButtonState();
     }
 
-    onunload(): void {
+    public override onunload(): void {
         this.activate(false);
     }
 
-    openSetting(): void {
-        const that = this;
+    public override openSetting(): void {
         const dialog = new siyuan.Dialog({
             title: `${this.displayName} <code class="fn__code">${this.name}</code>`,
-            content: `<div id="${that.SETTINGS_DIALOG_ID}" class="fn__flex-column" />`,
+            content: `<div id="${this.SETTINGS_DIALOG_ID}" class="fn__flex-column" />`,
             width: FLAG_MOBILE ? "92vw" : "720px",
             height: FLAG_MOBILE ? undefined : "640px",
         });
-        const target = dialog.element.querySelector(`#${that.SETTINGS_DIALOG_ID}`);
+        const target = dialog.element.querySelector(`#${this.SETTINGS_DIALOG_ID}`);
         if (target) {
             const settings = new Settings({
                 target,
@@ -147,6 +142,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
                     plugin: this,
                 },
             });
+            void settings;
         }
     }
 
@@ -173,11 +169,10 @@ export default class TypewriterPlugin extends siyuan.Plugin {
             || this.config.focus.enable;
     }
 
-
     /**
      * 切换监听器
-     * @param protyle 编辑器
-     * @param enable 是否启用编辑事件监听
+     * @param protyle - 编辑器
+     * @param enable - 是否启用编辑事件监听
      */
     protected toggleEventListener(
         protyle: IProtyle,
@@ -206,7 +201,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
 
     /**
      * 激活或禁用编辑事件监听模式
-     * @param enable 是否启用编辑事件监听
+     * @param enable - 是否启用编辑事件监听
      */
     protected activate(
         enable: boolean = this.enable,
@@ -226,7 +221,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
         if (!this.config.focus.enable) {
             /* 关闭焦点显示 */
             globalThis.document.getElementById(constants.FOCUS_ELEMENT_UNIQUE_ID)?.removeAttribute("id");
-            globalThis.document.querySelectorAll(`[${constants.FOCUS_ELEMENT_ATTR_NAME}]`).forEach(element => {
+            globalThis.document.querySelectorAll(`[${constants.FOCUS_ELEMENT_ATTR_NAME}]`).forEach((element) => {
                 if (element instanceof HTMLElement) {
                     delete element.dataset[constants.FOCUS_ELEMENT_DATA_NAME];
                 }
@@ -267,7 +262,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
 
     /**
      * 更新滚动函数
-     * @param timeout 延时 (ms)
+     * @param timeout - 延时 (ms)
      */
     protected updateScrollFunction(timeout: number = this.config.typewriter.timeout): void {
         this.scrollIntoView = deshake(
@@ -330,7 +325,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
     };
 
     /* 编辑事件监听 */
-    protected readonly editorEventListener = async (e: Event) => {
+    protected readonly editorEventListener = async (_e: Event) => {
         // this.logger.debug(e);
         const block = getCurrentBlock(); // 当前光标所在块
 
@@ -425,7 +420,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
                                         bottom: page_bottom,
                                     } = page.getBoundingClientRect();
 
-                                    const row_height = parseFloat(globalThis.getComputedStyle(position.container).getPropertyValue("line-height")); // 代码块每一行高度
+                                    const row_height = Number.parseFloat(globalThis.getComputedStyle(position.container).getPropertyValue("line-height")); // 代码块每一行高度
                                     const row_bottom = position.container.getBoundingClientRect().top + row_height * position.row; // 当前行底部的坐标
 
                                     this.scrollBy(page, {
@@ -468,7 +463,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
                 }
 
                 if (this.currentElement === element) { // 当前元素未改变
-                    return;
+
                 }
                 else { // 更新当前元素并滚动
                     this.currentElement = element;
