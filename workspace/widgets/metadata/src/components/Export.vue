@@ -1,45 +1,56 @@
 <!--
  Copyright (C) 2023 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <script setup lang="ts">
-import { reactive, shallowRef, watch, inject, ref, onUpdated } from "vue";
-import { I18n, VueI18nTranslation } from "vue-i18n";
-import { TableColumnData, TableData, TableDraggable, TableRowSelection } from "@arco-design/web-vue";
+import {
+    inject,
+    onUpdated,
+    reactive,
+    ref,
+    shallowRef,
+    watch,
+} from "vue";
 
-import { Client } from "@siyuan-community/siyuan-sdk";
+import { dumpIAL, Parser } from "@/utils/export";
 import { notify } from "@/utils/notify";
-import { Parser, dumpIAL } from "@/utils/export";
 import { isCustomAttrKey } from "@/utils/string";
 
-import { IMetadata } from "@/types/metadata";
-import { IData, IAL } from "@/types/data";
+import type {
+    TableColumnData,
+    TableData,
+    TableDraggable,
+    TableRowSelection,
+} from "@arco-design/web-vue";
+import type { Client } from "@siyuan-community/siyuan-sdk";
+import type { I18n, VueI18nTranslation } from "vue-i18n";
 
-const i18n = inject("i18n") as I18n;
-const t = i18n.global.t as VueI18nTranslation;
+import type { IAL, IData } from "@/types/data";
+import type { IMetadata } from "@/types/metadata";
 
 const props = defineProps<{
     data: IData;
     client: Client;
     activate: boolean; // 是否激活面板的控件
 }>();
-
 const emits = defineEmits<{
     (e: "updated"): void; // 界面更新
 }>();
+const i18n = inject("i18n") as I18n;
+const t = i18n.global.t as VueI18nTranslation;
 
 /* 推送组件更新 */
 function updated(): void {
@@ -51,8 +62,9 @@ const selected_rows = shallowRef<TableData[]>([]); // 选中的表格行
 const selected_keys = shallowRef<string[]>(
     (() => {
         const keys: string[] = [];
-        props.data.block_config.rows.forEach(row => {
-            if (row.activate) keys.push(row.key);
+        props.data.block_config.rows.forEach((row) => {
+            if (row.activate)
+                keys.push(row.key);
         });
         return keys;
     })(),
@@ -60,8 +72,9 @@ const selected_keys = shallowRef<string[]>(
 const key_map = new Map<string, string>(
     (() => {
         const map: [string, string][] = [];
-        props.data.block_config.rows.forEach(row => {
-            if (row._key) map.push([row.key, row._key]);
+        props.data.block_config.rows.forEach((row) => {
+            if (row._key)
+                map.push([row.key, row._key]);
         });
         return map;
     })(),
@@ -69,8 +82,9 @@ const key_map = new Map<string, string>(
 const parser_map = new Map<string, Parser>(
     (() => {
         const map: [string, Parser][] = [];
-        props.data.block_config.rows.forEach(row => {
-            if (row.parser) map.push([row.key, row.parser]);
+        props.data.block_config.rows.forEach((row) => {
+            if (row.parser)
+                map.push([row.key, row.parser]);
         });
         return map;
     })(),
@@ -119,13 +133,6 @@ const table = reactive<{
     },
 });
 
-watch(props.data.ial, ial => {
-    updateTable(ial);
-    updateSelectedRows();
-});
-
-updateTable(props.data.ial);
-
 /* 更新表格 */
 function updateTable(ial: IAL): void {
     const attrs: TableData[] = [];
@@ -137,7 +144,8 @@ function updateTable(ial: IAL): void {
                 const _key = key_map.get(key);
                 if (_key) {
                     return _key;
-                } else {
+                }
+                else {
                     return isCustomAttrKey(key) ? key.replace(/^custom-/, "") : key;
                 }
             })(),
@@ -154,19 +162,28 @@ function updateTable(ial: IAL): void {
 
     /* 排序 */
     attrs.sort((a1, a2) => {
-        const i1 = props.data.block_config.rows.findIndex(row => row.key === a1.key);
-        const i2 = props.data.block_config.rows.findIndex(row => row.key === a2.key);
-        if (i1 === -1 && i2 === -1) return a1.key!.localeCompare(a2.key!);
-        if (i1 === -1) return 1;
-        if (i2 === -1) return -1;
+        const i1 = props.data.block_config.rows.findIndex((row) => row.key === a1.key);
+        const i2 = props.data.block_config.rows.findIndex((row) => row.key === a2.key);
+        if (i1 === -1 && i2 === -1)
+            return a1.key!.localeCompare(a2.key!);
+        if (i1 === -1)
+            return 1;
+        if (i2 === -1)
+            return -1;
         return i1 - i2;
     });
     table.data = attrs;
 }
 
+/* 更新选中的行 */
+function updateSelectedRows() {
+    selected_rows.value = table.data.filter((a) => selected_keys.value.includes(a.key as string));
+}
+
 /* 排序发生更改 */
 function onChange(data: TableData[]): void {
     if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
         console.log("Export.onChange");
     }
 
@@ -178,6 +195,7 @@ function onChange(data: TableData[]): void {
 /* 选择发生更改 */
 function onSelectionChange(rowKeys: string[]): void {
     if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
         console.log("Export.onSelectionChange");
     }
 
@@ -188,6 +206,7 @@ function onSelectionChange(rowKeys: string[]): void {
 /* 输入框发生更改 */
 function onChangeInput(record: TableData, value: string) {
     if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
         console.log("Export.onChangeInput");
     }
 
@@ -196,7 +215,8 @@ function onChangeInput(record: TableData, value: string) {
     if (record.key === _key) {
         // 非自定义映射
         key_map.delete(record.key);
-    } else {
+    }
+    else {
         key_map.set(record.key!, value);
     }
 
@@ -206,6 +226,7 @@ function onChangeInput(record: TableData, value: string) {
 /* 选择框发生更改 */
 function onChangeSelect(record: TableData, value: Parser) {
     if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
         console.log("Export.onChangeSelect");
     }
 
@@ -214,77 +235,33 @@ function onChangeSelect(record: TableData, value: Parser) {
     updateSelectedRows();
 }
 
-/* 更新选中的行 */
-function updateSelectedRows() {
-    selected_rows.value = table.data.filter(a => selected_keys.value.includes(a.key as string));
-}
-
-/* 更新文本框 */
-watch(
-    selected_rows,
-    rows => {
-        /* 更新文本域中显示的 YFM */
-        if (rows.length > 0) {
-            try {
-                const metadata: string[] = [];
-                metadata.push("---");
-                metadata.push("\n");
-                metadata.push(dumpIAL(rows as IMetadata[]));
-                metadata.push("---");
-                yaml.value = metadata.join("");
-            } catch (error) {
-                notify((error as Error).toString());
-            }
-        } else {
-            yaml.value = "";
-        }
-
-        setTimeout(updated, 250);
-    },
-    {
-        flush: "post",
-    },
-);
-
 /* 保存 */
-function save(attrs: Record<string, string | null>, then?: (response: any) => void): void {
+function save(attrs: Record<string, null | string>, then?: (response: any) => void): void {
     /* 保存配置 */
     props.client
         .setBlockAttrs({
             id: props.data.block_id,
             attrs,
         })
-        .then(response => {
+        .then((response) => {
             if (import.meta.env.DEV) {
+                // eslint-disable-next-line no-console
                 console.log(`Export.onClickSave`, attrs);
             }
 
-            if (then) then(response);
+            if (then)
+                then(response);
         })
         .catch((error: Error) => {
             notify(error.toString());
         });
 }
 
-/* 导出时是否保留元数据 */
-watch(
-    () => props.data.block_config.retain,
-    retain => {
-        const attrs = {
-            "custom-config": JSON.stringify(props.data.block_config),
-            "data-export-md": props.data.block_config.retain ? yaml.value : "\n",
-        };
-
-        save(attrs, _r => {
-            Object.assign(props.data.block_ial, attrs);
-        });
-    },
-);
-
 /* 点击保存按钮 */
-function onClickSave(e: MouseEvent): void {
+function onClickSave(_e: MouseEvent): void {
     /* 更新配置 */
-    props.data.block_config.rows = table.data.map(row => {
+    // eslint-disable-next-line vue/no-mutating-props
+    props.data.block_config.rows = table.data.map((row) => {
         return {
             key: row.key!,
             _key: key_map.get(row.key!),
@@ -299,15 +276,73 @@ function onClickSave(e: MouseEvent): void {
         "data-export-md": props.data.block_config.retain ? yaml.value : "\n",
     };
 
-    save(attrs, _r => {
+    save(attrs, (_r) => {
         Object.assign(props.data.block_ial, attrs);
         notify(t("notification.metadata-save-success"), "S", 2000);
     });
 }
 
+/* 更改保持开关状态 */
+function onRetainChange(value: boolean | number | string): void {
+    // eslint-disable-next-line vue/no-mutating-props
+    props.data.block_config.retain = !!value;
+}
+
+updateTable(props.data.ial);
+
+watch(props.data.ial, (ial) => {
+    updateTable(ial);
+    updateSelectedRows();
+});
+
+/* 更新文本框 */
+watch(
+    selected_rows,
+    (rows) => {
+        /* 更新文本域中显示的 YFM */
+        if (rows.length > 0) {
+            try {
+                const metadata: string[] = [];
+                metadata.push("---");
+                metadata.push("\n");
+                metadata.push(dumpIAL(rows as IMetadata[]));
+                metadata.push("---");
+                yaml.value = metadata.join("");
+            }
+            catch (error) {
+                notify((error as Error).toString());
+            }
+        }
+        else {
+            yaml.value = "";
+        }
+
+        setTimeout(updated, 250);
+    },
+    {
+        flush: "post",
+    },
+);
+
+/* 导出时是否保留元数据 */
+watch(
+    () => props.data.block_config.retain,
+    (_retain) => {
+        const attrs = {
+            "custom-config": JSON.stringify(props.data.block_config),
+            "data-export-md": props.data.block_config.retain ? yaml.value : "\n",
+        };
+
+        save(attrs, (_r) => {
+            Object.assign(props.data.block_ial, attrs);
+        });
+    },
+);
+
 /* 组件更新 */
 onUpdated(() => {
     if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
         console.log("Export.onUpdated");
     }
     // setTimeout(updated, 250);
@@ -327,19 +362,20 @@ onUpdated(() => {
         >
             <a-button
                 :title="$t('metadata.save')"
-                @click="onClickSave"
                 type="primary"
                 size="mini"
+                @click="onClickSave"
             >
                 <template #icon>
                     <icon-save />
                 </template>
             </a-button>
             <a-switch
-                v-model:model-value="props.data.block_config.retain"
+                :model-value="props.data.block_config.retain"
                 :title="$t('metadata.retain')"
                 type="circle"
                 size="small"
+                @change="onRetainChange"
             >
                 <template #checked-icon>
                     <icon-check />
@@ -358,40 +394,38 @@ onUpdated(() => {
             :draggable="table.draggable"
             :pagination="false"
             :bordered="{ cell: true }"
-            @change="onChange"
-            @selection-change="(rowKeys: any) => onSelectionChange(rowKeys as string[])"
-            column-resizable
             size="mini"
             class="table"
+            column-resizable
+            @change="onChange"
+            @selection-change="(rowKeys: any) => onSelectionChange(rowKeys as string[])"
         >
             <!-- 导出时属性名 -->
-            <template #_key="{ record, rowIndex }">
+            <template #_key="{ record }">
                 <a-input
-                    size="mini"
                     v-model="record._key"
+                    size="mini"
                     @change="(value: any) => onChangeInput(record, value as string)"
                 />
             </template>
 
             <!-- 属性值 -->
-            <template #value="{ record, rowIndex }">
+            <template #value="{ record }">
                 <pre
-                    class="value"
                     :title="record.value"
-                    >{{ record.value }}</pre
-                >
+                    class="value"
+                >{{ record.value }}</pre>
             </template>
 
             <!-- 属性值解析器 -->
-            <template #parser="{ record, rowIndex }">
+            <template #parser="{ record }">
                 <a-select
                     v-if="record.parser !== undefined"
                     v-model:model-value="record.parser"
                     :options="Object.values(Parser)"
-                    @change="(value: any) => onChangeSelect(record, value as Parser)"
                     size="mini"
-                >
-                </a-select>
+                    @change="(value: any) => onChangeSelect(record, value as Parser)"
+                />
             </template>
         </a-table>
 

@@ -1,32 +1,32 @@
 <!--
  Copyright (C) 2023 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <script setup lang="ts">
-import { inject, ref, unref, onMounted, watch } from "vue";
-import { I18n } from "vue-i18n";
+import { inject, onMounted, ref, unref, watch } from "vue";
 
 import Breadcrumb from "./components/Breadcrumb.vue";
 import Export from "./components/Export.vue";
 import Form from "./components/Form.vue";
-
-import { Client } from "@siyuan-community/siyuan-sdk";
 import { getArcoLang } from "./utils/language";
 
-import { IData } from "./types/data";
+import type { Client } from "@siyuan-community/siyuan-sdk";
+import type { I18n } from "vue-i18n";
+
+import type { IData } from "./types/data";
 
 const client = inject("client") as Client;
 const data = inject("data") as IData;
@@ -37,12 +37,14 @@ const active_key_collapse = ref([1, 2]); // 属性编辑页签展开的列表
 const active_key_tags = ref(1); // 选中的页签
 const arch_lang = getArcoLang(unref(i18n.global.locale));
 
+// eslint-disable-next-line ts/no-use-before-define
 watch(active_key_tags, updated, { flush: "post" });
 
 /* 更新文档 */
 function updated(): void {
     setTimeout(() => {
         if (import.meta.env.DEV) {
+            // eslint-disable-next-line no-console
             console.log("APP.updated");
         }
 
@@ -62,6 +64,7 @@ function reload(): void {
 /* 组件挂载 */
 onMounted(() => {
     if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
         console.log("APP.onMounted");
     }
     updated();
@@ -86,20 +89,20 @@ onMounted(() => {
                     <a-col flex="auto" />
                     <a-col flex="none">
                         <a-button
-                            @click="reload"
                             :title="$t('reload')"
                             size="mini"
                             type="outline"
+                            @click="reload"
                         >
                             <template #icon>
                                 <icon-refresh />
                             </template>
                         </a-button>
                         <a-divider
+                            :size="2"
                             class="divider-vertical"
                             direction="vertical"
                             margin="0.5em"
-                            :size="2"
                         />
                         <a-switch
                             v-model:model-value="editable"

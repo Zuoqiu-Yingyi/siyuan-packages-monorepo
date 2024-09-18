@@ -1,39 +1,27 @@
 {
+    "extends": "@workspace/tsconfig/tsconfig.app.json",
     "compilerOptions": {
-        "target": "ESNext",
-        "useDefineForClassFields": true,
-        "module": "ESNext",
-        "moduleResolution": "Node",
-        "strict": true,
-        "jsx": "preserve",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "esModuleInterop": true,
-        "lib": [
-            "ESNext",
-            "DOM"
-        ],
-        "skipLibCheck": true,
-        "noEmit": true,
         "baseUrl": "./",
         "paths": {
             "~/*": [
-                "./*"
+                "./*",
             ],
             "@/*": [
-                "src/*"
-            ]
+                "src/*",
+            ],
         },
     },
-    "include": [
-        "src/**/*.ts",
-        "src/**/*.d.ts",
-        "src/**/*.tsx",
-        "src/**/*.vue"
-    ],
     "references": [
         {
-            "path": "./tsconfig.node.json"
-        }
-    ]
+            "path": "./tsconfig.node.json",
+        },
+    ],
+    "include": [
+        "public/i18n/*.json",
+        "src/**/*.d.ts",
+        "src/**/*.js",
+        "src/**/*.svelte",
+        "src/**/*.ts",
+        "src/**/*.vue",
+    ],
 }

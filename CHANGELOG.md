@@ -6,6 +6,7 @@
 - 将 `eslint` 配置应用于 `typewriter` 模块 | Apply `eslint` configuration to `typewriter` module
 - 将 `eslint` 配置应用于 `keepass` 模块 | Apply `eslint` configuration to `keepass` module
 - 将 `eslint` 配置应用于 `inbox` 模块 | Apply `eslint` configuration to `inbox` module
+- 将 `eslint` 配置应用于 `metadata` 模块 | Apply `eslint` configuration to `metadata` module
 
 ## 2024-09-17
 

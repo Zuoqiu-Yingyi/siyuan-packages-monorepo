@@ -1,23 +1,22 @@
 import "@arco-design/web-vue/dist/arco.css";
-
 import "./style.css";
 
-import { createApp, reactive } from "vue";
-import { createI18n } from "vue-i18n";
 import ArcoVue from "@arco-design/web-vue";
 import ArcoVueIcon from "@arco-design/web-vue/es/icon";
+import { Client } from "@siyuan-community/siyuan-sdk";
+import { createApp, reactive } from "vue";
+import { createI18n } from "vue-i18n";
 
 import { mapLang } from "@workspace/utils/locale/language";
 
 /* 组件 */
 import App from "./App.vue";
-
-import { Client } from "@siyuan-community/siyuan-sdk";
 import { setThemeMode } from "./utils/theme";
 
 /* 类型 */
-import { ISiyuanVariable } from "@workspace/types/siyuan";
-import { IData } from "./types/data";
+import type { ISiyuan } from "@workspace/types/siyuan";
+
+import type { IData } from "./types/data";
 
 /* 语言包 */
 import en from "./locales/en.json";
@@ -54,7 +53,7 @@ async function init() {
         }, "fetch");
     }
 
-    var siyuan: ISiyuanVariable;
+    let siyuan: ISiyuan;
 
     if (globalThis.frameElement) { // 以 widget 或者 iframe 模式加载
         /* 获取思源应用对象 */
@@ -74,10 +73,10 @@ async function init() {
         siyuan = {
             config,
             notebooks,
-        };
+        } as ISiyuan;
 
         /* 获取挂件块 ID */
-        data.block_id = data.url.searchParams.get('id')!;
+        data.block_id = data.url.searchParams.get("id")!;
     }
 
     /* 设置主题 */
@@ -96,8 +95,8 @@ async function init() {
     })).data[0];
     data.doc_path = doc_data.path;
     data.doc_notebook = doc_data.box;
-    data.paths.push(...`${doc_data.box}${doc_data.path.slice(0, -3)}`.split('/'));
-    data.hpaths.push(...`${siyuan.notebooks.find(notebook => notebook.id === doc_data.box)?.name}${doc_data.hpath}`.split('/'));
+    data.paths.push(...`${doc_data.box}${doc_data.path.slice(0, -3)}`.split("/"));
+    data.hpaths.push(...`${siyuan.notebooks.find((notebook) => notebook.id === doc_data.box)?.name}${doc_data.hpath}`.split("/"));
     data.ial.created = doc_data.created;
 
     /* 获取挂件块属性 */
@@ -126,6 +125,7 @@ async function init() {
     const app = createApp(App);
 
     if (import.meta.env.DEV) { // 开发环境
+        // eslint-disable-next-line no-console
         console.log(data);
     }
 
@@ -150,10 +150,10 @@ async function init() {
     return app;
 }
 
-init().catch(error => {
+init().catch((error) => {
     console.warn(error);
 
     if (import.meta.env.PROD) { // 生产环境
         setTimeout(() => globalThis.location.reload(), 1000); // 重新加载
     }
-})
+});
