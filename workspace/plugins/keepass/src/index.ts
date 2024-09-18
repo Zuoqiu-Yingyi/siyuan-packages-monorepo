@@ -1,65 +1,64 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import siyuan from "siyuan";
-import manifest from "~/public/plugin.json";
+import * as sdk from "@siyuan-community/siyuan-sdk";
 import {
     openDB,
     type IDBPDatabase,
     type OpenDBCallbacks,
 } from "idb";
-import type { ISiyuanGlobal } from "@workspace/types/siyuan";
+import siyuan from "siyuan";
 
-import * as sdk from "@siyuan-community/siyuan-sdk";
-
-import icon_keepass_keeweb from "./assets/symbols/icon-keepass-keeweb.symbol?raw";
-import icon_keepass_slash from "./assets/symbols/icon-keepass-slash.symbol?raw";
-
-import Settings from "./components/Settings.svelte";
 import KeeWebTab from "@workspace/components/siyuan/tab/IframeTab.svelte";
-
 import {
     FLAG_MOBILE,
 } from "@workspace/utils/env/front-end";
+import { isAndroid } from "@workspace/utils/env/native-front-end";
 import { Logger } from "@workspace/utils/logger";
 import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
-import { join } from "@workspace/utils/path/browserify";
+import { trimPrefix } from "@workspace/utils/misc/string";
 import { sync1 } from "@workspace/utils/misc/sync";
-import { openWindow } from "@workspace/utils/window/open";
+import { src2url } from "@workspace/utils/misc/url";
+import { join } from "@workspace/utils/path/browserify";
 import { isWindowFocused } from "@workspace/utils/siyuan/focus";
+import { openWindow } from "@workspace/utils/window/open";
+
+import manifest from "~/public/plugin.json";
+
+import icon_keepass_keeweb from "./assets/symbols/icon-keepass-keeweb.symbol?raw";
+import icon_keepass_slash from "./assets/symbols/icon-keepass-slash.symbol?raw";
+import Settings from "./components/Settings.svelte";
 import { DEFAULT_CONFIG } from "./configs/default";
-import type { I18N } from "./utils/i18n";
+
+import type { ISiyuanGlobal } from "@workspace/types/siyuan";
+
 import type { IConfig } from "./types/config";
-import type {
-    ILocalStoragePlugins,
-    ILocalStoragePlugin,
-    IPluginManifest,
-} from "./types/keeweb";
 import type {
     IDBSchema,
     IDBSchemaFiles,
     TDBDatabaseName,
     TDBStoreName,
 } from "./types/idb-schema";
-import { src2url } from "@workspace/utils/misc/url";
-import { trimPrefix } from "@workspace/utils/misc/string";
-import { isAndroid } from "@workspace/utils/env/native-front-end";
+import type {
+    ILocalStoragePlugin,
+    ILocalStoragePlugins,
+    IPluginManifest,
+} from "./types/keeweb";
+import type { I18N } from "./utils/i18n";
 
-declare var globalThis: ISiyuanGlobal;
+declare let globalThis: ISiyuanGlobal;
 
 export type TLocal = Record<string, any>;
 export interface IDB {
@@ -74,8 +73,8 @@ export default class KeepassPlugin extends siyuan.Plugin {
     /**
      * 遍历所有的 indexedDB 数据库
      */
-    protected static iterateIDB(schema: IDBSchema = KeepassPlugin.IDB_SCHEMA): { db: TDBDatabaseName, store: TDBStoreName }[] {
-        const result: { db: TDBDatabaseName, store: TDBStoreName }[] = [];
+    protected static iterateIDB(schema: IDBSchema = KeepassPlugin.IDB_SCHEMA): { db: TDBDatabaseName; store: TDBStoreName }[] {
+        const result: { db: TDBDatabaseName; store: TDBStoreName }[] = [];
         for (const [db_name, db] of Object.entries(schema)) {
             for (const store_name of Object.keys(db.stores)) {
                 result.push({
@@ -109,11 +108,12 @@ export default class KeepassPlugin extends siyuan.Plugin {
             name: "PluginFiles",
             stores: {
                 files: {
-                    name: "files"
+                    name: "files",
                 } as const,
             } as const,
         } as const,
     } as const;
+
     public static readonly IDB_ENTRIES = KeepassPlugin.iterateIDB();
 
     declare public readonly i18n: I18N;
@@ -167,28 +167,26 @@ export default class KeepassPlugin extends siyuan.Plugin {
 
         this.keewebTab = this.addTab({
             type: KeepassPlugin.CUSTOM_TAB_TYPE_KEEWEB,
-            init() {
+            init(this: IKeeWebTab) {
                 // plugin.logger.debug("tab-init");
                 // plugin.logger.debug(this);
 
-                const tab: IKeeWebTab = this;
-                tab.component = new KeeWebTab({
-                    target: tab.element,
+                this.component = new KeeWebTab({
+                    target: this.element,
                     props: {
-                        ...tab.data,
+                        ...this.data,
                     },
                 });
             },
-            destroy() {
+            destroy(this: IKeeWebTab) {
                 // plugin.logger.debug("tab-destroy");
 
-                const tab: IKeeWebTab = this;
-                tab.component?.$destroy();
+                this.component?.$destroy();
             },
         });
     }
 
-    onload(): void {
+    public override onload(): void {
         // this.logger.debug(this);
 
         /* 注册图标 */
@@ -247,7 +245,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
         // });
 
         this.loadData(KeepassPlugin.GLOBAL_CONFIG_NAME)
-            .then(config => {
+            .then((config) => {
                 if (config) {
                     this.config = mergeIgnoreArray(DEFAULT_CONFIG, config) as IConfig;
                 }
@@ -255,7 +253,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
                     this.config = mergeIgnoreArray(DEFAULT_CONFIG);
                 }
             })
-            .catch(error => this.logger.error(error))
+            .catch((error) => this.logger.error(error))
             .finally(async () => {
                 await this.initIDB();
                 await this.initFiles();
@@ -267,13 +265,13 @@ export default class KeepassPlugin extends siyuan.Plugin {
             });
     }
 
-    onLayoutReady(): void {
+    public override onLayoutReady(): void {
         /* 添加菜单项 */
         this.topBarButton = this.addTopBar({
             icon: "icon-keepass-keeweb",
             title: this.displayName,
             position: "right",
-            callback: e => {
+            callback: (_e) => {
                 const menu = new siyuan.Menu(this.TOP_BAR_MENU_ID);
                 menu.addItem({
                     icon: "iconLayout",
@@ -304,21 +302,20 @@ export default class KeepassPlugin extends siyuan.Plugin {
         });
     }
 
-    onunload(): void {
+    public override onunload(): void {
         globalThis.removeEventListener("storage", this.storageEventListener);
         this.saveLocalStorage();
         this.saveIDB();
     }
 
-    openSetting(): void {
-        const that = this;
+    public override openSetting(): void {
         const dialog = new siyuan.Dialog({
             title: `${this.displayName} <code class="fn__code">${this.name}</code>`,
-            content: `<div id="${that.SETTINGS_DIALOG_ID}" class="fn__flex-column" />`,
+            content: `<div id="${this.SETTINGS_DIALOG_ID}" class="fn__flex-column" />`,
             width: FLAG_MOBILE ? "92vw" : "720px",
             height: FLAG_MOBILE ? undefined : "640px",
         });
-        const target = dialog.element.querySelector(`#${that.SETTINGS_DIALOG_ID}`);
+        const target = dialog.element.querySelector(`#${this.SETTINGS_DIALOG_ID}`);
         if (target) {
             const settings = new Settings({
                 target,
@@ -327,6 +324,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
                     plugin: this,
                 },
             });
+            void settings;
         }
     }
 
@@ -428,7 +426,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
         const entries = sync1<string>(local_siyuan_keys, local_storage_keys);
         // this.logger.debug(entries);
 
-        entries.delete.forEach(entry => globalThis.localStorage.removeItem(entry));
+        entries.delete.forEach((entry) => globalThis.localStorage.removeItem(entry));
         this.setLocalStorageItems(this.local);
         return local_siyuan;
     }
@@ -446,9 +444,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
 
     /**
      * 加载 local
-     * @retruns
-     * - `this.local`: 加载成功
-     * - `undefined`: 加载失败
+     * @returns 加载的数据
      */
     public async loadLocal(): Promise<TLocal> {
         try {
@@ -543,28 +539,29 @@ export default class KeepassPlugin extends siyuan.Plugin {
                 const path = join(this.PLUGIN_STORAGE_IDB_PATH, entry.db, entry.store);
                 const response = await this.client.readDir({ path });
                 const file_names_siyuan = response.data
-                    .filter(entry => !entry.isDir)
-                    .map(entry => entry.name);
+                    .filter((entry) => !entry.isDir)
+                    .map((entry) => entry.name);
                 const file_names_idb = await this.idb[entry.db].getAllKeys(entry.store);
 
                 const entries = sync1<string>(file_names_siyuan, file_names_idb);
                 const transaction = this.idb[entry.db].transaction(entry.store, "readwrite");
                 const store = transaction.objectStore(entry.store);
                 const results = await Promise.allSettled([
-                    ...[...entries.delete].map(file_name => store.delete(file_name)),
-                    ...file_names_siyuan.map(file_name => (async () => {
+                    ...[...entries.delete].map((file_name) => store.delete(file_name)),
+                    ...file_names_siyuan.map((file_name) => (async () => {
                         const file = await this.client.getFile({ path: join(path, file_name) }, "arraybuffer");
                         await this.idb[entry.db].put(entry.store, file, file_name);
                     })()),
                     transaction.done,
                 ]);
 
-                results.forEach(result => {
+                results.forEach((result) => {
                     if (result.status === "rejected") {
                         this.logger.warn(result.reason);
                     }
                 });
-            } catch (error) {
+            }
+            catch (error) {
                 this.logger.warn(error);
             }
         }
@@ -572,13 +569,13 @@ export default class KeepassPlugin extends siyuan.Plugin {
 
     /**
      * 保存 indexedDB 中 KeeWeb 相关的数据  
-     * 完整同步 `indexedDB` -> `data/storage/petal/keepass/idb`
-     * @param names 需要保存的数据库名列表, 默认保存所有数据库
+     * 完整同步 `indexedDB` → `data/storage/petal/keepass/idb`
+     * @param names - 需要保存的数据库名列表, 默认保存所有数据库
      */
     public async saveIDB(...names: TDBDatabaseName[]) {
         const db_name_set = new Set(names);
         const entries = db_name_set.size > 0
-            ? KeepassPlugin.IDB_ENTRIES.filter(entry => db_name_set.has(entry.db))
+            ? KeepassPlugin.IDB_ENTRIES.filter((entry) => db_name_set.has(entry.db))
             : KeepassPlugin.IDB_ENTRIES;
 
         for (const entry of entries) {
@@ -586,16 +583,16 @@ export default class KeepassPlugin extends siyuan.Plugin {
                 const path = join(this.PLUGIN_STORAGE_IDB_PATH, entry.db, entry.store);
                 const response = await this.client.readDir({ path });
                 const file_names_siyuan = response.data
-                    .filter(entry => !entry.isDir)
-                    .map(entry => entry.name);
+                    .filter((entry) => !entry.isDir)
+                    .map((entry) => entry.name);
                 const file_names_idb = await this.idb[entry.db].getAllKeys(entry.store);
 
                 const entries = sync1<string>(file_names_idb, file_names_siyuan);
                 const transaction = this.idb[entry.db].transaction(entry.store);
                 const store = transaction.objectStore(entry.store);
                 const results = await Promise.allSettled([
-                    ...[...entries.delete].map(file_name => this.client.removeFile({ path: join(path, file_name) })),
-                    ...file_names_idb.map(file_name => (async () => {
+                    ...[...entries.delete].map((file_name) => this.client.removeFile({ path: join(path, file_name) })),
+                    ...file_names_idb.map((file_name) => (async () => {
                         const file = await store.get(file_name);
                         return file
                             ? this.client.putFile({ path: join(path, file_name), file })
@@ -604,12 +601,13 @@ export default class KeepassPlugin extends siyuan.Plugin {
                     transaction.done,
                 ]);
 
-                results.forEach(result => {
+                results.forEach((result) => {
                     if (result.status === "rejected") {
                         this.logger.warn(result.reason);
                     }
                 });
-            } catch (error) {
+            }
+            catch (error) {
                 this.logger.warn(error);
             }
         }
@@ -617,8 +615,8 @@ export default class KeepassPlugin extends siyuan.Plugin {
 
     /**
      * 判断一个 localStorage 键是否为本插件的配置项
-     * @param key 键名
-     * @param prefix 键名前缀
+     * @param key - 键名
+     * @param prefix - 键名前缀
      * @returns 是否为本插件的配置项
      */
     public isLocalStorageKey(
@@ -630,24 +628,24 @@ export default class KeepassPlugin extends siyuan.Plugin {
 
     /**
      * 创建 indexedDB 数据库的回调函数集
-     * @param name 数据库名
+     * @param name - 数据库名
      * @returns 回调函数集
      */
     protected createOpenDBCallbacks(name: TDBDatabaseName): OpenDBCallbacks<IDBSchemaFiles> {
         return {
             upgrade(db) {
-                for (const [key, store] of Object.entries(KeepassPlugin.IDB_SCHEMA[name].stores)) {
+                for (const store of Object.values(KeepassPlugin.IDB_SCHEMA[name].stores)) {
                     db.createObjectStore(store.name);
                 }
             },
-        }
+        };
     }
 
     /**
      * 复制 keeweb 插件文件
-     * @param type 文件类型
+     * @param type - 文件类型
      */
-    protected async copyKeeWebPluginFile(type: "js" | "css") {
+    protected async copyKeeWebPluginFile(type: "css" | "js") {
         const file_name = `plugin.${type}`;
         const file_path = join(this.PLUGIN_INSTALL_PATH, "keeweb/plugins/siyuan", file_name);
         const file = await this.client.getFile({ path: file_path }, "blob");
@@ -664,9 +662,9 @@ export default class KeepassPlugin extends siyuan.Plugin {
 
     /**
      * 添加 keeweb 插件文件
-     * @param type 文件类型
+     * @param type - 文件类型
      */
-    protected async putKeeWebPluginFile(type: "js" | "css") {
+    protected async putKeeWebPluginFile(type: "css" | "js") {
         const file_name = `plugin.${type}`;
         const idb_key = `${this.manifest.name}_${file_name}`;
         const file_path = join(this.PLUGIN_INSTALL_PATH, "keeweb/plugins/siyuan", file_name);
@@ -676,9 +674,9 @@ export default class KeepassPlugin extends siyuan.Plugin {
 
     /**
      * 删除 keeweb 插件文件
-     * @param type 文件类型
+     * @param type - 文件类型
      */
-    protected async deleteKeeWebPluginFile(type: "js" | "css") {
+    protected async deleteKeeWebPluginFile(type: "css" | "js") {
         const idb_key = `${this.manifest.name}_plugin.${type}`;
         await this.idb.PluginFiles.delete(KeepassPlugin.IDB_SCHEMA.PluginFiles.stores.files.name, idb_key);
     }
@@ -701,12 +699,12 @@ export default class KeepassPlugin extends siyuan.Plugin {
 
     /**
      * 保存 keeweb 思源插件的配置
-     * keeweb -> 思源
+     * keeweb → 思源
      * 在 localStorage 变更时调用
      */
     protected saveKeeWebPluginConfig(): void {
         const plugins: ILocalStoragePlugins | undefined = this.local[KeepassPlugin.LOCAL_STORAGE_KEY_PLUGINS];
-        const plugin: ILocalStoragePlugin | undefined = plugins?.plugins?.find(plugin => plugin?.manifest?.name === this.manifest.name);
+        const plugin: ILocalStoragePlugin | undefined = plugins?.plugins?.find((plugin) => plugin?.manifest?.name === this.manifest.name);
 
         if (plugin) { // 存在插件配置 (插件已安装)
             this.config.keeweb.plugin.siyuan.enable = true;
@@ -718,14 +716,14 @@ export default class KeepassPlugin extends siyuan.Plugin {
 
     /* 获取 keeweb 中思源插件的状态 */
     protected getKeeWebSiyuanPlugin(): {
-        plugins: ILocalStoragePlugins,
-        plugin: ILocalStoragePlugin | undefined,
+        plugins: ILocalStoragePlugins;
+        plugin: ILocalStoragePlugin | undefined;
     } {
-        var plugins: ILocalStoragePlugins | undefined = this.local[KeepassPlugin.LOCAL_STORAGE_KEY_PLUGINS];
-        var plugin: ILocalStoragePlugin | undefined;
+        let plugins: ILocalStoragePlugins | undefined = this.local[KeepassPlugin.LOCAL_STORAGE_KEY_PLUGINS];
+        let plugin: ILocalStoragePlugin | undefined;
         if (plugins) { // 插件配置存在
             if (Array.isArray(plugins.plugins)) {
-                plugin = plugins.plugins.find(plugin => plugin?.manifest?.name === this.manifest.name)
+                plugin = plugins.plugins.find((plugin) => plugin?.manifest?.name === this.manifest.name);
             }
             else {
                 plugins.plugins = [];
@@ -754,7 +752,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
      * 安装 keeweb 插件
      */
     public async installKeeWebPlugin(): Promise<void> {
-        var { plugins, plugin } = this.getKeeWebSiyuanPlugin();
+        const { plugins, plugin } = this.getKeeWebSiyuanPlugin();
 
         /* 更新 this.local 与 this.config  */
         if (!plugin) { // 不存在插件配置 (插件未安装)

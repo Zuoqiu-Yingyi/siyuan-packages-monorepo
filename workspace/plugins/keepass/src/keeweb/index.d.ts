@@ -1,24 +1,24 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import zh_Hans from "./i18n/zh-Hans.json";
-import type sdk from "@siyuan-community/siyuan-sdk";
-import type { SiyuanStorage } from "./storage";
+import type * as sdk from "@siyuan-community/siyuan-sdk";
+
 import type { IPluginManifest } from "@/types/keeweb";
+
+import type zh_Hans from "./i18n/zh-Hans.json";
+import type { SiyuanStorage } from "./storage";
 
 export type I18N = typeof zh_Hans;
 
@@ -27,7 +27,7 @@ export type I18N = typeof zh_Hans;
  * 
  * 模板文件: app/templates/settings/settings-plugins.hbs
  */
-//#region plugin-setting
+// #region plugin-setting
 export interface IPluginBaseSetting<T> {
     name: string;
     type: string;
@@ -49,17 +49,17 @@ export interface IPluginSelectSetting extends IPluginBaseSetting<string> {
 export interface IPluginCheckboxSetting extends IBaseSetting<boolean> {
     type: "checkbox";
 }
-export type TPluginSetting = ITextSetting
+export type TPluginSetting = ICheckboxSetting
     | ISelectSetting
-    | ICheckboxSetting;
-//#endregion plugin-setting
+    | ITextSetting;
+// #endregion plugin-setting
 
 /** 
  * 储存打开设置项
  * 
  * 模板文件: app/templates/open-config.hbs
  */
-//#region storage-open-config
+// #region storage-open-config
 export interface IStorageOpenConfigField {
     id: string;
     type: string; // input.type
@@ -73,7 +73,7 @@ export interface IStorageOpenConfig {
     desc?: string;
     fields: IStorageOpenConfigField[];
 }
-//#region storage-open-config
+// #region storage-open-config
 
 /**
  * 储存设置项
@@ -100,8 +100,8 @@ export interface IStorageInputSetting<T> extends IStorageBaseSettings<T> {
     pattern?: string;
     placeholder?: string;
 }
-export type TStorageSttingField<T = string | number> = IStorageInputSetting<T>
-    | IStorageCheckboxSetting
+export type TStorageSttingField<T = number | string> = IStorageCheckboxSetting
+    | IStorageInputSetting<T>
     | IStorageSelectSetting;
 export interface IStorageSettingsConfig {
     desc?: string;
