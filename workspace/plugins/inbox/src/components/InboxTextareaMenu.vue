@@ -1,23 +1,35 @@
 <!--
  Copyright (C) 2024 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <!-- 消息输入框菜单 -->
 <script setup lang="ts">
-import { Dropdown, Dgroup, Doption } from "@arco-design/web-vue";
+import {
+    Dgroup,
+    Doption,
+    Dropdown,
+} from "@arco-design/web-vue";
+
+// eslint-disable-next-line ts/consistent-type-definitions
+type TEmits = {
+    // REF: https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-emits
+    files: [files: FileList | null]; // 文件列表
+};
+
+const emits = defineEmits<TEmits>();
 
 enum TextareaOptionType {
     PHOTO_FRONT,
@@ -26,19 +38,14 @@ enum TextareaOptionType {
     VIDEO_REAR,
 }
 
-const emits = defineEmits<{
-    // REF: https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-emits
-    files: [files: FileList | null]; // 文件列表
-}>();
-
 /* 调用相机输入 */
 const camera_input = document.createElement("input");
 camera_input.type = "file";
-camera_input.addEventListener("change", e => {
+camera_input.addEventListener("change", (_e) => {
     emits("files", camera_input.files);
 });
 
-function onclick(e: MouseEvent, optionType: TextareaOptionType): void {
+function onclick(_e: MouseEvent, optionType: TextareaOptionType): void {
     // REF: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/capture
     switch (optionType) {
         case TextareaOptionType.PHOTO_FRONT: // 使用前置摄像头拍摄照片

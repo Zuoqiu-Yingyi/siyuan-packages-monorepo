@@ -1,43 +1,36 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-import siyuan from "siyuan";
-import type { ISiyuanGlobal } from "@workspace/types/siyuan";
-
-import icon_inbox from "./assets/symbols/icon-inbox.symbol?raw";
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import {
     Client,
-    type types,
 } from "@siyuan-community/siyuan-sdk";
-
-import Settings from "./components/Settings.svelte";
-import InboxDock from "./components/InboxDock.svelte";
+import siyuan from "siyuan";
 
 import {
     FLAG_MOBILE,
 } from "@workspace/utils/env/front-end";
 import { Logger } from "@workspace/utils/logger";
 import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
-import { DEFAULT_CONFIG } from "./configs/default";
-import type { I18N } from "./utils/i18n";
-import type { IConfig } from "./types/config";
 
-declare var globalThis: ISiyuanGlobal;
+import icon_inbox from "./assets/symbols/icon-inbox.symbol?raw";
+import InboxDock from "./components/InboxDock.svelte";
+import Settings from "./components/Settings.svelte";
+import { DEFAULT_CONFIG } from "./configs/default";
+
+import type { IConfig } from "./types/config";
+import type { I18N } from "./utils/i18n";
 
 export default class InboxPlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "config.json";
@@ -54,9 +47,9 @@ export default class InboxPlugin extends siyuan.Plugin {
     protected config: IConfig = mergeIgnoreArray(DEFAULT_CONFIG);
 
     protected inboxDock!: {
-        dock: ReturnType<siyuan.Plugin["addDock"]>,
-        model?: siyuan.IDockModel,
-        component?: InstanceType<typeof InboxDock>,
+        dock: ReturnType<siyuan.Plugin["addDock"]>;
+        model?: siyuan.IDockModel;
+        component?: InstanceType<typeof InboxDock>;
     }; // 收集箱面板
 
     constructor(options: any) {
@@ -69,7 +62,7 @@ export default class InboxPlugin extends siyuan.Plugin {
         this.INBOX_APP_PATH = `plugins/${this.name}/`;
     }
 
-    onload(): void {
+    public override onload(): void {
         // this.logger.debug(this);
 
         /* 注册图标 */
@@ -78,7 +71,7 @@ export default class InboxPlugin extends siyuan.Plugin {
         ].join(""));
 
         /* 注册侧边栏 */
-        const plugin = this;
+        const plugin = this as InstanceType<typeof InboxPlugin>;
         this.inboxDock = {
             dock: this.addDock({
                 config: {
@@ -115,29 +108,28 @@ export default class InboxPlugin extends siyuan.Plugin {
         };
 
         this.loadData(InboxPlugin.GLOBAL_CONFIG_NAME)
-            .then(config => {
+            .then((config) => {
                 this.config = mergeIgnoreArray(DEFAULT_CONFIG, config || {}) as IConfig;
             })
-            .catch(error => this.logger.error(error))
+            .catch((error) => this.logger.error(error))
             .finally(() => {
             });
     }
 
-    onLayoutReady(): void {
+    public override onLayoutReady(): void {
     }
 
-    onunload(): void {
+    public override onunload(): void {
     }
 
-    openSetting(): void {
-        const that = this;
+    public override openSetting(): void {
         const dialog = new siyuan.Dialog({
             title: `${this.displayName} <code class="fn__code">${this.name}</code>`,
-            content: `<div id="${that.SETTINGS_DIALOG_ID}" class="fn__flex-column" />`,
+            content: `<div id="${this.SETTINGS_DIALOG_ID}" class="fn__flex-column" />`,
             width: FLAG_MOBILE ? "92vw" : "720px",
             height: FLAG_MOBILE ? undefined : "640px",
         });
-        const target = dialog.element.querySelector(`#${that.SETTINGS_DIALOG_ID}`);
+        const target = dialog.element.querySelector(`#${this.SETTINGS_DIALOG_ID}`);
         if (target) {
             const settings = new Settings({
                 target,
@@ -146,6 +138,7 @@ export default class InboxPlugin extends siyuan.Plugin {
                     plugin: this,
                 },
             });
+            void settings;
         }
     }
 

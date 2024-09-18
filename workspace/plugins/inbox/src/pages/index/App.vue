@@ -1,40 +1,58 @@
 <!--
  Copyright (C) 2023 Zuoqiu Yingyi
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
  published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Affero General Public License for more details.
- 
+
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <script setup lang="ts">
-import { inject, shallowRef, reactive, watch, onMounted } from "vue";
-import { register, type VueAdvancedChat, type RoomUser, type Room, type Message, type Props } from "vue-advanced-chat";
+import {
+    inject,
+    onMounted,
+    reactive,
+    shallowRef,
+    watch,
+} from "vue";
+import {
+    register,
+    type Message,
+    type Props,
+    type Room,
+    type RoomUser,
+} from "vue-advanced-chat";
 
-import { FLAG_LIGHT, MEDIA_QUERY_LIST } from "@workspace/utils/env/native-front-end";
 import ArcoConfigProvider from "@workspace/components/arco/ArcoConfigProvider.vue";
+import {
+    FLAG_LIGHT,
+    MEDIA_QUERY_LIST,
+} from "@workspace/utils/env/native-front-end";
+import { deepClone } from "@workspace/utils/misc/clone";
 
-import InboxRoomInfoDialog from "@/components/InboxRoomInfoDialog.vue";
-import InboxUserInfoDialog from "@/components/InboxUserInfoDialog.vue";
-import InboxRoomSelectDialog from "@/components/InboxRoomSelectDialog.vue";
 import InboxMenu from "@/components/InboxMenu.vue";
+import InboxRoomInfoDialog from "@/components/InboxRoomInfoDialog.vue";
+import InboxRoomSelectDialog from "@/components/InboxRoomSelectDialog.vue";
 import InboxTextareaMenu from "@/components/InboxTextareaMenu.vue";
-
+import InboxUserInfoDialog from "@/components/InboxUserInfoDialog.vue";
 import * as Constants from "@/constant";
 import { Control } from "@/messages/control";
 
-import type { I18n, VueI18nTranslation } from "vue-i18n";
-import type { Logger } from "@workspace/utils/logger";
 import type { Client } from "@siyuan-community/siyuan-sdk";
-import { deepClone } from "@workspace/utils/misc/clone";
+import type {
+    I18n,
+    VueI18nTranslation,
+} from "vue-i18n";
+
+import type { Logger } from "@workspace/utils/logger";
 
 register();
 const vue_advanced_chat = shallowRef<HTMLElement | null>(null);
@@ -56,7 +74,7 @@ const picker_locale: string = (() => {
             return "zh";
         case "zh-hant":
             return "zh-hant";
-        default:
+        default: {
             const language = globalThis.navigator.language.toLowerCase();
             for (const lang of ["bn", "da", "de", "en", "en-gb", "es", "es-mx", "et", "fi", "fr", "hi", "hu", "it", "ja", "ko", "lt", "ms", "nb", "nl", "pl", "pt", "ru", "sv", "th", "uk", "zh", "zh-hant"].reverse()) {
                 if (language.startsWith(lang)) {
@@ -64,6 +82,7 @@ const picker_locale: string = (() => {
                 }
             }
             return "en";
+        }
     }
 })();
 
@@ -205,8 +224,8 @@ const main = reactive<Room>({
     users: [deepClone()(user)],
     index: 0,
 }); // 主收集箱
-const theme = shallowRef<"light" | "dark">(FLAG_LIGHT ? "light" : "dark"); // 主题
-const roomId = shallowRef<string | null>(null); // 当前聊天室 ID
+const theme = shallowRef<"dark" | "light">(FLAG_LIGHT ? "light" : "dark"); // 主题
+const roomId = shallowRef<null | string>(null); // 当前聊天室 ID
 const rooms = shallowRef<Room[]>([]); // 当前用户所在的聊天室列表
 const roomsLoaded = shallowRef<boolean>(false); // 聊天室列表是否加载完成
 const messages = shallowRef<Message[]>([]); // 当前聊天室消息列表
@@ -241,7 +260,7 @@ const control = new Control(
 );
 
 /* 监听系统主题更改 */
-MEDIA_QUERY_LIST.light.addEventListener("change", e => {
+MEDIA_QUERY_LIST.light.addEventListener("change", (e) => {
     theme.value = e.matches ? "light" : "dark";
 });
 
@@ -258,10 +277,11 @@ watch(rooms, () => {
     roomsLoaded.value = true;
 });
 
-watch(messages, messages => {
+watch(messages, (messages) => {
     if (messages.length > 0) {
         messagesLoaded.value = true;
-    } else {
+    }
+    else {
         /* 避免无消息时一直处于加载状态 */
         messagesLoaded.value = false;
 
@@ -279,7 +299,7 @@ onMounted(async () => {
 
 /**
  * 选择文件列表
- * @param files 文件列表
+ * @param files - 文件列表
  */
 function onSelectFiles(files: FileList | null): void {
     // logger.debug(files);
@@ -288,7 +308,8 @@ function onSelectFiles(files: FileList | null): void {
         const vac_col_messages = vue_advanced_chat.value?.shadowRoot?.querySelector(".vac-col-messages");
         if (vac_col_messages) {
             const dataTransfer = new DataTransfer();
-            for (const file of files) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files.item(i)!;
                 dataTransfer.items.add(file);
             }
 
@@ -321,10 +342,8 @@ function onSelectFiles(files: FileList | null): void {
         :rooms="rooms"
         @confirm="control.onRoomSelectConfirm"
     />
-    <!-- @vue-expect-error -->
     <vue-advanced-chat
         ref="vue_advanced_chat"
-        height="100vh"
         :room-id="roomId"
         :rooms-loaded="roomsLoaded"
         :messages-loaded="messagesLoaded"
@@ -348,6 +367,7 @@ function onSelectFiles(files: FileList | null): void {
         :menu-actions.prop="menu_actions"
         :message-actions.prop="message_actions"
         :message-selection-actions.prop="message_selection_actions"
+        height="100vh"
         @fetch-more-rooms="control.handler"
         @toggle-rooms-list="control.handler"
         @add-room="control.handler"
@@ -369,19 +389,21 @@ function onSelectFiles(files: FileList | null): void {
         @typing-message="control.handler"
     >
         <!-- 自定义添加按钮 -->
-        <span
-            class="icon"
-            slot="add-icon"
-        >
-            <InboxMenu @click="control.onClickMenuItem" />
-        </span>
+        <template #add-icon>
+            <span
+                class="icon"
+            >
+                <InboxMenu @click="control.onClickMenuItem" />
+            </span>
+        </template>
         <!-- 消息输入框的自定义按钮, 点击时触发 textarea-action-handler 事件 -->
-        <span
-            class="icon"
-            slot="custom-action-icon"
-        >
-            <InboxTextareaMenu @files="onSelectFiles" />
-        </span>
+        <template #custom-action-icon>
+            <span
+                class="icon"
+            >
+                <InboxTextareaMenu @files="onSelectFiles" />
+            </span>
+        </template>
     </vue-advanced-chat>
 </template>
 

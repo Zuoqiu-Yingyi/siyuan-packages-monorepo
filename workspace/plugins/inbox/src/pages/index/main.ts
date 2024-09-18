@@ -1,45 +1,44 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import "./main.less";
+
+import { Modal, Notification } from "@arco-design/web-vue";
+import { Client } from "@siyuan-community/siyuan-sdk";
+import { createApp } from "vue";
+import { createI18n } from "vue-i18n";
+
+import { mapLang } from "@workspace/utils/locale/language";
+import { Logger } from "@workspace/utils/logger";
+import { UA } from "@workspace/utils/misc/user-agent";
+import { relative } from "@workspace/utils/path/browserify";
+import { id } from "@workspace/utils/siyuan/id";
+import { auth } from "@workspace/utils/siyuan/url";
 
 /* 静态资源 */
 import manifest from "~/public/plugin.json";
-import "./main.less";
+import * as Constants from "~/src/constant";
 
 /* 语言包 */
 import en from "@/locales/en.json";
 import zh_Hans from "@/locales/zh-Hans.json";
 import zh_Hant from "@/locales/zh-Hant.json";
 
-import { createApp } from "vue";
-import { createI18n } from "vue-i18n";
-import { Modal, Notification } from '@arco-design/web-vue';
-import type { RoomUser } from "vue-advanced-chat";
-
-import { Client } from "@siyuan-community/siyuan-sdk";
-import { mapLang } from "@workspace/utils/locale/language";
-import { UA } from "@workspace/utils/misc/user-agent";
-import { relative } from "@workspace/utils/path/browserify";
-import { auth } from "@workspace/utils/siyuan/url";
-import { id } from "@workspace/utils/siyuan/id";
-
-import { Logger } from "@workspace/utils/logger";
-
 import App from "./App.vue";
-import * as Constants from "~/src/constant";
+
+import type { RoomUser } from "vue-advanced-chat";
 
 (async () => {
     /* 日志记录器 */
@@ -77,8 +76,11 @@ import * as Constants from "~/src/constant";
     try {
         /* 验证是否已通过认证 */
         const response = await client.echo({ method: "POST" });
-        var ip = response.data.Context.ClientIP || response.data.Context.RemoteIP;
-    } catch (error) {
+        const ip = response.data.Context.ClientIP || response.data.Context.RemoteIP;
+        void ip;
+    }
+    catch (error) {
+        void error;
         auth(); // 跳转到认证页面
         return;
     }
@@ -139,7 +141,7 @@ import * as Constants from "~/src/constant";
                 return current_user;
             }
             else {
-                throw new Error();
+                throw new Error("Current user information not found");
             }
         }
         catch {
@@ -151,7 +153,7 @@ import * as Constants from "~/src/constant";
                 UA.device.type,
                 // ip,
                 current_user_id,
-            ].filter(s => !!s).join("-");
+            ].filter((s) => !!s).join("-");
             const current_user: RoomUser = {
                 _id: current_user_id,
                 username,

@@ -1,12 +1,13 @@
 {
     "compilerOptions": {
         "composite": true,
-        "skipLibCheck": true,
         "module": "ESNext",
-        "moduleResolution": "bundler"
+        "moduleResolution": "bundler",
+        "skipLibCheck": true,
     },
     "include": [
+        "svelte.config.js",
         "vite.config.ts",
         "vite.*.config.ts",
-    ]
+    ],
 }

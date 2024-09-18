@@ -1,20 +1,19 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { RecordRTCPromisesHandler } from "recordrtc";
+
 import type { IMediaStreamConstraints } from ".";
 
 export interface IRecordingOptions {
@@ -24,7 +23,7 @@ export interface IRecordingOptions {
 
 export interface IRecorderConfiguration {
     recordingOptions: IRecordingOptions;
-    ws: WebSocket | URL;
+    ws: URL | WebSocket;
 };
 
 export class Recorder {
@@ -41,13 +40,13 @@ export class Recorder {
 
     public async init(): Promise<void> {
         const stream = await navigator.mediaDevices.getUserMedia(
-            this._recordingOptions.media
+            this._recordingOptions.media,
         );
         const type = this._recordingOptions.media.video ? "video" : "audio";
         /**
-         * REF: {@link https://www.npmjs.com/package/recordrtc#codecs-support RecordRTC Codecs Support}
+         * REF: {@link https://www.npmjs.com/package/recordrtc#codecs-support | RecordRTC Codecs Support}
          * 
-         * REF: {@link https://developer.mozilla.org/zh-CN/docs/Web/Media/Formats/Video_codecs 网页视频编码指南 - Web 媒体技术 | MDN}
+         * REF: {@link https://developer.mozilla.org/zh-CN/docs/Web/Media/Formats/Video_codecs | 网页视频编码指南 - Web 媒体技术 - MDN}
          * 
          * | 媒体格式                         | Firefox (`119.0.1`) | Chromium (`118.0.5993.138`) |
          * | :------------------------------- | :-----------------: | :-------------------------: |

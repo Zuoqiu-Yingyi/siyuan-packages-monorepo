@@ -1,19 +1,17 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 export enum MenuAction {
     ADD_ROOM = "add-room",
@@ -56,7 +54,7 @@ export interface IBaseBroadcastMessage extends IBaseMessage {
  * 指定消息接收者的 ID
  */
 export interface IBaseUnicastMessage extends IBaseMessage {
-    type: MessageType.push | MessageType.response | MessageType.call | MessageType.return;
+    type: MessageType.call | MessageType.push | MessageType.response | MessageType.return;
     receiver: string;
 }
 
@@ -91,13 +89,13 @@ export interface IBaseResponseMessage extends IBaseMessage {
  * 远程方法调用消息
  */
 export interface IBaseCallMessage<
-    F extends Function | ((...args: any) => any), // 函数
-    N = F extends Function ? F["name"] : string, // 函数名
+    F extends ((...args: any) => any) | CallableFunction,
+    N = F extends CallableFunction ? F["name"] : string,
     A = F extends ((...args: any) => any) ? Parameters<F> : any[], // 函数参数
 > extends IBaseUnicastMessage {
     type: MessageType.call;
     data: {
-        id: string | number;
+        id: number | string;
         name: N;
         args: A;
     };
@@ -107,13 +105,13 @@ export interface IBaseCallMessage<
  * 远程方法调用的返回结果消息
  */
 export interface IBaseReturnMessage<
-    F extends Function | ((...args: any) => any), // 函数
-    N = F extends Function ? F["name"] : string, // 函数名
+    F extends ((...args: any) => any) | CallableFunction,
+    N = F extends CallableFunction ? F["name"] : string,
     R = F extends ((...args: any) => any) ? ReturnType<F> : any, // 函数返回值
 > extends IBaseUnicastMessage {
     type: MessageType.return;
     data: {
-        id: string | number;
+        id: number | string;
         name: N;
         return: R;
     };
