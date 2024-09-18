@@ -1,31 +1,29 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 export interface IPlayingOptions {
-    element: HTMLVideoElement | HTMLAudioElement;
+    element: HTMLAudioElement | HTMLVideoElement;
     media: {
-        video: boolean,
-        audio: boolean,
+        video: boolean;
+        audio: boolean;
     };
 };
 
 export interface IPlayerConfiguration {
     options: IPlayingOptions;
-    ws: WebSocket | URL;
+    ws: URL | WebSocket;
 };
 
 export class Player {
@@ -57,33 +55,34 @@ export class Player {
                     const mime = ((this._options.media.video && this._options.media.audio)
                         ? `video/webm; codecs="vp9,opus"`
                         : (this._options.media.video
-                            ? `video/webm; codecs="vp9"`
-                            : (this._options.media.audio
-                                ? `audio/webm; codecs="opus"`
-                                : ""
+                                ? `video/webm; codecs="vp9"`
+                                : (this._options.media.audio
+                                        ? `audio/webm; codecs="opus"`
+                                        : ""
+                                    )
                             )
-                        )
                     );
                     /**
                      * REF: https://developer.mozilla.org/zh-CN/docs/Web/API/MediaSource/addSourceBuffer
                      */
                     const sourceBuffer = this._mediaSource.addSourceBuffer(mime);
                     resolve(sourceBuffer);
-                } catch (e) {
+                }
+                catch (e) {
                     reject(e);
                 }
             };
 
             if (this._mediaSource.readyState === "open") {
                 getSourceBuffer();
-            } else {
+            }
+            else {
                 this._mediaSource.addEventListener("sourceopen", getSourceBuffer);
             }
             this._mediaSource.addEventListener("sourceended", this.sourceendedEventHandler);
             this._mediaSource.addEventListener("sourceclose", this.sourcecloseEventHandler);
         });
     }
-
 
     public start(): boolean {
         if (this._started) {
@@ -92,8 +91,8 @@ export class Player {
         else {
             this._started = true;
             this._ws.addEventListener("message", this.messageEventHandler);
-            this._ws.addEventListener("close", this.errorEventHandler)
-            this._ws.addEventListener("error", this.closeEventHandler)
+            this._ws.addEventListener("close", this.errorEventHandler);
+            this._ws.addEventListener("error", this.closeEventHandler);
             return true;
         }
     }
@@ -129,19 +128,19 @@ export class Player {
         if (this._playing) {
             await this._options.element.play();
         }
-    }
+    };
 
-    protected readonly errorEventHandler = async (e: Event) => {
+    protected readonly errorEventHandler = async (_e: Event) => {
         this._mediaSource.endOfStream("network");
-    }
+    };
 
-    protected readonly closeEventHandler = async (e: Event) => {
+    protected readonly closeEventHandler = async (_e: Event) => {
         this._mediaSource.endOfStream("network");
-    }
+    };
 
-    protected readonly sourceendedEventHandler = async (e: Event) => {
-    }
+    protected readonly sourceendedEventHandler = async (_e: Event) => {
+    };
 
-    protected readonly sourcecloseEventHandler = async (e: Event) => {
-    }
+    protected readonly sourcecloseEventHandler = async (_e: Event) => {
+    };
 }

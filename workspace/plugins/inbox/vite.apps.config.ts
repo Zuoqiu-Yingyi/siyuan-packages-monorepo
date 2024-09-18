@@ -1,35 +1,34 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import {
-    type UserConfigFnObject,
-    type UserConfig,
-} from "vite";
 import { resolve } from "node:path";
 
+import { vitePluginForArco } from "@arco-plugins/vite-vue";
 import vue from "@vitejs/plugin-vue";
 import {
     VitePWA,
     type ManifestOptions,
 } from "vite-plugin-pwa";
 import { viteStaticCopy } from "vite-plugin-static-copy";
-import { vitePluginForArco } from "@arco-plugins/vite-vue";
 
 import plugin from "./public/plugin.json";
+
+import type {
+    UserConfig,
+    UserConfigFnObject,
+} from "vite";
 
 const plugin_root_pathname = `/plugins/${plugin.name}/`;
 export const manifest = {
@@ -42,7 +41,7 @@ export const manifest = {
             type: "image/png",
             sizes: "512x512",
             purpose: "any",
-        }
+        },
     ],
     file_handlers: [],
     start_url: "./",
@@ -163,23 +162,7 @@ export const userConfigFn: UserConfigFnObject = function (env) {
     const dev = env.mode.endsWith("dev");
     const config = {
         plugins: [
-            vue({
-                template: {
-                    compilerOptions: {
-                        // REF: https://www.npmjs.com/package/vue-advanced-chat#vue
-                        isCustomElement: tag => {
-                            // console.log(tag);
-                            switch (tag) {
-                                case "vue-advanced-chat":
-                                case "emoji-picker":
-                                    return true;
-                                default:
-                                    return /\w+(-\w+)+/.test(tag);
-                            }
-                        },
-                    },
-                },
-            }),
+            vue(),
             // REF: https://arco.design/vue/docs/start
             vitePluginForArco({
                 style: true,
@@ -213,9 +196,7 @@ export const userConfigFn: UserConfigFnObject = function (env) {
                 manifestFilename: "manifest.webmanifest",
                 strategies: "generateSW",
                 registerType: "autoUpdate",
-                minify: dev
-                    ? false
-                    : true,
+                minify: !dev,
                 manifest,
                 workbox: {
                     globIgnores: [
@@ -226,6 +207,7 @@ export const userConfigFn: UserConfigFnObject = function (env) {
                     globPatterns: [
                         "**/*.{js,css,html,ico,png,svg,json}",
                     ],
+                    maximumFileSizeToCacheInBytes: 16 * 1024 * 1024,
                 },
                 includeAssets: [],
                 devOptions: {

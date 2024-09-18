@@ -13,8 +13,8 @@
 ![hits](https://hits.b3log.org/Zuoqiu-Yingyi/siyuan-plugin-inbox.svg)
 <!-- ![jsDelivr hits (GitHub)](https://img.shields.io/jsdelivr/gh/hy/Zuoqiu-Yingyi/siyuan-packages-inbox?style=flat-square) -->
 [![GitHub all releases](https://img.shields.io/github/downloads/Zuoqiu-Yingyi/siyuan-plugin-inbox/total?style=flat-square)](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-inbox/releases)
-
 ---
+
 </div>
 
 ## USER GUIDE
@@ -32,10 +32,10 @@
    ```
 3. Create a pull request from `dev` branch to `main` branch in sub-repository.
 4. Merge the pull request.
-5. Await for the CD workflow `release-please.yml` to complete, it will create a *release pull request* in sub-repository.
-6. Merge the *release pull request*, it will create a new *pre-release* with current [changelog](./CHANGELOG.md) and a new *tag* with [semantic version](https://semver.org/) in sub-repository.
+5. Await for the CD workflow `release-please.yml` to complete, it will create a _release pull request_ in sub-repository.
+6. Merge the _release pull request_, it will create a new _pre-release_ with current [changelog](./CHANGELOG.md) and a new _tag_ with [semantic version](https://semver.org/) in sub-repository.
 7. Await for the CD workflow `build.yml` to complete, it will update the distribution files to `publish` branch in sub-repository.
-8. Await for the CD workflow `release-distribution.yml` to complete, it will create a new *pre-release* with an asset named `package.zip` and a new *tag* with timestamp in sub-repository.
+8. Await for the CD workflow `release-distribution.yml` to complete, it will create a new _pre-release_ with an asset named `package.zip` and a new _tag_ with timestamp in sub-repository.
 
 ## CHANGELOG
 

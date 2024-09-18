@@ -1,25 +1,24 @@
-/**
- * Copyright (C) 2023 Zuoqiu Yingyi
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2023 Zuoqiu Yingyi
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+// 
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import {
-    type UserConfig,
-    type UserConfigFnObject,
-} from "vite";
 import { resolve } from "node:path";
+
+import type {
+    UserConfig,
+    UserConfigFnObject,
+} from "vite";
 
 // https://vitejs.dev/config/
 export const userConfigFn: UserConfigFnObject = function (env) {
@@ -43,7 +42,7 @@ export const userConfigFn: UserConfigFnObject = function (env) {
                     index: resolve(__dirname, "src/index.ts"),
                 },
                 output: {
-                    entryFileNames: chunkInfo => {
+                    entryFileNames: (chunkInfo) => {
                         // console.log(chunkInfo);
                         switch (chunkInfo.name) {
                             case "index":
@@ -53,7 +52,7 @@ export const userConfigFn: UserConfigFnObject = function (env) {
                                 return "assets/[name]-[hash].js";
                         }
                     },
-                    assetFileNames: assetInfo => {
+                    assetFileNames: (assetInfo) => {
                         // console.log(chunkInfo);
                         switch (assetInfo.name) {
                             case "style.css":
@@ -67,8 +66,8 @@ export const userConfigFn: UserConfigFnObject = function (env) {
                 },
             },
         },
-    } as UserConfig;
+    } satisfies UserConfig;
 
     return config;
-}
+};
 export default userConfigFn;
