@@ -3,6 +3,7 @@
 ## 2024-11-21
 
 - 修复 Svelte 无法解析 `enum` 等 TypeScript 特性问题 | Fix the issue that Svelte cannot parse TypeScript features such as `enum`.
+- 添加 git hook | Add git hook.
 
 ## 2024-09-18
 
