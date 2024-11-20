@@ -9,6 +9,11 @@ export def pnpm-outdated [path: string] {
     ^pnpm outdated
 }
 
+export def pnpm-prune [path: string] {
+    cd $path
+    ^pnpm prune
+}
+
 export def get-paths [] {
     let paths = (ls ./tools | where type == dir | get name)
     let paths = $paths | append (ls ./packages | where type == dir | get name)

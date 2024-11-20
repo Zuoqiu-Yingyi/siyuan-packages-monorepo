@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-11-21
+
+- 修复 Svelte 无法解析 `enum` 等 TypeScript 特性问题 | Fix the issue that Svelte cannot parse TypeScript features such as `enum`.
+
 ## 2024-09-18
 
 - 将 `eslint` 配置应用于 `jupyter-client` 模块 | Apply `eslint` configuration to `jupyter-client` module

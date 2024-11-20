@@ -5,6 +5,7 @@ use utils.nu [get-paths, pnpm-update]
 
 let paths = get-paths
 $paths | each {|path|
+    print $path
     pnpm-update $path
-    $path
+    print ""
 }
