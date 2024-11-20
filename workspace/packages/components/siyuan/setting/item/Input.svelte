@@ -149,7 +149,7 @@
         {placeholder}
         bind:value={settingValue}
         on:change={changed}
-    />
+    ></textarea>
 {/if}
 
 <style lang="less">

@@ -1,11 +1,11 @@
 #!/usr/bin/env nu
-use utils.nu [get-paths, pnpm-outdated]
+use utils.nu [get-paths, pnpm-prune]
 
-^pnpm outdated
+^pnpm prune
 
 let paths = get-paths
 $paths | each {|path|
     print $path
-    pnpm-outdated $path
+    pnpm-prune $path
     print ""
 }

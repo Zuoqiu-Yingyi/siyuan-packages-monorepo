@@ -90,7 +90,7 @@
         {label}
     {:else}
         <!-- 文本输入框 -->
-        <div class="fn__hr--small" />
+        <div class="fn__hr--small"></div>
         <input
             bind:this={element}
             class="b3-text-field fn__size200"
@@ -99,7 +99,7 @@
             bind:value
             on:change={changed}
         />
-        <div class="fn__hr--small" />
+        <div class="fn__hr--small"></div>
     {/if}
 
     {#if file}
