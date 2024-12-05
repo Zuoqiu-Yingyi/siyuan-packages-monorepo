@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-12-05
+
+- 更新 GitHub 捐助链接 | Update GitHub donation link.
+
 ## 2024-11-21
 
 - 修复 Svelte 无法解析 `enum` 等 TypeScript 特性问题 | Fix the issue that Svelte cannot parse TypeScript features such as `enum`.

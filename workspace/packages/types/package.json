@@ -20,9 +20,9 @@
         "abcjs": "^6.4.4",
         "echarts": "^5.5.1",
         "highlight.js": "^11.10.0",
-        "mermaid": "^11.4.0",
-        "pdfjs-dist": "^4.8.69",
+        "mermaid": "^11.4.1",
+        "pdfjs-dist": "^4.9.155",
         "ts-toolbelt": "^9.6.0",
-        "viewerjs": "^1.11.6"
+        "viewerjs": "^1.11.7"
     }
 }
