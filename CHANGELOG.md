@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-12-06
+
+- 修复列表看板视图排列样式问题 | Fix the issue of list kanban view arrangement style.
+
 ## 2024-12-05
 
 - 更新 GitHub 捐助链接 | Update GitHub donation link.
