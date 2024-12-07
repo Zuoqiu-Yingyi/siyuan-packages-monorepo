@@ -4,6 +4,7 @@
 
 - 修复 CI/CD 脚本依赖问题 | Fix CI/CD script dependency issue.
 - 更新 CI 依赖 `release-please-action` 配置 | Update CI dependency `release-please-action` configuration.
+- 添加表格全宽显示功能 | Add table full width display function.
 
 ## 2024-12-06
 
