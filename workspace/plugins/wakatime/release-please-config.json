@@ -1,8 +1,14 @@
 {
+    "packages": {
+        ".": {
+            "release-as": "0.3.6"
+        }
+    },
     "prerelease": true,
     "release-type": "node",
+    "include-component-in-tag": false,
     "pull-request-header": ":robot: A new release will be created",
-    "changelog-types": [
+    "changelog-sections": [
         {
             "type": "build",
             "section": "Build System",
