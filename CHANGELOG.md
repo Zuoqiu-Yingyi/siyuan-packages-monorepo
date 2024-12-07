@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-12-08
+
+- 修复 CI/CD 脚本依赖问题 | Fix CI/CD script dependency issue.
+
 ## 2024-12-06
 
 - 修复列表看板视图排列样式问题 | Fix the issue of list kanban view arrangement style.
