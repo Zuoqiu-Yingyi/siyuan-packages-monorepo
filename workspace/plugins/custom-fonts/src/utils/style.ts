@@ -61,7 +61,7 @@ export function fontFamilyStyle(fontList: {
     emoji?: string[];
 }): string {
     const css: string[] = [];
-    css.push(":root {");
+    css.push(":root:root {");
     if (fontList.base && fontList.base.length > 0) {
         const base = washFontList(fontList.base);
         base.push("system-ui");

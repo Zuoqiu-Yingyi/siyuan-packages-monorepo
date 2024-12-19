@@ -31,10 +31,17 @@
     import type { IConfig } from "@/types/config";
     import type { I18N } from "@/utils/i18n";
 
-    export let config: IConfig; // 传入的配置项
-    export let plugin: InstanceType<typeof CustomFontsPlugin>; // 插件实例
+    interface IProps {
+        config: IConfig; // 传入的配置项
+        plugin: InstanceType<typeof CustomFontsPlugin>; // 插件实例
+        textareaHeight: number; // 文本框高度(px)
+    }
 
-    export let textareaHeight: number = 0; // 文本框高度(px)
+    const {
+        config,
+        plugin,
+        textareaHeight = 0,
+    }: IProps = $props();
 
     const i18n = plugin.i18n as unknown as I18N;
 
@@ -60,23 +67,21 @@
         );
     }
 
-    /* eslint-disable no-unused-vars */
-    enum PanelKey {
-        general,
-        snippet,
-        fonts,
-        menu,
-    }
+    const PanelKey = {
+        general: "general",
+        snippet: "snippet",
+        fonts: "fonts",
+        menu: "menu",
+    } as const;
 
-    enum TabKey {
-        base,
-        editor,
-        code,
-        graph,
-        math,
-        emoji,
-    }
-    /* eslint-enable no-unused-vars */
+    const TabKey = {
+        base: "base",
+        editor: "editor",
+        code: "code",
+        graph: "graph",
+        math: "math",
+        emoji: "emoji",
+    } as const;
 
     const panels_focus_key = PanelKey.general;
 
