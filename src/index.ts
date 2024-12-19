@@ -15,6 +15,7 @@
 
 import { Client } from "@siyuan-community/siyuan-sdk";
 import siyuan from "siyuan";
+import { mount } from "svelte";
 
 import List from "@workspace/components/siyuan/list/List.svelte";
 import {
@@ -24,10 +25,14 @@ import { classify } from "@workspace/utils/font";
 import { fontData2CssFontStyle } from "@workspace/utils/font/css";
 import { Logger } from "@workspace/utils/logger";
 import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
-import { getBlockMenuContext } from "@workspace/utils/siyuan/menu/block";
+import {
+    getBlockMenuContext,
+    type IOtherBlockMenuDetail,
+} from "@workspace/utils/siyuan/menu/block";
 import { renderSnippets } from "@workspace/utils/siyuan/snippet";
 
 import Settings from "./components/Settings.svelte";
+
 import { DEFAULT_CONFIG } from "./configs/default";
 import {
     fontFamilyStyle,
@@ -51,6 +56,7 @@ declare global {
 export default class CustomFontsPlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "global-config";
 
+    // @ts-expect-error ignore original type
     declare public readonly i18n: I18N;
 
     public readonly siyuan = siyuan;
@@ -139,7 +145,7 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
         });
         const target = dialog.element.querySelector(`#${plugin.SETTINGS_DIALOG_ID}`);
         if (target) {
-            const settings = new Settings({
+            const settings = mount(Settings, {
                 target,
                 props: {
                     config: this.config,
@@ -298,9 +304,9 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
     protected readonly blockMenuEventListener = (e: IClickBlockIconEvent) => {
         // this.logger.debug(e);
         const detail = e.detail;
-        const context = getBlockMenuContext(e.detail);
+        const context = getBlockMenuContext(detail as IOtherBlockMenuDetail);
         if (context) {
-            const submenu: siyuan.IMenuItemOption[] = [];
+            const submenu: siyuan.IMenu[] = [];
 
             /* 清除字体 */
             submenu.push({
@@ -346,7 +352,7 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
                             });
                         });
                     },
-                    bind: (element) => {
+                    bind: (element: HTMLElement) => {
                         const label = element.querySelector<HTMLElement>(".b3-menu__label");
                         if (label) {
                             label.style.fontFamily = font;
