@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-12-20
+
+- 兼容思源 `v3.1.16` 版本 | Compatible with SiYuan `v3.1.16` version.
+
 ## 2024-12-08
 
 - 修复 CI/CD 脚本依赖问题 | Fix CI/CD script dependency issue.

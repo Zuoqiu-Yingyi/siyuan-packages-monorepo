@@ -14,8 +14,12 @@ export def pnpm-prune [path: string] {
     ^pnpm prune
 }
 
-export def get-paths [] {
-    let paths = (ls ./tools | where type == dir | get name)
-    let paths = $paths | append (ls ./packages | where type == dir | get name)
+def ls-dir [path: string]: nothing -> list<string> {
+    ls $path | where type == dir | get name
+}
+
+export def get-paths []: nothing -> list<string> {
+    let paths = (ls-dir ./tools)
+    let paths = $paths | append (ls-dir ./packages)
     $paths
 }

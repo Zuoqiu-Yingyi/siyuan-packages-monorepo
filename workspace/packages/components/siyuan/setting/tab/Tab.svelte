@@ -46,7 +46,7 @@
     on:click={changed}
 >
     <!-- [组件子级 / Checking for slot content • Svelte 教程 | Svelte 中文网](https://www.svelte.cn/tutorial/optional-slots) -->
-    <span class="fn__flex-1" />
+    <span class="fn__flex-1"></span>
     {#if icon && $$slots.icon}
         <span class="item__icon">
             <slot name="icon" />
@@ -57,5 +57,5 @@
         <slot name="text">text</slot>
     </span>
 
-    <span class="fn__flex-1" />
+    <span class="fn__flex-1"></span>
 </div>

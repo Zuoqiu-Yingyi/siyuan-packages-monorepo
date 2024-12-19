@@ -24,7 +24,7 @@ import type { IProtyle } from "@workspace/types/siyuan/protyle";
 
 /* 块菜单上下文 */
 export interface IBlockMenuDetail {
-    menu: InstanceType<typeof siyuan.EventMenu>;
+    menu: InstanceType<typeof siyuan.subMenu>;
     protyle: IProtyle;
     data?: IDocumentData;
     blockElements?: HTMLElement[];
