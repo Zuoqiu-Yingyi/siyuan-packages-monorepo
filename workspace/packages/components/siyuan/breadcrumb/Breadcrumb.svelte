@@ -34,9 +34,9 @@
     <slot name="icons">
         {#each icons as icon, i (i)}
             {#if i === 0}
-                <span class="protyle-breadcrumb__space" />
+                <span class="protyle-breadcrumb__space"></span>
             {:else}
-                <span class="fn__space" />
+                <span class="fn__space"></span>
             {/if}
             <BlockIcon {...icon} />
         {/each}

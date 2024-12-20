@@ -74,7 +74,7 @@ export class SnapshotHandler extends Handler {
         /* 生成的处理器 */
         const handler: ISnapshotHandler = {
             original: {
-                value: response_old.data.isProtyleDoc // 是否为原始内容
+                value: response_old.data.displayInText // 是否为原始内容
                     ? response_old.data.content
                     : options.kramdown
                         ? this.plugin.lute.BlockDOM2Md(old_content)
@@ -84,7 +84,7 @@ export class SnapshotHandler extends Handler {
                     : "json",
             },
             modified: {
-                value: response_new.data.isProtyleDoc // 是否为原始内容
+                value: response_new.data.displayInText // 是否为原始内容
                     ? response_new.data.content
                     : options.kramdown
                         ? this.plugin.lute.BlockDOM2Md(new_content)

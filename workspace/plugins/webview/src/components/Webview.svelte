@@ -36,36 +36,44 @@
     import type { Electron } from "@workspace/types/electron";
 
     import type WebviewPlugin from "@/index";
-    import type { I18N } from "@/utils/i18n";
 
-    export let src: string;
-    export let tab: siyuan.ITabModel;
-    export let plugin: InstanceType<typeof WebviewPlugin>;
+    interface IProps {
+        src: string;
+        tab: siyuan.Custom;
+        title: string;
+        plugin: InstanceType<typeof WebviewPlugin>;
+    }
 
-    export let title: string = ""; // 页面标题
-    export let useragent: string = plugin.useragent; // 用户代理
-    export let background: string = plugin.background; // 背景
+    let {
+        src,
+        tab,
+        title = "",
+        plugin,
+    }: IProps = $props();
 
-    const i18n = plugin.i18n as unknown as I18N;
+    const useragent: string = plugin.useragent; // 用户代理
+    const background: string = plugin.background; // 背景
+
+    const i18n = plugin.i18n;
 
     let menu: InstanceType<typeof plugin.siyuan.Menu> | undefined;
 
-    let fullscreen = false; // 是否为全屏模式
-    let can_back = false; // 能否转到上一页
-    let can_forward = false; // 能否转到下一页
-    let loading = false; // 页面是否正在加载
-    let address = globalThis.decodeURIComponent(src); // 地址栏
-    let devtools_opened = false; // 开发者工具是否已打开
+    let fullscreen = $state(false); // 是否为全屏模式
+    let can_back = $state(false); // 能否转到上一页
+    let can_forward = $state(false); // 能否转到下一页
+    let loading = $state(false); // 页面是否正在加载
+    let address = $state(globalThis.decodeURIComponent(src)); // 地址栏
+    let devtools_opened = $state(false); // 开发者工具是否已打开
 
-    let iframe: HTMLIFrameElement | null = null; // iframe 标签
-    let webview: Electron.WebviewTag; // webview 标签
-    let webview_pointer_events_disable = false; // 是否禁用 webview 的鼠标事件
+    let iframe: HTMLIFrameElement | null = $state(null); // iframe 标签
+    let webview: Electron.WebviewTag | undefined = $state(undefined); // webview 标签
+    let webview_pointer_events_disable = $state(false); // 是否禁用 webview 的鼠标事件
 
     let mask: HTMLDivElement; // 遮罩
-    let mask_active = false; // 是否激活遮罩
+    let mask_active = $state(false); // 是否激活遮罩
 
-    let status_display = false; // 状态栏显示状态
-    let status = ""; // 状态栏内容
+    let status_display = $state(false); // 状态栏显示状态
+    let status = $state(""); // 状态栏内容
 
     void iframe;
 
@@ -203,11 +211,11 @@
 
             /* 是否可后退 */
             // REF https://www.electronjs.org/zh/docs/latest/api/webview-tag#webviewcangoback
-            can_back = webview?.canGoBack?.();
+            can_back = webview?.canGoBack?.() ?? false;
 
             /* 是否可前进 */
             // REF https://www.electronjs.org/zh/docs/latest/api/webview-tag#webviewcangoback
-            can_forward = webview?.canGoForward?.();
+            can_forward = webview?.canGoForward?.() ?? false;
         });
 
         /**
@@ -322,10 +330,10 @@
             const title = params.titleText || params.linkText || params.altText || params.suggestedFilename;
 
             // 添加右键菜单
-            const items: siyuan.IMenuItemOption[] = [];
+            const items: siyuan.IMenu[] = [];
 
-            function buildOpenMenuItems(url: string, title: string, action: string, current: boolean = true): siyuan.IMenuItemOption[] {
-                const items: siyuan.IMenuItemOption[] = [];
+            function buildOpenMenuItems(url: string, title: string, action: string, current: boolean = true): siyuan.IMenu[] {
+                const items: siyuan.IMenu[] = [];
 
                 if (current) {
                     /* 在当前页签中打开 */
@@ -387,8 +395,8 @@
                 return items;
             }
 
-            function buildCopyMenuItems(params: Electron.Params): siyuan.IMenuItemOption[] {
-                const items: siyuan.IMenuItemOption[] = [];
+            function buildCopyMenuItems(params: Electron.Params): siyuan.IMenu[] {
+                const items: siyuan.IMenu[] = [];
 
                 /* 复制链接地址 */
                 if (params.linkURL) {
@@ -894,9 +902,11 @@
     });
 
     function onmouseenter(e: MouseEvent): void {
+        e.stopPropagation();
         webview_pointer_events_disable = e.button !== 0;
     }
-    function onmouseleave(_e: MouseEvent): void {
+    function onmouseleave(e: MouseEvent): void {
+        e.stopPropagation();
         webview_pointer_events_disable = true;
     }
     function onMaskClick(_e: MouseEvent): void {
@@ -941,8 +951,8 @@
         <!-- 地址输入框 -->
         <input
             class="b3-text-field fn__flex-1 address-field"
+            onchange={onAddressChange}
             type="url"
-            on:change={onAddressChange}
             bind:value={address}
         />
 
@@ -984,13 +994,13 @@
     </div>
 
     <!-- 主体 -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
     <div
         slot="content"
         class="content fn__flex fn__flex-1"
-        on:mouseenter|capture|stopPropagation={onmouseenter}
-        on:mouseleave|capture|stopPropagation={onmouseleave}
+        onmouseenter={onmouseenter}
+        onmouseleave={onmouseleave}
     >
         {#if FLAG_ELECTRON}
             <webview
@@ -1002,7 +1012,7 @@
                 {src}
                 {title}
                 {useragent}
-            />
+            ></webview>
         {:else}
             <iframe
                 bind:this={iframe}
@@ -1011,7 +1021,7 @@
                 allowfullscreen
                 {src}
                 {title}
-            />
+            ></iframe>
         {/if}
         {#if status_display}
             <!-- 状态提示 (显示超链接地址) -->
@@ -1028,8 +1038,8 @@
             bind:this={mask}
             class="mask"
             class:mask-active={mask_active}
-            on:click={onMaskClick}
-        />
+            onclick={onMaskClick}
+        ></div>
     </div>
 </Tab>
 

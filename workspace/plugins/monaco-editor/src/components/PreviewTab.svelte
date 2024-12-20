@@ -25,9 +25,17 @@
     import type { IBreadcrumb } from "@/breadcrumb/breadcrumb";
     import type MonacoEditorPlugin from "@/index";
 
-    export let plugin: InstanceType<typeof MonacoEditorPlugin>; // 插件对象
-    export let pathname: string; // iframe 资源路径
-    export let title: string; // iframe 标题路径
+    interface IProps {
+        plugin: InstanceType<typeof MonacoEditorPlugin>; // 插件对象
+        pathname: string; // iframe 资源路径
+        title: string; // iframe 标题路径
+    }
+
+    const {
+        plugin,
+        pathname,
+        title,
+    }: IProps = $props();
 
     /* 响应式数据 */
     const fullscreen = writable(false);
@@ -37,11 +45,13 @@
 
     /* 面包屑构造 */
     const breadcrumb_maker = new AssetBreadcrumb(plugin);
-    let breadcrumbOptions: IBreadcrumb;
-    $: breadcrumb_maker.makeBreadcrumb({
-        stores,
-        pathname,
-    }).then((items) => (breadcrumbOptions = items));
+    let breadcrumbOptions: IBreadcrumb | undefined = $state();
+    $effect(() => {
+        breadcrumb_maker.makeBreadcrumb({
+            stores,
+            pathname,
+        }).then((items) => (breadcrumbOptions = items));
+    });
 </script>
 
 <Tab
@@ -53,7 +63,7 @@
         class="fn__flex fn__flex-1 preview"
         src={pathname}
         {title}
-    />
+    ></iframe>
 </Tab>
 
 <style>

@@ -16,8 +16,6 @@
 -->
 
 <script lang="ts">
-    import { createEventDispatcher, type ComponentEvents } from "svelte";
-
     import Dialog from "@workspace/components/siyuan/dialog/Dialog.svelte";
     import Input from "@workspace/components/siyuan/setting/item/Input.svelte";
     import { ItemType } from "@workspace/components/siyuan/setting/item/item";
@@ -26,77 +24,52 @@
     import uuid from "@workspace/utils/misc/uuid";
 
     import type { Session } from "@jupyterlab/services";
+    import type { ComponentEvents } from "svelte";
 
     import type { BlockID } from "@workspace/types/siyuan";
 
-    import type Plugin from "@/index";
+    import type JupyterClientPlugin from "@/index";
     import type { ISessionModel } from "@/types/jupyter";
 
     import type { WorkerHandlers } from "../workers/jupyter";
 
-    export let docID: BlockID; // 文档 ID
-    export let docIAL: Record<string, string>; // 文档块 IAL
-    export let plugin: InstanceType<typeof Plugin>; // 插件实例
+    interface IProps {
+        docID: BlockID; // 文档 ID
+        docIAL: Record<string, string>; // 文档块 IAL
+        plugin: InstanceType<typeof JupyterClientPlugin>; // 插件实例
+        oncancel: (params: {
+            id: BlockID;
+            event: MouseEvent;
+            session: Session.IModel;
+        }) => PromiseLike<void> | void;
+        onconfirm: (params: {
+            id: BlockID;
+            event: MouseEvent;
+            session: Session.IModel;
+        }) => PromiseLike<void> | void;
+    }
+
+    const {
+        docID,
+        docIAL,
+        plugin,
+        oncancel,
+        onconfirm,
+    }: IProps = $props();
 
     const i18n = plugin.i18n;
-    const dispatcher = createEventDispatcher<{
-        cancel: {
-            id: BlockID;
-            event: MouseEvent;
-            session: Session.IModel;
-        };
-        confirm: {
-            id: BlockID;
-            event: MouseEvent;
-            session: Session.IModel;
-        };
-    }>();
 
-    let session_new: ISessionModel = plugin.ial2session(docIAL, true); // 待新建的会话
-    let session: ISessionModel = session_new;
+    let session_new: ISessionModel = $state(plugin.ial2session(docIAL, true)); // 待新建的会话
+    let session: ISessionModel = $state(plugin.ial2session(docIAL, true));
 
-    let flag_session_new: boolean = true; // 当前会话是否为新建会话
-    let flag_session_running: boolean = false; // 当前会话是否为正在运行的会话
-    let flag_session_connected: boolean = false; // 当前会话是否为已连接的会话
-
-    // eslint-disable-next-line ts/no-use-before-define
-    updateFlag(session);
-
-    // eslint-disable-next-line ts/no-use-before-define
-    $: updateFlag(session);
-
-    function updateFlag(s: ISessionModel) {
-        const running = plugin.isSessionRunning(s.id);
-        flag_session_new = !running;
-        flag_session_running = running;
-        flag_session_connected = plugin.doc2session.has(docID);
-    }
+    let flag_session_new: boolean = $state(true); // 当前会话是否为新建会话
+    let flag_session_connected: boolean = $state(false); // 当前会话是否为已连接的会话
 
     /* 可选的会话列表 */
     const session_options = plugin.sessions.map((s) => ({
         key: s.id,
         text: s.name,
     }));
-
-    /* 判断对应的会话是否正在运行 */
-    if (flag_session_running) {
-        // 对应的会话正在运行
-        /* 添加一个全新的创建会话选项 */
-        session_new = plugin.ial2session({}, true);
-        session_options.unshift({
-            key: session_new.id,
-            text: i18n.settings.sessionSettings.connect.options.new.text,
-        });
-        session = plugin.sessions.find((s) => s.id === session.id) ?? session; // 获取对应的会话
-    }
-    else {
-        // 非运行的会话
-        /* 以文档属性中保存的信息创建会话 */
-        session_options.unshift({
-            key: session.id,
-            text: i18n.settings.sessionSettings.connect.options.new.text,
-        });
-    }
 
     /* 可选的内核列表 */
     const kernel_options: { key: string; text: string }[] = []; // 包含复用内核
@@ -129,9 +102,35 @@
             }),
     );
 
+    $effect(() => {
+        const running = plugin.isSessionRunning(session.id);
+        flag_session_new = !running;
+        flag_session_connected = plugin.doc2session.has(docID);
+
+        /* 判断对应的会话是否正在运行 */
+        if (running) {
+            // 对应的会话正在运行
+            /* 添加一个全新的创建会话选项 */
+            session_new = plugin.ial2session({}, true);
+            session_options.unshift({
+                key: session_new.id,
+                text: i18n.settings.sessionSettings.connect.options.new.text,
+            });
+            session = plugin.sessions.find((s) => s.id === session.id) ?? session; // 获取对应的会话
+        }
+        else {
+            // 非运行的会话
+            /* 以文档属性中保存的信息创建会话 */
+            session_options.unshift({
+                key: session.id,
+                text: i18n.settings.sessionSettings.connect.options.new.text,
+            });
+        }
+    });
+
     /* 点击取消按钮 */
     async function onCancle(e: ComponentEvents<Dialog>["cancel"]) {
-        dispatcher("cancel", {
+        oncancel({
             id: docID,
             event: e.detail.event,
             session,
@@ -258,7 +257,7 @@
             return;
         }
 
-        dispatcher("confirm", {
+        onconfirm({
             id: docID,
             event: e.detail.event,
             session,

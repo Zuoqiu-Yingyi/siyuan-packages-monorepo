@@ -37,11 +37,11 @@ export function siyuanConfig2EditorOptions(config: typeof window.siyuan.config =
          * REF: https://developer.mozilla.org/zh-CN/docs/Web/CSS/Using_CSS_custom_properties#javascript_%E4%B8%AD%E7%9A%84%E5%80%BC
          */
         fontFamily: getCodeFontFamily(),
-        fontLigatures: config.editor.codeLigatures,
-        mouseWheelZoom: config.editor.fontSizeScrollZoom,
-        readOnly: config.editor.readOnly,
-        tabSize: config.editor.codeTabSpaces,
-        theme: config.appearance.mode === 0 ? "vs" : "vs-dark",
+        fontLigatures: config!.editor.codeLigatures,
+        mouseWheelZoom: config!.editor.fontSizeScrollZoom,
+        readOnly: config!.editor.readOnly,
+        tabSize: config!.editor.codeTabSpaces,
+        theme: config!.appearance.mode === 0 ? "vs" : "vs-dark",
     };
 }
 

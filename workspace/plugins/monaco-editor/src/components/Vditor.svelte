@@ -16,9 +16,15 @@
 -->
 
 <script
-    context="module"
     lang="ts"
+    module
 >
+    import type {
+        IOptions,
+        IVditorHandlers,
+        IVditorProps,
+    } from "@/types/vditor";
+
     /* eslint-disable no-unused-vars */
     export enum RequestMode {
         none,
@@ -28,6 +34,26 @@
     /* eslint-enable no-unused-vars */
 
     void RequestMode;
+
+    export interface IProps {
+        plugin: IVditorProps["plugin"];
+        src2url: IVditorProps["src2url"];
+        baseURL: IVditorProps["baseURL"];
+        rootURL: IVditorProps["rootURL"];
+
+        path?: IVditorProps["path"];
+        vditorID?: IVditorProps["vditorID"];
+        assetsDirPath?: IVditorProps["assetsDirPath"];
+        assetsUploadMode?: IVditorProps["assetsUploadMode"];
+        options?: IVditorProps["options"];
+        value?: IVditorProps["value"];
+        theme?: IVditorProps["theme"];
+        codeBlockThemeLight?: IVditorProps["codeBlockThemeLight"];
+        codeBlockThemeDark?: IVditorProps["codeBlockThemeDark"];
+        updatable?: IVditorProps["updatable"];
+        changeable?: IVditorProps["changeable"];
+        debug?: IVditorProps["debug"];
+    }
 </script>
 
 <script lang="ts">
@@ -35,7 +61,6 @@
 
     import Vditor from "@siyuan-community/vditor";
     import {
-        createEventDispatcher,
         onDestroy,
         onMount,
     } from "svelte";
@@ -61,39 +86,36 @@
 
     import type * as sdk from "@siyuan-community/siyuan-sdk";
 
-    import type {
-        IOptions,
-        IVditorEvents,
-        IVditorProps,
-    } from "@/types/vditor";
+    const {
+        plugin,
+        src2url,
+        baseURL,
+        rootURL,
+        path = DEFAULT_VDITOR_PROPS.path,
+        vditorID = DEFAULT_VDITOR_PROPS.vditorID,
+        assetsDirPath = DEFAULT_VDITOR_PROPS.assetsDirPath,
+        assetsUploadMode = DEFAULT_VDITOR_PROPS.assetsUploadMode,
+        options = DEFAULT_VDITOR_PROPS.options,
+        value = DEFAULT_VDITOR_PROPS.value,
+        theme = DEFAULT_VDITOR_PROPS.theme,
+        codeBlockThemeLight = DEFAULT_VDITOR_PROPS.codeBlockThemeLight,
+        codeBlockThemeDark = DEFAULT_VDITOR_PROPS.codeBlockThemeDark,
+        updatable = DEFAULT_VDITOR_PROPS.updatable,
+        changeable = DEFAULT_VDITOR_PROPS.changeable,
+        debug = DEFAULT_VDITOR_PROPS.debug,
 
-    export let plugin: IVditorProps["plugin"];
-    export let src2url: IVditorProps["src2url"];
-    export let baseURL: IVditorProps["baseURL"];
-    export let rootURL: IVditorProps["rootURL"];
+        onOpenLink,
+        onChanged,
+        onSave,
+    }: IProps & IVditorHandlers = $props();
 
-    export let path: IVditorProps["path"] = DEFAULT_VDITOR_PROPS.path;
-    export let vditorID: IVditorProps["vditorID"] = DEFAULT_VDITOR_PROPS.vditorID;
-    export let assetsDirPath: IVditorProps["assetsDirPath"] = DEFAULT_VDITOR_PROPS.assetsDirPath;
-    export let assetsUploadMode: IVditorProps["assetsUploadMode"] = DEFAULT_VDITOR_PROPS.assetsUploadMode;
-    export let options: IVditorProps["options"] = DEFAULT_VDITOR_PROPS.options;
-    export let value: IVditorProps["value"] = DEFAULT_VDITOR_PROPS.value;
-    export let theme: IVditorProps["theme"] = DEFAULT_VDITOR_PROPS.theme;
-    export let codeBlockThemeLight: IVditorProps["codeBlockThemeLight"] = DEFAULT_VDITOR_PROPS.codeBlockThemeLight;
-    export let codeBlockThemeDark: IVditorProps["codeBlockThemeDark"] = DEFAULT_VDITOR_PROPS.codeBlockThemeDark;
-    export let updatable: IVditorProps["updatable"] = DEFAULT_VDITOR_PROPS.updatable;
-    export let changeable: IVditorProps["changeable"] = DEFAULT_VDITOR_PROPS.changeable;
-    export let debug: IVditorProps["debug"] = DEFAULT_VDITOR_PROPS.debug;
+    let vditorElement: HTMLElement | undefined = $state();
+    let globalTheme: "classic" | "dark" | undefined = $state();
+    let contentTheme: "dark" | "light" | string | undefined = $state();
+    let codeTheme: string | undefined = $state();
+    let vditor: InstanceType<typeof Vditor> | undefined = $state();
 
-    let vditorElement: HTMLElement;
-    let globalTheme: "classic" | "dark";
-    let contentTheme: "dark" | "light" | string;
-    let codeTheme: string;
-    let vditor: InstanceType<typeof Vditor>;
-
-    $: pathInfo = parse(path); // 当前文件路径信息
-
-    const dispatcher = createEventDispatcher<IVditorEvents>();
+    const pathInfo = $derived(parse(path)); // 当前文件路径信息
 
     function updateTheme(
         light: boolean, // 是否为明亮主题
@@ -382,7 +404,7 @@
         }
     }
 
-    $: {
+    $effect(() => {
         if (debug) {
             // @ts-expect-error
             globalThis.vditor = vditor;
@@ -391,13 +413,23 @@
             // @ts-expect-error
             delete globalThis.vditor;
         }
-    }
+    });
 
-    $: updateContent(value);
-    $: updateUpdatable(updatable);
-    $: updatechangeable(changeable);
-    $: updateAssetsUploadMode(assetsUploadMode);
-    $: updateTheme(theme, true, codeBlockThemeLight, codeBlockThemeDark);
+    $effect(() => {
+        updateContent(value);
+    });
+    $effect(() => {
+        updateUpdatable(updatable);
+    });
+    $effect(() => {
+        updatechangeable(changeable);
+    });
+    $effect(() => {
+        updateAssetsUploadMode(assetsUploadMode);
+    });
+    $effect(() => {
+        updateTheme(theme, true, codeBlockThemeLight, codeBlockThemeDark);
+    });
 
     onMount(() => {
         const mergedOptions = merge<IOptions>(
@@ -521,7 +553,7 @@
                         click(_e: Event, _vditor: IVditor): void {
                             // plugin.logger.debugs("save.click", this, event, vditor);
                             if (updatable) {
-                                dispatcher("save", { markdown: vditor?.getValue() });
+                                onSave?.({ markdown: vditor!.getValue() });
                             }
                         },
                     },
@@ -742,7 +774,7 @@
                         // plugin.logger.debugs("cache.after", markdown);
 
                         if (changeable) {
-                            dispatcher("changed", { markdown });
+                            onChanged?.({ markdown });
                         }
                     },
                 },
@@ -941,7 +973,7 @@
                          * 当前主题
                          * @defaultValue "light"
                          */
-                        current: contentTheme,
+                        current: contentTheme!,
 
                         /**
                          * 主题文件目录
@@ -1025,7 +1057,7 @@
                         switch (true) {
                             case bom instanceof HTMLAnchorElement: {
                                 const link = bom as HTMLAnchorElement;
-                                dispatcher("open-link", {
+                                onOpenLink?.({
                                     path: {
                                         current: path,
                                         target: parseFilePath(link.href),
@@ -1048,7 +1080,7 @@
                                     title = title.nextElementSibling as HTMLSpanElement;
                                 }
                                 const textContent = anchor?.textContent ?? "";
-                                dispatcher("open-link", {
+                                onOpenLink?.({
                                     path: {
                                         current: path,
                                         target: parseFilePath(textContent),
@@ -1381,7 +1413,7 @@
             },
             options,
         );
-        vditorElement.addEventListener("error", onerror, true);
+        vditorElement!.addEventListener("error", onerror, true);
         loadVditor(vditorElement, mergedOptions);
     });
 
@@ -1398,7 +1430,7 @@
     bind:this={vditorElement}
     id={vditorID}
     class="vditor"
-/>
+></div>
 
 <style lang="less">
 </style>

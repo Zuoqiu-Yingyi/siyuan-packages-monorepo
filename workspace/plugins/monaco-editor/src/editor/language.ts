@@ -18,11 +18,10 @@ import { MarkdownFormatter } from "./markdown/formatter";
 
 import type Monaco from "monaco-editor";
 import type { languages } from "monaco-editor";
-import type { createEventDispatcher } from "svelte";
 
 import type { BlockID } from "@workspace/types/siyuan";
 
-import type { IEditorEvents, IPlugin } from "@/types/editor";
+import type { IEditorHandlers, IPlugin } from "@/types/editor";
 
 /* 将 heightlight.js 的语言映射为 monaco 支持的语言 */
 export function heightlight2monaco(language: string): string {
@@ -137,7 +136,7 @@ export class Languages {
     constructor(
         public readonly pluign: IPlugin,
         protected readonly _monaco: typeof Monaco,
-        protected readonly _dispatch: ReturnType<typeof createEventDispatcher<IEditorEvents>>,
+        protected readonly _handlers: Partial<IEditorHandlers>,
     ) {
         this._langs = this._monaco.languages.getLanguages();
         this._langs.forEach((lang) => {
@@ -196,7 +195,7 @@ export class Languages {
                 return new Promise((resolve, _reject) => {
                     const timer = setTimeout(() => {
                         // this.pluign.logger.info(siyuan_token);
-                        this._dispatch("hover", { id: siyuan_token.id }); // 派遣鼠标悬浮事件
+                        this._handlers.onHover?.({ id: siyuan_token.id }); // 派遣鼠标悬浮事件
                         resolve(hover);
                     }, 1_000); // 悬浮 1s 后派遣悬浮事件
 
@@ -279,7 +278,7 @@ export class Languages {
 
             /* 派遣打开思源块事件 */
             const url = new URL(siyuan_link.url);
-            this._dispatch("open", {
+            this._handlers.onOpen?.({
                 id: siyuan_link.id,
                 focus: Number.parseInt(url.searchParams.get("focus")!),
             });

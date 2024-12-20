@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import { mount, unmount } from "svelte";
 import { get } from "svelte/store";
 
 import { prompt, type PromptCallback } from "@workspace/components/siyuan/dialog/prompt";
@@ -52,13 +53,14 @@ import {
     workspacePath2StaticPathname,
 } from "@workspace/utils/siyuan/url";
 
-import UploadDialog from "@/components/UploadDialog.svelte";
 import { HandlerType } from "@/facades/facade";
 import {
     isResourceOperable,
     ResourceOption,
 } from "@/utils/permission";
 import { OpenScheme } from "@/utils/url";
+
+import UploadDialog from "@/components/UploadDialog.svelte";
 
 import {
     Explorer,
@@ -89,13 +91,13 @@ export interface IMenuBase {
 /* 常规菜单项 */
 export interface IMenuAction extends IMenuBase {
     type: MenuItemType.Action;
-    options: siyuan.IMenuItemOption;
+    options: siyuan.IMenu;
 }
 
 /* 多级菜单项 */
 export interface IMenuSubmenu extends IMenuBase {
     type: MenuItemType.Submenu;
-    options: siyuan.IMenuItemOption;
+    options: siyuan.IMenu;
     submenu: IMenuItem[];
 }
 
@@ -161,7 +163,7 @@ export class ExplorerContextMenu {
     };
 
     /* 构造含有下级菜单的菜单项 */
-    public static makeSubmenuItem(item: IMenuSubmenu): siyuan.IMenuItemOption {
+    public static makeSubmenuItem(item: IMenuSubmenu): siyuan.IMenu {
         // eslint-disable-next-line array-callback-return
         item.options.submenu = item.submenu.map((item) => {
             switch (item.type) {
@@ -1110,19 +1112,20 @@ export class ExplorerContextMenu {
             });
             const target = dialog.element.querySelector(`#${DIALOG_ID}`);
             if (target) {
-                const component = new UploadDialog({
+                const component = mount(UploadDialog, {
                     target,
                     props: {
                         plugin: this.plugin,
                         path,
                         files,
                         prefix,
+
+                        onCancel: (params) => {
+                            unmount(component);
+                            dialog.destroy();
+                            resolve(params.finished);
+                        },
                     },
-                });
-                component.$on("cancel", (e) => {
-                    component.$destroy();
-                    dialog.destroy();
-                    resolve(e.detail.finished);
                 });
             }
         });

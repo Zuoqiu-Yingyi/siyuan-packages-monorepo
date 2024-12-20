@@ -17,6 +17,7 @@ import {
     Client,
 } from "@siyuan-community/siyuan-sdk";
 import siyuan from "siyuan";
+import { mount } from "svelte";
 
 import {
     range2HTML,
@@ -40,13 +41,15 @@ import {
 import {
     getBlockMenuContext,
     getSelectedMenuContext,
+    type BlockMenuDetail,
     type IBlockMenuContext,
     type ISelectedMenuContext,
 } from "@workspace/utils/siyuan/menu/block";
 import { fn__code } from "@workspace/utils/siyuan/text/span";
 
-import icon_opencc_convert from "./assets/symbols/icon-opencc-convert.symbol?raw";
 import Settings from "./components/Settings.svelte";
+
+import icon_opencc_convert from "./assets/symbols/icon-opencc-convert.symbol?raw";
 import {
     DEFAULT_CONFIG,
     DEFAULT_CUSTOM_DICTS,
@@ -59,7 +62,6 @@ import type {
     IClickEditorTitleIconEvent,
     IOpenMenuContentEvent,
 } from "@workspace/types/siyuan/events";
-import type { IProtyle } from "@workspace/types/siyuan/protyle";
 
 import type { IConfig } from "./types/config";
 import type { IDict, IDicts } from "./types/dictionary";
@@ -68,6 +70,7 @@ import type { I18N } from "./utils/i18n";
 export default class OpenCCPlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "global-config";
 
+    // @ts-expect-error ignore original type
     declare public readonly i18n: I18N;
 
     public readonly siyuan = siyuan;
@@ -128,14 +131,13 @@ export default class OpenCCPlugin extends siyuan.Plugin {
         });
         const target = dialog.element.querySelector(`#${this.SETTINGS_DIALOG_ID}`);
         if (target) {
-            const settings = new Settings({
+            mount(Settings, {
                 target,
                 props: {
                     config: this.config,
                     plugin: this,
                 },
             });
-            void settings;
         }
     }
 
@@ -217,7 +219,7 @@ export default class OpenCCPlugin extends siyuan.Plugin {
         // this.logger.debug(e);
 
         const detail = e.detail;
-        const context = getBlockMenuContext(detail); // 获取块菜单上下文
+        const context = getBlockMenuContext(detail as BlockMenuDetail); // 获取块菜单上下文
         if (context) {
             this.buildMenu(
                 detail.menu,
@@ -234,11 +236,11 @@ export default class OpenCCPlugin extends siyuan.Plugin {
      * @param protyle - 当前使用的 Protyle
      */
     protected buildMenu(
-        menu: siyuan.EventMenu,
+        menu: siyuan.subMenu,
         context: IBlockMenuContext | ISelectedMenuContext,
-        protyle: IProtyle,
+        protyle: siyuan.IProtyle,
     ): void {
-        const submenu: siyuan.IMenuItemOption[] = [];
+        const submenu: siyuan.IMenu[] = [];
 
         // 简体 => 繁体
         submenu.push({
@@ -298,9 +300,9 @@ export default class OpenCCPlugin extends siyuan.Plugin {
         });
 
         // 其他转换
-        const submenu1: siyuan.IMenuItemOption[] = [];
+        const submenu1: siyuan.IMenu[] = [];
         for (const from of Enum.values(Locale)) {
-            const submenu2: siyuan.IMenuItemOption[] = [];
+            const submenu2: siyuan.IMenu[] = [];
 
             for (const to of Enum.values(Locale)) {
                 const disabled = from === to;
@@ -355,11 +357,11 @@ export default class OpenCCPlugin extends siyuan.Plugin {
      */
     protected buildSubmenu(
         context: IBlockMenuContext | ISelectedMenuContext,
-        protyle: IProtyle,
+        protyle: siyuan.IProtyle,
         options: IConverterOptions,
         disabled: boolean = false,
-    ): siyuan.IMenuItemOption[] {
-        const submenu: siyuan.IMenuItemOption[] = [];
+    ): siyuan.IMenu[] {
+        const submenu: siyuan.IMenu[] = [];
 
         const flag_select = ("range" in context);
         const flag_block = ("isDocumentBlock" in context);

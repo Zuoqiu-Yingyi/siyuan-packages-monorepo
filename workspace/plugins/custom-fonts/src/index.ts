@@ -145,7 +145,7 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
         });
         const target = dialog.element.querySelector(`#${plugin.SETTINGS_DIALOG_ID}`);
         if (target) {
-            const settings = mount(Settings, {
+            mount(Settings, {
                 target,
                 props: {
                     config: this.config,
@@ -153,7 +153,6 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
                     textareaHeight: 320,
                 },
             });
-            void settings;
         }
     }
 

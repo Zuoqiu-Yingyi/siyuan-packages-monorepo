@@ -16,25 +16,43 @@
 -->
 
 <!-- 文件资源管理器面板 -->
+<script
+    lang="ts"
+    module
+>
+    import type MonacoEditorPlugin from "@/index";
+
+    export interface IProps {
+        plugin: InstanceType<typeof MonacoEditorPlugin>; // 插件对象
+        workspace: string; // 工作空间目录
+    }
+</script>
+
 <script lang="ts">
-    import { createEventDispatcher, setContext } from "svelte";
+    import { setContext } from "svelte";
 
     import Bar from "@workspace/components/siyuan/dock/Bar.svelte";
     import { TooltipsDirection } from "@workspace/components/siyuan/misc/tooltips";
     import FileTree from "@workspace/components/siyuan/tree/file/FileTree.svelte";
 
-    import { Explorer, type IExplorerEvent } from "@/explorer";
-    import { ExplorerIcon } from "@/explorer/icon";
+    import {
+        Explorer,
+        type IExplorerEvent,
+    } from "@/explorer";
 
-    import type { IBar } from "@workspace/components/siyuan/dock/index";
-    import type { ITree } from "@workspace/components/siyuan/tree/file";
+    interface IHandlers {
+        onDragEnterWindow?: (params: IExplorerEvent["dragEnterWindow"]) => void; // 拖拽进入窗口
+        onDragLeaveWindow?: (params: IExplorerEvent["dragLeaveWindow"]) => void; // 拖拽离开窗口
+    }
 
-    import type MonacoEditorPlugin from "@/index";
+    const {
+        plugin,
+        workspace,
 
-    export let plugin: InstanceType<typeof MonacoEditorPlugin>; // 插件对象
-    export let workspace: string; // 工作空间目录
+        onDragEnterWindow,
+        onDragLeaveWindow,
+    }: IProps & IHandlers = $props();
 
-    const dispatcher = createEventDispatcher<IExplorerEvent>();
     const explorer = new Explorer(plugin, workspace);
     const roots = explorer.createRootNodes();
     setContext<ITree>("tree", explorer);
@@ -93,21 +111,21 @@
     };
 
     /* 拖拽入窗口 */
-    function onDragEnterWindow(e: DragEvent): void {
+    function _onDragEnterWindow(e: DragEvent): void {
         explorer.dragEnterWindow(e);
-        dispatcher("dragEnterWindow", { e });
+        onDragEnterWindow?.({ e });
     }
 
     /* 拖拽出窗口 */
-    function onDragLeaveWindow(e: DragEvent): void {
+    function _onDragLeaveWindow(e: DragEvent): void {
         explorer.dragLeaveWindow(e);
-        dispatcher("dragLeaveWindow", { e });
+        onDragLeaveWindow?.({ e });
     }
 </script>
 
 <svelte:window
-    on:dragenter|stopPropagation|preventDefault|capture|self={onDragEnterWindow}
-    on:dragleave|stopPropagation|preventDefault|capture|self={onDragLeaveWindow}
+    on:dragenter|stopPropagation|preventDefault|capture|self={_onDragEnterWindow}
+    on:dragleave|stopPropagation|preventDefault|capture|self={_onDragLeaveWindow}
 />
 
 <Bar {...bar} />

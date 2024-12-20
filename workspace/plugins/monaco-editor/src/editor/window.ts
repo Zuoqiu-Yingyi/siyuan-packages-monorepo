@@ -58,9 +58,9 @@ export class EditorWindow {
                     name: this.plugin.name,
                     i18n: this.plugin.i18n,
 
-                    path: window.siyuan.config.system.workspaceDir,
+                    path: window.siyuan.config!.system.workspaceDir,
                     diff: !!handler.original,
-                    locale: window.siyuan.config.lang,
+                    locale: window.siyuan.config!.lang,
 
                     savable: !!handler.update,
 

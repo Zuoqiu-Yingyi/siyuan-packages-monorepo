@@ -17,6 +17,7 @@ import {
     Client,
 } from "@siyuan-community/siyuan-sdk";
 import siyuan from "siyuan";
+import { mount, unmount } from "svelte";
 
 import {
     FLAG_MOBILE,
@@ -24,9 +25,10 @@ import {
 import { Logger } from "@workspace/utils/logger";
 import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
 
-import icon_inbox from "./assets/symbols/icon-inbox.symbol?raw";
 import InboxDock from "./components/InboxDock.svelte";
 import Settings from "./components/Settings.svelte";
+
+import icon_inbox from "./assets/symbols/icon-inbox.symbol?raw";
 import { DEFAULT_CONFIG } from "./configs/default";
 
 import type { IConfig } from "./types/config";
@@ -35,6 +37,7 @@ import type { I18N } from "./utils/i18n";
 export default class InboxPlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "config.json";
 
+    // @ts-expect-error ignore original type
     declare public readonly i18n: I18N;
 
     public readonly siyuan = siyuan;
@@ -48,8 +51,8 @@ export default class InboxPlugin extends siyuan.Plugin {
 
     protected inboxDock!: {
         dock: ReturnType<siyuan.Plugin["addDock"]>;
-        model?: siyuan.IDockModel;
-        component?: InstanceType<typeof InboxDock>;
+        model?: siyuan.Dock;
+        component?: ReturnType<typeof mount>;
     }; // 收集箱面板
 
     constructor(options: any) {
@@ -89,10 +92,11 @@ export default class InboxPlugin extends siyuan.Plugin {
                     // plugin.logger.debug(this);
 
                     this.element.classList.add("fn__flex-column");
-                    const dock = new InboxDock({
+                    const dock = mount(InboxDock, {
                         target: this.element,
                         props: {
                             plugin,
+                            src: plugin.INBOX_APP_PATH,
                             ...this.data,
                         },
                     });
@@ -100,7 +104,9 @@ export default class InboxPlugin extends siyuan.Plugin {
                     plugin.inboxDock.component = dock;
                 },
                 destroy() {
-                    plugin.inboxDock.component?.$destroy();
+                    if (plugin.inboxDock.component) {
+                        unmount(plugin.inboxDock.component);
+                    }
                     delete plugin.inboxDock.component;
                     delete plugin.inboxDock.model;
                 },
@@ -131,14 +137,13 @@ export default class InboxPlugin extends siyuan.Plugin {
         });
         const target = dialog.element.querySelector(`#${this.SETTINGS_DIALOG_ID}`);
         if (target) {
-            const settings = new Settings({
+            mount(Settings, {
                 target,
                 props: {
                     config: this.config,
                     plugin: this,
                 },
             });
-            void settings;
         }
     }
 

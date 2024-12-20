@@ -38,13 +38,14 @@ import {
 } from "@workspace/utils/env/native-front-end";
 import { deepClone } from "@workspace/utils/misc/clone";
 
+import * as Constants from "@/constant";
+import { Control } from "@/messages/control";
+
 import InboxMenu from "@/components/InboxMenu.vue";
 import InboxRoomInfoDialog from "@/components/InboxRoomInfoDialog.vue";
 import InboxRoomSelectDialog from "@/components/InboxRoomSelectDialog.vue";
 import InboxTextareaMenu from "@/components/InboxTextareaMenu.vue";
 import InboxUserInfoDialog from "@/components/InboxUserInfoDialog.vue";
-import * as Constants from "@/constant";
-import { Control } from "@/messages/control";
 
 import type { Client } from "@siyuan-community/siyuan-sdk";
 import type {

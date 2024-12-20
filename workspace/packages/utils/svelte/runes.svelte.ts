@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Zuoqiu Yingyi
+// Copyright (C) 2024 Zuoqiu Yingyi
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -13,24 +13,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import type siyuan from "siyuan";
+export function state<T>(initial: T): T;
+export function state<T>(): T | undefined;
+export function state<T>(initial?: T): T | undefined {
+    const s = $state(initial);
+    return s;
+}
 
-export function washMenuItems(items: siyuan.IMenu[]): siyuan.IMenu[] {
-    /* 清理首尾两端的分割线 */
-    items = items.slice(
-        items.findIndex((item) => item.type !== "separator"),
-        items.findLastIndex((item) => item.type !== "separator") + 1,
-    );
+export function state_raw<T>(initial: T): T;
+export function state_raw<T>(): T | undefined;
+export function state_raw<T>(initial?: T): T | undefined {
+    const s = $state.raw(initial);
+    return s;
+}
 
-    if (items.length === 0)
-        return items;
-
-    /* 清理连续的分割线 */
-    items = items.filter((item, index, items) => {
-        if (item.type !== "separator")
-            return true;
-        else return items[index - 1]?.type !== "separator";
-    });
-
-    return items;
+export function state_snapshot<T>(s: T): $state.Snapshot<T> {
+    return $state.snapshot(s);
 }

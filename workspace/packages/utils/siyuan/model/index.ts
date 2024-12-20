@@ -16,7 +16,6 @@
 import type siyuan from "siyuan";
 
 import type { ISiyuanGlobal } from "@workspace/types/siyuan";
-import type { IProtyle } from "@workspace/types/siyuan/protyle";
 
 declare let globalThis: ISiyuanGlobal;
 
@@ -32,7 +31,7 @@ export interface IBaseModel {
 
 export interface IEditor {
     version: string;
-    protyle: IProtyle;
+    protyle: siyuan.IProtyle;
 }
 
 export interface IEditorModel extends IBaseModel {

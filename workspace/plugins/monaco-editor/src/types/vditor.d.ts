@@ -66,3 +66,9 @@ export interface IVditorEvents {
         markdown: string; // Markdown 文本
     };
 }
+
+export interface IVditorHandlers {
+    onOpenLink?: (params: IVditorEvents["open-link"]) => void;
+    onChanged?: (params: IVditorEvents["changed"]) => void;
+    onSave?: (params: IVditorEvents["save"]) => void;
+}

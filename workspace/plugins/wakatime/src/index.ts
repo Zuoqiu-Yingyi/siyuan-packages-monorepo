@@ -15,6 +15,7 @@
 
 import { Client } from "@siyuan-community/siyuan-sdk";
 import siyuan from "siyuan";
+import { mount } from "svelte";
 
 import {
     FLAG_MOBILE,
@@ -28,9 +29,10 @@ import { WorkerBridgeMaster } from "@workspace/utils/worker/bridge/master";
 
 import manifest from "~/public/plugin.json";
 
+import Settings from "./components/Settings.svelte";
+
 import icon_wakatime_wakapi from "./assets/symbols/icon-wakatime-wakapi.symbol?raw";
 import icon_wakatime from "./assets/symbols/icon-wakatime.symbol?raw";
-import Settings from "./components/Settings.svelte";
 import { DEFAULT_CONFIG } from "./configs/default";
 import CONSTANTS from "./constants";
 
@@ -55,6 +57,9 @@ declare let globalThis: ISiyuanGlobal;
 
 export default class WakaTimePlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "global-config";
+
+    // @ts-expect-error ignore original type
+    declare public readonly i18n: I18N;
 
     public readonly siyuan = siyuan;
     public readonly logger: InstanceType<typeof Logger>;
@@ -159,14 +164,13 @@ export default class WakaTimePlugin extends siyuan.Plugin {
         });
         const target = dialog.element.querySelector(`#${this.SETTINGS_DIALOG_ID}`);
         if (target) {
-            const settings = new Settings({
+            mount(Settings, {
                 target,
                 props: {
                     config: this.config,
                     plugin: this,
                 },
             });
-            void settings;
         }
     }
 

@@ -16,8 +16,6 @@
 -->
 
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
-
     import List from "@workspace/components/siyuan/list/List.svelte";
     import { trimPrefix } from "@workspace/utils/misc/string";
     import { join } from "@workspace/utils/path/browserify";
@@ -31,30 +29,44 @@
     import type MonacoEditorPlugin from "@/index";
     import type { IUpdateDialogEvent } from "@/types/upload";
 
-    export let plugin: InstanceType<typeof MonacoEditorPlugin>; // 插件对象
-    export let path: string; // 当前路径
-    export let files: FileList | IFile[]; // 待上传的文件列表
-    export let prefix: string = "/"; // 需要移除的目录前缀
+    interface IProps {
+        plugin: InstanceType<typeof MonacoEditorPlugin>; // 插件对象
+        path: string; // 当前路径
+        files: FileList | IFile[]; // 待上传的文件列表
+        prefix?: string; // 需要移除的目录前缀
+    }
+
+    interface IEvents {
+        onCancel?: (params: IUpdateDialogEvent["cancel"]) => void; // 取消事件
+    }
+
+    let {
+        plugin,
+        path,
+        files,
+        prefix = "/",
+
+        onCancel,
+    }: IEvents & IProps = $props();
 
     const cancelButtonText: string = window.siyuan.languages?.cancel ?? "Cancel"; // 取消按钮文本
-    let confirmButtonText: string = plugin.i18n.menu.upload.tips.startUpload; // 确定按钮文本
-    let confirmButtonDisabled: boolean = true; // 确定按钮是否禁用
+    let confirmButtonText: string = $state(plugin.i18n.menu.upload.tips.startUpload); // 确定按钮文本
+    let confirmButtonDisabled: boolean = $state(true); // 确定按钮是否禁用
 
-    let cancel: HTMLButtonElement | undefined; // 取消按钮
-    let confirm: HTMLButtonElement | undefined; // 确认按钮
+    let cancel: HTMLButtonElement | undefined = $state(); // 取消按钮
+    let confirm: HTMLButtonElement | undefined = $state(); // 确认按钮
 
     void cancel;
     void confirm;
 
-    let text: string; // 提示文本
-    let items: IListItem[]; // 列表
-    let filetree: InstanceType<typeof FileTree>;
-    let uploaded_file: number = 0; // 已上传文件数
-    let uploaded_byte: number = 0; // 已上传比特数
+    let text: string | undefined = $state(); // 提示文本
+    let items: IListItem[] | undefined = $state(); // 列表
+    let filetree: InstanceType<typeof FileTree> | undefined = $state();
+    let uploaded_file: number = $state(0); // 已上传文件数
+    let uploaded_byte: number = $state(0); // 已上传比特数
 
-    let fold: boolean = true; // 是否折叠下级列表
-    let finished: boolean = false; // 上传完成
-    const dispatcher = createEventDispatcher<IUpdateDialogEvent>();
+    let fold: boolean = $state(true); // 是否折叠下级列表
+    let finished: boolean = $state(false); // 上传完成
 
     const total_file = files.length; // 总文件数
     const total_byte = (() => {
@@ -66,31 +78,31 @@
     })(); // 总文件大小
 
     /* 通过文件路径构建文件树 */
-    $: {
+    $effect(() => {
         filetree = new FileTree(plugin, files, prefix);
         items = filetree.toList(fold);
         confirmButtonDisabled = false;
-    }
+    });
 
-    $: {
+    $effect(() => {
         text = plugin.i18n.menu.upload.tips.statusInfo // 提示信息
             .replaceAll("{{1}}", fn__code(uploaded_file.toString())) // 已上传文件数
             .replaceAll("{{2}}", fn__code(total_file.toString())) // 总文件数
             .replaceAll("{{3}}", fn__code(uploaded_byte.toString())) // 已上传文件大小
             .replaceAll("{{4}}", fn__code(total_byte.toString())); // 文件总大小
-    }
+    });
 
-    function onCancle(event: MouseEvent): void {
-        dispatcher("cancel", { finished, event });
+    function _onCancle(event: MouseEvent): void {
+        onCancel?.({ finished, event });
     }
-    async function onConfirm(event: MouseEvent): Promise<void> {
+    async function _onConfirm(event: MouseEvent): Promise<void> {
         if (finished) {
-            dispatcher("cancel", { finished, event });
+            onCancel?.({ finished, event });
         }
         else {
             confirmButtonDisabled = true;
             const errorList: IFile[] = []; // 上传失败的文件列表
-            for (const file of filetree.files) {
+            for (const file of filetree!.files) {
                 try {
                     await plugin.client.putFile({
                         path: join(path, file.webkitRelativePath || normalize(trimPrefix(file.path ?? "", prefix)) || file.name),
@@ -129,7 +141,7 @@
         {@html text}
     </div>
 
-    <div class="fn__hr" />
+    <div class="fn__hr"></div>
 
     <!-- 文件列表 -->
     <List {items} />
@@ -140,16 +152,16 @@
     <button
         bind:this={cancel}
         class="b3-button b3-button--cancel"
-        on:click={onCancle}
+        onclick={_onCancle}
     >
         {cancelButtonText}
     </button>
-    <div class="fn__space" />
+    <div class="fn__space"></div>
     <button
         bind:this={confirm}
         class="b3-button b3-button--text"
         disabled={confirmButtonDisabled}
-        on:click={onConfirm}
+        onclick={_onConfirm}
     >
         {confirmButtonText}
     </button>

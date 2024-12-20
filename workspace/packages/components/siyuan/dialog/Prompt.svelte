@@ -86,7 +86,7 @@
         {#if datalist.length > 0}
             <datalist id={listID}>
                 {#each datalist as value}
-                    <option {value} />
+                    <option {value}></option>
                 {/each}
             </datalist>
         {/if}

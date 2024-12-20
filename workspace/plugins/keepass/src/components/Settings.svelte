@@ -26,14 +26,20 @@
     import { type ITab } from "@workspace/components/siyuan/setting/tab";
     import Tabs from "@workspace/components/siyuan/setting/tab/Tabs.svelte";
 
-    import type Plugin from "@/index";
+    import type KeepassPlugin from "@/index";
     import type { IConfig } from "@/types/config";
-    import type { I18N } from "@/utils/i18n";
 
-    export let config: IConfig; // 传入的配置项
-    export let plugin: InstanceType<typeof Plugin>; // 插件实例
+    interface IProps {
+        config: IConfig; // 传入的配置项
+        plugin: InstanceType<typeof KeepassPlugin>; // 插件实例
+    }
 
-    const i18n = plugin.i18n as unknown as I18N;
+    const {
+        config,
+        plugin,
+    }: IProps = $props();
+
+    const i18n = plugin.i18n;
 
     async function updated() {
         await plugin.updateConfig(config);
@@ -60,17 +66,15 @@
         );
     }
 
-    /* eslint-disable no-unused-vars */
-    enum PanelKey {
-        general, // 常规设置
-        keeweb, // KeeWeb 设置
-    }
+    const PanelKey = {
+        general: "general", // 常规设置
+        keeweb: "keeweb", // KeeWeb 设置
+    } as const;
 
-    enum TabKey {
-        plugin, // 插件设置
-        window, // 窗口设置
-    }
-    /* eslint-enable no-unused-vars */
+    const TabKey = {
+        plugin: "plugin", // 插件设置
+        window: "window", // 窗口设置
+    } as const;
 
     const panels_focus_key = PanelKey.general;
     const panels: ITab[] = [
