@@ -28,15 +28,22 @@
 
     import { DEFAULT_SETTINGS, getWsUrl } from "@/jupyter/settings";
 
-    import type Plugin from "@/index";
+    import type JupyterClientPlugin from "@/index";
     import type { IConfig } from "@/types/config";
 
-    export let config: IConfig; // 传入的配置项
-    export let plugin: InstanceType<typeof Plugin>; // 插件实例
+    interface IProps {
+        config: IConfig; // 传入的配置项
+        plugin: InstanceType<typeof JupyterClientPlugin>; // 插件实例
+    }
+
+    const {
+        config,
+        plugin,
+    }: IProps = $props();
 
     const i18n = plugin.i18n;
 
-    $: placeholder_wsUrl = getWsUrl(config.jupyter.server.settings.baseUrl);
+    const placeholder_wsUrl = $derived(getWsUrl(config.jupyter.server.settings.baseUrl));
 
     /**
      * 更新并保存设置项
@@ -57,21 +64,19 @@
         );
     }
 
-    /* eslint-disable no-unused-vars */
-    enum PanelKey {
-        general, // 常规设置
-        jupyter, // Jupyter 设置
-        xterm, // Xterm 设置
-    }
+    const PanelKey = {
+        general: "general", // 常规设置
+        jupyter: "jupyter", // Jupyter 设置
+        xterm: "xterm", // Xterm 设置
+    } as const;
 
-    enum TabKey {
-        global, // 全局设置
-        service, // 服务设置
-        execute, // 运行设置
-        output, // 输出设置
-        import, // 导入设置
-    }
-    /* eslint-enable no-unused-vars */
+    const TabKey = {
+        global: "global", // 全局设置
+        service: "service", // 服务设置
+        execute: "execute", // 运行设置
+        output: "output", // 输出设置
+        import: "import", // 导入设置
+    } as const;
 
     const panels_focus_key = PanelKey.general;
     const panels: ITab[] = [

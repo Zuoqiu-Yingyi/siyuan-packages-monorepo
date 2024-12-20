@@ -32,14 +32,20 @@
 
     import type WakaTimePlugin from "@/index";
     import type { IConfig } from "@/types/config";
-    import type { I18N } from "@/utils/i18n";
 
-    export let config: IConfig; // 传入的配置项
-    export let plugin: InstanceType<typeof WakaTimePlugin>; // 插件实例
+    interface IProps {
+        config: IConfig; // 传入的配置项
+        plugin: InstanceType<typeof WakaTimePlugin>; // 插件实例
+    }
 
-    let useragent_placeholder = plugin.wakatimeDefaultUserAgent;
+    const {
+        config,
+        plugin,
+    }: IProps = $props();
 
-    const i18n = plugin.i18n as unknown as I18N;
+    let useragent_placeholder = $state(plugin.wakatimeDefaultUserAgent);
+
+    const i18n = plugin.i18n;
 
     async function updated() {
         await plugin.updateConfig(config);
@@ -104,23 +110,23 @@
         general, // 常规设置
         service, // 服务设置
     }
-    /* eslint-enable no-unused-vars */
+        /* eslint-enable no-unused-vars */
 
-    const panels_focus_key = PanelKey.general;
-    const panels: ITab[] = [
-        {
-            key: PanelKey.general,
-            text: i18n.settings.generalSettings.title,
-            name: i18n.settings.generalSettings.title,
-            icon: "#iconSettings",
-        },
-        {
-            key: PanelKey.wakatime,
-            text: i18n.settings.wakatimeSettings.title,
-            name: i18n.settings.wakatimeSettings.title,
-            icon: "#icon-wakatime",
-        },
-    ];
+        const panels_focus_key = PanelKey.general;
+        const panels: ITab[] = [
+            {
+                key: PanelKey.general,
+                text: i18n.settings.generalSettings.title,
+                name: i18n.settings.generalSettings.title,
+                icon: "#iconSettings",
+            },
+            {
+                key: PanelKey.wakatime,
+                text: i18n.settings.wakatimeSettings.title,
+                name: i18n.settings.wakatimeSettings.title,
+                icon: "#icon-wakatime",
+            },
+        ];
 
     const wakatime_settings_tabs_focus_key = TabKey.general;
     const tabs = {

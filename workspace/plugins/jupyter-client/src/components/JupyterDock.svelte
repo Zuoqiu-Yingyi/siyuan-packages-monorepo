@@ -40,18 +40,30 @@
     import type JupyterClientPlugin from "@/index";
     import type { WorkerHandlers } from "@/workers/jupyter";
 
-    export let plugin: InstanceType<typeof JupyterClientPlugin>; // 插件对象
-    export let kernelspecs: KernelSpec.ISpecModels = {
-        default: "",
-        kernelspecs: {},
-    }; // 内核清单
-    export let kernels: Kernel.IModel[] = []; // 活动的内核列表
-    export let sessions: Session.IModel[] = []; // 活动的会话列表
+    interface IProps {
+        plugin: InstanceType<typeof JupyterClientPlugin>; // 插件实例
+        kernelspecs?: KernelSpec.ISpecModels; // 内核清单
+        kernels?: Kernel.IModel[]; // 活动的内核列表
+        sessions?: Session.IModel[]; // 活动的会话列表
+        currentSpec?: string; // 当前的内核定义
+        currentKernel?: string; // 当前的内核 ID
+        currentSession?: string; // 当前的会话 ID
+        currentDocument?: string; // 当前的文档 ID
+    }
 
-    export let currentSpec: string = ""; // 当前的内核定义
-    export let currentKernel: string = ""; // 当前的内核 ID
-    export let currentSession: string = ""; // 当前的会话 ID
-    export let currentDocument: string = ""; // 当前的文档 ID
+    const {
+        plugin,
+        kernelspecs = {
+            default: "",
+            kernelspecs: {},
+        },
+        kernels = [],
+        sessions = [],
+        currentSpec = "",
+        currentKernel = "",
+        currentSession = "",
+        currentDocument = "",
+    }: IProps = $props();
 
     const ROOT_DIRECTORY = "/"; // 根目录
 
@@ -421,15 +433,15 @@
     };
 
     /* 动态更新 jupyter 服务状态 */
-    $: {
+    $effect(() => {
         roots[0]!.count = Object.keys(kernelspecs.kernelspecs).length;
         resources2node(kernelspecs, kernels, sessions).then((children) => {
             roots[0]!.children = children;
         });
-    }
+    });
 
     /* 动态更新内核清单 */
-    $: {
+    $effect(() => {
         roots[1]!.count = Object.keys(kernelspecs.kernelspecs).length;
         kernelspecs2node(kernelspecs).then(async (children) => {
             /* 确保内核图标已加载 */
@@ -437,26 +449,26 @@
             roots[2]!.children = kernels2node(kernels);
             roots[3]!.children = sessions2node(sessions);
         });
-    }
+    });
 
     /* 动态更新活跃的内核 */
-    $: {
+    $effect(() => {
         roots[2]!.count = kernels.length;
         roots[2]!.children = kernels2node(kernels);
-    }
+    });
 
     /* 动态更新活跃的会话 */
-    $: {
+    $effect(() => {
         roots[3]!.count = sessions.length;
         roots[3]!.children = sessions2node(sessions);
-    }
+    });
 
-    $: {
+    $effect(() => {
         updateCurrentSpec(currentSpec);
         updateCurrentKernel(currentKernel);
         updateCurrentSession(currentSession);
         updateCurrentDocument(currentSpec, currentKernel, currentSession, currentDocument);
-    }
+    });
 
     /* 回收资源 */
     onDestroy(() => {
@@ -516,7 +528,7 @@
         const depth = get(node.depth)!;
         const directory = get(node.directory)!;
 
-        const items: import("siyuan").IMenuItemOption[] = [];
+        const items: import("siyuan").IMenu[] = [];
 
         if (
             path === KERNELSPECS_DIRECTORY // 可用内核目录

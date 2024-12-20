@@ -102,7 +102,7 @@
     {srcdoc}
     {title}
     use:action
-/>
+></iframe>
 
 <style>
     .iframe {

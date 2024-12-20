@@ -1,5 +1,9 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-12-21
+
+- 部分 Svelte 组件迁移至 `v5` | Partial Svelte components migrated to `v5`.
+
 ## 2024-12-20
 
 - 兼容思源 `v3.1.16` 版本 | Compatible with SiYuan `v3.1.16` version.

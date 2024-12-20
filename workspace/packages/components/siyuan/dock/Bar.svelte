@@ -41,7 +41,7 @@
         <span
             class="fn__space"
             class:fn__flex-1={i === 0}
-        />
+        ></span>
 
         <slot
             name="icon"

@@ -30,14 +30,20 @@
 
     import { locale2lang } from "../opencc/lang";
 
-    import type Plugin from "@/index";
+    import type OpenCCPlugin from "@/index";
     import type { IConfig } from "@/types/config";
-    import type { I18N } from "@/utils/i18n";
 
-    export let config: IConfig; // 传入的配置项
-    export let plugin: InstanceType<typeof Plugin>; // 插件实例
+    interface IProps {
+        config: IConfig; // 传入的配置项
+        plugin: InstanceType<typeof OpenCCPlugin>; // 插件实例
+    }
 
-    const i18n = plugin.i18n as unknown as I18N;
+    const {
+        config,
+        plugin,
+    }: IProps = $props();
+
+    const i18n = plugin.i18n;
 
     async function updated() {
         await plugin.updateConfig(config);

@@ -15,6 +15,33 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    import {
+        BlockHandler,
+        Inline,
+        Language,
+        type IBlockHandler,
+    } from "@/handlers/block";
+
+    import type MonacoEditorPlugin from "@/index";
+    import type {
+        IDockEditor,
+        IEditorEvents,
+    } from "@/types/editor";
+
+    export interface IProps {
+        plugin: InstanceType<typeof MonacoEditorPlugin>; // 插件实例
+        editor: IDockEditor; // 编辑器配置
+        id?: string; // 块 ID
+        realTime?: boolean; // 是否启用实时更新模式
+        inline?: Inline; // 是否启用 kramdown 模式
+        language?: Language; // 是否启用 kramdown 模式
+    }
+</script>
+
 <script lang="ts">
     import { get } from "svelte/store";
 
@@ -22,26 +49,20 @@
     import { TooltipsDirection } from "@workspace/components/siyuan/misc/tooltips";
     import regexp from "@workspace/utils/regexp";
 
-    import { BlockHandler, Inline, Language, type IBlockHandler } from "@/handlers/block";
-
     import EditorIframe from "./EditorIframe.svelte";
-
-    import type { ComponentEvents } from "svelte";
 
     import type { IBar } from "@workspace/components/siyuan/dock/index";
 
-    import type MonacoEditorPlugin from "@/index";
-    import type { IDockEditor } from "@/types/editor";
+    let {
+        plugin,
+        editor,
+        id = "",
+        realTime = false,
+        inline = Inline.mark,
+        language = Language.kramdown,
+    }: IProps = $props();
 
-    export let plugin: InstanceType<typeof MonacoEditorPlugin>; // 插件对象
-    export let editor: IDockEditor; // 编辑器配置
-
-    export let id: string = ""; // 块 ID
-    export let realTime: boolean = false; // 是否启用实时更新模式
-    export let inline: Inline = Inline.mark; // 是否启用 kramdown 模式
-    export let language: Language = Language.kramdown; // 是否启用 kramdown 模式
-
-    export let bar: IBar = {
+    const bar: IBar = {
         // 标题栏配置
         logo: "#iconCode",
         title: plugin.i18n.dock.title,
@@ -108,38 +129,38 @@
     };
 
     const blockHandler = new BlockHandler(plugin);
-    let handler: IBlockHandler;
-    let savable: boolean = false;
+    let handler: IBlockHandler | undefined = $state(undefined);
+    let savable: boolean = $state(false);
 
-    $: {
+    $effect(() => {
         if (regexp.id.test(id)) {
             blockHandler.makeHandler({ id, inline, language }).then((h) => (handler = h));
         }
-    }
+    });
 
-    $: {
+    $effect(() => {
         if (handler) {
             savable = !!handler.update;
             editor.modified = handler.modified;
             editor.modifiedOptions = handler.options;
         }
-    }
+    });
 
     /* 保存内容 */
-    function update(e: ComponentEvents<EditorIframe>["changed"] | ComponentEvents<EditorIframe>["save"]) {
-        handler.update?.(e.detail.value);
+    function update(params: IEditorEvents["changed"] | IEditorEvents["save"]) {
+        handler?.update?.(params.value);
     }
 
     /* 悬浮事件 */
-    function hover(e: ComponentEvents<EditorIframe>["hover"]) {
+    function hover(params: IEditorEvents["hover"]) {
         /* 悬浮显示思源块 */
-        plugin.openFloatLayer(e.detail);
+        plugin.openFloatLayer(params);
     }
 
     /* 打开链接事件 */
-    function open(e: ComponentEvents<EditorIframe>["open"]) {
+    function open(params: IEditorEvents["open"]) {
         /* 在新页签打开思源块 */
-        plugin.openDocTab(e.detail);
+        plugin.openDocTab(params);
     }
 </script>
 
@@ -147,11 +168,11 @@
 
 <EditorIframe
     changeable={realTime}
+    onChanged={update}
+    onHover={hover}
+    onOpen={open}
+    onSave={update}
     {plugin}
     {savable}
-    on:save={update}
-    on:changed={update}
-    on:hover={hover}
-    on:open={open}
     {...editor}
 />

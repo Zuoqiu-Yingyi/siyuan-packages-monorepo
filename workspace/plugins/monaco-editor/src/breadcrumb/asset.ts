@@ -63,7 +63,7 @@ export class AssetBreadcrumb extends Breadcrumb {
         /* 获得相对于工作空间目录的路径 */
         const path = options.path ?? staticPathname2WorkspacePath(options.pathname);
         const paths: string[] = [];
-        paths.push(...window.siyuan.config.system.workspaceDir.replaceAll("\\", "/").split("/"));
+        paths.push(...window.siyuan.config!.system.workspaceDir.replaceAll("\\", "/").split("/"));
         breadcrumb.breadcrumbItems.push({
             type: "item",
             icon: "#iconWorkspace",

@@ -26,6 +26,10 @@
         type Unsubscriber,
     } from "svelte/store";
 
+    import Icon from "./../../misc/Icon.svelte";
+    import Svg from "./../../misc/Svg.svelte";
+    import SvgArrow from "./../../misc/SvgArrow.svelte";
+
     import {
         FileTreeNodeType,
         type IFileTreeEvent,
@@ -33,9 +37,6 @@
         type IFileTreeNodeStores,
         type ITree,
     } from ".";
-    import Icon from "./../../misc/Icon.svelte";
-    import Svg from "./../../misc/Svg.svelte";
-    import SvgArrow from "./../../misc/SvgArrow.svelte";
 
     export let type: IFileTreeNode["type"];
     export let name: IFileTreeNode["name"] = "";

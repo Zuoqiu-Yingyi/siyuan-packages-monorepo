@@ -25,14 +25,20 @@
     import Panels from "@workspace/components/siyuan/setting/panel/Panels.svelte";
     import { type ITab } from "@workspace/components/siyuan/setting/tab";
 
-    import type Plugin from "@/index";
+    import type TypewriterPlugin from "@/index";
     import type { IConfig } from "@/types/config";
-    import type { I18N } from "@/utils/i18n";
 
-    export let config: IConfig; // 传入的配置项
-    export let plugin: InstanceType<typeof Plugin>; // 插件实例
+    interface IProps {
+        config: IConfig; // 传入的配置项
+        plugin: InstanceType<typeof TypewriterPlugin>; // 插件实例
+    }
 
-    const i18n = plugin.i18n as unknown as I18N;
+    const {
+        config,
+        plugin,
+    }: IProps = $props();
+
+    const i18n = plugin.i18n;
 
     async function updated() {
         await plugin.updateConfig(config);
@@ -49,13 +55,11 @@
         );
     }
 
-    /* eslint-disable no-unused-vars */
-    enum PanelKey {
-        general, // 常规设置
-        focus, // 焦点设置
-        typewriter, // 打字机设置
-    }
-    /* eslint-enable no-unused-vars */
+    const PanelKey = {
+        general: "general", // 常规设置
+        focus: "focus", // 焦点设置
+        typewriter: "typewriter", // 打字机设置
+    } as const;
 
     const panels_focus_key = PanelKey.general;
     const panels: ITab[] = [

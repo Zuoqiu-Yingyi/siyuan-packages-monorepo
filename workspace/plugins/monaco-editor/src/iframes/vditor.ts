@@ -16,6 +16,7 @@
 import "@/styles/vditor.less";
 
 import { Client } from "@siyuan-community/siyuan-sdk";
+import { mount, unmount } from "svelte";
 
 import {
     FLAG_ELECTRON,
@@ -24,12 +25,16 @@ import {
 } from "@workspace/utils/env/native-front-end";
 import { Logger } from "@workspace/utils/logger";
 import { trimSuffix } from "@workspace/utils/misc/string";
+import { state } from "@workspace/utils/svelte/runes.svelte";
 
 import i18n from "~/public/i18n/en_US.json";
 import manifest from "~/public/plugin.json";
 
 import { VditorBridgeSlave } from "@/bridge/VditorSlave";
-import Vditor from "@/components/Vditor.svelte";
+
+import Vditor, { type IProps } from "@/components/Vditor.svelte";
+
+import type { IVditorHandlers } from "../types/vditor";
 
 const src2url = new Map<string, string>(); // 将 src 目标映射为 blob URL
 const baseURL = "./../libs/vditor";
@@ -48,19 +53,20 @@ const logger = new Logger(`${manifest.name}-vditor-${(() => {
 })()}`);
 const client = new Client({ baseURL: `${globalThis.location.origin}${rootURL}/` });
 
-let vditor: InstanceType<typeof Vditor> = new Vditor({
-    target: globalThis.document.body,
-    props: {
-        plugin: {
-            name: manifest.name,
-            i18n,
-            logger,
-            client,
-        },
-        src2url,
-        baseURL,
-        rootURL,
+let props: IProps & IVditorHandlers = state({
+    plugin: {
+        name: manifest.name,
+        i18n,
+        logger,
+        client,
     },
+    src2url,
+    baseURL,
+    rootURL,
+});
+let vditor: ReturnType<typeof mount> = mount(Vditor, {
+    target: globalThis.document.body,
+    props,
 }); // 编辑器组件
 
 const bridge = new VditorBridgeSlave(
@@ -73,40 +79,41 @@ const bridge = new VditorBridgeSlave(
 
                 /* 编辑器已存在则销毁原编辑器 */
                 if (vditor) {
-                    vditor.$destroy();
+                    unmount(vditor);
                 }
 
-                /* 创建新的编辑器 */
-                vditor = new Vditor({
-                    target: globalThis.document.body,
-                    props: {
-                        plugin: {
-                            name: data.name,
-                            i18n: data.i18n,
-                            logger,
-                            client,
-                        },
-                        src2url,
-                        baseURL,
-                        rootURL,
-
-                        path: data.path,
-                        vditorID: data.vditorID,
-                        assetsDirPath: data.assetsDirPath,
-                        assetsUploadMode: data.assetsUploadMode,
-                        options: data.options,
-                        value: data.value,
-                        theme: data.theme,
-                        codeBlockThemeLight: data.codeBlockThemeLight,
-                        codeBlockThemeDark: data.codeBlockThemeDark,
-                        debug: data.debug,
+                props = state({
+                    plugin: {
+                        name: data.name,
+                        i18n: data.i18n,
+                        logger,
+                        client,
                     },
+                    src2url,
+                    baseURL,
+                    rootURL,
+
+                    path: data.path,
+                    vditorID: data.vditorID,
+                    assetsDirPath: data.assetsDirPath,
+                    assetsUploadMode: data.assetsUploadMode,
+                    options: data.options,
+                    value: data.value,
+                    theme: data.theme,
+                    codeBlockThemeLight: data.codeBlockThemeLight,
+                    codeBlockThemeDark: data.codeBlockThemeDark,
+                    debug: data.debug,
+
+                    onOpenLink: (params) => bridge.openLink(params),
+                    onChanged: (params) => bridge.changed(params),
+                    onSave: (params) => bridge.save(params),
                 });
 
-                /* 监听更改与保存事件 */
-                vditor.$on("changed", (e) => bridge.changed(e.detail));
-                vditor.$on("save", (e) => bridge.save(e.detail));
-                vditor.$on("open-link", (e) => bridge.openLink(e.detail));
+                /* 创建新的编辑器 */
+                vditor = mount(Vditor, {
+                    target: globalThis.document.body,
+                    props,
+                });
             },
         );
 
@@ -116,9 +123,11 @@ const bridge = new VditorBridgeSlave(
             (e) => {
                 const { data } = e.data;
 
-                if (vditor) {
-                    vditor.$set(data);
-                }
+                // REF: https://svelte.dev/docs/svelte/legacy-component-api#$set
+                Object.entries(data).forEach(([key, value]) => {
+                    // @ts-expect-error Svelte $set
+                    props[key] = value;
+                });
             },
         );
         bridge.ready();

@@ -15,6 +15,7 @@
 
 import * as sdk from "@siyuan-community/siyuan-sdk";
 import siyuan from "siyuan";
+import { mount } from "svelte";
 
 import {
     FLAG_MOBILE,
@@ -23,6 +24,7 @@ import { Logger } from "@workspace/utils/logger";
 import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
 
 import Settings from "./components/Settings.svelte";
+
 import { DEFAULT_CONFIG } from "./configs/default";
 
 import type { ISiyuanGlobal } from "@workspace/types/siyuan";
@@ -35,6 +37,7 @@ declare const _globalThis: ISiyuanGlobal;
 export default class TemplatePlugin extends siyuan.Plugin {
     public static readonly GLOBAL_CONFIG_NAME = "config.json";
 
+    // @ts-expect-error ignore original type
     declare public readonly i18n: I18N;
 
     public readonly siyuan = siyuan;
@@ -91,14 +94,13 @@ export default class TemplatePlugin extends siyuan.Plugin {
         });
         const target = dialog.element.querySelector(`#${this.SETTINGS_DIALOG_ID}`);
         if (target) {
-            const settings = new Settings({
+            mount(Settings, {
                 target,
                 props: {
                     config: this.config,
                     plugin: this,
                 },
             });
-            void settings;
         }
     }
 

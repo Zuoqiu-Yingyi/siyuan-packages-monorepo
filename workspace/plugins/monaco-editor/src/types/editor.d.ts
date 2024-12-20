@@ -84,3 +84,10 @@ export interface IEditorEvents {
         focus?: number; // 是否聚焦
     }; // 访问思源相关字段
 }
+
+export interface IEditorHandlers {
+    onChanged?: (params: IEditorEvents["changed"]) => void;
+    onSave?: (params: IEditorEvents["save"]) => void;
+    onHover?: (params: IEditorEvents["hover"]) => void;
+    onOpen?: (params: IEditorEvents["open"]) => void;
+}

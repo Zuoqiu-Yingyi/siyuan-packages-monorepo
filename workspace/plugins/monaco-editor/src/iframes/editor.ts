@@ -16,18 +16,24 @@
 /* 界面入口 */
 import "@/styles/editor.less";
 
+import { mount, unmount } from "svelte";
+
 import {
     FLAG_ELECTRON,
     FLAG_IFRAME,
     FLAG_POPUP,
 } from "@workspace/utils/env/native-front-end";
 import { Logger } from "@workspace/utils/logger";
+import { state } from "@workspace/utils/svelte/runes.svelte";
 
 import i18n from "~/public/i18n/en_US.json";
 import manifest from "~/public/plugin.json";
 
 import { EditorBridgeSlave } from "@/bridge/EditorSlave";
-import Editor from "@/components/Editor.svelte";
+
+import Editor, { type IProps } from "@/components/Editor.svelte";
+
+import type { IEditorHandlers } from "../types/editor";
 
 const logger = new Logger(`${manifest.name}-editor-${(() => {
     switch (true) {
@@ -42,17 +48,18 @@ const logger = new Logger(`${manifest.name}-editor-${(() => {
     }
 })()}`);
 
-let editor: InstanceType<typeof Editor> | null = !FLAG_ELECTRON
-    ? new Editor({
-        target: globalThis.document.body,
-        props: {
-            plugin: {
-                name: manifest.name,
-                i18n,
-                logger,
-            },
-        },
-    })
+let props: IProps & IEditorHandlers = state({
+    plugin: {
+        name: manifest.name,
+        i18n,
+        logger,
+    },
+});
+let editor: null | ReturnType<typeof mount> = !FLAG_ELECTRON
+    ? mount(Editor, {
+            target: globalThis.document.body,
+            props,
+        })
     : null; // 编辑器组件
 
 const bridge = new EditorBridgeSlave(
@@ -66,44 +73,49 @@ const bridge = new EditorBridgeSlave(
 
                 /* 编辑器已存在则销毁原编辑器 */
                 if (editor) {
-                    editor.$destroy();
+                    unmount(editor);
                 }
 
-                /* 创建新的编辑器 */
-                editor = new Editor({
-                    target: globalThis.document.body,
-                    props: {
-                        plugin: {
-                            name: data.name,
-                            i18n: data.i18n,
-                            logger,
-                        },
-                        path: data.path,
-                        diff: data.diff,
-                        locale: data.locale,
-                        savable: data.savable,
-                        changeable: data.changeable,
-                        original: data.original,
-                        modified: data.modified,
-                        options: data.options,
+                props = state({
+                    plugin: {
+                        name: data.name,
+                        i18n: data.i18n,
+                        logger,
                     },
+                    path: data.path,
+                    diff: data.diff,
+                    locale: data.locale,
+                    savable: data.savable,
+                    changeable: data.changeable,
+                    original: data.original,
+                    modified: data.modified,
+                    options: data.options,
+
+                    onChanged: (params) => bridge.changed(params),
+                    onSave: (params) => bridge.save(params),
+                    onHover: (params) => bridge.hover(params),
+                    onOpen: (params) => bridge.open(params),
                 });
-                /* 监听更改与保存事件 */
-                editor.$on("changed", (e) => bridge.changed(e.detail));
-                editor.$on("save", (e) => bridge.save(e.detail));
-                editor.$on("hover", (e) => bridge.hover(e.detail));
-                editor.$on("open", (e) => bridge.open(e.detail));
+
+                /* 创建新的编辑器 */
+                editor = mount(Editor, {
+                    target: globalThis.document.body,
+                    props,
+                });
             },
         );
         /* 更改编辑器配置 */
         bridge.addEventListener(
             "editor-set",
             (e) => {
+                // logger.debug("editor-set", e.data);
                 const { data } = e.data;
 
-                if (editor) {
-                    editor.$set(data);
-                }
+                // REF: https://svelte.dev/docs/svelte/legacy-component-api#$set
+                Object.entries(data).forEach(([key, value]) => {
+                    // @ts-expect-error Svelte $set
+                    props[key] = value;
+                });
             },
         );
         bridge.ready();

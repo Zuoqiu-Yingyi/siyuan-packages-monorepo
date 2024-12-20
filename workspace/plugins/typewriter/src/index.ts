@@ -19,6 +19,7 @@ import {
     Client,
 } from "@siyuan-community/siyuan-sdk";
 import siyuan from "siyuan";
+import { mount } from "svelte";
 
 import {
     FLAG_MOBILE,
@@ -35,6 +36,7 @@ import {
 import { getEditors } from "@workspace/utils/siyuan/model";
 
 import Settings from "./components/Settings.svelte";
+
 import { DEFAULT_CONFIG } from "./configs/default";
 import constants from "./constants";
 
@@ -55,6 +57,7 @@ declare let globalThis: ISiyuanGlobal;
 export default class TypewriterPlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "global-config";
 
+    // @ts-expect-error ignore original type
     declare public readonly i18n: I18N;
 
     public readonly siyuan = siyuan;
@@ -135,14 +138,13 @@ export default class TypewriterPlugin extends siyuan.Plugin {
         });
         const target = dialog.element.querySelector(`#${this.SETTINGS_DIALOG_ID}`);
         if (target) {
-            const settings = new Settings({
+            mount(Settings, {
                 target,
                 props: {
                     config: this.config,
                     plugin: this,
                 },
             });
-            void settings;
         }
     }
 
@@ -175,7 +177,7 @@ export default class TypewriterPlugin extends siyuan.Plugin {
      * @param enable - 是否启用编辑事件监听
      */
     protected toggleEventListener(
-        protyle: IProtyle,
+        protyle: siyuan.IProtyle,
         enable: boolean,
     ): void {
         const listener = [

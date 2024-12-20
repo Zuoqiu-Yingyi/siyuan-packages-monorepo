@@ -26,11 +26,17 @@
     import type { XtermOutputElement } from "./XtermOutputElement";
 
     /* 标题栏配置 */
-    export let plugin: InstanceType<typeof JupyterClientPlugin>; // 插件对象
-    export let stream: string = ""; // 使用 base64 编码的数据流
+    interface IProps {
+        stream: string; // 使用 base64 编码的数据流
+        plugin: InstanceType<typeof JupyterClientPlugin>; // 插件实例
+    }
 
-    let xterm: undefined | XtermOutputElement;
-    void xterm;
+    const {
+        stream = "",
+        plugin,
+    }: IProps = $props();
+
+    let xterm: XtermOutputElement;
 
     const bar: IBar = {
         logo: "#icon-jupyter-client-inspect",
@@ -52,7 +58,7 @@
     bind:this={xterm}
     class="xtrem fn__flex-1"
     data-stream={stream}
-/>
+></jupyter-xterm-output>
 
 <style lang="less">
     .xtrem {

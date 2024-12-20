@@ -20,6 +20,7 @@ import {
     type OpenDBCallbacks,
 } from "idb";
 import siyuan from "siyuan";
+import { mount } from "svelte";
 
 import KeeWebTab from "@workspace/components/siyuan/tab/IframeTab.svelte";
 import {
@@ -37,9 +38,10 @@ import { openWindow } from "@workspace/utils/window/open";
 
 import manifest from "~/public/plugin.json";
 
+import Settings from "./components/Settings.svelte";
+
 import icon_keepass_keeweb from "./assets/symbols/icon-keepass-keeweb.symbol?raw";
 import icon_keepass_slash from "./assets/symbols/icon-keepass-slash.symbol?raw";
-import Settings from "./components/Settings.svelte";
 import { DEFAULT_CONFIG } from "./configs/default";
 
 import type { ISiyuanGlobal } from "@workspace/types/siyuan";
@@ -65,7 +67,7 @@ export interface IDB {
     FilesCache: IDBPDatabase<IDBSchemaFiles>;
     PluginFiles: IDBPDatabase<IDBSchemaFiles>;
 }
-export interface IKeeWebTab extends siyuan.ITabModel {
+export interface IKeeWebTab extends siyuan.Custom {
     component?: InstanceType<typeof KeeWebTab>;
 }
 
@@ -116,6 +118,7 @@ export default class KeepassPlugin extends siyuan.Plugin {
 
     public static readonly IDB_ENTRIES = KeepassPlugin.iterateIDB();
 
+    // @ts-expect-error ignore original type
     declare public readonly i18n: I18N;
 
     public readonly siyuan = siyuan;
@@ -317,14 +320,13 @@ export default class KeepassPlugin extends siyuan.Plugin {
         });
         const target = dialog.element.querySelector(`#${this.SETTINGS_DIALOG_ID}`);
         if (target) {
-            const settings = new Settings({
+            mount(Settings, {
                 target,
                 props: {
                     config: this.config,
                     plugin: this,
                 },
             });
-            void settings;
         }
     }
 

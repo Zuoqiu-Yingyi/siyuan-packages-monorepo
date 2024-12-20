@@ -17,6 +17,7 @@ import "./index.less";
 
 import * as sdk from "@siyuan-community/siyuan-sdk";
 import siyuan from "siyuan";
+import { mount, unmount, type ComponentEvents } from "svelte";
 
 import { asyncPrompt } from "@workspace/components/siyuan/dialog/prompt";
 import Item from "@workspace/components/siyuan/menu/Item.svelte";
@@ -46,6 +47,7 @@ import {
 } from "@workspace/utils/siyuan/dom";
 import {
     getBlockMenuContext,
+    type BlockMenuDetail,
     type IBlockMenuContext,
 } from "@workspace/utils/siyuan/menu/block";
 import { fn__code } from "@workspace/utils/siyuan/text/span";
@@ -54,6 +56,11 @@ import { openWindow } from "@workspace/utils/window/open";
 import { WorkerBridgeMaster } from "@workspace/utils/worker/bridge/master";
 
 import manifest from "~/public/plugin.json";
+
+import JupyterDock from "./components/JupyterDock.svelte";
+import JupyterInspectDock from "./components/JupyterInspectDock.svelte";
+import SessionManager from "./components/SessionManager.svelte";
+import Settings from "./components/Settings.svelte";
 
 import icon_jupyter_client_inspect from "./assets/symbols/icon-jupyter-client-inspect.symbol?raw";
 import icon_jupyter_client_kernel_autorestarting from "./assets/symbols/icon-jupyter-client-kernel-autorestarting.symbol?raw";
@@ -73,10 +80,6 @@ import icon_jupyter_client_simple from "./assets/symbols/icon-jupyter-client-sim
 import icon_jupyter_client_terminal from "./assets/symbols/icon-jupyter-client-terminal.symbol?raw";
 import icon_jupyter_client_text from "./assets/symbols/icon-jupyter-client-text.symbol?raw";
 import icon_jupyter_client from "./assets/symbols/icon-jupyter-client.symbol?raw";
-import JupyterDock from "./components/JupyterDock.svelte";
-import JupyterInspectDock from "./components/JupyterInspectDock.svelte";
-import SessionManager from "./components/SessionManager.svelte";
-import Settings from "./components/Settings.svelte";
 import { XtermOutputElement } from "./components/XtermOutputElement";
 import { DEFAULT_CONFIG } from "./configs/default";
 import CONSTANTS from "./constants";
@@ -102,7 +105,6 @@ import type {
 } from "@jupyterlab/services";
 import type xterm from "@xterm/xterm";
 import type { IProtyle } from "siyuan/types/protyle";
-import type { ComponentEvents } from "svelte";
 
 import type { BlockID } from "@workspace/types/siyuan";
 import type {
@@ -113,6 +115,7 @@ import type {
     ILoadedProtyleStaticEvent,
     ISwitchProtyleEvent,
 } from "@workspace/types/siyuan/events";
+import type { Modify } from "@workspace/types/utils/readonly";
 import type { IKeyboardStatus } from "@workspace/utils/shortcut";
 import type { IHandlers, THandlersWrapper } from "@workspace/utils/worker/bridge";
 
@@ -129,7 +132,7 @@ export type TMenuContext = {
     isMultiBlock: false;
     id: BlockID;
 } | IBlockMenuContext;
-export interface IJupyterTab extends siyuan.ITabModel {
+export interface IJupyterTab extends siyuan.Custom {
     component?: InstanceType<typeof JupyterTab>;
 }
 
@@ -155,6 +158,7 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
         key: (key: string) => /^(?:\S|Tab|Delete|Backspace)$/.test(key),
     } as const; // 触发自动补全的事件
 
+    // @ts-expect-error ignore original type
     declare public readonly i18n: I18N;
 
     public readonly siyuan = siyuan;
@@ -183,14 +187,14 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
 
     protected jupyterDock!: {
         dock: ReturnType<siyuan.Plugin["addDock"]>;
-        model?: siyuan.IDockModel;
-        component?: InstanceType<typeof JupyterDock>;
+        model?: siyuan.Dock;
+        component?: ReturnType<typeof mount>;
     }; // Jupyter 管理面板
 
     protected jupyterInspectDock!: {
         dock: ReturnType<siyuan.Plugin["addDock"]>;
-        model?: siyuan.IDockModel;
-        component?: InstanceType<typeof JupyterInspectDock>;
+        model?: siyuan.Dock;
+        component?: ReturnType<typeof mount>;
     }; // Jupyter 上下文帮助面板
 
     public readonly doc2session = new Map<string, Session.IModel>(); // 文档 ID 到会话的映射
@@ -328,7 +332,7 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
                     // plugin.logger.debug(this);
 
                     this.element.classList.add("fn__flex-column");
-                    const dock = new JupyterDock({
+                    const dock = mount(JupyterDock, {
                         target: this.element,
                         props: {
                             plugin,
@@ -365,10 +369,11 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
                     // plugin.logger.debug(this);
 
                     this.element.classList.add("fn__flex-column");
-                    const dock = new JupyterInspectDock({
+                    const dock = mount(JupyterInspectDock, {
                         target: this.element,
                         props: {
                             plugin,
+                            stream: "",
                             ...this.data,
                         },
                     });
@@ -376,7 +381,9 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
                     plugin.jupyterInspectDock.component = dock;
                 },
                 destroy() {
-                    plugin.jupyterInspectDock.component?.$destroy();
+                    if (plugin.jupyterInspectDock.component) {
+                        unmount(plugin.jupyterInspectDock.component);
+                    }
                     delete plugin.jupyterInspectDock.component;
                     delete plugin.jupyterInspectDock.model;
                 },
@@ -603,14 +610,13 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
         });
         const target = dialog.element.querySelector(`#${this.SETTINGS_DIALOG_ID}`);
         if (target) {
-            const settings = new Settings({
+            mount(Settings, {
                 target,
                 props: {
                     config: this.config,
                     plugin: this,
                 },
             });
-            void settings;
         }
     }
 
@@ -823,7 +829,7 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
         /* 避免跨站策略阻止请求 */
         const response = await this.client.forwardProxy({
             url: url.href,
-            method: init.method,
+            method: init.method as "GET",
             headers: [init.headers as Record<string, string>],
             responseEncoding: "base64",
         });
@@ -1054,8 +1060,8 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
         ial: Record<string, string>,
         session: Session.IModel | undefined,
         context: TMenuContext,
-    ): siyuan.IMenuItemOption[] {
-        const submenu: siyuan.IMenuItemOption[] = [];
+    ): siyuan.IMenu[] {
+        const submenu: siyuan.IMenu[] = [];
 
         const session_ial = this.ial2session(ial, false);
         const kernel_name = session?.kernel?.name
@@ -1086,20 +1092,20 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
                         });
                         const target = dialog.element.querySelector(`#${this.SETTINGS_DIALOG_ID}`);
                         if (target) {
-                            const manager = new SessionManager({
+                            mount(SessionManager, {
                                 target,
                                 props: {
                                     docID: id,
                                     docIAL: ial,
                                     plugin: this,
+                                    oncancel: (_params) => {
+                                        dialog.destroy();
+                                    },
+                                    onconfirm: (_params) => {
+                                        dialog.destroy();
+                                        this.updateDockFocusItem(id);
+                                    },
                                 },
-                            });
-                            manager.$on("cancel", (_e: ComponentEvents<SessionManager>["cancel"]) => {
-                                dialog.destroy();
-                            });
-                            manager.$on("confirm", (_e: ComponentEvents<SessionManager>["confirm"]) => {
-                                dialog.destroy();
-                                this.updateDockFocusItem(id);
                             });
                         }
                     },
@@ -1327,7 +1333,7 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
         restart: boolean,
         session: Session.IModel | undefined,
         context: TMenuContext,
-    ): siyuan.IMenuItemOption[] {
+    ): siyuan.IMenu[] {
         const disabled = !session?.kernel;
         const flag_cell = context.isDocumentBlock || context.isMultiBlock;
         const execute = async (options: IJupyterParserOptions) => {
@@ -1348,7 +1354,7 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
         };
 
         const buildCntrlMenuItems = (options: IJupyterParserOptions) => {
-            const submenu: siyuan.IMenuItemOption[] = [
+            const submenu: siyuan.IMenu[] = [
                 {
                     icon: "iconTheme",
                     label: this.i18n.menu.run.submenu.cntrl.enable.label,
@@ -1373,7 +1379,7 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
             return submenu;
         };
 
-        const submenu: siyuan.IMenuItemOption[] = [
+        const submenu: siyuan.IMenu[] = [
             {
                 icon: "iconPlay",
                 label: this.i18n.menu.run.submenu.custom.label,
@@ -1418,8 +1424,8 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
      */
     public buildOpenDocumentMenuItems(
         id: string,
-    ): siyuan.IMenuItemOption[] {
-        const submenu: siyuan.IMenuItemOption[] = [];
+    ): siyuan.IMenu[] {
+        const submenu: siyuan.IMenu[] = [];
 
         /* 在新页签中打开 */
         submenu.push({
@@ -1581,7 +1587,7 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
                 case "ok": {
                     /* 使用菜单实现自动补全 */
                     const content = message.content;
-                    const menu_items: siyuan.IMenuItemOption[] = [];
+                    const menu_items: siyuan.IMenu[] = [];
                     const icon_map = isLightTheme()
                         ? LIGHT_ICON_MAP
                         : DARK_ICON_MAP;
@@ -1607,7 +1613,7 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
                                 current.end,
                                 current.text,
                             );
-                            const item: siyuan.IMenuItemOption = {
+                            const item: siyuan.IMenu = {
                                 label: current.text,
                                 accelerator: fn__code(current.type),
                                 // accelerator: fn__code(current.signature),
@@ -1662,7 +1668,7 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
                                 content.cursor_end,
                                 label,
                             ),
-                        } as siyuan.IMenuItemOption)));
+                        } as siyuan.IMenu)));
                     }
 
                     if (menu_items.length > 0) {
@@ -1872,7 +1878,7 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
         | sdk.types.kernel.api.block.insertBlock.IOperation
         | void
     > {
-        const payload: sdk.types.kernel.api.block.insertBlock.IPayload = {
+        const payload: Modify<sdk.types.kernel.api.block.insertBlock.IPayload> = {
             data: buildNewCodeCell(),
             dataType: "markdown",
         };
@@ -2071,10 +2077,10 @@ export default class JupyterClientPlugin extends siyuan.Plugin {
         // this.logger.debug(e);
 
         const detail = e.detail;
-        const context = getBlockMenuContext(detail); // 获取块菜单上下文
+        const context = getBlockMenuContext(detail as BlockMenuDetail); // 获取块菜单上下文
         if (context) {
             const session = this.doc2session.get(context.protyle.block.rootID!);
-            const submenu: siyuan.IMenuItemOption[] = [];
+            const submenu: siyuan.IMenu[] = [];
             if (context.isDocumentBlock) { // 文档块菜单
                 submenu.push(...this.buildJupyterDocumentMenuItems(
                     context.id,

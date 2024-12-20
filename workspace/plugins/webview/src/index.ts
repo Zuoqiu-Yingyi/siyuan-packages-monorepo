@@ -15,6 +15,7 @@
 
 import * as sdk from "@siyuan-community/siyuan-sdk";
 import siyuan from "siyuan";
+import { mount } from "svelte";
 
 import {
     FLAG_DESKTOP,
@@ -33,6 +34,7 @@ import {
 } from "@workspace/utils/siyuan/icon";
 import {
     getBlockMenuContext,
+    type BlockMenuDetail,
 } from "@workspace/utils/siyuan/menu/block";
 import { washMenuItems } from "@workspace/utils/siyuan/menu/wash";
 import {
@@ -44,14 +46,15 @@ import {
     Pathname,
 } from "@workspace/utils/siyuan/url";
 
+import Settings from "./components/Settings.svelte";
+import Webview from "./components/Webview.svelte";
+
 import icon_webview_anchor from "./assets/symbols/icon-webview-anchor.symbol?raw";
 import icon_webview_browser from "./assets/symbols/icon-webview-browser.symbol?raw";
 import icon_webview_chromium from "./assets/symbols/icon-webview-chromium.symbol?raw";
 import icon_webview_click from "./assets/symbols/icon-webview-click.symbol?raw";
 import icon_webview_select from "./assets/symbols/icon-webview-select.symbol?raw";
 import icon_webview_title from "./assets/symbols/icon-webview-title.symbol?raw";
-import Settings from "./components/Settings.svelte";
-import Webview from "./components/Webview.svelte";
 import { DEFAULT_CONFIG } from "./configs/default";
 import {
     openNewWindow,
@@ -81,6 +84,7 @@ export default class WebviewPlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "global-config.json";
     static readonly WEBVIEW_TAB_TYPE = "-webview-tag";
 
+    // @ts-expect-error ignore original type
     declare public readonly i18n: I18N;
 
     public readonly siyuan = siyuan;
@@ -116,7 +120,7 @@ export default class WebviewPlugin extends siyuan.Plugin {
 
                 // eslint-disable-next-line ts/no-this-alias
                 const tab = this;
-                void new Webview({
+                mount(Webview, {
                     // target,
                     target: tab.element,
                     props: {
@@ -291,7 +295,7 @@ export default class WebviewPlugin extends siyuan.Plugin {
         });
         const target = dialog.element.querySelector(`#${plugin.SETTINGS_DIALOG_ID}`);
         if (target) {
-            void new Settings({
+            mount(Settings, {
                 target,
                 props: {
                     config: this.config,
@@ -363,9 +367,9 @@ export default class WebviewPlugin extends siyuan.Plugin {
             title: "",
         },
         webPreferences: IWebPreferences = {
-            defaultFontSize: window.siyuan.config.editor.fontSize,
+            defaultFontSize: window.siyuan.config!.editor.fontSize,
             defaultFontFamily: {
-                standard: window.siyuan.config.editor.fontFamily,
+                standard: window.siyuan.config!.editor.fontFamily,
             },
         },
     ) {
@@ -608,7 +612,7 @@ export default class WebviewPlugin extends siyuan.Plugin {
     protected buildOpenBlockSubmenu(
         id: BlockID,
         focus: boolean = false,
-    ): siyuan.IMenuItemOption[] {
+    ): siyuan.IMenu[] {
         const options: Parameters<typeof siyuan.openTab>[0] = {
             app: this.app,
             doc: {
@@ -621,7 +625,7 @@ export default class WebviewPlugin extends siyuan.Plugin {
             },
         };
 
-        const submenu: siyuan.IMenuItemOption[] = [
+        const submenu: siyuan.IMenu[] = [
             {
                 /* 在新页签中打开 */
                 icon: "iconAdd",
@@ -703,8 +707,8 @@ export default class WebviewPlugin extends siyuan.Plugin {
         href: string,
         title: string,
         icon?: string,
-    ): siyuan.IMenuItemOption[] {
-        const submenu: siyuan.IMenuItemOption[] = [
+    ): siyuan.IMenu[] {
+        const submenu: siyuan.IMenu[] = [
             {
                 /* 在新页签中打开 */
                 icon: "iconAdd",
@@ -779,7 +783,7 @@ export default class WebviewPlugin extends siyuan.Plugin {
             return;
         }
 
-        const submenu: siyuan.IMenuItemOption[] = [];
+        const submenu: siyuan.IMenu[] = [];
 
         /* 新窗口打开块 */
         submenu.push({
@@ -805,7 +809,7 @@ export default class WebviewPlugin extends siyuan.Plugin {
     /* 超链接菜单 */
     protected readonly linkMenuEventListener = (e: IOpenMenuLinkEvent) => {
         // this.logger.debug(e);
-        const submenu: siyuan.IMenuItemOption[] = [];
+        const submenu: siyuan.IMenu[] = [];
 
         const element = e.detail.element; // 超链接元素
         const link = this.parseHyperlinkMeta(element, this.config.tab.open.targets);
@@ -888,9 +892,9 @@ export default class WebviewPlugin extends siyuan.Plugin {
     protected readonly blockMenuEventListener = (e: IClickBlockIconEvent | IClickEditorTitleIconEvent) => {
         // this.logger.debug(e);
         const detail = e.detail;
-        const context = getBlockMenuContext(e.detail);
+        const context = getBlockMenuContext(e.detail as BlockMenuDetail);
         if (context) {
-            const submenu: siyuan.IMenuItemOption[] = [];
+            const submenu: siyuan.IMenu[] = [];
 
             if (!context.isDocumentBlock // 不是文档块
                 && !context.isMultiBlock // 不是多个块

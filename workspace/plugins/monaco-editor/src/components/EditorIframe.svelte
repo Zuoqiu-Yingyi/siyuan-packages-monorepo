@@ -15,8 +15,33 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type MonacoEditorPlugin from "@/index";
+    import type {
+        IEditorHandlers,
+        IEditorProps,
+    } from "@/types/editor";
+
+    export interface IProps {
+        plugin: InstanceType<typeof MonacoEditorPlugin>; // 插件对象
+
+        diff?: IEditorProps["diff"];
+        locale?: IEditorProps["locale"];
+        savable?: IEditorProps["savable"];
+        changeable?: IEditorProps["changeable"];
+        original?: IEditorProps["original"];
+        modified?: IEditorProps["modified"];
+        options?: IEditorProps["options"];
+        originalOptions?: IEditorProps["originalOptions"];
+        modifiedOptions?: IEditorProps["modifiedOptions"];
+        diffOptions?: IEditorProps["diffOptions"];
+    }
+</script>
+
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
 
     import { EditorBridgeMaster } from "@/bridge/EditorMaster";
 
@@ -24,48 +49,51 @@
 
     import type { Action } from "svelte/action";
 
-    import type MonacoEditorPlugin from "@/index";
-    import type { IEditorEvents, IEditorProps } from "@/types/editor";
+    const {
+        plugin,
+        diff = false,
+        locale = DEFAULT_EDITOR_PROPS.locale,
+        savable = DEFAULT_EDITOR_PROPS.savable,
+        changeable = DEFAULT_EDITOR_PROPS.changeable,
+        original = DEFAULT_EDITOR_PROPS.original,
+        modified = DEFAULT_EDITOR_PROPS.modified,
+        options = DEFAULT_EDITOR_PROPS.options,
+        originalOptions = DEFAULT_EDITOR_PROPS.originalOptions,
+        modifiedOptions = DEFAULT_EDITOR_PROPS.modifiedOptions,
+        diffOptions = DEFAULT_EDITOR_PROPS.diffOptions,
 
-    export let plugin: InstanceType<typeof MonacoEditorPlugin>; // 插件对象
+        onChanged,
+        onSave,
+        onHover,
+        onOpen,
+    }: IProps & IEditorHandlers = $props();
 
-    export let diff: IEditorProps["diff"] = false;
-    export let locale: IEditorProps["locale"] = DEFAULT_EDITOR_PROPS.locale;
+    let inited = $state(false);
 
-    export let savable: IEditorProps["savable"] = DEFAULT_EDITOR_PROPS.savable;
-    export let changeable: IEditorProps["changeable"] = DEFAULT_EDITOR_PROPS.changeable;
-
-    export let original: IEditorProps["original"] = DEFAULT_EDITOR_PROPS.original;
-    export let modified: IEditorProps["modified"] = DEFAULT_EDITOR_PROPS.modified;
-    export let options: IEditorProps["options"] = DEFAULT_EDITOR_PROPS.options;
-    export let originalOptions: IEditorProps["originalOptions"] = DEFAULT_EDITOR_PROPS.originalOptions;
-    export let modifiedOptions: IEditorProps["modifiedOptions"] = DEFAULT_EDITOR_PROPS.modifiedOptions;
-    export let diffOptions: IEditorProps["diffOptions"] = DEFAULT_EDITOR_PROPS.diffOptions;
-
-    let inited = false;
-
-    const dispatch = createEventDispatcher<IEditorEvents>();
     const bridge = new EditorBridgeMaster(
         plugin, //
         EditorBridgeMaster.createChannel(true), //
     );
 
-    $: if (inited)
-        bridge.set({ savable });
-    $: if (inited)
-        bridge.set({ changeable });
-    $: if (inited)
-        bridge.set({ original });
-    $: if (inited)
-        bridge.set({ modified });
-    $: if (inited)
-        bridge.set({ options });
-    $: if (inited)
-        bridge.set({ originalOptions });
-    $: if (inited)
-        bridge.set({ modifiedOptions });
-    $: if (inited)
-        bridge.set({ diffOptions });
+    $effect(() => {
+        if (inited) {
+            bridge.set({
+                savable,
+                changeable,
+
+                original: $state.snapshot(original),
+                modified: $state.snapshot(modified),
+                // @ts-expect-error
+                options: $state.snapshot(options),
+                // @ts-expect-error
+                originalOptions: $state.snapshot(originalOptions),
+                // @ts-expect-error
+                modifiedOptions: $state.snapshot(modifiedOptions),
+                // @ts-expect-error
+                diffOptions: $state.snapshot(diffOptions),
+            });
+        }
+    });
 
     bridge.addEventListener("editor-ready", (e) => {
         // plugin.logger.debug("editor-ready");
@@ -81,12 +109,16 @@
                 savable,
                 changeable,
 
-                original,
-                modified,
-                options,
-                originalOptions,
-                modifiedOptions,
-                diffOptions,
+                original: $state.snapshot(original),
+                modified: $state.snapshot(modified),
+                // @ts-expect-error
+                options: $state.snapshot(options),
+                // @ts-expect-error
+                originalOptions: $state.snapshot(originalOptions),
+                // @ts-expect-error
+                modifiedOptions: $state.snapshot(modifiedOptions),
+                // @ts-expect-error
+                diffOptions: $state.snapshot(diffOptions),
             });
             inited = true;
         }
@@ -95,16 +127,16 @@
         }
     });
     bridge.addEventListener("editor-changed", (e) => {
-        dispatch("changed", e.data.data);
+        onChanged?.(e.data.data);
     });
     bridge.addEventListener("editor-save", (e) => {
-        dispatch("save", e.data.data);
+        onSave?.(e.data.data);
     });
     bridge.addEventListener("editor-hover-siyuan", (e) => {
-        dispatch("hover", e.data.data);
+        onHover?.(e.data.data);
     });
     bridge.addEventListener("editor-open-siyuan", (e) => {
-        dispatch("open", e.data.data);
+        onOpen?.(e.data.data);
     });
 
     /* 挂载编辑器 */
@@ -126,7 +158,7 @@
     class="fn__flex-1 editor"
     title={plugin.displayName}
     use:init
-/>
+></iframe>
 
 <style>
     .editor {

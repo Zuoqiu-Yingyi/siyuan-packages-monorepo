@@ -25,8 +25,15 @@
 
     import type InboxPlugin from "@/index";
 
-    export let plugin: InstanceType<typeof InboxPlugin>; // 插件对象
-    export let src: string; // iframe 资源路径
+    interface IProps {
+        src: string;
+        plugin: InstanceType<typeof InboxPlugin>;
+    }
+
+    let {
+        src,
+        plugin,
+    }: IProps = $props();
 
     const url = new URL(src, globalThis.document.baseURI);
 

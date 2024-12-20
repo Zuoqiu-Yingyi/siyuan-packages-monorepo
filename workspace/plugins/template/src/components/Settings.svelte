@@ -28,12 +28,18 @@
 
     import type Plugin from "@/index";
     import type { IConfig } from "@/types/config";
-    import type { I18N } from "@/utils/i18n";
 
-    export let config: IConfig; // 传入的配置项
-    export let plugin: InstanceType<typeof Plugin>; // 插件实例
+    interface IProps {
+        config: IConfig; // 传入的配置项
+        plugin: InstanceType<typeof Plugin>; // 插件实例
+    }
 
-    const i18n = plugin.i18n as unknown as I18N;
+    const {
+        config,
+        plugin,
+    }: IProps = $props();
+
+    const i18n = plugin.i18n;
 
     // @ts-expect-error
     // eslint-disable-next-line no-unused-vars, unused-imports/no-unused-vars
@@ -55,7 +61,7 @@
     enum PanelKey {
         // eslint-disable-next-line no-unused-vars
         general, // 常规设置
-    }
+    };
 
     const panels_focus_key = PanelKey.general;
     const panels = [

@@ -58,7 +58,7 @@
     >
         {cancelButtonText}
     </button>
-    <div class="fn__space" />
+    <div class="fn__space"></div>
     <button
         bind:this={confirm}
         class="b3-button b3-button--text"

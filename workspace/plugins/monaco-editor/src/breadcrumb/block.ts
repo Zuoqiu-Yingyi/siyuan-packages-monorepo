@@ -31,7 +31,7 @@ import type { ComponentProps } from "svelte";
 import type Tab from "@workspace/components/siyuan/tab/Tab.svelte";
 import type { BlockID } from "@workspace/types/siyuan";
 
-import type EditorIframe from "@/components/EditorIframe.svelte";
+import type { IProps as IEditorIframeProps } from "@/components/EditorIframe.svelte";
 
 /* 建立从节点类型到 svg 图标引用 ID 的映射 */
 export const NodeType2IconID = new Map<sdk.siyuan.NodeType, string>([
@@ -73,7 +73,7 @@ export const SubType2IconID = new Map<sdk.siyuan.BlockSubType, string>([
 ]);
 
 export interface IBlockStore extends IBaseStore {
-    changeable: Writable<ComponentProps<EditorIframe>["changeable"]>; // 编辑器是否可更改
+    changeable: Writable<IEditorIframeProps["changeable"]>; // 编辑器是否可更改
     fullscreen: Writable<ComponentProps<Tab>["fullscreen"]>; // 是否全屏显示
 }
 
