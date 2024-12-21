@@ -39,6 +39,10 @@
         Explorer,
         type IExplorerEvent,
     } from "@/explorer";
+    import { ExplorerIcon } from "@/explorer/icon";
+
+    import type { IBar } from "@workspace/components/siyuan/dock";
+    import type { ITree } from "@workspace/components/siyuan/tree/file";
 
     interface IHandlers {
         onDragEnterWindow?: (params: IExplorerEvent["dragEnterWindow"]) => void; // 拖拽进入窗口

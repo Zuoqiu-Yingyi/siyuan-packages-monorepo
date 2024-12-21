@@ -80,52 +80,23 @@
     );
 
     $effect(() => {
-        if (inited)
-            bridge.set({ path });
-    });
-    $effect(() => {
-        if (inited)
-            bridge.set({ vditorID });
-    });
-    $effect(() => {
-        if (inited)
-            bridge.set({ assetsDirPath });
-    });
-    $effect(() => {
-        if (inited)
-            bridge.set({ assetsUploadMode });
-    });
-    $effect(() => {
-        if (inited)
-            bridge.set({ options });
-    });
-    $effect(() => {
-        if (inited)
-            bridge.set({ value });
-    });
-    $effect(() => {
-        if (inited)
-            bridge.set({ theme });
-    });
-    $effect(() => {
-        if (inited)
-            bridge.set({ codeBlockThemeLight });
-    });
-    $effect(() => {
-        if (inited)
-            bridge.set({ codeBlockThemeDark });
-    });
-    $effect(() => {
-        if (inited)
-            bridge.set({ updatable });
-    });
-    $effect(() => {
-        if (inited)
-            bridge.set({ changeable });
-    });
-    $effect(() => {
-        if (inited)
-            bridge.set({ debug });
+        if (inited) {
+            bridge.set({
+                path,
+                vditorID,
+                assetsDirPath,
+                assetsUploadMode,
+                // @ts-expect-error
+                options: $state.snapshot(options),
+                value,
+                theme,
+                codeBlockThemeLight,
+                codeBlockThemeDark,
+                updatable,
+                changeable,
+                debug,
+            });
+        }
     });
 
     bridge.addEventListener("vditor-ready", (e) => {
@@ -140,7 +111,8 @@
                 vditorID,
                 assetsDirPath,
                 assetsUploadMode,
-                options,
+                // @ts-expect-error
+                options: $state.snapshot(options),
                 value,
                 theme,
                 codeBlockThemeLight,
