@@ -210,6 +210,7 @@ export default class MonacoEditorPlugin extends siyuan.Plugin {
                 const tab = this as IEditorTab;
                 if (tab.component) {
                     unmount(tab.component);
+                    delete tab.component;
                 }
             },
         });

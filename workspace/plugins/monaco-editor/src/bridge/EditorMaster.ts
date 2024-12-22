@@ -53,7 +53,6 @@ export class EditorBridgeMaster extends BridgeMaster<IMessageEditorSlaveEventMap
         };
 
         /* 发送消息 */
-        this.plugin.logger.debug("EditorBridgeMaster.init", message);
         this.channel.port1.postMessage(message);
     }
 
