@@ -66,8 +66,9 @@
     let breadcrumbItems: ComponentProps<Tab>["breadcrumbItems"] = $state([]); // 面包屑项
     let breadcrumbIcons: ComponentProps<Tab>["breadcrumbIcons"] = $state([]); // 面包屑按钮
 
-    let tabOptions: ITabOptions;
-    const inited: boolean = $derived(diff !== undefined);
+    let tabOptions: ITabOptions | undefined = $state();
+    // eslint-disable-next-line prefer-const
+    let inited: boolean = $derived(diff !== undefined);
 
     /* 响应式数据 */
     const stores = {
