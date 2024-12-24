@@ -16,7 +16,7 @@
 import { mount, unmount } from "svelte";
 import { get } from "svelte/store";
 
-import { prompt, type PromptCallback } from "@workspace/components/siyuan/dialog/prompt";
+import { prompt, type PromptCallback } from "@workspace/components/siyuan/dialog/prompt.svelte.ts";
 import {
     FileTreeNodeType,
     type IFileTreeNodeStores,

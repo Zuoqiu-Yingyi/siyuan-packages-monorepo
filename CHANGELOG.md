@@ -1,5 +1,17 @@
 # 更改日志 | CHANGE LOG
 
+## 2024-12-24
+
+- 修复提示框无法加载问题 | Fix the issue that the prompt box cannot be loaded.
+
+## 2024-12-23
+
+- 修复编辑器页签无法加载问题 | Fix the issue that the editor tab cannot be loaded.
+
+## 2024-12-22
+
+- 修复文件管理器无法加载 | Fix the issue that the explorer cannot be loaded.
+
 ## 2024-12-21
 
 - 部分 Svelte 组件迁移至 `v5` | Partial Svelte components migrated to `v5`.
