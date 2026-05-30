@@ -1,0 +1,52 @@
+[submodule "workspace/plugins/custom-block"]
+	path = workspace/plugins/custom-block
+	url = https://github.com/Zuoqiu-Yingyi/siyuan-plugin-custom-block.git
+	branch = dev
+[submodule "workspace/plugins/custom-fonts"]
+	path = workspace/plugins/custom-fonts
+	url = https://github.com/Zuoqiu-Yingyi/siyuan-plugin-custom-fonts.git
+	branch = dev
+[submodule "workspace/plugins/inbox"]
+	path = workspace/plugins/inbox
+	url = https://github.com/Zuoqiu-Yingyi/siyuan-plugin-inbox.git
+	branch = dev
+[submodule "workspace/plugins/jupyter-client"]
+	path = workspace/plugins/jupyter-client
+	url = https://github.com/Zuoqiu-Yingyi/siyuan-plugin-jupyter-client.git
+	branch = dev
+[submodule "workspace/plugins/keepass"]
+	path = workspace/plugins/keepass
+	url = https://github.com/Zuoqiu-Yingyi/siyuan-plugin-keepass.git
+	branch = dev
+[submodule "workspace/widgets/metadata"]
+	path = workspace/widgets/metadata
+	url = https://github.com/Zuoqiu-Yingyi/widget-metadata.git
+	branch = dev
+[submodule "workspace/plugins/monaco-editor"]
+	path = workspace/plugins/monaco-editor
+	url = https://github.com/Zuoqiu-Yingyi/siyuan-plugin-monaco-editor.git
+	branch = dev
+[submodule "workspace/plugins/open-api"]
+	path = workspace/plugins/open-api
+	url = https://github.com/Zuoqiu-Yingyi/siyuan-plugin-open-api.git
+	branch = dev
+[submodule "workspace/plugins/opencc"]
+	path = workspace/plugins/opencc
+	url = https://github.com/Zuoqiu-Yingyi/siyuan-plugin-opencc.git
+	branch = dev
+[submodule "workspace/plugins/template"]
+	path = workspace/plugins/template
+	url = https://github.com/Zuoqiu-Yingyi/siyuan-plugin-template.git
+	branch = main
+[submodule "workspace/plugins/typewriter"]
+	path = workspace/plugins/typewriter
+	url = https://github.com/Zuoqiu-Yingyi/siyuan-plugin-typewriter.git
+	branch = dev
+[submodule "workspace/plugins/wakatime"]
+	path = workspace/plugins/wakatime
+	url = https://github.com/Zuoqiu-Yingyi/siyuan-plugin-wakatime.git
+	branch = dev
+[submodule "workspace/plugins/webview"]
+	path = workspace/plugins/webview
+	url = https://github.com/Zuoqiu-Yingyi/siyuan-plugin-webview.git
+	branch = dev
