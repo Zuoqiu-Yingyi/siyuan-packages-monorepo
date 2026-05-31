@@ -9,7 +9,7 @@
         ],
         "module": "ESNext",
         "moduleResolution": "Bundler",
-        // "baseUrl": "./",
+        // "baseUrl": ".",
         // "paths": {
         //     "~/*": [
         //         "./*",
