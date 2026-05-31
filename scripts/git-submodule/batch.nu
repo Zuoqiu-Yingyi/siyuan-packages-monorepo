@@ -27,9 +27,9 @@ def --wrapped main [...args: string] {
             print $"(ansi cyan)> ($cmd) ($cmd_args | str join ' ')(ansi reset)"
             cd $abs_path
             if ($cmd_args | is-empty) {
-                run-external $cmd
+                try { run-external $cmd }
             } else {
-                run-external $cmd ...$cmd_args
+                try { run-external $cmd ...$cmd_args }
             }
         } else {
             print $"(ansi yellow)Skipping ($submodule_path) \(not initialized\)(ansi reset)"
