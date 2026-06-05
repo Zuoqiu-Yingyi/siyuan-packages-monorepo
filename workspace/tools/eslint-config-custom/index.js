@@ -60,6 +60,7 @@ const rules = {
                     "$vue", // import Component from "Component.vue";
                     "$svelte", // import Component from "Component.svelte";
                 ],
+                "$json", // import data from "data.json";
                 "value-import",
                 "unknown",
 
@@ -83,6 +84,7 @@ const rules = {
                     "$vue-type", // import type Component from "Component.vue";
                     "$svelte-type", // import type Component from "Component.svelte";
                 ],
+                "$json-type", // import type data from "data.json";
                 "type-import",
 
                 "side-effect-style", // import "style.css";
@@ -99,6 +101,7 @@ const rules = {
                 { groupName: "$base-type", elementNamePattern: "^~/.*", selector: "type" },
                 { groupName: "$vue-type", elementNamePattern: ".+\\.vue", selector: "type" },
                 { groupName: "$svelte-type", elementNamePattern: ".+\\.svelte(\\.(j|t)s)?", selector: "type" },
+                { groupName: "$json-type", elementNamePattern: ".+\\.json", selector: "type" },
 
                 { groupName: "$node", elementNamePattern: "^node:.+" },
                 { groupName: "$repo", elementNamePattern: "^@repo/.*" },
@@ -106,6 +109,7 @@ const rules = {
                 { groupName: "$base", elementNamePattern: "^~/.*" },
                 { groupName: "$vue", elementNamePattern: ".+\\.vue" },
                 { groupName: "$svelte", elementNamePattern: ".+\\.svelte(\\.(j|t)s)?" },
+                { groupName: "$json", elementNamePattern: ".+\\.json" },
             ],
         },
     ],

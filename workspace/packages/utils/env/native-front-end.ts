@@ -89,7 +89,7 @@ export function isDark(): boolean {
 }
 
 export function isSiyuan(): boolean {
-    return !!globalThis.siyuan;
+    return "siyuan" in globalThis;
 }
 
 export function isSiyuanParent(): boolean {
