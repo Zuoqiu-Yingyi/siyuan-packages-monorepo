@@ -22,8 +22,9 @@
     import { src2url } from "@workspace/utils/misc/url";
     import { path2icon } from "@workspace/utils/siyuan/icon";
 
-    import Iframe from "./../misc/Iframe.svelte";
     import { TooltipsDirection } from "./../misc/tooltips";
+
+    import Iframe from "./../misc/Iframe.svelte";
     import Tab from "./Tab.svelte";
 
     import type {
@@ -61,7 +62,6 @@
                     iframe.contentWindow.location.reload();
                 }
                 else {
-                    // eslint-disable-next-line no-self-assign
                     src = src;
                 }
             },

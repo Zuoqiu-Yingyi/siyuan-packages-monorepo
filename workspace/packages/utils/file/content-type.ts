@@ -18,8 +18,8 @@ import * as media from "media-typer";
 
 export {
     content,
-    media,
     parse as contentTypeParse,
+    media,
 };
 
 export interface IContentType {

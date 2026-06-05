@@ -19,10 +19,7 @@
     lang="ts"
     module
 >
-    import type {
-        IDialogEvent,
-        IPromptEvent,
-    } from "./event";
+    import type { IDialogEvent, IPromptEvent } from "./event";
 
     export interface IProps {
         text?: string; // 提示文本
@@ -130,7 +127,7 @@
         <!-- REF: https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/datalist -->
         {#if datalist.length > 0}
             <datalist id={listID}>
-                {#each datalist as value}
+                {#each datalist as value (value)}
                     <option {value}></option>
                 {/each}
             </datalist>

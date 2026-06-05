@@ -16,12 +16,11 @@
 -->
 
 <script lang="ts">
-    import {
-        createEventDispatcher,
-        type ComponentEvents,
-    } from "svelte";
+    import { createEventDispatcher } from "svelte";
 
     import Dialog from "./Dialog.svelte";
+
+    import type { ComponentEvents } from "svelte";
 
     import type { IPromptEvent } from "./event";
 
@@ -85,7 +84,7 @@
         <!-- REF: https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/datalist -->
         {#if datalist.length > 0}
             <datalist id={listID}>
-                {#each datalist as value}
+                {#each datalist as value (value)}
                     <option {value}></option>
                 {/each}
             </datalist>

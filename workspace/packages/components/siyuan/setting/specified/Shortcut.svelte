@@ -20,21 +20,25 @@
 <script lang="ts">
     import {
         createEventDispatcher,
-        type ComponentEvents,
+
     } from "svelte";
 
     import {
         MouseButton,
         MouseEvent,
-        type IFunctionKeysStatus,
-        type IMouseStatus,
+
     } from "@workspace/utils/shortcut";
+
+    import { ItemType } from "./../item/item";
 
     import Svg from "./../../misc/Svg.svelte";
     import Group from "./../item/Group.svelte";
     import Input from "./../item/Input.svelte";
-    import { ItemType } from "./../item/item";
     import MiniItem from "./../item/MiniItem.svelte";
+
+    import type { ComponentEvents } from "svelte";
+
+    import type { IFunctionKeysStatus, IMouseStatus } from "@workspace/utils/shortcut";
 
     import type { IShortcutEvent } from "./../event";
 

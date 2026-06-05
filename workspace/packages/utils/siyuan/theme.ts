@@ -15,8 +15,6 @@
 
 import type { ISiyuanGlobal } from "@workspace/types/siyuan";
 
-declare let globalThis: ISiyuanGlobal;
-
 /* 是否为暗色主题 */
 export function isDarkTheme(): boolean {
     const themeMode = globalThis
@@ -34,7 +32,7 @@ export function isDarkTheme(): boolean {
             break;
     }
 
-    const mode = globalThis
+    const mode = (globalThis as ISiyuanGlobal)
         ?.siyuan
         ?.config
         ?.appearance

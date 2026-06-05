@@ -26,10 +26,11 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
         onMount,
     } from "svelte";
 
+    import { ItemType } from "./item/item";
+
     import Svg from "./../misc/Svg.svelte";
     import Group from "./item/Group.svelte";
     import Input from "./item/Input.svelte";
-    import { ItemType } from "./item/item";
     import Item from "./item/Item.svelte";
     import MiniItem from "./item/MiniItem.svelte";
     import Panel from "./panel/Panel.svelte";

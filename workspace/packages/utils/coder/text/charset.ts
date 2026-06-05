@@ -20,8 +20,10 @@ import { detect as chardet } from "jschardet";
 
 import {
     CHAR_SET,
-    type TLabel,
+
 } from ".";
+
+import type { TLabel } from ".";
 
 export function detectContentType(contentType: string): false | TLabel {
     try {

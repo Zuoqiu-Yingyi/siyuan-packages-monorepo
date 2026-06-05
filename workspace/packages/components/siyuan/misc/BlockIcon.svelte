@@ -19,11 +19,14 @@
     import { onDestroy } from "svelte";
     import {
         writable,
-        type Unsubscriber,
+
     } from "svelte/store";
 
-    import Svg from "./Svg.svelte";
     import { TooltipsDirection } from "./tooltips";
+
+    import Svg from "./Svg.svelte";
+
+    import type { Unsubscriber } from "svelte/store";
 
     import type {
         IBlockIconProps,

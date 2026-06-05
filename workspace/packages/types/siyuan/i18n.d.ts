@@ -16,8 +16,8 @@
 import type { A } from "ts-toolbelt";
 
 // REF https://www.zhihu.com/question/479585640/answer/2705083460
-type IsEqual<T, U> =
-    (<T1>() => T1 extends T ? 1 : 2) extends
+type IsEqual<T, U>
+    = (<T1>() => T1 extends T ? 1 : 2) extends
     (<T2>() => T2 extends U ? 1 : 2)
         ? true
         : false;

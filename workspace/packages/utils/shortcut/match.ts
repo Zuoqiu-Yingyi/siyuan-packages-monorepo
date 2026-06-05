@@ -28,7 +28,7 @@ export function isMathced<T>(value: T, checker: TChecker<T>): boolean {
         case (checker instanceof Set):
             return (checker as Set<T>).has(value);
 
-        case (checker instanceof Function):
+        case (typeof checker === "function"):
             return (checker as (value: T) => boolean)(value);
 
         default:

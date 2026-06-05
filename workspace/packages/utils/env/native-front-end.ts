@@ -15,8 +15,6 @@
 
 import type { ISiyuanGlobal } from "@workspace/types/siyuan";
 
-declare let globalThis: ISiyuanGlobal;
-
 export const MEDIA_QUERY_LIST = {
     get light() {
         return window.matchMedia("(prefers-color-scheme: light)");
@@ -31,12 +29,13 @@ export function hasNodeRequire(): boolean {
 }
 
 export function hasNodeProcess(): boolean {
+    // eslint-disable-next-line node/prefer-global/process
     return !!globalThis.process;
 }
 
 export function hasElectron(): boolean {
-    // eslint-disable-next-line no-prototype-builtins
-    return !!globalThis.process?.versions?.hasOwnProperty("electron");
+    // eslint-disable-next-line node/prefer-global/process
+    return !!Object.hasOwn(globalThis.process?.versions ?? {}, "electron");
 }
 
 export function isElectron(): boolean {
@@ -67,7 +66,7 @@ export function isLight(): boolean {
             break;
     }
 
-    const mode = globalThis
+    const mode = (globalThis as ISiyuanGlobal)
         ?.siyuan
         ?.config
         ?.appearance
@@ -102,8 +101,8 @@ export function isSiyuanTop(): boolean {
 }
 
 export function isAndroid(): boolean {
-    return !!globalThis.JSAndroid
-        && globalThis
+    return !!(globalThis as ISiyuanGlobal).JSAndroid
+        && (globalThis as ISiyuanGlobal)
             ?.siyuan
             ?.config
             ?.system
@@ -111,8 +110,8 @@ export function isAndroid(): boolean {
 };
 
 export function isIOS(): boolean {
-    return !!globalThis.webkit?.messageHandlers
-        && globalThis
+    return !!(globalThis as ISiyuanGlobal).webkit?.messageHandlers
+        && (globalThis as ISiyuanGlobal)
             ?.siyuan
             ?.config
             ?.system

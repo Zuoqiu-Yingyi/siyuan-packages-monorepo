@@ -23,20 +23,21 @@
     } from "svelte";
     import {
         writable,
-        type Unsubscriber,
+
     } from "svelte/store";
+
+    import {
+        FileTreeNodeType,
+
+    } from ".";
 
     import Icon from "./../../misc/Icon.svelte";
     import Svg from "./../../misc/Svg.svelte";
     import SvgArrow from "./../../misc/SvgArrow.svelte";
 
-    import {
-        FileTreeNodeType,
-        type IFileTreeEvent,
-        type IFileTreeNode,
-        type IFileTreeNodeStores,
-        type ITree,
-    } from ".";
+    import type { Unsubscriber } from "svelte/store";
+
+    import type { IFileTreeEvent, IFileTreeNode, IFileTreeNodeStores, ITree } from ".";
 
     export let type: IFileTreeNode["type"];
     export let name: IFileTreeNode["name"] = "";

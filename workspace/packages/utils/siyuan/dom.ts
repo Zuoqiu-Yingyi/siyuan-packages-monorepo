@@ -27,8 +27,6 @@ import type {
     SnippetID,
 } from "@workspace/types/siyuan";
 
-declare let globalThis: ISiyuanGlobal;
-
 /**
  * 查询块节点 ID
  * @param e - 事件
@@ -126,13 +124,13 @@ export function getShorthandID(e: Event): ShorthandID | void {
                             ?.classList
                             ?.contains
                             ?.("sy_inbox") // 收集箱项内容
-                            || element
-                                ?.parentElement
-                                ?.parentElement
-                                ?.parentElement
-                                ?.classList
-                                ?.contains
-                                ?.("sy__inbox") // 收集箱项标题
+                        || element
+                            ?.parentElement
+                            ?.parentElement
+                            ?.parentElement
+                            ?.classList
+                            ?.contains
+                            ?.("sy__inbox") // 收集箱项标题
                     ) {
                         return dataset.id;
                     }
@@ -164,13 +162,13 @@ export function getHistoryCreated(e: Event): HistoryCreated | void {
                             ?.classList
                             ?.contains
                             ?.("history__panel") // 文件历史面板
-                            && !element
-                                ?.parentElement
-                                ?.parentElement
-                                ?.parentElement
-                                ?.classList
-                                ?.contains
-                                ?.("history__repo") // 非数据历史面板
+                        && !element
+                            ?.parentElement
+                            ?.parentElement
+                            ?.parentElement
+                            ?.classList
+                            ?.contains
+                            ?.("history__repo") // 非数据历史面板
                     ) {
                         return dataset.created;
                     }
@@ -255,7 +253,7 @@ export function getSnapshotIDs(e: Event): {
  */
 export function updateBlockID(
     html: string,
-    Lute: typeof siyuan.Lute = globalThis.Lute,
+    Lute: typeof siyuan.Lute = (globalThis as ISiyuanGlobal).Lute,
 ): string {
     const element = document.createElement("div");
     element.innerHTML = html;
@@ -504,8 +502,7 @@ export function getCodeBlockCursorPosition(): ICodeBlockCursorPosition | void {
                  */
                 const order = anchorNode === focusNode // 位于同一个元素内, 等价于 anchorNode.compareDocumentPosition(focusNode) === 0
                     ? anchorOffset <= focusOffset // 根据 offset 判断光标起点与终点的顺序
-                    : (!!(anchorNode.compareDocumentPosition(focusNode) & Node.DOCUMENT_POSITION_FOLLOWING)
-                        );
+                    : (!!(anchorNode.compareDocumentPosition(focusNode) & Node.DOCUMENT_POSITION_FOLLOWING));
 
                 before.setStartBefore(container.firstChild);
                 after.setEndAfter(container.lastChild);

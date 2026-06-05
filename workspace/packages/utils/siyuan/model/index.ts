@@ -17,8 +17,6 @@ import type siyuan from "siyuan";
 
 import type { ISiyuanGlobal } from "@workspace/types/siyuan";
 
-declare let globalThis: ISiyuanGlobal;
-
 export interface IApp {
     plugins: InstanceType<typeof siyuan.Plugin>[];
 }
@@ -101,7 +99,7 @@ export function getEditorsFromBlockPanels(globalSiyuan = window.siyuan): IEditor
  * @param globalSiyuan - 思源全局变量
  * @returns 编辑器列表
  */
-export function getEditors(globalSiyuan = globalThis.siyuan): IEditor[] {
+export function getEditors(globalSiyuan = (globalThis as ISiyuanGlobal).siyuan): IEditor[] {
     const editors: IEditor[] = [
         ...getEditorsFromLayout(globalSiyuan),
         ...getEditorsFromBlockPanels(globalSiyuan),

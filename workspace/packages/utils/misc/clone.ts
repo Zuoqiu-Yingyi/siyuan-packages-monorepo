@@ -18,6 +18,6 @@ import rfdc from "rfdc";
 
 export default rfdc;
 export {
-    rfdc,
     rfdc as deepClone,
+    rfdc,
 };

@@ -121,10 +121,10 @@ export function prompt(Dialog: typeof siyuan.Dialog, options: IPromptOptions): I
     component.$on("confirm", async (e) => {
         const close = options.confirm
             ? await options.confirm(
-                e.detail.value,
-                dialog,
-                component,
-            )
+                    e.detail.value,
+                    dialog,
+                    component,
+                )
             : true;
         if (close) {
             dialog.destroy();
@@ -133,10 +133,10 @@ export function prompt(Dialog: typeof siyuan.Dialog, options: IPromptOptions): I
     component.$on("cancel", async (e) => {
         const close = options.cancel
             ? await options.cancel(
-                e.detail.value,
-                dialog,
-                component,
-            )
+                    e.detail.value,
+                    dialog,
+                    component,
+                )
             : true;
         if (close) {
             dialog.destroy();

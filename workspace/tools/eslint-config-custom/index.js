@@ -93,32 +93,32 @@ const rules = {
                 "^@/.*",
             ],
             customGroups: [
+                { groupName: "$node-type", elementNamePattern: "^node:.+", selector: "type" },
+                { groupName: "$repo-type", elementNamePattern: "^@repo/.*", selector: "type" },
+                { groupName: "$workspace-type", elementNamePattern: "^@workspace/.*", selector: "type" },
+                { groupName: "$base-type", elementNamePattern: "^~/.*", selector: "type" },
+                { groupName: "$vue-type", elementNamePattern: ".+\\.vue", selector: "type" },
+                { groupName: "$svelte-type", elementNamePattern: ".+\\.svelte(\\.(j|t)s)?", selector: "type" },
+
                 { groupName: "$node", elementNamePattern: "^node:.+" },
                 { groupName: "$repo", elementNamePattern: "^@repo/.*" },
                 { groupName: "$workspace", elementNamePattern: "^@workspace/.*" },
                 { groupName: "$base", elementNamePattern: "^~/.*" },
                 { groupName: "$vue", elementNamePattern: ".+\\.vue" },
-                { groupName: "$svelte", elementNamePattern: ".+\\.svelte" },
-
-                { groupName: "$node-type", elementNamePattern: "^node:.+", modifiers: ["type"] },
-                { groupName: "$repo-type", elementNamePattern: "^@repo/.*", modifiers: ["type"] },
-                { groupName: "$workspace-type", elementNamePattern: "^@workspace/.*", modifiers: ["type"] },
-                { groupName: "$base-type", elementNamePattern: "^~/.*", modifiers: ["type"] },
-                { groupName: "$vue-type", elementNamePattern: ".+\\.vue", modifiers: ["type"] },
-                { groupName: "$svelte-type", elementNamePattern: ".+\\.svelte", modifiers: ["type"] },
+                { groupName: "$svelte", elementNamePattern: ".+\\.svelte(\\.(j|t)s)?" },
             ],
         },
     ],
     "perfectionist/sort-named-exports": [
         "warn",
         {
-            groups: ["value", "type", "unknown"],
+            groups: ["value-export", "type-export", "unknown"],
         },
     ],
     "perfectionist/sort-named-imports": [
         "warn",
         {
-            groups: ["value", "type", "unknown"],
+            groups: ["value-import", "type-import", "unknown"],
             ignoreAlias: false,
         },
     ],
@@ -297,6 +297,7 @@ const config = antfu({
                     ],
                 },
             ],
+            "import/no-mutable-exports": "off",
         },
     },
     ignores: [

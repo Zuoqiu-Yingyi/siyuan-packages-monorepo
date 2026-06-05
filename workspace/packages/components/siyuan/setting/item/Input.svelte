@@ -22,11 +22,11 @@
 
     import {
         ItemType,
-        type ILimits,
-        type IOptions,
+
     } from "./item";
 
     import type { IInputEvent } from "./../event";
+    import type { ILimits, IOptions } from "./item";
 
     export let type: ItemType; // Setting Type
     export let settingKey: string;
