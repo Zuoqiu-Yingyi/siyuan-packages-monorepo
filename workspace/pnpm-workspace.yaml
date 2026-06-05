@@ -1,5 +1,13 @@
+shellEmulator: true
+
+trustPolicy: no-downgrade
+
 packages:
-  - tools/*
   - packages/*
   - plugins/*
+  - tools/*
   - widgets/*
+allowBuilds:
+  esbuild: true
+  svelte-preprocess: true
+  unrs-resolver: false

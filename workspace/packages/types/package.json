@@ -14,14 +14,14 @@
         "format:prettier": "prettier -w ./electron"
     },
     "devDependencies": {
-        "@types/katex": "^0.16.7",
+        "@types/katex": "^0.16.8",
         "@types/plantuml-encoder": "^1.4.2",
         "@types/viz.js": "^2.1.5",
-        "abcjs": "^6.4.4",
-        "echarts": "^5.6.0",
+        "abcjs": "^6.6.3",
+        "echarts": "^6.1.0",
         "highlight.js": "^11.11.1",
-        "mermaid": "^11.4.1",
-        "pdfjs-dist": "^4.9.155",
+        "mermaid": "^11.15.0",
+        "pdfjs-dist": "^6.0.227",
         "ts-toolbelt": "^9.6.0",
         "viewerjs": "^1.11.7"
     }
