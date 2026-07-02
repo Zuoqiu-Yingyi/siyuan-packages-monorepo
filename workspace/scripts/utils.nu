@@ -21,5 +21,7 @@ def ls-dir [path: string]: nothing -> list<string> {
 export def get-paths []: nothing -> list<string> {
     let paths = (ls-dir ./tools)
     let paths = $paths | append (ls-dir ./packages)
+    let paths = $paths | append (ls-dir ./plugins)
+    let paths = $paths | append (ls-dir ./widgets)
     $paths
 }

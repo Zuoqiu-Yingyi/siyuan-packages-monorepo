@@ -1,6 +1,5 @@
 {
     "recommendations": [
-        "zixuanchen.vitest-explorer",
         "vue.vscode-typescript-vue-plugin",
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
