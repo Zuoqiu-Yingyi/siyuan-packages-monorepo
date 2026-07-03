@@ -28,5 +28,5 @@ export function state_raw<T>(initial?: T): T | undefined {
 }
 
 export function state_snapshot<T>(s: T): $state.Snapshot<T> {
-    return $state.snapshot(s);
+    return $state.snapshot<T>(s);
 }

@@ -16,20 +16,10 @@
 -->
 
 <script lang="ts">
-    import {
-        createEventDispatcher,
-        getContext,
-        onDestroy,
-    } from "svelte";
-    import {
-        writable,
+    import { createEventDispatcher, getContext, onDestroy } from "svelte";
+    import { writable } from "svelte/store";
 
-    } from "svelte/store";
-
-    import {
-        FileTreeNodeType,
-
-    } from ".";
+    import { FileTreeNodeType } from ".";
 
     import Icon from "./../../misc/Icon.svelte";
     import Svg from "./../../misc/Svg.svelte";
@@ -526,14 +516,6 @@
         // 拖拽中
         opacity: 0.25;
     }
-    .highlight(@color: var(--b3-theme-primary-lighter)) {
-        // 辅助线高亮
-        &::before {
-            // background-color: var(--b3-theme-surface-light);
-            background-color: @color;
-            // background-color: var(--b3-theme-primary-lightest);
-        }
-    }
     .node {
         margin: 0; // 辅助线对齐
 
@@ -542,7 +524,11 @@
             // 有下级目录
             + .node-list {
                 // 高亮下级目录
-                .highlight();
+                &::before {
+                    // background-color: var(--b3-theme-surface-light);
+                    background-color: var(--b3-theme-primary-lighter);
+                    // background-color: var(--b3-theme-primary-lightest);
+                }
             }
         }
     }
@@ -562,7 +548,12 @@
 
         // 焦点在下级节点
         &:has(> .node.b3-list-item--focus) {
-            .highlight(); // 高亮本级目录
+            // 高亮本级目录
+            &::before {
+                // background-color: var(--b3-theme-surface-light);
+                background-color: var(--b3-theme-primary-lighter);
+                // background-color: var(--b3-theme-primary-lightest);
+            }
         }
     }
 </style>
