@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@siyuan-community/siyuan-sdk':
-        specifier: ^0.3.16
-        version: 0.3.16
+        specifier: ^0.3.17
+        version: 0.3.17
       '@workspace/eslint-config-custom':
         specifier: workspace:*
         version: link:tools/eslint-config-custom
@@ -2106,8 +2106,8 @@ packages:
     resolution: {integrity: sha512-TeheYy0ILzBEI/CO55CP6zJCSdSWeRtGnHy8U8dWSUH4I68iqTsy7HkMktR4xakThc9jotkPQUXT4ITdbV7cHA==}
     engines: {node: '>=18'}
 
-  '@siyuan-community/siyuan-sdk@0.3.16':
-    resolution: {integrity: sha512-xmQt1ffli18CGaRrbL2ZCz6KEVuBpAF7HkcOIfFJEJK+LilKuDCEvPPW3UoMGifZDOZ3yW7VLUsqcMh9nFlVtQ==}
+  '@siyuan-community/siyuan-sdk@0.3.17':
+    resolution: {integrity: sha512-LQV1NabPwkttLh95F3DYmIpRtjlqx3zUQbSNDkzocvczevm9iCHD77NLQtfQYMsFkrpNlOgRavsaG0ol5Bxqgg==}
     engines: {node: '26'}
 
   '@siyuan-community/vditor@3.9.6':
@@ -7456,7 +7456,7 @@ snapshots:
 
   '@sindresorhus/base62@1.0.0': {}
 
-  '@siyuan-community/siyuan-sdk@0.3.16':
+  '@siyuan-community/siyuan-sdk@0.3.17':
     dependencies:
       axios: 1.18.1
       isomorphic-ws: 5.0.0(ws@8.21.0)

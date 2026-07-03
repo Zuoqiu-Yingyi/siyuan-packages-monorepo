@@ -34,7 +34,7 @@
 
     export let fold: NonNullable<IListItem["fold"]> = true; // 是否折叠下级列表
     export let children: NonNullable<IListItem["children"]> = []; // 下级列表
-    export let indent: NonNullable<IListItem["indent"]> = ""; // 下级列表
+    export let indent: NonNullable<IListItem["indent"]> = ""; // 下级列表缩进
 
     function onToggle() {
         fold = !fold;
@@ -52,6 +52,7 @@
     <!-- 下级列表折叠按钮 -->
     <span
         class="b3-list-item__toggle"
+        class:fn__none={narrow}
         class:hidden={children.length === 0}
     >
         <SvgArrow open={!fold} />

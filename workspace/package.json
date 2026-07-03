@@ -24,7 +24,7 @@
         "format": "turbo run format"
     },
     "dependencies": {
-        "@siyuan-community/siyuan-sdk": "^0.3.16",
+        "@siyuan-community/siyuan-sdk": "^0.3.17",
         "@workspace/eslint-config-custom": "workspace:*",
         "@workspace/tsconfig": "workspace:*",
         "@workspace/types": "workspace:*",

@@ -16,15 +16,16 @@
 /* 字体处理 */
 
 import type { FontData } from "@workspace/types/misc/browser";
+import type { IFontData } from "@workspace/types/siyuan/font";
 
-export interface IFonts {
+export interface IFonts<T> {
     families: string[];
-    map: Map<string, FontData[]>;
+    map: Map<string, T[]>;
 }
 
-/* 字体按照字体族分类 */
-export function classify(fonts: FontData[]): IFonts {
-    const fontList: IFonts = {
+/* 按照字体族分类浏览器字体 */
+export function classifyBrowserFonts(fonts: FontData[]): IFonts<FontData> {
+    const fontList: IFonts<FontData> = {
         families: [],
         map: new Map<string, FontData[]>(),
     };
@@ -38,5 +39,26 @@ export function classify(fonts: FontData[]): IFonts {
             fontList.map.set(font.family, [font]);
         }
     });
+    fontList.families.sort((a, b) => a.localeCompare(b)); // 按照当地语言排序
+    return fontList;
+}
+
+/* 按照字体族分类系统字体 */
+export function classifySystemFonts(fonts: IFontData[]): IFonts<IFontData> {
+    const fontList: IFonts<IFontData> = {
+        families: [],
+        map: new Map<string, IFontData[]>(),
+    };
+    fonts.forEach((font) => {
+        const list = fontList.map.get(font.family);
+        if (list) {
+            list.push(font);
+        }
+        else {
+            fontList.families.push(font.family);
+            fontList.map.set(font.family, [font]);
+        }
+    });
+    fontList.families.sort((a, b) => a.localeCompare(b)); // 按照当地语言排序
     return fontList;
 }

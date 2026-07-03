@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Zuoqiu Yingyi
+// Copyright (C) 2026 Zuoqiu Yingyi
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -13,23 +13,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import parseFont from "mapbox-to-css-font";
-
-import type { FontData } from "@workspace/types/misc/browser";
-import type { IFontData } from "@workspace/types/siyuan/font";
-
-export { parseFont };
-
-/**
- * 将字体样式转换为对应的 CSS 样式
- * @param font - 字体信息
- * @param size - 字号
- * @returns CSS `font` 属性 样式
- */
-export function fontData2CssFontStyle(
-    font: FontData | IFontData,
-    size: number = 16,
-): string {
-    const font_name = "displayName" in font ? font.displayName : font.fullName;
-    return parseFont(font_name, size);
+export interface IFontData {
+    family: string;
+    weight: number;
+    displayName: string;
 }
