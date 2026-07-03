@@ -47,7 +47,6 @@
         "svelte": "^5.56.4",
         "svelte-check": "^4.7.1",
         "svelte-preprocess": "^6.0.5",
-        "svelte-preprocess-less": "^0.4.0",
         "tslib": "^2.8.1",
         "tsx": "^4.22.5",
         "turbo": "^2.10.2",
