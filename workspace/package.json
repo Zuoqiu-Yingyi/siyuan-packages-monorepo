@@ -11,7 +11,7 @@
     "repository": "https://github.com/Zuoqiu-Yingyi/siyuan-plugins-dev",
     "scripts": {
         "submodule:batch": "nu ./../scripts/git-submodule/batch.nu",
-        "preinstall": "git submodule update --init --recursive",
+        "submodule:update": "git submodule update --init --recursive",
         "prepare": "cd ./.. && husky ./workspace/.husky",
         "lint-staged": "lint-staged --allow-empty",
         "outdated:all": "nu ./scripts/outdated.nu",
