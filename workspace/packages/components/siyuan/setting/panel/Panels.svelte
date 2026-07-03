@@ -46,7 +46,7 @@
 
 <div class="fn__flex-1 fn__flex config__panel">
     <!-- 面板标签列表 -->
-    <ul class="b3-tab-bar b3-list b3-list--background">
+    <ul class="config__side b3-list b3-list--background">
         {#if searchEnable}
             <!-- 搜索框 -->
             <div class="b3-form__icon">
