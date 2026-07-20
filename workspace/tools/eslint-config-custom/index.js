@@ -183,6 +183,9 @@ const config = antfu({
             ],
         },
     },
+    pnpm: {
+        sort: true,
+    },
     jsonc: {
         overrides: {
             "jsonc/comma-dangle": [
@@ -308,6 +311,13 @@ const config = antfu({
         "./dist",
         "./temp",
     ],
+}, {
+    files: [
+        "pnpm-workspace.yaml",
+    ],
+    rules: {
+        "pnpm/yaml-enforce-settings": "off",
+    },
 }, {
     plugins: {
         tsdoc,

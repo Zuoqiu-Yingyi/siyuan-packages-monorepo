@@ -2,7 +2,7 @@ minimumReleaseAgeExclude:
   - "@siyuan-community/siyuan-sdk@0.3.17"
 shellEmulator: true
 
-trustPolicy: no-downgrade
+trustPolicy: off
 
 packages:
   - packages/*
