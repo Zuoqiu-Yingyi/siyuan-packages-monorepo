@@ -1,0 +1,20 @@
+workspace/tools/eslint-config-custom/index.js
+  s_78a077530218ad::t_b3299ca826c7ef 315-320
+  s_78a077530218ad::t_73ce0aa6a3dc09 186-188
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.34-trip",
+  "base_commit_sha": "935eefd17b6522ee9789427e842bf02db2fcb526",
+  "prompts": {},
+  "sessions": {
+    "s_78a077530218ad": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f7ec6-f0c4-7382-b777-6910c2e2a334",
+        "model": "gpt-5.5-2026-04-24"
+      },
+      "human_author": "Yingyi / 颖逸 <49649786+Zuoqiu-Yingyi@users.noreply.github.com>"
+    }
+  }
+}
