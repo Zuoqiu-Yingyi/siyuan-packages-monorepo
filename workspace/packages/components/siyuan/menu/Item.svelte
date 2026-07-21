@@ -25,12 +25,18 @@
 
     export let icon: string = ""; // 图标
     export let font: string = ""; // 菜单项文本字体样式
-    export let label: string = ""; // 菜单项文本/input 提示
+    export let label: string = ""; // 菜单项文本/input/textarea 提示
     export let disabled: boolean = false; // 是否禁用
 
     export let input: boolean = false; // 是否为输入框
     export let value: string = ""; // 输入框内容
     export let accelerator: string = ""; // 捷径提示
+
+    export let textarea: boolean = false; // 是否为多行输入框
+    export let rows: number = 1; // 多行输入框显示行数
+
+    export let checkbox: boolean = false; // 是否为复选框 (开关)
+    export let checked: boolean = false; // 复选框是否被选中 (开关是否开启)
 
     export let file: boolean = false; // 是否为文件上传
     export let accept: string = ""; // 文件上传类型
@@ -61,6 +67,10 @@
         dispatch("changed", { value, event });
     }
 
+    function switched(event: Event) {
+        dispatch("switched", { checked, event });
+    }
+
     function selected(event: Event) {
         dispatch("selected", { files, event });
     }
@@ -85,10 +95,7 @@
     style:position={file ? "relative" : "initial"}
     class="b3-menu__label"
 >
-    {#if !input || file}
-        <!-- 文本 -->
-        {label}
-    {:else}
+    {#if input}
         <!-- 文本输入框 -->
         <div class="fn__hr--small"></div>
         <input
@@ -100,6 +107,32 @@
             on:change={changed}
         />
         <div class="fn__hr--small"></div>
+    {:else if textarea}
+        <!-- 多行文本输入框 -->
+        <textarea
+            class="b3-text-field fn__block"
+            {disabled}
+            placeholder={label}
+            rows={rows}
+            spellcheck="false"
+            bind:value
+            on:change={changed}
+        ></textarea>
+    {:else if checkbox}
+        <!-- 开关 -->
+        <div class="fn__flex">
+            <span>{label}</span>
+            <span class="fn__space fn__flex-1"></span>
+            <input
+                class="b3-switch fn__flex-center"
+                checked={checked}
+                type="checkbox"
+                on:change={switched}
+            />
+        </div>
+    {:else}
+        <!-- 文本 -->
+        {label}
     {/if}
 
     {#if file}

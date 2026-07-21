@@ -18,6 +18,10 @@ export interface IMenuItemEvent {
         value: string; // 文本输入框的值
         event: Event; // 文本输入框更改事件
     };
+    switched: { // 复选框状态更改
+        checked: boolean; // 复选框的值
+        event: Event; // 复选框更改事件
+    };
     selected: { // 文件选择器选择文件
         files: FileList | null; // 文件选择的列表
         event: Event; // 文件选择事件
