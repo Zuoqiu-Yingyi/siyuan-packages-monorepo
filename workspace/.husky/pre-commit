@@ -3,5 +3,6 @@
 cd workspace
 
 pnpm run lint-staged
+pnpm run build:dev
 
 exit 0
