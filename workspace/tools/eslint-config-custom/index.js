@@ -310,6 +310,8 @@ const config = antfu({
     ignores: [
         "./dist",
         "./temp",
+        "**/.release-please-manifest.json",
+        "**/CHANGELOG.md",
     ],
 }, {
     files: [
