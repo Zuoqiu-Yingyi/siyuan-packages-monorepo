@@ -6,7 +6,7 @@ export def pnpm-update [path: string] {
 
 export def pnpm-outdated [path: string] {
     cd $path
-    ^pnpm outdated
+    try { ^pnpm outdated } catch {}
 }
 
 export def pnpm-prune [path: string] {
