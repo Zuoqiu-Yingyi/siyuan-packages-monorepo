@@ -1,0 +1,29 @@
+workspace/scripts/utils.nu
+  s_5dced1815aa1c0::t_bd858e796c9173 9
+workspace/package.json
+  s_8f60d1272f27e3::t_3ec58a8bf69472 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.38-trip",
+  "base_commit_sha": "798b8f2dec4def9aecf0960165fe3367a38a43c9",
+  "prompts": {},
+  "sessions": {
+    "s_5dced1815aa1c0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f9372-87f5-7961-9234-8c9bb4ea3f7b",
+        "model": "gpt-5.5-2026-04-24"
+      },
+      "human_author": "Yingyi / 颖逸 <49649786+Zuoqiu-Yingyi@users.noreply.github.com>"
+    },
+    "s_8f60d1272f27e3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f9343-4bdd-7d42-9561-19cc3a93d398",
+        "model": "gpt-5.5-2026-04-24"
+      },
+      "human_author": "Yingyi / 颖逸 <49649786+Zuoqiu-Yingyi@users.noreply.github.com>"
+    }
+  }
+}
