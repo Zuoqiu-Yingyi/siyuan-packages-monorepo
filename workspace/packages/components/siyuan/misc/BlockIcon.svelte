@@ -48,6 +48,10 @@
 
     let element: HTMLElement;
 
+    export function rect(): DOMRect | undefined {
+        return element?.getBoundingClientRect();
+    }
+
     /* 外部响应式变量 */
     const props = {
         icon: writable(icon),

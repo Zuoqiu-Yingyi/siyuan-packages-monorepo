@@ -20,7 +20,7 @@ export interface IElectron {
     contextBridge: Electron.ContextBridge;
     crashReporter: Electron.CrashReporter;
     ipcRenderer: Electron.IpcRenderer;
-    nativeImage: Electron.NativeImage;
+    nativeImage: typeof Electron.nativeImage;
     shell: Electron.Shell;
     webFrame: Electron.WebFrame;
 }

@@ -18,16 +18,9 @@
 <!-- 快捷键 -->
 
 <script lang="ts">
-    import {
-        createEventDispatcher,
+    import { createEventDispatcher } from "svelte";
 
-    } from "svelte";
-
-    import {
-        MouseButton,
-        MouseEvent,
-
-    } from "@workspace/utils/shortcut";
+    import { MouseButton, MouseEvent } from "@workspace/utils/shortcut";
 
     import { ItemType } from "./../item/item";
 
@@ -93,7 +86,7 @@
     const dispatch = createEventDispatcher<IShortcutEvent>();
     function changed(e: ComponentEvents<Input>["changed"]) {
         if (e.detail.key in shortcut) {
-            shortcut[e.detail.key as (keyof IFunctionKeysStatus)] = e.detail.value as boolean;
+            shortcut[e.detail.key as keyof IFunctionKeysStatus] = e.detail.value as boolean;
         }
         dispatch("changed", { shortcut });
     }
@@ -221,7 +214,7 @@
                 disabled={disabledMouseEvent}
                 normal={false}
                 options={mouseEventOptions}
-                settingKey="type"
+                settingKey="button"
                 settingValue={shortcut.type}
                 type={ItemType.select}
                 on:changed={changed}

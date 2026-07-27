@@ -27,6 +27,7 @@ export enum MouseButton {
 
 export enum MouseEvent {
     click = "click",
+    auxclick = "auxclick",
     dblclick = "dblclick",
 
     contextmenu = "contextmenu",
