@@ -1,0 +1,23 @@
+workspace/packages/utils/shortcut/index.ts
+  s_bb6ef839dc6ff6::t_424aff0116114c 30
+workspace/packages/components/siyuan/misc/BlockIcon.svelte
+  s_bb6ef839dc6ff6::t_424aff0116114c 51-54
+workspace/packages/components/siyuan/setting/specified/Shortcut.svelte
+  s_bb6ef839dc6ff6::t_424aff0116114c 21,23,89,217
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.38-trip",
+  "base_commit_sha": "dc02e3ecd0eaaa9a94e88311adb3e275d92e5404",
+  "prompts": {},
+  "sessions": {
+    "s_bb6ef839dc6ff6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "89deb1b1-ca78-4ec3-89e7-7d3aa88f69f1",
+        "model": "claude-glm-5.2"
+      },
+      "human_author": "Yingyi / 颖逸 <49649786+Zuoqiu-Yingyi@users.noreply.github.com>"
+    }
+  }
+}
