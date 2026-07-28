@@ -393,6 +393,8 @@ export function getCurrentBlockID(): BlockID | void {
 
 /**
  * 获取当前光标所在编辑器 (所见即所得)
+ * 
+ * 若当前编辑器为只读模式时, 该函数将返回 null
  * @returns 当前光标所在的编辑器的 HTML 元素
  */
 export function getCurrentProtyleWysiwyg(): HTMLElement | null {
