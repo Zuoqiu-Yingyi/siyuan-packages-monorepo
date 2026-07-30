@@ -1,0 +1,4 @@
+interface:
+  display_name: "Release SiYuan Bazaar Package"
+  short_description: "Prepare SiYuan Bazaar package releases"
+  default_prompt: "Use $release-siyuan-bazaar-package to prepare and commit a SiYuan Bazaar package release."
