@@ -312,6 +312,7 @@ const config = antfu({
         "./temp",
         "**/.release-please-manifest.json",
         "**/CHANGELOG.md",
+        "**/pnpm-lock.yaml",
     ],
 }, {
     files: [

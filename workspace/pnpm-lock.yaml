@@ -441,9 +441,6 @@ importers:
         specifier: workspace:^
         version: link:../../packages/utils
     devDependencies:
-      '@types/opencc-js':
-        specifier: ^1.0.3
-        version: 1.0.3
       opencc-js:
         specifier: ^1.4.1
         version: 1.4.1
@@ -2335,9 +2332,6 @@ packages:
 
   '@types/normalize-path@3.0.2':
     resolution: {integrity: sha512-DO++toKYPaFn0Z8hQ7Tx+3iT9t77IJo/nDiqTXilgEP+kPNIYdpS9kh3fXuc53ugqwp9pxC1PVjCpV1tQDyqMA==}
-
-  '@types/opencc-js@1.0.3':
-    resolution: {integrity: sha512-TENp7YkI2hNlc4dplhivSHj0hU4DORCK56VY7rniaSfA5f87uD3uv+kPIRuH9h64TGv976iVFi4gEHZZtS2y8Q==}
 
   '@types/parse-data-url@3.0.2':
     resolution: {integrity: sha512-SJZQzMiHCu9aUYyzsjEpj2TKlb1h4nklSGgLUgG/sAvCMEAuEDHFwStiKTX8Q9j5miNhdatGT1ffT8Rzi3i5BQ==}
@@ -7665,8 +7659,6 @@ snapshots:
       undici-types: 8.3.0
 
   '@types/normalize-path@3.0.2': {}
-
-  '@types/opencc-js@1.0.3': {}
 
   '@types/parse-data-url@3.0.2':
     dependencies:

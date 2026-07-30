@@ -6,7 +6,7 @@ const config = {
     /* incremental formatting */
     // REF: https://github.com/sudo-suhas/lint-staged-django-react-demo
     // "*": "cspell lint --no-must-find-files",
-    "*.{js,jsx,ts,tsx,vue,svelte,css,less,html,xml,md,json,toml,yaml}": "eslint --max-warnings 0 --no-warn-ignored",
+    "*.{js,jsx,ts,tsx,vue,svelte,css,less,html,xml,md,json,toml,yaml}": "eslint --max-warnings 0 --fix --no-warn-ignored",
 };
 
 export default config;
