@@ -50,3 +50,7 @@
 	path = workspace/plugins/webview
 	url = https://github.com/Zuoqiu-Yingyi/siyuan-plugin-webview.git
 	branch = dev
+[submodule "workspace/widgets/panorama-viewer"]
+	path = workspace/widgets/panorama-viewer
+	url = https://github.com/Zuoqiu-Yingyi/widget-panorama-viewer.git
+	branch = main

@@ -7,7 +7,7 @@ This repository is a monorepo for SiYuan community packages. The root contains p
 Workspace package groups are declared in `workspace/pnpm-workspace.yaml`:
 
 - `workspace/plugins/*`: SiYuan plugins, usually Vite apps with `src/`, `public/`, and generated `dist/`.
-- `workspace/widgets/*`: SiYuan widgets, currently including `metadata`.
+- `workspace/widgets/*`: SiYuan widgets, currently including `metadata` and `panorama-viewer`.
 - `workspace/packages/*`: shared workspace libraries, including `@workspace/types`, `@workspace/utils`, and `@workspace/components`.
 - `workspace/tools/*`: shared internal config packages such as ESLint and TypeScript config.
 
