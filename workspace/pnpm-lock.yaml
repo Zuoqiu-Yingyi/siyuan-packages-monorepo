@@ -541,31 +541,52 @@ importers:
   widgets/panorama-viewer:
     dependencies:
       '@photo-sphere-viewer/autorotate-plugin':
-        specifier: 5.15.0
+        specifier: ^5.15.0
+        version: 5.15.0(@photo-sphere-viewer/core@5.15.0)
+      '@photo-sphere-viewer/compass-plugin':
+        specifier: ^5.15.0
         version: 5.15.0(@photo-sphere-viewer/core@5.15.0)
       '@photo-sphere-viewer/core':
-        specifier: 5.15.0
+        specifier: ^5.15.0
         version: 5.15.0
       '@photo-sphere-viewer/cubemap-adapter':
-        specifier: 5.15.0
+        specifier: ^5.15.0
         version: 5.15.0(@photo-sphere-viewer/core@5.15.0)
       '@photo-sphere-viewer/cubemap-tiles-adapter':
-        specifier: 5.15.0
+        specifier: ^5.15.0
         version: 5.15.0(@photo-sphere-viewer/core@5.15.0)(@photo-sphere-viewer/cubemap-adapter@5.15.0(@photo-sphere-viewer/core@5.15.0))
       '@photo-sphere-viewer/cubemap-video-adapter':
-        specifier: 5.15.0
+        specifier: ^5.15.0
         version: 5.15.0(@photo-sphere-viewer/core@5.15.0)(@photo-sphere-viewer/video-plugin@5.15.0(@photo-sphere-viewer/core@5.15.0))
       '@photo-sphere-viewer/dual-fisheye-adapter':
-        specifier: 5.15.0
+        specifier: ^5.15.0
         version: 5.15.0(@photo-sphere-viewer/core@5.15.0)(@photo-sphere-viewer/video-plugin@5.15.0(@photo-sphere-viewer/core@5.15.0))
       '@photo-sphere-viewer/equirectangular-tiles-adapter':
-        specifier: 5.15.0
+        specifier: ^5.15.0
         version: 5.15.0(@photo-sphere-viewer/core@5.15.0)
       '@photo-sphere-viewer/equirectangular-video-adapter':
-        specifier: 5.15.0
+        specifier: ^5.15.0
         version: 5.15.0(@photo-sphere-viewer/core@5.15.0)(@photo-sphere-viewer/video-plugin@5.15.0(@photo-sphere-viewer/core@5.15.0))
+      '@photo-sphere-viewer/gyroscope-plugin':
+        specifier: ^5.15.0
+        version: 5.15.0(@photo-sphere-viewer/core@5.15.0)
+      '@photo-sphere-viewer/map-plugin':
+        specifier: ^5.15.0
+        version: 5.15.0(@photo-sphere-viewer/core@5.15.0)
+      '@photo-sphere-viewer/plan-plugin':
+        specifier: ^5.15.0
+        version: 5.15.0(@photo-sphere-viewer/core@5.15.0)
+      '@photo-sphere-viewer/settings-plugin':
+        specifier: ^5.15.0
+        version: 5.15.0(@photo-sphere-viewer/core@5.15.0)
+      '@photo-sphere-viewer/stereo-plugin':
+        specifier: ^5.15.0
+        version: 5.15.0(@photo-sphere-viewer/core@5.15.0)(@photo-sphere-viewer/gyroscope-plugin@5.15.0(@photo-sphere-viewer/core@5.15.0))
       '@photo-sphere-viewer/video-plugin':
-        specifier: 5.15.0
+        specifier: ^5.15.0
+        version: 5.15.0(@photo-sphere-viewer/core@5.15.0)
+      '@photo-sphere-viewer/visible-range-plugin':
+        specifier: ^5.15.0
         version: 5.15.0(@photo-sphere-viewer/core@5.15.0)
       '@siyuan-community/siyuan-sdk':
         specifier: ^0.3.17
@@ -1857,6 +1878,11 @@ packages:
     peerDependencies:
       '@photo-sphere-viewer/core': 5.15.0
 
+  '@photo-sphere-viewer/compass-plugin@5.15.0':
+    resolution: {integrity: sha512-nGwZxIJeeC0lmL58evpSh4itUBmjPlxNo3KRa2NJleAOYwQMvoLkgOfJ8z3HSE2Q9oScs16AJvB3MwyfAol9Kg==}
+    peerDependencies:
+      '@photo-sphere-viewer/core': 5.15.0
+
   '@photo-sphere-viewer/core@5.15.0':
     resolution: {integrity: sha512-Mf72l3R8iBf+Im5duv7IVkX3uiKU1BT6bzzXmdE43KahQgNftt9pYKqTzN1YjaYLAzWDBCFZj/bEK1dIZXk9Gg==}
 
@@ -1894,8 +1920,39 @@ packages:
       '@photo-sphere-viewer/core': 5.15.0
       '@photo-sphere-viewer/video-plugin': 5.15.0
 
+  '@photo-sphere-viewer/gyroscope-plugin@5.15.0':
+    resolution: {integrity: sha512-Ew8nChUUCbvsAkowYSv4K8lb50A06ja0TG19P7ioXuJTkprhlGboQR0OhWve9NvK1vuigc49m2sDJ4SJxbVlPw==}
+    peerDependencies:
+      '@photo-sphere-viewer/core': 5.15.0
+
+  '@photo-sphere-viewer/map-plugin@5.15.0':
+    resolution: {integrity: sha512-yeuolUNdKeCv5voR5UEwlD7QD+GQ6JVlavDd23G/PjE7S80e230d30lejTUw/RGSsYSspnSPtACsu/Vay7942Q==}
+    peerDependencies:
+      '@photo-sphere-viewer/core': 5.15.0
+
+  '@photo-sphere-viewer/plan-plugin@5.15.0':
+    resolution: {integrity: sha512-i9UPQVrBET0msWiOh030wpo8C7DPePyuDIg7O9r5x9HsZ2+oOvRiwJG9B9kPfK86drn1ECxuqYIWbjW/bWHxjA==}
+    peerDependencies:
+      '@photo-sphere-viewer/core': 5.15.0
+
+  '@photo-sphere-viewer/settings-plugin@5.15.0':
+    resolution: {integrity: sha512-xZot+fT5R+Jy7D/QEVoylIMg/R+l/iSBykQ1v8wqGkSrUqJdVkNv3w3ksycb9BYFt/78P8HU7AGvJgIF6J3EFQ==}
+    peerDependencies:
+      '@photo-sphere-viewer/core': 5.15.0
+
+  '@photo-sphere-viewer/stereo-plugin@5.15.0':
+    resolution: {integrity: sha512-/TMy7RAzxHH2vJd0a8p3hZDj2jLxURDsyzN/Kb2jIb5ZYiQijsXr+IwvvFAhvIdFMaZhzKTGP2uFvxnwop7vag==}
+    peerDependencies:
+      '@photo-sphere-viewer/core': 5.15.0
+      '@photo-sphere-viewer/gyroscope-plugin': 5.15.0
+
   '@photo-sphere-viewer/video-plugin@5.15.0':
     resolution: {integrity: sha512-RG70vRu+suV7QT1WbnxVknm8KVU26wCZx4NUofFAENYSvyldlRxmVK3XqCh1WChWhcjrXqj3woz4vnzrykVOzQ==}
+    peerDependencies:
+      '@photo-sphere-viewer/core': 5.15.0
+
+  '@photo-sphere-viewer/visible-range-plugin@5.15.0':
+    resolution: {integrity: sha512-fmG2U0ewtPVyTp2sQK/Soo+7TbROu5EIxfvlDv+t3HQ5ENflrtalweby/CKUT+sJOoZZWUpneIqRt14tD7mw7Q==}
     peerDependencies:
       '@photo-sphere-viewer/core': 5.15.0
 
@@ -4321,6 +4378,9 @@ packages:
 
   layout-base@2.0.1:
     resolution: {integrity: sha512-dp3s92+uNI1hWIpPGH3jK2kxE2lMjdXdr+DH8ynZHpd6PUlH6x6cbuXnoMmiNumznqaNO31xu9e79F0uuZ0JFg==}
+
+  leaflet@1.9.4:
+    resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==}
 
   less@4.8.0:
     resolution: {integrity: sha512-7Y7DJBMbsW29UGjOG6NGvxQEx71AaDcrryBwYCMaFwn0kj8FkSueKN9r9WexVOetKEhXh38kL++WJncfkEpS+g==}
@@ -7563,6 +7623,10 @@ snapshots:
     dependencies:
       '@photo-sphere-viewer/core': 5.15.0
 
+  '@photo-sphere-viewer/compass-plugin@5.15.0(@photo-sphere-viewer/core@5.15.0)':
+    dependencies:
+      '@photo-sphere-viewer/core': 5.15.0
+
   '@photo-sphere-viewer/core@5.15.0':
     dependencies:
       three: 0.185.1
@@ -7595,7 +7659,33 @@ snapshots:
       '@photo-sphere-viewer/core': 5.15.0
       '@photo-sphere-viewer/video-plugin': 5.15.0(@photo-sphere-viewer/core@5.15.0)
 
+  '@photo-sphere-viewer/gyroscope-plugin@5.15.0(@photo-sphere-viewer/core@5.15.0)':
+    dependencies:
+      '@photo-sphere-viewer/core': 5.15.0
+
+  '@photo-sphere-viewer/map-plugin@5.15.0(@photo-sphere-viewer/core@5.15.0)':
+    dependencies:
+      '@photo-sphere-viewer/core': 5.15.0
+
+  '@photo-sphere-viewer/plan-plugin@5.15.0(@photo-sphere-viewer/core@5.15.0)':
+    dependencies:
+      '@photo-sphere-viewer/core': 5.15.0
+      leaflet: 1.9.4
+
+  '@photo-sphere-viewer/settings-plugin@5.15.0(@photo-sphere-viewer/core@5.15.0)':
+    dependencies:
+      '@photo-sphere-viewer/core': 5.15.0
+
+  '@photo-sphere-viewer/stereo-plugin@5.15.0(@photo-sphere-viewer/core@5.15.0)(@photo-sphere-viewer/gyroscope-plugin@5.15.0(@photo-sphere-viewer/core@5.15.0))':
+    dependencies:
+      '@photo-sphere-viewer/core': 5.15.0
+      '@photo-sphere-viewer/gyroscope-plugin': 5.15.0(@photo-sphere-viewer/core@5.15.0)
+
   '@photo-sphere-viewer/video-plugin@5.15.0(@photo-sphere-viewer/core@5.15.0)':
+    dependencies:
+      '@photo-sphere-viewer/core': 5.15.0
+
+  '@photo-sphere-viewer/visible-range-plugin@5.15.0(@photo-sphere-viewer/core@5.15.0)':
     dependencies:
       '@photo-sphere-viewer/core': 5.15.0
 
@@ -10144,6 +10234,8 @@ snapshots:
   layout-base@1.0.2: {}
 
   layout-base@2.0.1: {}
+
+  leaflet@1.9.4: {}
 
   less@4.8.0(supports-color@5.5.0):
     dependencies:
