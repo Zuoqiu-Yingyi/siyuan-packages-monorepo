@@ -1,0 +1,21 @@
+docs/agents/project.md
+  s_52432ec05e4a51::t_84a93a9d35c77f 10
+.gitmodules
+  s_52432ec05e4a51::t_7ee10f5edc8ee4 53-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.39-trip",
+  "base_commit_sha": "71c6bcdc1286394b98d78a59da2503a516e1411e",
+  "prompts": {},
+  "sessions": {
+    "s_52432ec05e4a51": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8db31d65-117b-42c9-9ab4-4b414b748f11",
+        "model": "claude-glm-5.2"
+      },
+      "human_author": "Yingyi / 颖逸 <49649786+Zuoqiu-Yingyi@users.noreply.github.com>"
+    }
+  }
+}
