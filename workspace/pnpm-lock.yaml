@@ -588,9 +588,9 @@ importers:
       '@photo-sphere-viewer/visible-range-plugin':
         specifier: ^5.15.0
         version: 5.15.0(@photo-sphere-viewer/core@5.15.0)
-      '@siyuan-community/siyuan-sdk':
-        specifier: ^0.3.17
-        version: 0.3.17(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0)
+      '@workspace/types':
+        specifier: workspace:^
+        version: link:../../packages/types
       flowbite-svelte:
         specifier: ^1.33.1
         version: 1.33.1(rollup@4.62.2)(svelte@5.56.8(@typescript-eslint/types@8.65.0))(tailwindcss@4.3.3)
