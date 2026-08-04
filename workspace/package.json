@@ -2,7 +2,14 @@
     "name": "workspace",
     "type": "module",
     "private": true,
-    "packageManager": "pnpm@11.17.0",
+    "packageManager": "pnpm@11.20.0",
+    "devEngines": {
+        "runtime": {
+            "name": "node",
+            "version": "^26.0.0",
+            "onFail": "download"
+        }
+    },
     "author": {
         "name": "Zuoqiu Yingyi",
         "url": "https://github.com/Zuoqiu-Yingyi"
@@ -50,7 +57,7 @@
         "svelte-check": "^4.7.4",
         "svelte-preprocess": "^6.0.5",
         "tslib": "^2.8.1",
-        "tsx": "^4.23.2",
+        "tsx": "^4.23.5",
         "turbo": "^2.10.8",
         "typescript": "^6.0.3",
         "vite": "^8.2.0",
