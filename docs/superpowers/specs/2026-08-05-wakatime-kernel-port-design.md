@@ -29,16 +29,16 @@ wakatime 插件当前把后台逻辑放在一个 Web Worker（`src/workers/wakat
 
 ## 运行环境对照表
 
-| worker 中使用 | 内核中替换为 | 备注 |
-|---|---|---|
-| `@siyuan-community/siyuan-sdk` `Client`（lsNotebooks/getBlockInfo/getHPathByPath/forwardProxy/putFile/getFile/readDir/removeFile） | `siyuan.client.fetch("/api/...", {method:"POST", body})` 直接打内核 REST | goja 无 SDK，所有内核 API 手写 JSON |
-| `forwardProxy()` 外发 wakatime.com | `siyuan.client.fetch("/api/network/forwardProxy", {method:"POST", body})` | 同一端点，响应取 `data.status`/`data.body` |
-| `WorkerBridgeSlave` + `BroadcastChannel` | `siyuan.rpc.bind(name, handler)` | 前端改用 `this.kernel.rpc.call.<name>(...)` |
-| `self.setInterval/clearInterval` | `setInterval/clearInterval` | goja 全局已提供 |
-| `@workspace/utils/logger` `Logger` | `siyuan.logger` | 浏览器 `console.group` 在 goja 不适用 |
-| `client.putFile/getFile/readDir/removeFile`（路径在 `data/...`） | `siyuan.storage.put/get/list/remove`（相对 `data/storage/petal/<name>/`） | 缓存目录改为 `./.cache/` |
-| `new Date()` / `Date.getTime()` | 同（goja 支持） | `time()/now()` 语义不变 |
-| `self.location.pathname` 推断 baseURL | 不需要 | 内核脚本不在 HTTP 上下文 |
+| worker 中使用                                                                                                                      | 内核中替换为                                                              | 备注                                        |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------- |
+| `@siyuan-community/siyuan-sdk` `Client`（lsNotebooks/getBlockInfo/getHPathByPath/forwardProxy/putFile/getFile/readDir/removeFile） | `siyuan.client.fetch("/api/...", {method:"POST", body})` 直接打内核 REST  | goja 无 SDK，所有内核 API 手写 JSON         |
+| `forwardProxy()` 外发 wakatime.com                                                                                                 | `siyuan.client.fetch("/api/network/forwardProxy", {method:"POST", body})` | 同一端点，响应取 `data.status`/`data.body`  |
+| `WorkerBridgeSlave` + `BroadcastChannel`                                                                                           | `siyuan.rpc.bind(name, handler)`                                          | 前端改用 `this.kernel.rpc.call.<name>(...)` |
+| `self.setInterval/clearInterval`                                                                                                   | `setInterval/clearInterval`                                               | goja 全局已提供                             |
+| `@workspace/utils/logger` `Logger`                                                                                                 | `siyuan.logger`                                                           | 浏览器 `console.group` 在 goja 不适用       |
+| `client.putFile/getFile/readDir/removeFile`（路径在 `data/...`）                                                                   | `siyuan.storage.put/get/list/remove`（相对 `data/storage/petal/<name>/`） | 缓存目录改为 `./.cache/`                    |
+| `new Date()` / `Date.getTime()`                                                                                                    | 同（goja 支持）                                                           | `time()/now()` 语义不变                     |
+| `self.location.pathname` 推断 baseURL                                                                                              | 不需要                                                                    | 内核脚本不在 HTTP 上下文                    |
 
 ## 架构
 
@@ -79,24 +79,24 @@ eventBus: ws-main/protyle/click             siyuan.event.handler (可选日志)
 
 内核侧（`siyuan.rpc.bind` 注册的方法）：
 
-| 方法 | 参数 | 返回 | 说明 |
-|---|---|---|---|
-| `onload` | 无 | `Promise<void>` | 创建缓存目录、加载缓存、更新笔记本列表 |
-| `unload` | 无 | `Promise<void>` | 清定时器、最后一次 commit |
-| `restart` | 无 | `void` | `updateTimer()` + `updateContext()` |
-| `updateConfig` | `(config: IConfig, context: {headers,language,project,url})` | `void` | 合并到实例 config/context |
-| `addViewEvent` | `({id,box,path})` | `void` | 记一条 view 心跳 |
-| `addEditEvent` | `(id: BlockID)` | `Promise<void>` | 查块→记一条 edit 心跳 |
+| 方法           | 参数                                                         | 返回            | 说明                                                   |
+| -------------- | ------------------------------------------------------------ | --------------- | ------------------------------------------------------ |
+| `onload`       | 无                                                           | `Promise<void>` | 创建缓存目录、加载缓存、更新笔记本列表                 |
+| `unload`       | 无                                                           | `Promise<void>` | 清定时器、最后一次 commit                              |
+| `restart`      | 无                                                           | `void`          | `updateTimer()` + `updateContext()`                    |
+| `updateConfig` | `(config: IConfig, context: {headers,language,project,url})` | `void`          | 合并到实例 config/context                              |
+| `addViewEvent` | `(id: BlockID)`                                              | `Promise<void>` | 查块→记一条 view 心跳（与 addEditEvent 统一, 只传 id） |
+| `addEditEvent` | `(id: BlockID)`                                              | `Promise<void>` | 查块→记一条 edit 心跳                                  |
 
 前端侧调用点（对应替换 `bridge.call`）：
 
-| 位置 | 旧 | 新 |
-|---|---|---|
-| `onload`（state→running 后） | `bridge.call("onload")` + `updateWorkerConfig` | `kernel.rpc.call.onload()` + `kernel.rpc.call.updateConfig(...)` + `kernel.rpc.call.restart()` |
-| `webSocketMainEventListener` | `bridge.call("addEditEvent", op.id)` | `kernel.rpc.call.addEditEvent(op.id)`（fire-and-forget） |
-| `protyleEventListener` | `bridge.call("addViewEvent", {id,box,path})` | `kernel.rpc.call.addViewEvent({id,box,path})` |
-| `clickEditorContentEventListener` | 同上 | 同上 |
-| `onunload` | `bridge.call("unload")` 后 terminate | `kernel.rpc.call.unload()` |
+| 位置                              | 旧                                             | 新                                                                                             |
+| --------------------------------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `onload`（state→running 后）      | `bridge.call("onload")` + `updateWorkerConfig` | `kernel.rpc.call.onload()` + `kernel.rpc.call.updateConfig(...)` + `kernel.rpc.call.restart()` |
+| `webSocketMainEventListener`      | `bridge.call("addEditEvent", op.id)`           | `kernel.rpc.call.addEditEvent(op.id)`（fire-and-forget）                                       |
+| `protyleEventListener`            | `bridge.call("addViewEvent", {id,box,path})`   | `kernel.rpc.call.addViewEvent(protyle.block.rootID)`（fire-and-forget，仅传 id）               |
+| `clickEditorContentEventListener` | 同上                                           | 同上                                                                                           |
+| `onunload`                        | `bridge.call("unload")` 后 terminate           | `kernel.rpc.call.unload()`                                                                     |
 
 ## 关键替换细节
 

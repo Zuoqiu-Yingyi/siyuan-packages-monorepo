@@ -317,7 +317,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 
 **Interfaces:**
 - Consumes: `IStorageBackend` + `WakaTimeCache` (Task 1), `CONSTANTS.KERNEL_CACHE_PATH` (Task 3), `IConfig`/`Context`/`Heartbeats`/`TCacheDatum`/`Category`/`Type` types (existing), `sleep` from `@workspace/utils/misc/sleep`, `JSONL` from `@/utils/jsonl`, `kernel` types from `siyuan/kernel`.
-- Produces: `dist/kernel.js` that, on load, binds 6 RPC methods and starts timers.
+- Produces: `dist/kernel.js` that, on load, binds 6 RPC methods (`onload/unload/restart/updateConfig/addViewEvent/addEditEvent`) and starts timers. `addViewEvent` and `addEditEvent` both take a single `id: BlockID` and resolve block info internally.
 
 This is the largest task. Build it in one file, in the order below. The structure mirrors `src/workers/wakatime.ts` exactly — same helper functions, same data shapes — only the I/O layer changes.
 
@@ -624,8 +624,8 @@ Add the lifecycle methods and bind them in the constructor:
         await this.siyuan.rpc.bind("unload", this.rpcUnload.bind(this), "Stop the wakatime kernel plugin.");
         await this.siyuan.rpc.bind("restart", this.rpcRestart.bind(this), "Restart timers and context.");
         await this.siyuan.rpc.bind("updateConfig", this.rpcUpdateConfig.bind(this), "Update config and request context.");
-        await this.siyuan.rpc.bind("addViewEvent", this.rpcAddViewEvent.bind(this), "Record a view heartbeat.");
-        await this.siyuan.rpc.bind("addEditEvent", this.rpcAddEditEvent.bind(this), "Record an edit heartbeat.");
+        await this.siyuan.rpc.bind("addViewEvent", this.rpcAddViewEvent.bind(this), "Record a view heartbeat (id only).");
+        await this.siyuan.rpc.bind("addEditEvent", this.rpcAddEditEvent.bind(this), "Record an edit heartbeat (id only).");
     }
 
     /* 卸载 */
@@ -688,16 +688,42 @@ These are the functions actually invoked by the frontend. They wrap the internal
         Object.assign(this.context, context);
     }
 
-    /* RPC: addViewEvent */
-    private rpcAddViewEvent(info: { id: string; box: string; path: string }): void {
-        const time = this.now();
+    /* RPC: addViewEvent — 与 addEditEvent 统一, 只传 id, 内核内部解析块信息 */
+    private async rpcAddViewEvent(id: BlockID): Promise<void> {
+        try {
+            const time = this.now();
 
-        this.context.blocks.set(info.id, info.id);
-        this.addEvent({
-            ...info,
-            time,
-            is_write: false,
-        });
+            /* 复用 addEditEvent 已建立的块映射, 若缺失则补查 getBlockInfo */
+            let root_id = this.context.blocks.get(id);
+            let root_info = root_id && this.context.roots.get(root_id);
+            if (!root_info) {
+                const block_info = await this.kernelFetch<{ box: string; path: string; rootID: string }>(
+                    "/api/block/getBlockInfo",
+                    { id },
+                );
+                root_id = block_info.rootID;
+                root_info = {
+                    id: root_id,
+                    box: block_info.box,
+                    path: block_info.path,
+                    events: [],
+                };
+
+                this.context.blocks.set(id, root_id);
+                this.context.roots.set(root_id, root_info);
+            }
+
+            this.addEvent({
+                id: root_info.id,
+                box: root_info.box,
+                path: root_info.path,
+                time,
+                is_write: false,
+            });
+        }
+        catch {
+            /* 块删除事件导致无法查询到对应的块 — 静默忽略 */
+        }
     }
 
     /* RPC: addEditEvent */
@@ -866,7 +892,7 @@ Rewrite `onunload`:
     }
 ```
 
-Rewrite the three event listeners — replace each `this.bridge?.call<THandlers["xxx"]>("xxx", arg)` with `this.kernel.rpc.call.xxx(arg)` (fire-and-forget, no `await`, no `THandlers` type param):
+Rewrite the three event listeners — replace each `this.bridge?.call<THandlers["xxx"]>("xxx", arg)` with `this.kernel.rpc.call.xxx(arg)` (fire-and-forget, no `await`, no `THandlers` type param). `addViewEvent` and `addEditEvent` both take only the block id:
 
 In `webSocketMainEventListener`, the edit-event call:
 ```ts
@@ -875,14 +901,10 @@ In `webSocketMainEventListener`, the edit-event call:
                             }
 ```
 
-In `protyleEventListener` and `clickEditorContentEventListener`:
+In `protyleEventListener` and `clickEditorContentEventListener` — only the rootID is sent; the kernel resolves `box`/`path`:
 ```ts
         if (protyle.notebookId && protyle.path && protyle.block.rootID) {
-            void this.kernel.rpc.call.addViewEvent({
-                id: protyle.block.rootID,
-                box: protyle.notebookId,
-                path: protyle.path,
-            });
+            void this.kernel.rpc.call.addViewEvent(protyle.block.rootID);
         }
 ```
 
