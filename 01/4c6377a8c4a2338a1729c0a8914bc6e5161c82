@@ -1,0 +1,22 @@
+docs/superpowers/specs/2026-08-05-wakatime-kernel-port-design.md
+  s_f872ffe1c991ea::t_3b48c0221a2234 28
+  s_f872ffe1c991ea::t_cb8f9c6726655a 176-180
+  s_f872ffe1c991ea::t_ae9f2e8fd461e0 1-27,29-175,181-244,246-251
+  s_f872ffe1c991ea::t_c3e666a9982d40 245
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.39-trip",
+  "base_commit_sha": "014c6377a8c4a2338a1729c0a8914bc6e5161c82",
+  "prompts": {},
+  "sessions": {
+    "s_f872ffe1c991ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "716e2c4d-e980-404e-afd4-431e03bd92b1",
+        "model": "claude-glm-5.2"
+      },
+      "human_author": "Yingyi / 颖逸 <49649786+Zuoqiu-Yingyi@users.noreply.github.com>"
+    }
+  }
+}
