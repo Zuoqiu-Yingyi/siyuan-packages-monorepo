@@ -106,7 +106,6 @@
     data-type={type}
     aria-label={ariaLabel}
     role="button"
-    on:click
     on:dblclick
     on:click={(e) => onClick(e, element, props)}
 >

@@ -82,3 +82,11 @@ export interface ISwitchProtyleEvent extends CustomEvent<siyuan.IEventBusMap["sw
 export interface IDestroyProtyleEvent extends CustomEvent<siyuan.IEventBusMap["destroy-protyle"]> {
     // type: "destroy-protyle";
 }
+
+export interface IOpenedNotebookEvent extends CustomEvent<siyuan.IEventBusMap["opened-notebook"]> {
+    // type: "opened-notebook";
+}
+
+export interface IClosedNotebookEvent extends CustomEvent<siyuan.IEventBusMap["closed-notebook"]> {
+    // type: "closed-notebook";
+}
