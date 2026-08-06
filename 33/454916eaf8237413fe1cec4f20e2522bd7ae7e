@@ -1,0 +1,21 @@
+docs/superpowers/specs/2026-08-06-wakatime-status-panel-design.md
+  s_5ea5ef2bf27b7d::t_70f8784faf17a0 1-180,182-184,187-189,199-223,225-395
+  s_5ea5ef2bf27b7d::t_49e00e89339341 224
+  s_5ea5ef2bf27b7d::t_23cf39bde331a2 181,185-186,190-198
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.39-trip",
+  "base_commit_sha": "33454916eaf8237413fe1cec4f20e2522bd7ae7e",
+  "prompts": {},
+  "sessions": {
+    "s_5ea5ef2bf27b7d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1bba0fae-01d0-4e5e-87fc-4b043c3d3abd",
+        "model": "claude-glm-5.2"
+      },
+      "human_author": "Yingyi / 颖逸 <49649786+Zuoqiu-Yingyi@users.noreply.github.com>"
+    }
+  }
+}
