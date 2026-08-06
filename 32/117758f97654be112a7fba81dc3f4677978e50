@@ -1,0 +1,19 @@
+docs/superpowers/specs/2026-08-06-echarts-lure-render-design.md
+  s_fa2c4144aa3ab7::t_03b58b69565289 1-124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.39-trip",
+  "base_commit_sha": "32117758f97654be112a7fba81dc3f4677978e50",
+  "prompts": {},
+  "sessions": {
+    "s_fa2c4144aa3ab7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b5230b6-d128-410f-8240-610acb90462a",
+        "model": "claude-glm-5.2"
+      },
+      "human_author": "Yingyi / 颖逸 <49649786+Zuoqiu-Yingyi@users.noreply.github.com>"
+    }
+  }
+}
