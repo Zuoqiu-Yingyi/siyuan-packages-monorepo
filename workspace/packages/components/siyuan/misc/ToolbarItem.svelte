@@ -27,7 +27,9 @@
         ariaLabel?: string; // 提示标签内容 aria-label
     }
 
-    export interface IHandlers {}
+    export interface IHandlers {
+        onClick?: () => void; // 点击事件
+    }
 
     export interface ISlots {}
 
@@ -37,16 +39,24 @@
 <script lang="ts">
     import Svg from "./Svg.svelte";
 
-    const { icon = "#iconHelp", none = false, active = false, disabled = false, ariaLabel = "" }: TProps = $props();
+    const {
+        icon = "#iconHelp",
+        none = false,
+        active = false,
+        disabled = false,
+        ariaLabel = "",
+        onClick = () => {},
+    }: TProps = $props();
 </script>
 
-<div
+<button
     class="toolbar__item"
     class:ariaLabel={ariaLabel !== ""}
     class:fn__none={none}
     class:toolbar__item--active={active}
     class:toolbar__item--disabled={disabled}
     aria-label={ariaLabel}
+    onclick={onClick}
 >
     <Svg {icon} />
-</div>
+</button>
