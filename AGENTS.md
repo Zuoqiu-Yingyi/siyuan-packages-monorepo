@@ -17,7 +17,7 @@
 |---|---|
 | Project | SiYuan community packages monorepo |
 | Workspace | `workspace/` |
-| Package manager | `pnpm@11.17.0` |
+| Package manager | `pnpm@12.3.4` |
 | Build system | Turborepo + Vite |
 | Main package groups | `plugins/*`, `widgets/*`, `packages/*`, `tools/*` |
 | Test command | TODO: no repository-wide test script is defined |
