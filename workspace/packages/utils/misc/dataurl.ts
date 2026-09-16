@@ -26,8 +26,13 @@ export function dataURL2str(dataURL: string): string | undefined {
 export function dataURL2blob(dataURL: string): Blob | undefined {
     const result = parser(dataURL);
     if (result) {
+        const buffer = result.toBuffer();
         return new Blob(
-            [result.toBuffer()],
+            /**
+             * `Buffer` 的底层缓冲区类型为 `ArrayBufferLike`, 可能是不被 `BlobPart` 接受的 `SharedArrayBuffer`,
+             * 因此这里显式包装为视图类型确定的 `Uint8Array`
+             */
+            [new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength) as Uint8Array<ArrayBuffer>],
             { type: result.contentType },
         );
     }
