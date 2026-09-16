@@ -79,17 +79,26 @@
     /**
      * 外部响应式变量
      * 组件内部的渲染以这些 store 为准, 因此外部通过 store 写入的状态会立即反映到视图上
+     * 这里仅使用属性的初值播种, 后续变更由下方的 `$effect` 同步, 因此无需在闭包中读取属性
      */
+    // svelte-ignore state_referenced_locally
     const iconStore = writable(icon);
+    // svelte-ignore state_referenced_locally
     const showStore = writable(show);
+    // svelte-ignore state_referenced_locally
     const noneStore = writable(none);
+    // svelte-ignore state_referenced_locally
     const activeStore = writable(active);
+    // svelte-ignore state_referenced_locally
     const disabledStore = writable(disabled);
+    // svelte-ignore state_referenced_locally
     const typeStore = writable(type);
+    // svelte-ignore state_referenced_locally
     const ariaLabelStore = writable(ariaLabel);
+    // svelte-ignore state_referenced_locally
     const tooltipsDirectionStore = writable(tooltipsDirection);
 
-    const props = {
+    const stores = {
         icon: iconStore,
         show: showStore,
         none: noneStore,
@@ -127,7 +136,7 @@
     class:toolbar__item--disabled={$disabledStore}
     data-type={$typeStore}
     aria-label={$ariaLabelStore}
-    onclick={(e: MouseEvent) => onClick(e, element!, props)}
+    onclick={(e: MouseEvent) => onClick(e, element!, stores)}
     {ondblclick}
     role="button"
 >

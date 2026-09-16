@@ -101,10 +101,16 @@
     }: TProps = $props();
 
     let li: HTMLLIElement | undefined; // 当前节点元素
+    /* 仅在事件载荷中读取, 无需响应式 */
+    // svelte-ignore non_reactive_update
     let ul: HTMLUListElement | undefined; // 下级节点列表元素
 
-    /* 外部响应式变量 */
-    const props: IFileTreeNodeStores = {
+    /**
+     * 外部响应式变量
+     * 这里仅使用属性的初值播种, 后续变更由下方的 `$effect` 同步, 因此无需在闭包中读取属性
+     */
+    // svelte-ignore state_referenced_locally
+    const stores: IFileTreeNodeStores = {
         type: writable(type),
         name: writable(name),
         path: writable(path),
@@ -153,96 +159,96 @@
      * 组件内部的渲染以 store 为准, 因此外部通过 store 写入的状态会立即反映到视图上
      * REF: https://svelte.dev/docs/svelte/svelte-store#fromStore
      */
-    const state = {
-        type: fromStore(props.type),
-        name: fromStore(props.name),
-        path: fromStore(props.path),
-        depth: fromStore(props.depth),
-        indent: fromStore(props.indent),
-        directory: fromStore(props.directory),
+    const view = {
+        type: fromStore(stores.type),
+        name: fromStore(stores.name),
+        path: fromStore(stores.path),
+        depth: fromStore(stores.depth),
+        indent: fromStore(stores.indent),
+        directory: fromStore(stores.directory),
 
-        focus: fromStore(props.focus),
-        folded: fromStore(props.folded),
-        symlink: fromStore(props.symlink),
-        dragging: fromStore(props.dragging),
-        draggable: fromStore(props.draggable),
-        hideActions: fromStore(props.hideActions),
+        focus: fromStore(stores.focus),
+        folded: fromStore(stores.folded),
+        symlink: fromStore(stores.symlink),
+        dragging: fromStore(stores.dragging),
+        draggable: fromStore(stores.draggable),
+        hideActions: fromStore(stores.hideActions),
 
-        dragoverTop: fromStore(props.dragoverTop),
-        dragover: fromStore(props.dragover),
-        dragoverBottom: fromStore(props.dragoverBottom),
+        dragoverTop: fromStore(stores.dragoverTop),
+        dragover: fromStore(stores.dragover),
+        dragoverBottom: fromStore(stores.dragoverBottom),
 
-        title: fromStore(props.title),
-        children: fromStore(props.children),
+        title: fromStore(stores.title),
+        children: fromStore(stores.children),
 
-        toggleIcon: fromStore(props.toggleIcon),
-        toggleAriaLabel: fromStore(props.toggleAriaLabel),
+        toggleIcon: fromStore(stores.toggleIcon),
+        toggleAriaLabel: fromStore(stores.toggleAriaLabel),
 
-        icon: fromStore(props.icon),
-        iconAriaLabel: fromStore(props.iconAriaLabel),
-        iconPopoverID: fromStore(props.iconPopoverID),
+        icon: fromStore(stores.icon),
+        iconAriaLabel: fromStore(stores.iconAriaLabel),
+        iconPopoverID: fromStore(stores.iconPopoverID),
 
-        text: fromStore(props.text),
-        textAriaLabel: fromStore(props.textAriaLabel),
+        text: fromStore(stores.text),
+        textAriaLabel: fromStore(stores.textAriaLabel),
 
-        menuIcon: fromStore(props.menuIcon),
-        menuAriaLabel: fromStore(props.menuAriaLabel),
+        menuIcon: fromStore(stores.menuIcon),
+        menuAriaLabel: fromStore(stores.menuAriaLabel),
 
-        symlinkIcon: fromStore(props.symlinkIcon),
-        symlinkAriaLabel: fromStore(props.symlinkAriaLabel),
+        symlinkIcon: fromStore(stores.symlinkIcon),
+        symlinkAriaLabel: fromStore(stores.symlinkAriaLabel),
 
-        count: fromStore(props.count),
-        countAriaLabel: fromStore(props.countAriaLabel),
+        count: fromStore(stores.count),
+        countAriaLabel: fromStore(stores.countAriaLabel),
     } as const;
 
     /* 属性变更时同步至 store */
-    $effect(() => void props.type.set(type));
-    $effect(() => void props.name.set(name));
-    $effect(() => void props.path.set(path));
-    $effect(() => void props.root.set(root));
-    $effect(() => void props.depth.set(depth));
-    $effect(() => void props.indent.set(indent));
-    $effect(() => void props.relative.set(relative));
-    $effect(() => void props.directory.set(directory));
+    $effect(() => void stores.type.set(type));
+    $effect(() => void stores.name.set(name));
+    $effect(() => void stores.path.set(path));
+    $effect(() => void stores.root.set(root));
+    $effect(() => void stores.depth.set(depth));
+    $effect(() => void stores.indent.set(indent));
+    $effect(() => void stores.relative.set(relative));
+    $effect(() => void stores.directory.set(directory));
 
-    $effect(() => void props.focus.set(focus));
-    $effect(() => void props.folded.set(folded));
-    $effect(() => void props.symlink.set(symlink));
-    $effect(() => void props.dragging.set(dragging));
-    $effect(() => void props.draggable.set(draggable));
-    $effect(() => void props.hideActions.set(hideActions));
+    $effect(() => void stores.focus.set(focus));
+    $effect(() => void stores.folded.set(folded));
+    $effect(() => void stores.symlink.set(symlink));
+    $effect(() => void stores.dragging.set(dragging));
+    $effect(() => void stores.draggable.set(draggable));
+    $effect(() => void stores.hideActions.set(hideActions));
 
-    $effect(() => void props.dragoverTop.set(dragoverTop));
-    $effect(() => void props.dragover.set(dragover));
-    $effect(() => void props.dragoverBottom.set(dragoverBottom));
+    $effect(() => void stores.dragoverTop.set(dragoverTop));
+    $effect(() => void stores.dragover.set(dragover));
+    $effect(() => void stores.dragoverBottom.set(dragoverBottom));
 
-    $effect(() => void props.title.set(title));
-    $effect(() => void props.children.set(children));
+    $effect(() => void stores.title.set(title));
+    $effect(() => void stores.children.set(children));
 
-    $effect(() => void props.toggleIcon.set(toggleIcon));
-    $effect(() => void props.toggleAriaLabel.set(toggleAriaLabel));
+    $effect(() => void stores.toggleIcon.set(toggleIcon));
+    $effect(() => void stores.toggleAriaLabel.set(toggleAriaLabel));
 
-    $effect(() => void props.icon.set(icon));
-    $effect(() => void props.iconAriaLabel.set(iconAriaLabel));
-    $effect(() => void props.iconPopoverID.set(iconPopoverID));
+    $effect(() => void stores.icon.set(icon));
+    $effect(() => void stores.iconAriaLabel.set(iconAriaLabel));
+    $effect(() => void stores.iconPopoverID.set(iconPopoverID));
 
-    $effect(() => void props.text.set(text));
-    $effect(() => void props.textAriaLabel.set(textAriaLabel));
+    $effect(() => void stores.text.set(text));
+    $effect(() => void stores.textAriaLabel.set(textAriaLabel));
 
-    $effect(() => void props.menuIcon.set(menuIcon));
-    $effect(() => void props.menuAriaLabel.set(menuAriaLabel));
+    $effect(() => void stores.menuIcon.set(menuIcon));
+    $effect(() => void stores.menuAriaLabel.set(menuAriaLabel));
 
-    $effect(() => void props.symlinkIcon.set(symlinkIcon));
-    $effect(() => void props.symlinkAriaLabel.set(symlinkAriaLabel));
+    $effect(() => void stores.symlinkIcon.set(symlinkIcon));
+    $effect(() => void stores.symlinkAriaLabel.set(symlinkAriaLabel));
 
-    $effect(() => void props.count.set(count));
-    $effect(() => void props.countAriaLabel.set(countAriaLabel));
+    $effect(() => void stores.count.set(count));
+    $effect(() => void stores.countAriaLabel.set(countAriaLabel));
 
     const tree = getContext<ITree>("tree");
-    tree?.appendNode(props);
+    tree?.appendNode(stores);
 
     onDestroy(() => {
-        tree?.removeNode(props);
+        tree?.removeNode(stores);
     });
 
     /* 构造事件载荷 */
@@ -251,7 +257,7 @@
             e,
             li: li!,
             ul: ul!,
-            props,
+            props: stores,
         };
     }
 
@@ -321,18 +327,18 @@
 <li
     bind:this={li}
     class="node b3-list-item"
-    class:b3-list-item--focus={state.focus.current}
-    class:b3-list-item--hide-action={state.hideActions.current}
-    class:dragging={state.dragging.current}
-    class:dragover={state.dragover.current}
-    class:dragover__bottom={state.dragoverBottom.current}
-    class:dragover__top={state.dragoverTop.current}
-    data-depth={state.depth.current}
-    data-directory={state.directory.current}
-    data-name={state.name.current}
-    data-path={state.path.current}
-    data-type={state.type.current}
-    draggable={state.draggable.current}
+    class:b3-list-item--focus={view.focus.current}
+    class:b3-list-item--hide-action={view.hideActions.current}
+    class:dragging={view.dragging.current}
+    class:dragover={view.dragover.current}
+    class:dragover__bottom={view.dragoverBottom.current}
+    class:dragover__top={view.dragoverTop.current}
+    data-depth={view.depth.current}
+    data-directory={view.directory.current}
+    data-name={view.name.current}
+    data-path={view.path.current}
+    data-type={view.type.current}
+    draggable={view.draggable.current}
     onclick={stopPropagation(preventDefault(open))}
     oncontextmenu={stopPropagation(preventDefault(menu))}
     ondragend={stopPropagation(_onDragend)}
@@ -341,64 +347,64 @@
     ondragover={stopPropagation(preventDefault(_onDragover))}
     ondragstart={stopPropagation(_onDragstart)}
     ondrop={stopPropagation(preventDefault(_onDrop))}
-    title={state.title.current}
+    title={view.title.current}
 >
     <!-- 折叠/展开按钮 -->
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_interactive_supports_focus -->
     <span
-        style:padding-left="calc(4px + {state.indent.current} * {state.depth.current})"
+        style:padding-left="calc(4px + {view.indent.current} * {view.depth.current})"
         class="toggle b3-list-item__toggle b3-list-item__toggle--hl"
-        class:b3-tooltips={!!state.toggleAriaLabel.current}
-        class:b3-tooltips__ne={!!state.toggleAriaLabel.current && state.type.current !== FileTreeNodeType.Root}
-        class:b3-tooltips__se={!!state.toggleAriaLabel.current && state.type.current === FileTreeNodeType.Root}
-        class:fn__hidden={state.type.current === FileTreeNodeType.File}
-        aria-label={state.toggleAriaLabel.current}
+        class:b3-tooltips={!!view.toggleAriaLabel.current}
+        class:b3-tooltips__ne={!!view.toggleAriaLabel.current && view.type.current !== FileTreeNodeType.Root}
+        class:b3-tooltips__se={!!view.toggleAriaLabel.current && view.type.current === FileTreeNodeType.Root}
+        class:fn__hidden={view.type.current === FileTreeNodeType.File}
+        aria-label={view.toggleAriaLabel.current}
         onclick={stopPropagation(preventDefault(toggle))}
         role="button"
     >
         <SvgArrow
-            icon={state.toggleIcon.current}
-            open={!state.folded.current}
+            icon={view.toggleIcon.current}
+            open={!view.folded.current}
         />
     </span>
 
     <!-- 图标 -->
     <span
         class="icon b3-list-item__icon"
-        class:b3-tooltips={!!state.iconAriaLabel.current}
-        class:b3-tooltips__ne={!!state.iconAriaLabel.current && state.type.current !== FileTreeNodeType.Root}
-        class:b3-tooltips__se={!!state.iconAriaLabel.current && state.type.current === FileTreeNodeType.Root}
-        aria-label={state.iconAriaLabel.current}
+        class:b3-tooltips={!!view.iconAriaLabel.current}
+        class:b3-tooltips__ne={!!view.iconAriaLabel.current && view.type.current !== FileTreeNodeType.Root}
+        class:b3-tooltips__se={!!view.iconAriaLabel.current && view.type.current === FileTreeNodeType.Root}
+        aria-label={view.iconAriaLabel.current}
     >
-        {#if state.icon.current}
+        {#if view.icon.current}
             <!-- svg 图标 -->
             <Icon
-                id={state.iconPopoverID.current}
-                icon={state.icon.current}
+                id={view.iconPopoverID.current}
+                icon={view.icon.current}
             />
-        {:else if state.type.current === FileTreeNodeType.File}
+        {:else if view.type.current === FileTreeNodeType.File}
             <!-- 文件图标 -->
             <Svg
-                id={state.iconPopoverID.current}
+                id={view.iconPopoverID.current}
                 icon="#iconFile"
             />
-        {:else if state.type.current === FileTreeNodeType.Folder}
+        {:else if view.type.current === FileTreeNodeType.Folder}
             <!-- 文件夹图标 -->
             <Svg
-                id={state.iconPopoverID.current}
+                id={view.iconPopoverID.current}
                 icon="#iconFolder"
             />
-        {:else if state.type.current === FileTreeNodeType.Root}
+        {:else if view.type.current === FileTreeNodeType.Root}
             <!-- 根目录图标 -->
             <Svg
-                id={state.iconPopoverID.current}
+                id={view.iconPopoverID.current}
                 icon="#iconFilesRoot"
             />
         {:else}
             <!-- 未知图标 -->
             <Svg
-                id={state.iconPopoverID.current}
+                id={view.iconPopoverID.current}
                 icon="#iconHelp"
             />
         {/if}
@@ -407,75 +413,75 @@
     <!-- 文本 -->
     <span
         class="text b3-list-item__text"
-        class:ariaLabel={!!state.textAriaLabel.current}
-        class:b3-tooltips__ne={!!state.textAriaLabel.current && state.type.current !== FileTreeNodeType.Root}
-        class:b3-tooltips__se={!!state.textAriaLabel.current && state.type.current === FileTreeNodeType.Root}
-        aria-label={state.textAriaLabel.current}
+        class:ariaLabel={!!view.textAriaLabel.current}
+        class:b3-tooltips__ne={!!view.textAriaLabel.current && view.type.current !== FileTreeNodeType.Root}
+        class:b3-tooltips__se={!!view.textAriaLabel.current && view.type.current === FileTreeNodeType.Root}
+        aria-label={view.textAriaLabel.current}
     >
-        {state.text.current}
+        {view.text.current}
     </span>
 
     <!-- 菜单按钮 -->
     <!-- svelte-ignore a11y_interactive_supports_focus -->
     <span
         class="menu b3-list-item__action"
-        class:b3-tooltips={!!state.menuAriaLabel.current}
-        class:b3-tooltips__nw={!!state.menuAriaLabel.current && state.type.current !== FileTreeNodeType.Root}
-        class:b3-tooltips__sw={!!state.menuAriaLabel.current && state.type.current === FileTreeNodeType.Root}
+        class:b3-tooltips={!!view.menuAriaLabel.current}
+        class:b3-tooltips__nw={!!view.menuAriaLabel.current && view.type.current !== FileTreeNodeType.Root}
+        class:b3-tooltips__sw={!!view.menuAriaLabel.current && view.type.current === FileTreeNodeType.Root}
         data-type="more"
-        aria-label={state.menuAriaLabel.current}
+        aria-label={view.menuAriaLabel.current}
         onclick={stopPropagation(preventDefault(menu))}
         role="button"
     >
-        {#if state.menuIcon.current}
-            <Icon icon={state.menuIcon.current} />
+        {#if view.menuIcon.current}
+            <Icon icon={view.menuIcon.current} />
         {/if}
     </span>
 
     <!-- 符号链接 -->
-    {#if state.symlink.current}
+    {#if view.symlink.current}
         <span
             class="symblink b3-list-item__action"
-            class:b3-tooltips={!!state.symlinkAriaLabel.current}
-            class:b3-tooltips__nw={!!state.symlinkAriaLabel.current && state.type.current !== FileTreeNodeType.Root}
-            class:b3-tooltips__sw={!!state.symlinkAriaLabel.current && state.type.current === FileTreeNodeType.Root}
+            class:b3-tooltips={!!view.symlinkAriaLabel.current}
+            class:b3-tooltips__nw={!!view.symlinkAriaLabel.current && view.type.current !== FileTreeNodeType.Root}
+            class:b3-tooltips__sw={!!view.symlinkAriaLabel.current && view.type.current === FileTreeNodeType.Root}
             data-type="symlink"
-            aria-label={state.symlinkAriaLabel.current}
+            aria-label={view.symlinkAriaLabel.current}
         >
-            {#if state.symlinkIcon.current}
-                <Icon icon={state.symlinkIcon.current} />
+            {#if view.symlinkIcon.current}
+                <Icon icon={view.symlinkIcon.current} />
             {/if}
         </span>
     {/if}
 
     <!-- 计数器 -->
-    {#if !Number.isNaN(state.count.current)}
+    {#if !Number.isNaN(view.count.current)}
         <span
             class="counter"
-            class:b3-tooltips={!!state.countAriaLabel.current}
-            class:b3-tooltips__nw={!!state.countAriaLabel.current && state.type.current !== FileTreeNodeType.Root}
-            class:b3-tooltips__sw={!!state.countAriaLabel.current && state.type.current === FileTreeNodeType.Root}
-            aria-label={state.countAriaLabel.current}
+            class:b3-tooltips={!!view.countAriaLabel.current}
+            class:b3-tooltips__nw={!!view.countAriaLabel.current && view.type.current !== FileTreeNodeType.Root}
+            class:b3-tooltips__sw={!!view.countAriaLabel.current && view.type.current === FileTreeNodeType.Root}
+            aria-label={view.countAriaLabel.current}
         >
-            {state.count.current}
+            {view.count.current}
         </span>
     {/if}
 </li>
 
 <!-- 下级节点 -->
-{#if state.children.current}
+{#if view.children.current}
     <ul
         bind:this={ul}
-        style:--monaco-editor-explorer-indent-left="calc(12px + {state.indent.current} * {state.depth.current})"
+        style:--monaco-editor-explorer-indent-left="calc(12px + {view.indent.current} * {view.depth.current})"
         class="node-list"
-        class:dragging={state.dragging.current}
-        class:dragover={state.dragover.current}
-        class:fn__none={state.folded.current}
+        class:dragging={view.dragging.current}
+        class:dragover={view.dragover.current}
+        class:fn__none={view.folded.current}
     >
         <!-- 递归渲染下级节点 (Svelte 5 不再使用 <svelte:self>, 直接引用自身) -->
-        {#each state.children.current as node (node.path)}
+        {#each view.children.current as node (node.path)}
             <Node
-                depth={(state.depth.current ?? 0) + 1}
+                depth={(view.depth.current ?? 0) + 1}
                 {onDrag}
                 {onDragend}
                 {onDragenter}
