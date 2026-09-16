@@ -1,0 +1,24 @@
+workspace/packages/utils/misc/dataurl.ts
+  s_375e4a819920b7::t_29572f03c4c20f 29,31-35
+workspace/packages/utils/electron/clipboard.ts
+  s_375e4a819920b7::t_2c172a779439a5 16-17,20-45,47-49,51-53,57,61,81
+  s_375e4a819920b7::t_06fb9fb5057a18 82-126
+  s_375e4a819920b7::t_3f6a5dc04136e8 58-60
+  s_375e4a819920b7::t_d943ee87f1dc5a 46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.44-trip",
+  "base_commit_sha": "e6e8fb5646c4fead0a47805f833b65e25641d1ed",
+  "prompts": {},
+  "sessions": {
+    "s_375e4a819920b7": {
+      "agent_id": {
+        "tool": "chengxiaobang",
+        "id": "s_vmnj8i26q86q",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Yingyi / 颖逸 <49649786+Zuoqiu-Yingyi@users.noreply.github.com>"
+    }
+  }
+}
