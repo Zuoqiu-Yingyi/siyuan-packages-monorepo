@@ -27,6 +27,7 @@ export function state_raw<T>(initial?: T): T | undefined {
     return s;
 }
 
-export function state_snapshot<T>(s: T): $state.Snapshot<T> {
+/* `$state.Snapshot` 未从 `$state` 命名空间导出, 因此这里让 TS 自行推断返回值类型 */
+export function state_snapshot<T>(s: T) {
     return $state.snapshot<T>(s);
 }

@@ -15,99 +15,121 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<script lang="ts">
-    import { onDestroy } from "svelte";
-    import {
-        writable,
+<script
+    lang="ts"
+    module
+>
+    import type {
+        IBlockIconProps,
+        IBlockIconStatus,
+    } from "./index";
 
-    } from "svelte/store";
+    export interface IProps {
+        icon?: NonNullable<IBlockIconStatus["icon"]>; // svg 图标引用 ID
+        tag?: NonNullable<IBlockIconStatus["tag"]>; // 元素 HTML 标签名称
+        show?: NonNullable<IBlockIconStatus["show"]>; // 是否显示 .block__icon--show (opacity: 1)
+        none?: NonNullable<IBlockIconStatus["none"]>; // 是否隐藏 .fn__none (display: none)
+        active?: NonNullable<IBlockIconStatus["active"]>; // 是否激活 .toolbar__item--active
+        disabled?: NonNullable<IBlockIconStatus["disabled"]>; // 是否禁用 .toolbar__item--disabled
+        type?: NonNullable<IBlockIconStatus["type"]>; // data-type
+        ariaLabel?: NonNullable<IBlockIconStatus["ariaLabel"]>; // 提示标签内容 aria-label
+        tooltipsDirection?: NonNullable<IBlockIconStatus["tooltipsDirection"]>; // 提示标签方向
+    }
+
+    export interface IHandlers {
+        onClick?: NonNullable<IBlockIconProps["onClick"]>; // 按钮点击回调函数
+        ondblclick?: (event: MouseEvent) => void; // 按钮双击事件
+    }
+
+    export type TProps = IProps & IHandlers;
+</script>
+
+<script lang="ts">
+    import { writable } from "svelte/store";
 
     import { TooltipsDirection } from "./tooltips";
 
     import Svg from "./Svg.svelte";
 
-    import type { Unsubscriber } from "svelte/store";
+    import type { IBlockIconStores } from "./index";
 
-    import type {
-        IBlockIconProps,
-        IBlockIconStores,
-    } from "./index";
+    const {
+        icon = "#iconHelp",
 
-    export let icon: NonNullable<IBlockIconProps["icon"]> = "#iconHelp";
+        tag = "button",
+        show = true,
+        none = false,
+        active = false,
+        disabled = false,
 
-    export let tag: NonNullable<IBlockIconProps["icon"]> = "button";
-    export let show: NonNullable<IBlockIconProps["show"]> = true;
-    export let none: NonNullable<IBlockIconProps["none"]> = false;
-    export let active: NonNullable<IBlockIconProps["active"]> = false;
-    export let disabled: NonNullable<IBlockIconProps["disabled"]> = false;
+        type = "",
+        ariaLabel = "",
+        tooltipsDirection = TooltipsDirection.none,
 
-    export let type: NonNullable<IBlockIconProps["type"]> = "";
-    export let ariaLabel: NonNullable<IBlockIconProps["ariaLabel"]> = "";
-    export let tooltipsDirection: NonNullable<IBlockIconProps["tooltipsDirection"]> = TooltipsDirection.none;
-    export let onClick: NonNullable<IBlockIconProps["onClick"]> = () => null;
+        onClick = () => null,
+        ondblclick,
+    }: TProps = $props();
 
-    let element: HTMLElement;
+    let element: HTMLElement | undefined;
 
     export function rect(): DOMRect | undefined {
         return element?.getBoundingClientRect();
     }
 
-    /* 外部响应式变量 */
+    /**
+     * 外部响应式变量
+     * 组件内部的渲染以这些 store 为准, 因此外部通过 store 写入的状态会立即反映到视图上
+     */
+    const iconStore = writable(icon);
+    const showStore = writable(show);
+    const noneStore = writable(none);
+    const activeStore = writable(active);
+    const disabledStore = writable(disabled);
+    const typeStore = writable(type);
+    const ariaLabelStore = writable(ariaLabel);
+    const tooltipsDirectionStore = writable(tooltipsDirection);
+
     const props = {
-        icon: writable(icon),
-        show: writable(show),
-        none: writable(none),
-        active: writable(active),
-        disabled: writable(disabled),
-        type: writable(type),
-        ariaLabel: writable(ariaLabel),
-        tooltipsDirection: writable(tooltipsDirection),
+        icon: iconStore,
+        show: showStore,
+        none: noneStore,
+        active: activeStore,
+        disabled: disabledStore,
+        type: typeStore,
+        ariaLabel: ariaLabelStore,
+        tooltipsDirection: tooltipsDirectionStore,
     } as const satisfies IBlockIconStores;
 
-    $: props.icon.set(icon);
-    $: props.show.set(show);
-    $: props.none.set(none);
-    $: props.active.set(active);
-    $: props.disabled.set(disabled);
-    $: props.type.set(type);
-    $: props.ariaLabel.set(ariaLabel);
-    $: props.tooltipsDirection.set(tooltipsDirection);
-
-    const unsubscribes: Unsubscriber[] = [
-        props.icon.subscribe((v) => (icon = v)), //
-        props.show.subscribe((v) => (show = v)), //
-        props.none.subscribe((v) => (none = v)), //
-        props.active.subscribe((v) => (active = v)), //
-        props.disabled.subscribe((v) => (disabled = v)), //
-        props.type.subscribe((v) => (type = v)), //
-        props.ariaLabel.subscribe((v) => (ariaLabel = v)), //
-        props.tooltipsDirection.subscribe((v) => (tooltipsDirection = v)), //
-    ];
-
-    onDestroy(() => {
-        unsubscribes.forEach((unsubscribe) => unsubscribe());
-    });
+    /* 属性变更时同步至 store */
+    $effect(() => void iconStore.set(icon));
+    $effect(() => void showStore.set(show));
+    $effect(() => void noneStore.set(none));
+    $effect(() => void activeStore.set(active));
+    $effect(() => void disabledStore.set(disabled));
+    $effect(() => void typeStore.set(type));
+    $effect(() => void ariaLabelStore.set(ariaLabel));
+    $effect(() => void tooltipsDirectionStore.set(tooltipsDirection));
 </script>
 
 <!--
     动态标签名
     REF: https://svelte.dev/docs/special-elements#svelte-element
 -->
-<!-- svelte-ignore a11y-interactive-supports-focus -->
+<!-- svelte-ignore a11y_interactive_supports_focus -->
 <svelte:element
     this={tag}
     bind:this={element}
-    class="block__icon fn__flex-center {tooltipsDirection}"
-    class:b3-tooltips={tooltipsDirection !== TooltipsDirection.none}
-    class:block__icon--show={show}
-    class:fn__none={none}
-    class:toolbar__item--active={active}
-    class:toolbar__item--disabled={disabled}
-    data-type={type}
-    aria-label={ariaLabel}
+    class="block__icon fn__flex-center {$tooltipsDirectionStore}"
+    class:b3-tooltips={$tooltipsDirectionStore !== TooltipsDirection.none}
+    class:block__icon--show={$showStore}
+    class:fn__none={$noneStore}
+    class:toolbar__item--active={$activeStore}
+    class:toolbar__item--disabled={$disabledStore}
+    data-type={$typeStore}
+    aria-label={$ariaLabelStore}
+    onclick={(e: MouseEvent) => onClick(e, element!, props)}
+    {ondblclick}
     role="button"
-    on:dblclick
-    on:click={(e) => onClick(e, element, props)}
 >
-    <Svg {icon} />
+    <Svg icon={$iconStore} />
 </svelte:element>

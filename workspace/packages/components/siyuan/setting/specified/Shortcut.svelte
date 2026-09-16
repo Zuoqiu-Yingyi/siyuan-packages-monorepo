@@ -17,9 +17,55 @@
 
 <!-- 快捷键 -->
 
-<script lang="ts">
-    import { createEventDispatcher } from "svelte";
+<script
+    lang="ts"
+    module
+>
+    import type { IMouseStatus } from "@workspace/utils/shortcut";
 
+    import type { IShortcutEvent } from "./../event";
+
+    import type { IProps as IInputProps } from "./../item/Input.svelte";
+
+    export interface IProps {
+        title: string; // 标题
+        shortcut: IMouseStatus; // 快捷键
+
+        /* 最小宽度 */
+        minWidth?: string;
+        marginRight?: string;
+
+        /* 是否显示 */
+        displayCtrlKey?: boolean;
+        displayShiftKey?: boolean;
+        displayAltKey?: boolean;
+        displayMetaKey?: boolean;
+        displayMouseButton?: boolean;
+        displayMouseEvent?: boolean;
+
+        /* 是否禁用 */
+        disabledCtrlKey?: boolean;
+        disabledShiftKey?: boolean;
+        disabledAltKey?: boolean;
+        disabledMetaKey?: boolean;
+        disabledMouseButton?: boolean;
+        disabledMouseEvent?: boolean;
+
+        /* 显示内容 */
+        mouseButtonTitle?: string;
+        mouseEventTitle?: string;
+        mouseButtonOptions?: NonNullable<IInputProps["options"]>;
+        mouseEventOptions?: NonNullable<IInputProps["options"]>;
+    }
+
+    export interface IHandlers {
+        onChanged?: (params: IShortcutEvent["changed"]) => void; // 快捷键变更
+    }
+
+    export type TProps = IProps & IHandlers;
+</script>
+
+<script lang="ts">
     import { MouseButton, MouseEvent } from "@workspace/utils/shortcut";
 
     import { ItemType } from "./../item/item";
@@ -29,66 +75,61 @@
     import Input from "./../item/Input.svelte";
     import MiniItem from "./../item/MiniItem.svelte";
 
-    import type { ComponentEvents } from "svelte";
+    import type { IFunctionKeysStatus } from "@workspace/utils/shortcut";
 
-    import type { IFunctionKeysStatus, IMouseStatus } from "@workspace/utils/shortcut";
+    import type { IInputEvent } from "./../event";
 
-    import type { IShortcutEvent } from "./../event";
+    const {
+        title,
+        shortcut = $bindable(),
 
-    export let title: string; // 标题
-    export let shortcut: IMouseStatus; // 快捷键
+        minWidth = undefined,
+        marginRight = undefined,
 
-    /* 最小宽度 */
-    /* eslint-disable no-undef-init */
-    export let minWidth: string | undefined = undefined;
-    export let marginRight: string | undefined = undefined;
-    /* eslint-enable no-undef-init */
+        displayCtrlKey = true,
+        displayShiftKey = true,
+        displayAltKey = true,
+        displayMetaKey = true,
+        displayMouseButton = true,
+        displayMouseEvent = true,
 
-    /* 是否显示 */
-    export let displayCtrlKey = true;
-    export let displayShiftKey = true;
-    export let displayAltKey = true;
-    export let displayMetaKey = true;
-    export let displayMouseButton = true;
-    export let displayMouseEvent = true;
+        disabledCtrlKey = false,
+        disabledShiftKey = false,
+        disabledAltKey = false,
+        disabledMetaKey = false,
+        disabledMouseButton = false,
+        disabledMouseEvent = false,
 
-    /* 是否禁用 */
-    export let disabledCtrlKey = false;
-    export let disabledShiftKey = false;
-    export let disabledAltKey = false;
-    export let disabledMetaKey = false;
-    export let disabledMouseButton = false;
-    export let disabledMouseEvent = false;
+        mouseButtonTitle = "Mouse Button",
+        mouseEventTitle = "Mouse Event",
+        mouseButtonOptions = [
+            { key: MouseButton.Left, text: "Left" },
+            { key: MouseButton.Middle, text: "Middle" },
+            { key: MouseButton.Right, text: "Right" },
+            { key: MouseButton.Back, text: "Back" },
+            { key: MouseButton.Forward, text: "Forward" },
+        ],
+        mouseEventOptions = [
+            { key: MouseEvent.click, text: MouseEvent.click },
+            { key: MouseEvent.dblclick, text: MouseEvent.dblclick },
+            { key: MouseEvent.mousedown, text: MouseEvent.mousedown },
+            { key: MouseEvent.mouseup, text: MouseEvent.mouseup },
+            { key: MouseEvent.mouseenter, text: MouseEvent.mouseenter },
+            { key: MouseEvent.mouseleave, text: MouseEvent.mouseleave },
+            { key: MouseEvent.mousewheel, text: MouseEvent.mousewheel },
+            { key: MouseEvent.mouseover, text: MouseEvent.mouseover },
+            { key: MouseEvent.mousemove, text: MouseEvent.mousemove },
+            { key: MouseEvent.mouseout, text: MouseEvent.mouseout },
+        ],
 
-    /* 显示内容 */
-    export let mouseButtonTitle = "Mouse Button";
-    export let mouseEventTitle = "Mouse Event";
-    export let mouseButtonOptions = [
-        { key: MouseButton.Left, text: "Left" },
-        { key: MouseButton.Middle, text: "Middle" },
-        { key: MouseButton.Right, text: "Right" },
-        { key: MouseButton.Back, text: "Back" },
-        { key: MouseButton.Forward, text: "Forward" },
-    ];
-    export let mouseEventOptions = [
-        { key: MouseEvent.click, text: MouseEvent.click },
-        { key: MouseEvent.dblclick, text: MouseEvent.dblclick },
-        { key: MouseEvent.mousedown, text: MouseEvent.mousedown },
-        { key: MouseEvent.mouseup, text: MouseEvent.mouseup },
-        { key: MouseEvent.mouseenter, text: MouseEvent.mouseenter },
-        { key: MouseEvent.mouseleave, text: MouseEvent.mouseleave },
-        { key: MouseEvent.mousewheel, text: MouseEvent.mousewheel },
-        { key: MouseEvent.mouseover, text: MouseEvent.mouseover },
-        { key: MouseEvent.mousemove, text: MouseEvent.mousemove },
-        { key: MouseEvent.mouseout, text: MouseEvent.mouseout },
-    ];
+        onChanged,
+    }: TProps = $props();
 
-    const dispatch = createEventDispatcher<IShortcutEvent>();
-    function changed(e: ComponentEvents<Input>["changed"]) {
-        if (e.detail.key in shortcut) {
-            shortcut[e.detail.key as keyof IFunctionKeysStatus] = e.detail.value as boolean;
+    function changed(params: IInputEvent["changed"]) {
+        if (params.key in shortcut) {
+            shortcut[params.key as keyof IFunctionKeysStatus] = params.value as boolean;
         }
-        dispatch("changed", { shortcut });
+        onChanged?.({ shortcut });
     }
 </script>
 
@@ -98,20 +139,25 @@
             {marginRight}
             {minWidth}
         >
-            <Svg
-                className="svg"
-                icon="#iconKeymap"
-            />
-            <kbd slot="title">Ctrl</kbd>
-            <Input
-                slot="input"
-                disabled={disabledCtrlKey}
-                normal={false}
-                settingKey="ctrlKey"
-                settingValue={shortcut.ctrlKey}
-                type={ItemType.checkbox}
-                on:changed={changed}
-            />
+            {#snippet icon()}
+                <Svg
+                    className="svg"
+                    icon="#iconKeymap"
+                />
+            {/snippet}
+            {#snippet title()}
+                <kbd>Ctrl</kbd>
+            {/snippet}
+            {#snippet input()}
+                <Input
+                    disabled={disabledCtrlKey}
+                    normal={false}
+                    onChanged={changed}
+                    settingKey="ctrlKey"
+                    settingValue={shortcut.ctrlKey}
+                    type={ItemType.checkbox}
+                />
+            {/snippet}
         </MiniItem>
     {/if}
     {#if displayShiftKey}
@@ -119,20 +165,25 @@
             {marginRight}
             {minWidth}
         >
-            <Svg
-                className="svg"
-                icon="#iconKeymap"
-            />
-            <kbd slot="title">Shift</kbd>
-            <Input
-                slot="input"
-                disabled={disabledShiftKey}
-                normal={false}
-                settingKey="shiftKey"
-                settingValue={shortcut.shiftKey}
-                type={ItemType.checkbox}
-                on:changed={changed}
-            />
+            {#snippet icon()}
+                <Svg
+                    className="svg"
+                    icon="#iconKeymap"
+                />
+            {/snippet}
+            {#snippet title()}
+                <kbd>Shift</kbd>
+            {/snippet}
+            {#snippet input()}
+                <Input
+                    disabled={disabledShiftKey}
+                    normal={false}
+                    onChanged={changed}
+                    settingKey="shiftKey"
+                    settingValue={shortcut.shiftKey}
+                    type={ItemType.checkbox}
+                />
+            {/snippet}
         </MiniItem>
     {/if}
     {#if displayAltKey}
@@ -140,20 +191,25 @@
             {marginRight}
             {minWidth}
         >
-            <Svg
-                className="svg"
-                icon="#iconKeymap"
-            />
-            <kbd slot="title">Alt</kbd>
-            <Input
-                slot="input"
-                disabled={disabledAltKey}
-                normal={false}
-                settingKey="altKey"
-                settingValue={shortcut.altKey}
-                type={ItemType.checkbox}
-                on:changed={changed}
-            />
+            {#snippet icon()}
+                <Svg
+                    className="svg"
+                    icon="#iconKeymap"
+                />
+            {/snippet}
+            {#snippet title()}
+                <kbd>Alt</kbd>
+            {/snippet}
+            {#snippet input()}
+                <Input
+                    disabled={disabledAltKey}
+                    normal={false}
+                    onChanged={changed}
+                    settingKey="altKey"
+                    settingValue={shortcut.altKey}
+                    type={ItemType.checkbox}
+                />
+            {/snippet}
         </MiniItem>
     {/if}
     {#if displayMetaKey}
@@ -161,20 +217,25 @@
             {marginRight}
             {minWidth}
         >
-            <Svg
-                className="svg"
-                icon="#iconKeymap"
-            />
-            <kbd slot="title">Meta</kbd>
-            <Input
-                slot="input"
-                disabled={disabledMetaKey}
-                normal={false}
-                settingKey="metaKey"
-                settingValue={shortcut.metaKey}
-                type={ItemType.checkbox}
-                on:changed={changed}
-            />
+            {#snippet icon()}
+                <Svg
+                    className="svg"
+                    icon="#iconKeymap"
+                />
+            {/snippet}
+            {#snippet title()}
+                <kbd>Meta</kbd>
+            {/snippet}
+            {#snippet input()}
+                <Input
+                    disabled={disabledMetaKey}
+                    normal={false}
+                    onChanged={changed}
+                    settingKey="metaKey"
+                    settingValue={shortcut.metaKey}
+                    type={ItemType.checkbox}
+                />
+            {/snippet}
         </MiniItem>
     {/if}
     {#if displayMouseButton}
@@ -182,21 +243,26 @@
             {marginRight}
             {minWidth}
         >
-            <Svg
-                className="svg"
-                icon="#iconSelectText"
-            />
-            <span slot="title">{mouseButtonTitle}</span>
-            <Input
-                slot="input"
-                disabled={disabledMouseButton}
-                normal={false}
-                options={mouseButtonOptions}
-                settingKey="button"
-                settingValue={shortcut.button}
-                type={ItemType.select}
-                on:changed={changed}
-            />
+            {#snippet icon()}
+                <Svg
+                    className="svg"
+                    icon="#iconSelectText"
+                />
+            {/snippet}
+            {#snippet title()}
+                <span>{mouseButtonTitle}</span>
+            {/snippet}
+            {#snippet input()}
+                <Input
+                    disabled={disabledMouseButton}
+                    normal={false}
+                    onChanged={changed}
+                    options={mouseButtonOptions}
+                    settingKey="button"
+                    settingValue={shortcut.button}
+                    type={ItemType.select}
+                />
+            {/snippet}
         </MiniItem>
     {/if}
     {#if displayMouseEvent}
@@ -204,21 +270,26 @@
             {marginRight}
             {minWidth}
         >
-            <Svg
-                className="svg"
-                icon="#iconSelectText"
-            />
-            <span slot="title">{mouseEventTitle}</span>
-            <Input
-                slot="input"
-                disabled={disabledMouseEvent}
-                normal={false}
-                options={mouseEventOptions}
-                settingKey="button"
-                settingValue={shortcut.type}
-                type={ItemType.select}
-                on:changed={changed}
-            />
+            {#snippet icon()}
+                <Svg
+                    className="svg"
+                    icon="#iconSelectText"
+                />
+            {/snippet}
+            {#snippet title()}
+                <span>{mouseEventTitle}</span>
+            {/snippet}
+            {#snippet input()}
+                <Input
+                    disabled={disabledMouseEvent}
+                    normal={false}
+                    onChanged={changed}
+                    options={mouseEventOptions}
+                    settingKey="button"
+                    settingValue={shortcut.type}
+                    type={ItemType.select}
+                />
+            {/snippet}
         </MiniItem>
     {/if}
 </Group>

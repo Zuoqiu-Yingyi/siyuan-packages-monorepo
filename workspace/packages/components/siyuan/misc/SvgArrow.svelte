@@ -15,12 +15,27 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<script lang="ts">
-    export let open: boolean = false;
+<script
+    lang="ts"
+    module
+>
+    export interface IProps {
+        open?: boolean; // 是否展开
+        icon?: string; // svg 图标引用
+        style?: null | string; // 样式
+        className?: string; // 类名
+    }
 
-    export let icon: string = "#iconRight";
-    export let style: null | string = null;
-    export let className: string = "b3-list-item__arrow";
+    export type TProps = IProps;
+</script>
+
+<script lang="ts">
+    const {
+        open = false,
+        icon = "#iconRight",
+        style = null,
+        className = "b3-list-item__arrow",
+    }: TProps = $props();
 </script>
 
 <svg

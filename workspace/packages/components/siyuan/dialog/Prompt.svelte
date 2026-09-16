@@ -15,71 +15,118 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<script lang="ts">
-    import { createEventDispatcher } from "svelte";
-
-    import Dialog from "./Dialog.svelte";
-
-    import type { ComponentEvents } from "svelte";
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
 
     import type { IPromptEvent } from "./event";
 
-    export let text: string = ""; // 提示文本
-    export let value: string = ""; // 输入框默认内容
-    export let placeholder: string = ""; // 输入框空白提示内容
-    export let tips: string = ""; // 输入框提示内容
-    export let listID: string = Math.random().toString(36).slice(2); // 数据列表 ID
-    export let datalist: string[] = []; // 输入框数据列表
-    export let selectable: boolean = true; // 是否可选择
-    export let autofocus: boolean = true; // 是否自动聚焦
+    export interface IProps {
+        text?: string; // 提示文本
+        value?: string; // 输入框默认内容
+        placeholder?: string; // 输入框空白提示内容
+        tips?: string; // 输入框提示内容
+        listID?: string; // 数据列表 ID
+        datalist?: string[]; // 输入框数据列表
+        selectable?: boolean; // 是否可选择
+        autofocus?: boolean; // 是否自动聚焦
 
-    export let cancelButtonText: string = window.siyuan?.languages?.cancel ?? "Cancel"; // 取消按钮文本
-    export let confirmButtonText: string = window.siyuan?.languages?.confirm ?? "Confirm"; // 确定按钮文本
+        cancelButtonText?: string; // 取消按钮文本
+        confirmButtonText?: string; // 确定按钮文本
+    }
 
-    const dispatcher = createEventDispatcher<IPromptEvent>();
+    export interface IHandlers {
+        onCancel?: (params: IPromptEvent["cancel"]) => void; // 点击取消按钮
+        onConfirm?: (params: IPromptEvent["confirm"]) => void; // 点击确定按钮
+        onChange?: (params: IPromptEvent["change"]) => void; // 输入框内容变更
+        onInput?: (params: IPromptEvent["input"]) => void; // 输入框输入
+    }
 
-    function onCancle(event: ComponentEvents<Dialog>["cancel"]): void {
-        dispatcher("cancel", { value, event: event.detail.event });
+    export interface ISlots {
+        textSlot?: Snippet; // 自定义提示文本 (代替 text)
+        inputSlot?: Snippet; // 自定义输入框
+        tipsSlot?: Snippet; // 自定义内容提示 (代替 tips)
     }
-    function onConfirm(event: ComponentEvents<Dialog>["confirm"]): void {
-        dispatcher("confirm", { value, event: event.detail.event });
+
+    export type TProps = IProps & IHandlers & ISlots;
+</script>
+
+<script lang="ts">
+    import Dialog from "./Dialog.svelte";
+
+    import type { IDialogEvent } from "./event";
+
+    let {
+        text = "",
+        value = $bindable(""),
+        placeholder = "",
+        tips = "",
+        listID = Math.random().toString(36).slice(2),
+        datalist = [],
+        selectable = true,
+        autofocus = true,
+
+        cancelButtonText = window.siyuan?.languages?.cancel ?? "Cancel",
+        confirmButtonText = window.siyuan?.languages?.confirm ?? "Confirm",
+
+        onCancel,
+        onConfirm,
+        onChange,
+        onInput,
+
+        textSlot,
+        inputSlot,
+        tipsSlot,
+    }: TProps = $props();
+
+    function _onCancle(params: IDialogEvent["cancel"]): void {
+        onCancel?.({ value, event: params.event });
     }
-    function onChange(event: Event): void {
-        dispatcher("change", { value, event });
+    function _onConfirm(params: IDialogEvent["confirm"]): void {
+        onConfirm?.({ value, event: params.event });
     }
-    function onInput(event: Event): void {
-        dispatcher("input", { value, event });
+    function _onChange(event: Event): void {
+        onChange?.({ value, event });
+    }
+    function _onInput(event: Event): void {
+        onInput?.({ value, event });
     }
 </script>
 
 <Dialog
     {cancelButtonText}
     {confirmButtonText}
+    onCancel={_onCancle}
+    onConfirm={_onConfirm}
     {selectable}
-    on:cancel={onCancle}
-    on:confirm={onConfirm}
 >
     <!-- 提示文本 -->
-    <slot name="text">
+    {#if textSlot}
+        {@render textSlot()}
+    {:else}
         <div class="ft__breakword">
             <!-- eslint-disable-next-line svelte/no-at-html-tags -->
             {@html text}
         </div>
-    </slot>
+    {/if}
 
     <br />
 
     <!-- 输入框 -->
-    <slot name="input">
-        <!-- svelte-ignore a11y-autofocus -->
+    {#if inputSlot}
+        {@render inputSlot()}
+    {:else}
+        <!-- svelte-ignore a11y_autofocus -->
         <input
             class="b3-text-field fn__block"
             {autofocus}
             list={listID}
+            onchange={_onChange}
+            oninput={_onInput}
             {placeholder}
             bind:value
-            on:input={onInput}
-            on:change={onChange}
         />
         <!-- REF: https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/datalist -->
         {#if datalist.length > 0}
@@ -89,11 +136,13 @@
                 {/each}
             </datalist>
         {/if}
-    </slot>
+    {/if}
 
     <!-- 内容提示 -->
-    <slot name="tips">
+    {#if tipsSlot}
+        {@render tipsSlot()}
+    {:else}
         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         {@html tips}
-    </slot>
+    {/if}
 </Dialog>

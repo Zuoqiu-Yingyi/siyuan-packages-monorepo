@@ -15,21 +15,48 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<script lang="ts">
-    import Svg from "./../misc/Svg.svelte";
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
 
     import type { IBreadcrumbItem } from ".";
 
-    export let itemId: IBreadcrumbItem["itemId"] = "";
+    export interface IProps {
+        itemId?: IBreadcrumbItem["itemId"]; // 块 ID
+        iconId?: IBreadcrumbItem["iconId"]; // 图标关联的块 ID
+        icon?: IBreadcrumbItem["icon"]; // 图标
+        text?: IBreadcrumbItem["text"]; // 文本
+        textTitle?: IBreadcrumbItem["textTitle"]; // 文本提示
+        textEllipsis?: IBreadcrumbItem["textEllipsis"]; // 文本过长时是否省略
+        active?: IBreadcrumbItem["active"]; // 是否激活
+    }
 
-    export let iconId: IBreadcrumbItem["iconId"] = "";
-    export let icon: IBreadcrumbItem["icon"] = "";
+    export interface ISlots {
+        svg?: Snippet; // 自定义图标
+    }
 
-    export let text: IBreadcrumbItem["text"] = "";
-    export let textTitle: IBreadcrumbItem["textTitle"] = "";
-    export let textEllipsis: IBreadcrumbItem["textEllipsis"] = true;
+    export type TProps = IProps & ISlots;
+</script>
 
-    export let active: IBreadcrumbItem["active"] = false;
+<script lang="ts">
+    import Svg from "./../misc/Svg.svelte";
+
+    const {
+        itemId = "",
+
+        iconId = "",
+        icon = "",
+
+        text = "",
+        textTitle = "",
+        textEllipsis = true,
+
+        active = false,
+
+        svg,
+    }: TProps = $props();
 </script>
 
 <span
@@ -37,14 +64,14 @@
     class:protyle-breadcrumb__item--active={active}
     data-node-id={itemId}
 >
-    <slot name="svg">
-        {#if icon}
-            <Svg
-                id={iconId}
-                {icon}
-            />
-        {/if}
-    </slot>
+    {#if svg}
+        {@render svg()}
+    {:else if icon}
+        <Svg
+            id={iconId}
+            {icon}
+        />
+    {/if}
 
     <span
         class="protyle-breadcrumb__text"

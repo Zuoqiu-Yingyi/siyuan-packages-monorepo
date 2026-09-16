@@ -17,10 +17,33 @@
 
 <!-- 面板容器 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
+
+    export interface IProps {
+        display?: boolean; // 是否显示该面板
+        top?: boolean; // 是否移除保留面板上下边距
+        name?: string; // 面板名称
+    }
+
+    export interface ISlots {
+        children?: Snippet; // 面板内容
+    }
+
+    export type TProps = IProps & ISlots;
+</script>
+
 <script lang="ts">
-    export let display = true; // 是否显示该面板
-    export let top = false; // 是否移除保留面板上下边距
-    export let name = ""; // 面板名称
+    const {
+        display = true,
+        top = false,
+        name = "",
+
+        children,
+    }: TProps = $props();
 </script>
 
 <div
@@ -29,5 +52,5 @@
     class:fn__none={!display}
     data-name={name}
 >
-    <slot />
+    {@render children?.()}
 </div>

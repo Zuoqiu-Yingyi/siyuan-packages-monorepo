@@ -15,64 +15,100 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<script lang="ts">
-    import {
-        createEventDispatcher,
-        onMount,
-    } from "svelte";
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
 
     import type { IMenuItemEvent } from ".";
 
-    export let icon: string = ""; // 图标
-    export let font: string = ""; // 菜单项文本字体样式
-    export let label: string = ""; // 菜单项文本/input/textarea 提示
-    export let disabled: boolean = false; // 是否禁用
+    export interface IProps {
+        icon?: string; // 图标
+        font?: string; // 菜单项文本字体样式
+        label?: string; // 菜单项文本/input/textarea 提示
+        disabled?: boolean; // 是否禁用
 
-    export let input: boolean = false; // 是否为输入框
-    export let value: string = ""; // 输入框内容
-    export let accelerator: string = ""; // 捷径提示
+        input?: boolean; // 是否为输入框
+        value?: string; // 输入框内容
+        accelerator?: string; // 捷径提示
 
-    export let textarea: boolean = false; // 是否为多行输入框
-    export let rows: number = 1; // 多行输入框显示行数
+        textarea?: boolean; // 是否为多行输入框
+        rows?: number; // 多行输入框显示行数
 
-    export let checkbox: boolean = false; // 是否为复选框 (开关)
-    export let checked: boolean = false; // 复选框是否被选中 (开关是否开启)
+        checkbox?: boolean; // 是否为复选框 (开关)
+        checked?: boolean; // 复选框是否被选中 (开关是否开启)
 
-    export let file: boolean = false; // 是否为文件上传
-    export let accept: string = ""; // 文件上传类型
-    // REF: https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/input/file#multiple
-    export let multiple: boolean = true; // 是否支持多文件/文件夹上传
-    // REF: https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/input/file#webkitdirectory
-    export let webkitdirectory: boolean = true; // 是否支持文件夹上传
-
-    let files: FileList | null = null; // 上传的文件列表
-    let element: HTMLInputElement;
-
-    /* 动态设置 webkitdirectory */
-    function setWebkitdirectory(enable: boolean): void {
-        if (element) {
-            element.webkitdirectory = enable;
-        }
+        file?: boolean; // 是否为文件上传
+        accept?: string; // 文件上传类型
+        // REF: https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/input/file#multiple
+        multiple?: boolean; // 是否支持多文件/文件夹上传
+        // REF: https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/input/file#webkitdirectory
+        webkitdirectory?: boolean; // 是否支持文件夹上传
     }
 
-    $: setWebkitdirectory(webkitdirectory);
+    export interface IHandlers {
+        onChanged?: (params: IMenuItemEvent["changed"]) => void; // 文本输入框内容更改
+        onSwitched?: (params: IMenuItemEvent["switched"]) => void; // 复选框状态更改
+        onSelected?: (params: IMenuItemEvent["selected"]) => void; // 文件选择器选择文件
+    }
 
-    onMount(() => {
-        setWebkitdirectory(webkitdirectory);
+    export interface ISlots {
+        iconSlot?: Snippet; // 自定义菜单项图标
+    }
+
+    export type TProps = IProps & IHandlers & ISlots;
+</script>
+
+<script lang="ts">
+    let {
+        icon = "",
+        font = "",
+        label = "",
+        disabled = false,
+
+        input = false,
+        value = $bindable(""),
+        accelerator = "",
+
+        textarea = false,
+        rows = 1,
+
+        checkbox = false,
+        checked = false,
+
+        file = false,
+        accept = "",
+        multiple = true,
+        webkitdirectory = true,
+
+        onChanged,
+        onSwitched,
+        onSelected,
+
+        iconSlot,
+    }: TProps = $props();
+
+    let files: FileList | null = $state(null); // 上传的文件列表
+    let element: HTMLInputElement | undefined = $state();
+
+    /* 动态设置 webkitdirectory */
+    $effect(() => {
+        if (element) {
+            element.webkitdirectory = webkitdirectory;
+        }
     });
 
-    const dispatch = createEventDispatcher<IMenuItemEvent>();
-
     function changed(event: Event) {
-        dispatch("changed", { value, event });
+        onChanged?.({ value, event });
     }
 
     function switched(event: Event) {
-        dispatch("switched", { checked, event });
+        onSwitched?.({ checked, event });
     }
 
     function selected(event: Event) {
-        dispatch("selected", { files, event });
+        onSelected?.({ files, event });
     }
 </script>
 
@@ -81,12 +117,12 @@
     <svg class="b3-menu__icon">
         <use xlink:href={icon} />
     </svg>
+{:else if iconSlot}
+    {@render iconSlot()}
 {:else}
-    <slot name="icon">
-        <svg class="b3-menu__icon">
-            <use xlink:href="#" />
-        </svg>
-    </slot>
+    <svg class="b3-menu__icon">
+        <use xlink:href="#" />
+    </svg>
 {/if}
 
 <!-- 菜单项标签 -->
@@ -102,9 +138,9 @@
             bind:this={element}
             class="b3-text-field fn__size200"
             {disabled}
+            onchange={changed}
             placeholder={label}
             bind:value
-            on:change={changed}
         />
         <div class="fn__hr--small"></div>
     {:else if textarea}
@@ -112,11 +148,11 @@
         <textarea
             class="b3-text-field fn__block"
             {disabled}
+            onchange={changed}
             placeholder={label}
-            rows={rows}
+            {rows}
             spellcheck="false"
             bind:value
-            on:change={changed}
         ></textarea>
     {:else if checkbox}
         <!-- 开关 -->
@@ -125,9 +161,9 @@
             <span class="fn__space fn__flex-1"></span>
             <input
                 class="b3-switch fn__flex-center"
-                checked={checked}
+                {checked}
+                onchange={switched}
                 type="checkbox"
-                on:change={switched}
             />
         </div>
     {:else}
@@ -143,9 +179,9 @@
             {accept}
             {disabled}
             {multiple}
+            onchange={selected}
             type="file"
             bind:files
-            on:change={selected}
         />
     {/if}
 </span>

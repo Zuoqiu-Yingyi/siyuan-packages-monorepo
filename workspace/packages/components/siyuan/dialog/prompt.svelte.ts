@@ -15,11 +15,11 @@
 
 import { mount, unmount } from "svelte";
 
-import Prompt from "./Prompt.v5.svelte";
+import Prompt from "./Prompt.svelte";
 
 import type siyuan from "siyuan";
 
-import type { TProps as TPromptProps } from "./Prompt.v5.svelte";
+import type { TProps as TPromptProps } from "./Prompt.svelte";
 
 export type PromptCallback<T> = (
     value: string,

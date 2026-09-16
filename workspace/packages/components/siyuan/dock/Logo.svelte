@@ -15,11 +15,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    export interface IProps {
+        icon?: string; // 图标
+        title?: string; // 标题
+    }
+
+    export type TProps = IProps;
+</script>
+
 <script lang="ts">
     import Svg from "./../misc/Svg.svelte";
 
-    export let icon: string = ""; // 图标
-    export let title: string = ""; // 标题
+    const {
+        icon = "",
+        title = "",
+    }: TProps = $props();
 </script>
 
 <div class="block__logo">

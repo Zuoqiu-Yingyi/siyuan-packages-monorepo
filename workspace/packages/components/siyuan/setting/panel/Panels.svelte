@@ -17,29 +17,59 @@
 
 <!-- 面板组 -->
 
-<script lang="ts">
-    import { createEventDispatcher } from "svelte";
-
-    import Svg from "./../../misc/Svg.svelte";
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
 
     import type { IPanelsEvent } from "./../event";
     import type { ITab, TabKey } from "./../tab";
 
-    export let panels: ITab[]; // 面板标签列表
-    export let focus: TabKey; // 当前选中的面板的 key
+    export interface IProps {
+        panels: ITab[]; // 面板标签列表
+        focus: TabKey; // 当前选中的面板的 key
 
-    export let searchEnable = false; // 是否启用搜索
-    export let searchPlaceholder = ""; // 搜索提示内容
-    export let searchValue = ""; // 搜索框内容
+        searchEnable?: boolean; // 是否启用搜索
+        searchPlaceholder?: string; // 搜索提示内容
+        searchValue?: string; // 搜索框内容
+    }
 
-    const dispatch = createEventDispatcher<IPanelsEvent>();
+    export interface IHandlers {
+        onChanged?: (params: IPanelsEvent["changed"]) => void; // 面板切换
+        onSearchChanged?: (params: IPanelsEvent["search-changed"]) => void; // 搜索框内容变更
+    }
+
+    export interface ISlots {
+        children?: Snippet<[TabKey]>; // 面板主体 (参数为当前选中的面板的 key)
+    }
+
+    export type TProps = IProps & IHandlers & ISlots;
+</script>
+
+<script lang="ts">
+    import Svg from "./../../misc/Svg.svelte";
+
+    let {
+        panels,
+        focus = $bindable(),
+
+        searchEnable = false,
+        searchPlaceholder = "",
+        searchValue = $bindable(""),
+
+        onChanged,
+        onSearchChanged,
+
+        children,
+    }: TProps = $props();
 
     function searchChanged() {
-        dispatch("search-changed", { value: searchValue });
+        onSearchChanged?.({ value: searchValue });
     }
 
     function changed(key: TabKey) {
-        dispatch("changed", { key });
+        onChanged?.({ key });
         focus = key;
     }
 </script>
@@ -56,22 +86,22 @@
                 />
                 <input
                     class="b3-text-field fn__block b3-form__icon-input"
+                    onchange={searchChanged}
                     placeholder={searchPlaceholder}
                     bind:value={searchValue}
-                    on:change={searchChanged}
                 />
             </div>
         {/if}
 
         {#each panels as panel (panel.key)}
-            <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
+            <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
             <li
                 class="b3-list-item"
                 class:b3-list-item--focus={panel.key === focus}
                 data-name={panel.name}
+                onclick={() => changed(panel.key)}
+                onkeyup={() => changed(panel.key)}
                 role="button"
-                on:click={() => changed(panel.key)}
-                on:keyup={() => changed(panel.key)}
             >
                 {#if panel.icon}
                     <Svg
@@ -89,7 +119,11 @@
 
     <!-- 面板主体 -->
     <div class="config__tab-wrap">
-        <slot {focus}>Container</slot>
+        {#if children}
+            {@render children(focus)}
+        {:else}
+            Container
+        {/if}
     </div>
 </div>
 

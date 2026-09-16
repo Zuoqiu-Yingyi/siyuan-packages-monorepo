@@ -20,11 +20,37 @@
     REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs/setting-item.svelte
 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
+
+    export interface IProps {
+        title?: string; // Displaying Setting Title
+        text?: string; // Displaying Setting Text
+        block?: boolean; // Using Block Style
+    }
+
+    export interface ISlots {
+        titleSlot?: Snippet; // 自定义标题 (代替 title)
+        textSlot?: Snippet; // 自定义说明文本 (代替 text)
+        input?: Snippet; // 设置项控件
+    }
+
+    export type TProps = IProps & ISlots;
+</script>
+
 <script lang="ts">
-    // Optional
-    export let title: string = ""; // Displaying Setting Title
-    export let text: string = ""; // Displaying Setting Text
-    export let block: boolean = false; // Using Block Style
+    const {
+        title = "",
+        text = "",
+        block = false,
+
+        titleSlot,
+        textSlot,
+        input,
+    }: TProps = $props();
 </script>
 
 <label class="fn__flex b3-label">
@@ -32,26 +58,30 @@
         class="fn__flex-1"
         class:visible={block}
     >
-        <slot name="title">
+        {#if titleSlot}
+            {@render titleSlot()}
+        {:else}
             <!-- eslint-disable-next-line svelte/no-at-html-tags -->
             {@html title}
-        </slot>
+        {/if}
         <div class="b3-label__text">
-            <slot name="text">
+            {#if textSlot}
+                {@render textSlot()}
+            {:else}
                 <!-- eslint-disable-next-line svelte/no-at-html-tags -->
                 {@html text}
-            </slot>
+            {/if}
         </div>
 
         {#if block}
             <div class="fn__hr"></div>
-            <slot name="input" />
+            {@render input?.()}
         {/if}
     </div>
 
     {#if !block}
         <span class="fn__space"></span>
-        <slot name="input" />
+        {@render input?.()}
     {/if}
 </label>
 

@@ -15,6 +15,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { IProps as IIframeProps } from "./../misc/Iframe.svelte";
+
+    export interface IProps {
+        src?: IIframeProps["src"]; // iframe 资源
+        title?: IIframeProps["title"]; // iframe 标题
+    }
+
+    export type TProps = IProps;
+</script>
+
 <script lang="ts">
     import { get } from "svelte/store";
 
@@ -27,22 +41,21 @@
     import Iframe from "./../misc/Iframe.svelte";
     import Tab from "./Tab.svelte";
 
-    import type {
-        ComponentEvents,
-        ComponentProps,
-    } from "svelte";
+    import type { IEvent as IIframeEvent } from "./../misc/Iframe.svelte";
+    import type { IProps as ITabProps } from "./Tab.svelte";
 
-    export let src: ComponentProps<Iframe>["src"]; // iframe 资源
-    export let title: ComponentProps<Iframe>["title"]; // iframe 标题
+    let {
+        src = $bindable(),
+        title,
+    }: TProps = $props();
 
-    $: url = src2url(src as string);
+    const url = $derived(src2url(src as string));
 
     /* 响应式数据 */
-    let iframe: HTMLIFrameElement | undefined;
-    let fullscreen = false;
-    const breadcrumb: ComponentProps<Tab>["breadcrumb"] = true;
-    let breadcrumbItems: ComponentProps<Tab>["breadcrumbItems"] = [];
-    const breadcrumbIcons: ComponentProps<Tab>["breadcrumbIcons"] = [
+    let iframe: HTMLIFrameElement | undefined = $state();
+    let fullscreen = $state(false);
+    const breadcrumb: ITabProps["breadcrumb"] = true;
+    const breadcrumbIcons: ITabProps["breadcrumbIcons"] = [
         {
             icon: "#iconCopy",
             type: "copy",
@@ -88,9 +101,9 @@
         },
     ];
 
-    function updateBreadCrumb(url: URL): void {
+    function buildBreadcrumbItems(url: URL): NonNullable<ITabProps["breadcrumbItems"]> {
         const paths: string[] = [];
-        const items: ComponentProps<Tab>["breadcrumbItems"] = [];
+        const items: NonNullable<ITabProps["breadcrumbItems"]> = [];
         const flag_location = url.origin === location.origin;
 
         /* 协议 */
@@ -190,19 +203,18 @@
             );
         }
 
-        /* 搜索参数 */
-        breadcrumbItems = items;
+        return items;
     }
 
-    function oncreate(e: ComponentEvents<Iframe>["create"]): void {
-        iframe = e.detail.iframe;
+    const breadcrumbItems = $derived(buildBreadcrumbItems(url));
+
+    function onCreate(params: IIframeEvent): void {
+        iframe = params.iframe;
     }
 
-    function ondestroy(_e: ComponentEvents<Iframe>["destroy"]): void {
+    function onDestroy(): void {
         iframe = undefined;
     }
-
-    $: updateBreadCrumb(url);
 </script>
 
 <Tab
@@ -211,11 +223,12 @@
     {breadcrumbItems}
     {fullscreen}
 >
-    <Iframe
-        slot="content"
-        {src}
-        {title}
-        on:create={oncreate}
-        on:destroy={ondestroy}
-    />
+    {#snippet content()}
+        <Iframe
+            {onCreate}
+            {onDestroy}
+            {src}
+            {title}
+        />
+    {/snippet}
 </Tab>

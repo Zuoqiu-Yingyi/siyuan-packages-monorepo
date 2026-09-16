@@ -15,12 +15,37 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { IFileTreeHandlers, IFileTreeRootNode } from ".";
+
+    export interface IProps {
+        root: IFileTreeRootNode; // 根节点
+    }
+
+    export type TProps = IProps & IFileTreeHandlers;
+</script>
+
 <script lang="ts">
     import Node from "./Node.svelte";
 
-    import type { IFileTreeRootNode } from ".";
+    const {
+        root,
 
-    export let root: IFileTreeRootNode;
+        onOpen,
+        onMenu,
+        onFold,
+        onUnfold,
+        onDrag,
+        onDragstart,
+        onDragend,
+        onDragenter,
+        onDragover,
+        onDragleave,
+        onDrop,
+    }: TProps = $props();
 </script>
 
 <ul
@@ -28,16 +53,17 @@
     data-url={root.path}
 >
     <Node
-        on:open
-        on:fold
-        on:menu
-        on:unfold
-        on:dragstart
-        on:dragend
-        on:dragenter
-        on:dragover
-        on:dragleave
-        on:drop
+        {onDrag}
+        {onDragend}
+        {onDragenter}
+        {onDragleave}
+        {onDragover}
+        {onDragstart}
+        {onDrop}
+        {onFold}
+        {onMenu}
+        {onOpen}
+        {onUnfold}
         {...root}
     />
 </ul>

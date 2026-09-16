@@ -15,6 +15,23 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
+
+    export interface ISlots {
+        children?: Snippet; // 面板内容
+    }
+
+    export type TProps = ISlots;
+</script>
+
+<script lang="ts">
+    const { children }: TProps = $props();
+</script>
+
 <div class="fn__flex-1 fn__flex-column">
-    <slot />
+    {@render children?.()}
 </div>

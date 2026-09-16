@@ -1,5 +1,11 @@
 # 更改日志 | CHANGE LOG
 
+## 2026-09-16
+
+- 全部 Svelte 组件迁移至 `v5` runes 模式 | All Svelte components migrated to `v5` runes mode.
+- 组件事件改为回调属性, 具名插槽改为 snippet | Component events changed to callback props, named slots changed to snippets.
+- 新增 `@workspace/utils/svelte/event` 以替代 Svelte 5 移除的事件修饰符 | Add `@workspace/utils/svelte/event` to replace event modifiers removed in Svelte 5.
+
 ## 2024-12-24
 
 - 修复提示框无法加载问题 | Fix the issue that the prompt box cannot be loaded.

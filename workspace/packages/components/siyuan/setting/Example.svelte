@@ -37,8 +37,8 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
     import Panels from "./panel/Panels.svelte";
     import Tabs from "./tab/Tabs.svelte";
 
-    let block = false;
-    let normal = false;
+    let block = $state(false);
+    let normal = $state(false);
 
     const panel_focus_key = 1;
     const panels = [
@@ -98,297 +98,340 @@ REF: https://github.com/siyuan-note/plugin-sample-vite-svelte/blob/main/src/libs
 <Panels
     focus={panel_focus_key}
     {panels}
-    let:focus={panel_focus}
 >
-    <Panel display={panels[0]?.key === panel_focus}>
-        <Tabs
-            focus={tab_focus_key}
-            {tabs}
-            let:focus
-        >
-            <!-- 标签页 1 内容 -->
-            <div
-                class:fn__none={tabs[0]?.key !== focus}
-                data-type={tabs[0]?.name}
+    {#snippet children(panel_focus)}
+        <Panel display={panels[0]?.key === panel_focus}>
+            <Tabs
+                focus={tab_focus_key}
+                {tabs}
             >
-                <Item>
-                    <h4 slot="title">This setting panel is provided by a svelte component</h4>
-                    <span slot="text">
-                        See:
-                        <a href="https://github.com/Zuoqiu-Yingyi/siyuan-packages-monorepo/tree/main/workspace/packages/components/siyuan/setting">siyuan-packages-monorepo/workspace/packages/components/siyuan/setting at main · Zuoqiu-Yingyi/siyuan-packages-monorepo · GitHub</a>
-                    </span>
-                </Item>
+                {#snippet children(focus)}
+                    <!-- 标签页 1 内容 -->
+                    <div
+                        class:fn__none={tabs[0]?.key !== focus}
+                        data-type={tabs[0]?.name}
+                    >
+                        <Item>
+                            {#snippet titleSlot()}
+                                <h4>This setting panel is provided by a svelte component</h4>
+                            {/snippet}
+                            {#snippet textSlot()}
+                                <span>
+                                    See:
+                                    <a href="https://github.com/Zuoqiu-Yingyi/siyuan-packages-monorepo/tree/main/workspace/packages/components/siyuan/setting">siyuan-packages-monorepo/workspace/packages/components/siyuan/setting at main · Zuoqiu-Yingyi/siyuan-packages-monorepo · GitHub</a>
+                                </span>
+                            {/snippet}
+                        </Item>
 
-                <Item
-                    {block}
-                    text="This is a checkbox"
-                    title="Checkbox"
-                >
-                    <Input
-                        slot="input"
-                        {block}
-                        {normal}
-                        settingKey="Checkbox"
-                        settingValue={block}
-                        type={ItemType.checkbox}
-                        on:changed={(event) => {
-                            showMessage(`Checkbox changed: ${event.detail.key} = ${event.detail.value}`);
-                            setTimeout(() => (block = !block), 0);
-                        }}
-                    />
-                </Item>
+                        <Item
+                            {block}
+                            text="This is a checkbox"
+                            title="Checkbox"
+                        >
+                            {#snippet input()}
+                                <Input
+                                    {block}
+                                    {normal}
+                                    onChanged={(event) => {
+                                        showMessage(`Checkbox changed: ${event.key} = ${event.value}`);
+                                        setTimeout(() => (block = !block), 0);
+                                    }}
+                                    settingKey="Checkbox"
+                                    settingValue={block}
+                                    type={ItemType.checkbox}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <Item
-                    {block}
-                    text="This is a text input"
-                    title="Input"
-                >
-                    <Input
-                        slot="input"
-                        {block}
-                        {normal}
-                        placeholder="Input something"
-                        settingKey="Text"
-                        settingValue=""
-                        type={ItemType.text}
-                        on:changed={(event) => {
-                            showMessage(`Input changed: ${event.detail.key} = ${event.detail.value}`);
-                        }}
-                    />
-                </Item>
+                        <Item
+                            {block}
+                            text="This is a text input"
+                            title="Input"
+                        >
+                            {#snippet input()}
+                                <Input
+                                    {block}
+                                    {normal}
+                                    onChanged={(event) => {
+                                        showMessage(`Input changed: ${event.key} = ${event.value}`);
+                                    }}
+                                    placeholder="Input something"
+                                    settingKey="Text"
+                                    settingValue=""
+                                    type={ItemType.text}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <Item
-                    {block}
-                    text="This is a number input"
-                    title="Slide"
-                >
-                    <Input
-                        slot="input"
-                        {block}
-                        {limits}
-                        {normal}
-                        settingKey="Number"
-                        settingValue={50}
-                        type={ItemType.number}
-                        on:changed={(event) => {
-                            showMessage(`Slide changed: ${event.detail.key} = ${event.detail.value}`);
-                        }}
-                    />
-                </Item>
+                        <Item
+                            {block}
+                            text="This is a number input"
+                            title="Slide"
+                        >
+                            {#snippet input()}
+                                <Input
+                                    {block}
+                                    {limits}
+                                    {normal}
+                                    onChanged={(event) => {
+                                        showMessage(`Slide changed: ${event.key} = ${event.value}`);
+                                    }}
+                                    settingKey="Number"
+                                    settingValue={50}
+                                    type={ItemType.number}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <Item
-                    {block}
-                    text="This is a slide"
-                    title="Slide"
-                >
-                    <Input
-                        slot="input"
-                        {block}
-                        {limits}
-                        {normal}
-                        settingKey="Slide"
-                        settingValue={50}
-                        type={ItemType.slider}
-                        on:changed={(event) => {
-                            showMessage(`Slide changed: ${event.detail.key} = ${event.detail.value}`);
-                        }}
-                    />
-                </Item>
+                        <Item
+                            {block}
+                            text="This is a slide"
+                            title="Slide"
+                        >
+                            {#snippet input()}
+                                <Input
+                                    {block}
+                                    {limits}
+                                    {normal}
+                                    onChanged={(event) => {
+                                        showMessage(`Slide changed: ${event.key} = ${event.value}`);
+                                    }}
+                                    settingKey="Slide"
+                                    settingValue={50}
+                                    type={ItemType.slider}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <Item
-                    {block}
-                    text="This is a button"
-                    title="Button"
-                >
-                    <Input
-                        slot="input"
-                        {block}
-                        {normal}
-                        settingKey="Button"
-                        settingValue="Click me"
-                        type={ItemType.button}
-                        on:clicked={() => {
-                            showMessage("Button clicked");
-                            setTimeout(() => (normal = !normal), 0);
-                        }}
-                    />
-                </Item>
+                        <Item
+                            {block}
+                            text="This is a button"
+                            title="Button"
+                        >
+                            {#snippet input()}
+                                <Input
+                                    {block}
+                                    {normal}
+                                    onClicked={() => {
+                                        showMessage("Button clicked");
+                                        setTimeout(() => (normal = !normal), 0);
+                                    }}
+                                    settingKey="Button"
+                                    settingValue="Click me"
+                                    type={ItemType.button}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <Item
-                    {block}
-                    text="This is a select"
-                    title="Select"
-                >
-                    <Input
-                        slot="input"
-                        {block}
-                        {normal}
-                        {options}
-                        settingKey="Select"
-                        settingValue="left"
-                        type={ItemType.select}
-                        on:changed={(event) => {
-                            showMessage(`Select changed: ${event.detail.key} = ${event.detail.value}`);
-                        }}
-                    />
-                </Item>
+                        <Item
+                            {block}
+                            text="This is a select"
+                            title="Select"
+                        >
+                            {#snippet input()}
+                                <Input
+                                    {block}
+                                    {normal}
+                                    onChanged={(event) => {
+                                        showMessage(`Select changed: ${event.key} = ${event.value}`);
+                                    }}
+                                    {options}
+                                    settingKey="Select"
+                                    settingValue="left"
+                                    type={ItemType.select}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <Item
-                    {block}
-                    text="This is a textarea"
-                    title="Textarea"
-                >
-                    <Input
-                        slot="input"
-                        {block}
-                        {normal}
-                        placeholder="Input something"
-                        settingKey="Textarea"
-                        settingValue=""
-                        type={ItemType.textarea}
-                        on:changed={(event) => {
-                            showMessage(`Input changed: ${event.detail.key} = ${event.detail.value}`);
-                        }}
-                    />
-                </Item>
-            </div>
+                        <Item
+                            {block}
+                            text="This is a textarea"
+                            title="Textarea"
+                        >
+                            {#snippet input()}
+                                <Input
+                                    {block}
+                                    {normal}
+                                    onChanged={(event) => {
+                                        showMessage(`Input changed: ${event.key} = ${event.value}`);
+                                    }}
+                                    placeholder="Input something"
+                                    settingKey="Textarea"
+                                    settingValue=""
+                                    type={ItemType.textarea}
+                                />
+                            {/snippet}
+                        </Item>
+                    </div>
 
-            <!-- 标签页 2 内容 -->
-            <div
-                class:fn__none={tabs[1]?.key !== focus}
-                data-type={tabs[1]?.name}
-            >
-                <Group title="group-title <code class='fn__code'>code style</code>">
-                    <MiniItem>
-                        <Svg
-                            slot="icon"
-                            className="svg"
-                            icon="#iconSettings"
-                        />
-                        <span slot="title">mini checkbox</span>
-                        <Input
-                            slot="input"
-                            settingKey="Checkbox"
-                            settingValue={block}
-                            type={ItemType.checkbox}
-                            on:changed={(event) => {
-                                showMessage(`Checkbox changed: ${event.detail.key} = ${event.detail.value}`);
-                                setTimeout(() => (block = !block), 0);
-                            }}
-                        />
-                    </MiniItem>
-                    <MiniItem>
-                        <Svg
-                            slot="icon"
-                            className="svg"
-                            icon="#iconParagraph"
-                        />
-                        <span slot="title">mini text</span>
-                        <Input
-                            slot="input"
-                            placeholder="Input something"
-                            settingKey="Text"
-                            settingValue=""
-                            type={ItemType.text}
-                            on:changed={(event) => {
-                                showMessage(`Input changed: ${event.detail.key} = ${event.detail.value}`);
-                            }}
-                        />
-                    </MiniItem>
-                    <MiniItem>
-                        <Svg
-                            slot="icon"
-                            className="svg"
-                            icon="#iconSpreadOdd"
-                        />
-                        <span slot="title">mini number</span>
-                        <Input
-                            slot="input"
-                            {limits}
-                            settingKey="Number"
-                            settingValue={50}
-                            type={ItemType.number}
-                            on:changed={(event) => {
-                                showMessage(`Slide changed: ${event.detail.key} = ${event.detail.value}`);
-                            }}
-                        />
-                    </MiniItem>
-                    <MiniItem>
-                        <Svg
-                            slot="icon"
-                            className="svg"
-                            icon="#iconScrollHoriz"
-                        />
-                        <span slot="title">mini slide</span>
-                        <Input
-                            slot="input"
-                            {limits}
-                            settingKey="Slide"
-                            settingValue={50}
-                            type={ItemType.slider}
-                            on:changed={(event) => {
-                                showMessage(`Slide changed: ${event.detail.key} = ${event.detail.value}`);
-                            }}
-                        />
-                    </MiniItem>
-                    <MiniItem>
-                        <Svg
-                            slot="icon"
-                            className="svg"
-                            icon="#iconSelectText"
-                        />
-                        <span slot="title">mini button</span>
-                        <Input
-                            slot="input"
-                            settingKey="Button"
-                            settingValue="Click me"
-                            type={ItemType.button}
-                            on:clicked={() => {
-                                showMessage("Button clicked");
-                                setTimeout(() => (normal = !normal), 0);
-                            }}
-                        />
-                    </MiniItem>
-                    <MiniItem>
-                        <Svg
-                            slot="icon"
-                            className="svg"
-                            icon="#iconDown"
-                        />
-                        <span slot="title">mini select</span>
-                        <Input
-                            slot="input"
-                            {options}
-                            settingKey="Select"
-                            settingValue="left"
-                            type={ItemType.select}
-                            on:changed={(event) => {
-                                showMessage(`Select changed: ${event.detail.key} = ${event.detail.value}`);
-                            }}
-                        />
-                    </MiniItem>
-                    <MiniItem>
-                        <Svg
-                            slot="icon"
-                            className="svg"
-                            icon="#iconAlignLeft"
-                        />
-                        <span slot="title">mini textarea</span>
-                        <Input
-                            slot="input"
-                            placeholder="Input something"
-                            settingKey="Textarea"
-                            settingValue=""
-                            type={ItemType.textarea}
-                            on:changed={(event) => {
-                                showMessage(`Input changed: ${event.detail.key} = ${event.detail.value}`);
-                            }}
-                        />
-                    </MiniItem>
-                </Group>
-            </div>
-        </Tabs>
-    </Panel>
+                    <!-- 标签页 2 内容 -->
+                    <div
+                        class:fn__none={tabs[1]?.key !== focus}
+                        data-type={tabs[1]?.name}
+                    >
+                        <Group title="group-title <code class='fn__code'>code style</code>">
+                            <MiniItem>
+                                {#snippet icon()}
+                                    <Svg
+                                        className="svg"
+                                        icon="#iconSettings"
+                                    />
+                                {/snippet}
+                                {#snippet title()}
+                                    <span>mini checkbox</span>
+                                {/snippet}
+                                {#snippet input()}
+                                    <Input
+                                        onChanged={(event) => {
+                                            showMessage(`Checkbox changed: ${event.key} = ${event.value}`);
+                                            setTimeout(() => (block = !block), 0);
+                                        }}
+                                        settingKey="Checkbox"
+                                        settingValue={block}
+                                        type={ItemType.checkbox}
+                                    />
+                                {/snippet}
+                            </MiniItem>
+                            <MiniItem>
+                                {#snippet icon()}
+                                    <Svg
+                                        className="svg"
+                                        icon="#iconParagraph"
+                                    />
+                                {/snippet}
+                                {#snippet title()}
+                                    <span>mini text</span>
+                                {/snippet}
+                                {#snippet input()}
+                                    <Input
+                                        onChanged={(event) => {
+                                            showMessage(`Input changed: ${event.key} = ${event.value}`);
+                                        }}
+                                        placeholder="Input something"
+                                        settingKey="Text"
+                                        settingValue=""
+                                        type={ItemType.text}
+                                    />
+                                {/snippet}
+                            </MiniItem>
+                            <MiniItem>
+                                {#snippet icon()}
+                                    <Svg
+                                        className="svg"
+                                        icon="#iconSpreadOdd"
+                                    />
+                                {/snippet}
+                                {#snippet title()}
+                                    <span>mini number</span>
+                                {/snippet}
+                                {#snippet input()}
+                                    <Input
+                                        {limits}
+                                        onChanged={(event) => {
+                                            showMessage(`Slide changed: ${event.key} = ${event.value}`);
+                                        }}
+                                        settingKey="Number"
+                                        settingValue={50}
+                                        type={ItemType.number}
+                                    />
+                                {/snippet}
+                            </MiniItem>
+                            <MiniItem>
+                                {#snippet icon()}
+                                    <Svg
+                                        className="svg"
+                                        icon="#iconScrollHoriz"
+                                    />
+                                {/snippet}
+                                {#snippet title()}
+                                    <span>mini slide</span>
+                                {/snippet}
+                                {#snippet input()}
+                                    <Input
+                                        {limits}
+                                        onChanged={(event) => {
+                                            showMessage(`Slide changed: ${event.key} = ${event.value}`);
+                                        }}
+                                        settingKey="Slide"
+                                        settingValue={50}
+                                        type={ItemType.slider}
+                                    />
+                                {/snippet}
+                            </MiniItem>
+                            <MiniItem>
+                                {#snippet icon()}
+                                    <Svg
+                                        className="svg"
+                                        icon="#iconSelectText"
+                                    />
+                                {/snippet}
+                                {#snippet title()}
+                                    <span>mini button</span>
+                                {/snippet}
+                                {#snippet input()}
+                                    <Input
+                                        onClicked={() => {
+                                            showMessage("Button clicked");
+                                            setTimeout(() => (normal = !normal), 0);
+                                        }}
+                                        settingKey="Button"
+                                        settingValue="Click me"
+                                        type={ItemType.button}
+                                    />
+                                {/snippet}
+                            </MiniItem>
+                            <MiniItem>
+                                {#snippet icon()}
+                                    <Svg
+                                        className="svg"
+                                        icon="#iconDown"
+                                    />
+                                {/snippet}
+                                {#snippet title()}
+                                    <span>mini select</span>
+                                {/snippet}
+                                {#snippet input()}
+                                    <Input
+                                        onChanged={(event) => {
+                                            showMessage(`Select changed: ${event.key} = ${event.value}`);
+                                        }}
+                                        {options}
+                                        settingKey="Select"
+                                        settingValue="left"
+                                        type={ItemType.select}
+                                    />
+                                {/snippet}
+                            </MiniItem>
+                            <MiniItem>
+                                {#snippet icon()}
+                                    <Svg
+                                        className="svg"
+                                        icon="#iconAlignLeft"
+                                    />
+                                {/snippet}
+                                {#snippet title()}
+                                    <span>mini textarea</span>
+                                {/snippet}
+                                {#snippet input()}
+                                    <Input
+                                        onChanged={(event) => {
+                                            showMessage(`Input changed: ${event.key} = ${event.value}`);
+                                        }}
+                                        placeholder="Input something"
+                                        settingKey="Textarea"
+                                        settingValue=""
+                                        type={ItemType.textarea}
+                                    />
+                                {/snippet}
+                            </MiniItem>
+                        </Group>
+                    </div>
+                {/snippet}
+            </Tabs>
+        </Panel>
 
-    <Panel display={panels[1]?.key === panel_focus}>Empty Panel</Panel>
+        <Panel display={panels[1]?.key === panel_focus}>
+            Empty Panel
+        </Panel>
+    {/snippet}
 </Panels>

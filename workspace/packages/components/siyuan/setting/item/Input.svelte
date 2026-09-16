@@ -17,38 +17,63 @@
 
 <!-- 设置项输入组件 -->
 
-<script lang="ts">
-    import { createEventDispatcher } from "svelte";
-
-    import {
-        ItemType,
-
-    } from "./item";
+<script
+    lang="ts"
+    module
+>
+    import { ItemType } from "./item";
 
     import type { IInputEvent } from "./../event";
     import type { ILimits, IOptions } from "./item";
 
-    export let type: ItemType; // Setting Type
-    export let settingKey: string;
-    export let settingValue: any;
+    export interface IProps {
+        type: ItemType; // Setting Type
+        settingKey: string;
+        settingValue: any;
 
-    export let disabled: boolean = false; // Disable Input
-    export let block: boolean = false; // Using Block Style
-    export let normal: boolean = true; // Normal Size
-    export let placeholder: string = ""; // Use it if type is text/number/textarea
-    export let options: IOptions = []; // Use it if type is select
-    export let limits: ILimits = { min: 0, max: 100, step: 1 }; // Use it if type is number/slider
-    export let height: number = 0; // Use it if type is textarea
-    export let fontFamily: string = ""; // Use it if type is textarea
+        disabled?: boolean; // Disable Input
+        block?: boolean; // Using Block Style
+        normal?: boolean; // Normal Size
+        placeholder?: string; // Use it if type is text/number/textarea
+        options?: IOptions; // Use it if type is select
+        limits?: ILimits; // Use it if type is number/slider
+        height?: number; // Use it if type is textarea
+        fontFamily?: string; // Use it if type is textarea
+    }
 
-    const dispatch = createEventDispatcher<IInputEvent>();
+    export interface IHandlers {
+        onClicked?: (params: IInputEvent["clicked"]) => void; // 按钮点击
+        onChanged?: (params: IInputEvent["changed"]) => void; // 设置项值变更
+    }
+
+    export type TProps = IProps & IHandlers;
+</script>
+
+<script lang="ts">
+    let {
+        type,
+        settingKey,
+        settingValue = $bindable(),
+
+        disabled = false,
+        block = false,
+        normal = true,
+        placeholder = "",
+        options = [],
+        limits = { min: 0, max: 100, step: 1 },
+        height = 0,
+        fontFamily = "",
+
+        onClicked,
+        onChanged,
+    }: TProps = $props();
 
     function clicked(event: MouseEvent) {
-        dispatch("clicked", { event });
+        onClicked?.({ event });
     }
 
     function changed(event: Event) {
-        dispatch("changed", { key: settingKey, value: settingValue, event });
+        onChanged?.({ key: settingKey, value: settingValue, event });
     }
 </script>
 
@@ -59,9 +84,9 @@
         class:fn__block={block}
         class:fn__flex-center={!block}
         {disabled}
+        onchange={changed}
         type="checkbox"
         bind:checked={settingValue}
-        on:change={changed}
     />
 {:else if type === ItemType.text}
     <!-- Text Input -->
@@ -71,9 +96,9 @@
         class:fn__flex-center={!block}
         class:fn__size200={!block && normal}
         {disabled}
+        onchange={changed}
         {placeholder}
         bind:value={settingValue}
-        on:change={changed}
     />
 {:else if type === ItemType.number}
     <!-- Number Input -->
@@ -85,11 +110,11 @@
         {disabled}
         max={limits.max}
         min={limits.min}
+        onchange={changed}
         {placeholder}
         step={limits.step}
         type="number"
         bind:value={settingValue}
-        on:change={changed}
     />
 {:else if type === ItemType.slider}
     <!-- Slider -->
@@ -100,10 +125,10 @@
         {disabled}
         max={limits.max}
         min={limits.min}
+        onchange={changed}
         step={limits.step}
         type="range"
         bind:value={settingValue}
-        on:change={changed}
     />
 {:else if type === ItemType.button}
     <!-- Button Input -->
@@ -113,7 +138,7 @@
         class:fn__flex-center={!block}
         class:fn__size200={!block && normal}
         {disabled}
-        on:click={clicked}
+        onclick={clicked}
     >
         {settingValue}
     </button>
@@ -125,8 +150,8 @@
         class:fn__flex-center={!block}
         class:fn__size200={!block && normal}
         {disabled}
+        onchange={changed}
         bind:value={settingValue}
-        on:change={changed}
     >
         {#each options as option (option.key)}
             <option
@@ -146,9 +171,9 @@
         class:fn__block={block}
         class:fn__size200={!block && normal}
         {disabled}
+        onchange={changed}
         {placeholder}
         bind:value={settingValue}
-        on:change={changed}
     ></textarea>
 {/if}
 

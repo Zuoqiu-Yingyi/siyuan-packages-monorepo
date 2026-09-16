@@ -15,15 +15,45 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<script lang="ts">
-    import { createEventDispatcher } from "svelte";
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
 
     import type { IDialogEvent } from "./event";
 
-    export let selectable: boolean = true; // 是否可选择
+    export interface IProps {
+        selectable?: boolean; // 是否可选择
+        cancelButtonText?: string; // 取消按钮文本
+        confirmButtonText?: string; // 确定按钮文本
+    }
 
-    export let cancelButtonText: string = window.siyuan?.languages?.cancel ?? "Cancel"; // 取消按钮文本
-    export let confirmButtonText: string = window.siyuan?.languages?.confirm ?? "Confirm"; // 确定按钮文本
+    export interface IHandlers {
+        onCancel?: (params: IDialogEvent["cancel"]) => void; // 点击取消按钮
+        onConfirm?: (params: IDialogEvent["confirm"]) => void; // 点击确定按钮
+    }
+
+    export interface ISlots {
+        children?: Snippet; // 对话框内容
+    }
+
+    export type TProps = IProps & IHandlers & ISlots;
+</script>
+
+<script lang="ts">
+    import type { HTMLAttributes } from "svelte/elements";
+
+    const {
+        selectable = true,
+        cancelButtonText = window.siyuan?.languages?.cancel ?? "Cancel",
+        confirmButtonText = window.siyuan?.languages?.confirm ?? "Confirm",
+
+        onCancel,
+        onConfirm,
+
+        children,
+    }: TProps & HTMLAttributes<HTMLElement> = $props();
 
     let cancel: HTMLButtonElement | undefined; // 取消按钮
     let confirm: HTMLButtonElement | undefined; // 确认按钮
@@ -31,13 +61,11 @@
     void cancel;
     void confirm;
 
-    const dispatcher = createEventDispatcher<IDialogEvent>();
-
-    function onCancle(event: MouseEvent): void {
-        dispatcher("cancel", { event });
+    function _onCancle(event: MouseEvent): void {
+        onCancel?.({ event });
     }
-    function onConfirm(event: MouseEvent): void {
-        dispatcher("confirm", { event });
+    function _onConfirm(event: MouseEvent): void {
+        onConfirm?.({ event });
     }
 </script>
 
@@ -46,7 +74,7 @@
     class="b3-dialog__content"
 >
     <!-- 内容 -->
-    <slot />
+    {@render children?.()}
 </div>
 
 <!-- 按鈕 -->
@@ -54,7 +82,7 @@
     <button
         bind:this={cancel}
         class="b3-button b3-button--cancel"
-        on:click={onCancle}
+        onclick={_onCancle}
     >
         {cancelButtonText}
     </button>
@@ -62,7 +90,7 @@
     <button
         bind:this={confirm}
         class="b3-button b3-button--text"
-        on:click={onConfirm}
+        onclick={_onConfirm}
     >
         {confirmButtonText}
     </button>

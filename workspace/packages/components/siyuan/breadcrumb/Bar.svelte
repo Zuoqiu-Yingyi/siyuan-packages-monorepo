@@ -15,17 +15,39 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
+
+    import type { IBreadcrumbElement } from ".";
+
+    export interface IProps {
+        items?: IBreadcrumbElement[]; // 面包屑元素列表
+    }
+
+    export interface ISlots {
+        children?: Snippet; // 自定义面包屑内容
+    }
+
+    export type TProps = IProps & ISlots;
+</script>
+
 <script lang="ts">
     import Svg from "./../misc/Svg.svelte";
     import Item from "./Item.svelte";
 
-    import type { IBreadcrumbElement } from ".";
-
-    export let items: IBreadcrumbElement[] = [];
+    const {
+        items = [],
+        children,
+    }: TProps = $props();
 </script>
 
 <div class="protyle-breadcrumb__bar protyle-breadcrumb__bar--nowrap">
-    <slot>
+    {#if children}
+        {@render children()}
+    {:else}
         {#each items as item, i (i)}
             {#if item.type === "item"}
                 <Item {...item} />
@@ -36,5 +58,5 @@
                 />
             {/if}
         {/each}
-    </slot>
+    {/if}
 </div>

@@ -15,23 +15,51 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
+
+    import type { IBlockIconProps } from "./../misc";
+
+    import type { IProps as IBarProps } from "./Bar.svelte";
+
+    export interface IProps {
+        items?: IBarProps["items"]; // 面包屑元素列表
+        icons?: IBlockIconProps[]; // 按钮列表
+    }
+
+    export interface ISlots {
+        bar?: Snippet; // 自定义面包屑导航栏 (代替 items)
+        iconList?: Snippet; // 自定义按钮列表 (代替 icons)
+    }
+
+    export type TProps = IProps & ISlots;
+</script>
+
 <script lang="ts">
     import BlockIcon from "./../misc/BlockIcon.svelte";
     import Bar from "./Bar.svelte";
 
-    import type { ComponentProps } from "svelte";
+    const {
+        items = [],
+        icons = [],
 
-    import type { IBlockIconProps } from "./../misc";
-
-    export let items: ComponentProps<Bar>["items"] = [];
-    export let icons: IBlockIconProps[] = [];
+        bar,
+        iconList,
+    }: TProps = $props();
 </script>
 
 <div class="protyle-breadcrumb">
-    <slot name="bar">
+    {#if bar}
+        {@render bar()}
+    {:else}
         <Bar {items} />
-    </slot>
-    <slot name="icons">
+    {/if}
+    {#if iconList}
+        {@render iconList()}
+    {:else}
         {#each icons as icon, i (i)}
             {#if i === 0}
                 <span class="protyle-breadcrumb__space"></span>
@@ -40,5 +68,5 @@
             {/if}
             <BlockIcon {...icon} />
         {/each}
-    </slot>
+    {/if}
 </div>

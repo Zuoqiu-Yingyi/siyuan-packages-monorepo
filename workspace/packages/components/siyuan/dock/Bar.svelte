@@ -15,39 +15,64 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
+
+    import type { IBar } from ".";
+    import type { IBlockIconProps } from "./../misc";
+
+    export interface IProps {
+        logo?: NonNullable<IBar["logo"]>; // 图标
+        title?: NonNullable<IBar["title"]>; // 标题
+        icons?: NonNullable<IBar["icons"]>; // 图标按钮
+    }
+
+    export interface ISlots {
+        logoSlot?: Snippet; // 自定义图标与标题
+        icon?: Snippet<[IBlockIconProps]>; // 自定义单个图标按钮
+    }
+
+    export type TProps = IProps & ISlots;
+</script>
+
 <script lang="ts">
     import BlockIcon from "./../misc/BlockIcon.svelte";
     import Logo from "./Logo.svelte";
 
-    import type { IBar } from ".";
+    const {
+        logo = "",
+        title = "",
 
-    export let logo: NonNullable<IBar["logo"]> = ""; // 图标
-    export let title: NonNullable<IBar["title"]> = ""; // 标题
+        icons = [],
 
-    export let icons: NonNullable<IBar["icons"]> = []; // 图标按钮
+        logoSlot,
+        icon: iconSlot,
+    }: TProps = $props();
 </script>
 
 <div class="block__icons">
-    <slot name="logo">
-        {#if logo || title}
-            <Logo
-                icon={logo}
-                {title}
-            />
-        {/if}
-    </slot>
-    <!-- REF: https://www.svelte.cn/docs#slot_let -->
+    {#if logoSlot}
+        {@render logoSlot()}
+    {:else if logo || title}
+        <Logo
+            icon={logo}
+            {title}
+        />
+    {/if}
+    <!-- REF: https://svelte.dev/docs/svelte/snippet#Passing-snippets-to-components -->
     {#each icons as icon, i (i)}
         <span
             class="fn__space"
             class:fn__flex-1={i === 0}
         ></span>
 
-        <slot
-            name="icon"
-            {icon}
-        >
+        {#if iconSlot}
+            {@render iconSlot(icon)}
+        {:else}
             <BlockIcon {...icon} />
-        </slot>
+        {/if}
     {/each}
 </div>

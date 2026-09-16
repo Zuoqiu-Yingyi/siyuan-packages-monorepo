@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import type { createEventDispatcher } from "svelte";
 import type { Writable } from "svelte/store";
 
 /* 文档树项类型 */
@@ -29,16 +28,15 @@ export interface ITree {
     removeNode: (node: IFileTreeNodeStores) => void; // 移除节点
 }
 
-/* 文档树派遣的事件载荷 */
+/* 文档树事件载荷 */
 export interface IFileTreeEventDetails<E extends Event> {
     e: E; // 鼠标事件
     li: HTMLLIElement; // 节点元素
     ul: HTMLUListElement; // 下级节点列表元素
     props: IFileTreeNodeStores; // 组件响应式状态变量
-    dispatcher: ReturnType<typeof createEventDispatcher<IFileTreeEvent>>; // 组件事件派遣器
 }
 
-/* 文档树派遣的事件 */
+/* 文档树事件 */
 export interface IFileTreeEvent {
     dragstart: IFileTreeEventDetails<DragEvent>; // 拖拽开始
     drag: IFileTreeEventDetails<DragEvent>; // 拖拽中 (...)
@@ -53,6 +51,14 @@ export interface IFileTreeEvent {
     fold: IFileTreeEventDetails<MouseEvent>; // 折叠文件夹
     unfold: IFileTreeEventDetails<MouseEvent>; // 展开文件夹
 }
+
+/**
+ * 文档树事件处理函数 (回调属性)
+ * REF: https://svelte.dev/docs/svelte/v5-migration-guide#Event-changes-Component-events
+ */
+export type IFileTreeHandlers = {
+    [P in keyof IFileTreeEvent as `on${Capitalize<P>}`]?: (details: IFileTreeEvent[P]) => void;
+};
 
 /* 文档树节点 */
 export interface IFileTreeNode {

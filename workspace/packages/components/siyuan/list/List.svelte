@@ -15,18 +15,37 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { IListItem } from "./list";
+
+    export interface IProps {
+        items?: IListItem[]; // 列表项
+        className?: string; // 类名
+        border?: boolean; // 是否显示边框
+        fn__none?: boolean; // 是否隐藏 .fn__none (display: none)
+        flex_1?: boolean; // 是否填充剩余空间 .fn__flex-1
+        width?: number; // 宽度 (px, 0 表示不限制)
+        indent?: string; // 左侧缩进
+    }
+
+    export type TProps = IProps;
+</script>
+
 <script lang="ts">
     import ListItem from "./ListItem.svelte";
 
-    import type { IListItem } from "./list";
-
-    export let items: IListItem[] = [];
-    export let className: string = "b3-list b3-list--background";
-    export let border: boolean = false;
-    export let fn__none: boolean = false;
-    export let flex_1: boolean = true;
-    export let width: number = 0;
-    export let indent: string = "";
+    const {
+        items = [],
+        className = "b3-list b3-list--background",
+        border = false,
+        fn__none = false,
+        flex_1 = true,
+        width = 0,
+        indent = "",
+    }: TProps = $props();
 </script>
 
 <ul

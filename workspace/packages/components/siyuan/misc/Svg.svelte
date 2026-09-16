@@ -15,13 +15,29 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    export interface IProps {
+        icon: string; // svg 图标引用
+        id?: string; // 块 ID
+        className?: string; // 类名
+        style?: string; // 样式
+    }
+
+    export type TProps = IProps;
+</script>
+
 <script lang="ts">
     import regexp from "@workspace/utils/regexp";
 
-    export let icon: string;
-    export let id: string = "";
-    export let className: string = "";
-    export let style: string = "";
+    const {
+        icon,
+        id = "",
+        className = "",
+        style = "",
+    }: TProps = $props();
 </script>
 
 <svg

@@ -17,14 +17,34 @@
 
 <!-- 设置项组 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
+
+    export interface IProps {
+        title: string; // 标题文本
+    }
+
+    export interface ISlots {
+        children?: Snippet; // 设置项列表
+    }
+
+    export type TProps = IProps & ISlots;
+</script>
+
 <script lang="ts">
-    export let title: string; // 标题文本
+    const {
+        title,
+        children,
+    }: TProps = $props();
 </script>
 
 <div class="b3-label">
     <!-- eslint-disable-next-line svelte/no-at-html-tags -->
     {@html title}
     <div class="config-query">
-        <slot />
+        {@render children?.()}
     </div>
 </div>

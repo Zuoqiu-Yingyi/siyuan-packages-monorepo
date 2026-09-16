@@ -17,19 +17,40 @@
 
 <!-- 选项卡组 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
+
+    import type { ITabEvent } from "./../event";
+    import type { ITab, TabKey } from "./../tab";
+
+    export interface IProps {
+        tabs: ITab[]; // 页签列表
+        focus: TabKey; // 当前选中的页签的 key
+    }
+
+    export interface ISlots {
+        children?: Snippet<[TabKey]>; // 页签内容 (参数为当前选中的页签的 key)
+    }
+
+    export type TProps = IProps & ISlots;
+</script>
+
 <script lang="ts">
     import Svg from "./../../misc/Svg.svelte";
     import Tab from "./Tab.svelte";
 
-    import type { ComponentEvents } from "svelte";
+    let {
+        tabs,
+        focus = $bindable(),
 
-    import type { ITab } from "./../tab";
+        children,
+    }: TProps = $props();
 
-    export let tabs: ITab[];
-    export let focus: number | string;
-
-    function changed(e: ComponentEvents<Tab>["changed"]) {
-        focus = e.detail.key;
+    function changed(params: ITabEvent["changed"]) {
+        focus = params.key;
     }
 </script>
 
@@ -40,33 +61,40 @@
     <!-- 选项卡页签栏 -->
     <div class="layout-tab-bar fn__flex">
         {#each tabs as tab (tab.key)}
-            <!-- [事件 / 事件转发 • Svelte 教程 | Svelte 中文网](https://www.svelte.cn/tutorial/event-forwarding) -->
             <Tab
                 name={tab.name}
                 focus={tab.key === focus}
                 icon={!!tab.icon}
                 key={tab.key}
-                on:changed={changed}
+                onChanged={changed}
             >
-                <span slot="icon">
-                    {#if tab.icon?.startsWith("#")}
-                        <Svg icon={tab.icon} />
-                    {:else if tab.icon}
+                {#snippet iconSlot()}
+                    <span>
+                        {#if tab.icon?.startsWith("#")}
+                            <Svg icon={tab.icon} />
+                        {:else if tab.icon}
+                            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+                            {@html tab.icon}
+                        {/if}
+                    </span>
+                {/snippet}
+                {#snippet text()}
+                    <span>
                         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                        {@html tab.icon}
-                    {/if}
-                </span>
-                <span slot="text">
-                    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                    {@html tab.text}
-                </span>
+                        {@html tab.text}
+                    </span>
+                {/snippet}
             </Tab>
         {/each}
     </div>
 
     <!-- 选项卡内容栏 -->
-    <!-- [Svelte API 中文文档 | Svelte 中文网](https://www.svelte.cn/docs#slot_let) -->
+    <!-- REF: https://svelte.dev/docs/svelte/snippet#Passing-snippets-to-components -->
     <div class="fn__flex-1">
-        <slot {focus}>Container</slot>
+        {#if children}
+            {@render children(focus)}
+        {:else}
+            Container
+        {/if}
     </div>
 </div>

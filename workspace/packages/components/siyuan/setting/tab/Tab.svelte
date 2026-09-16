@@ -16,45 +16,78 @@
 -->
 
 <!-- 标签页页签 -->
-<script lang="ts">
-    import { createEventDispatcher } from "svelte";
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
 
     import type { ITabEvent } from "./../event";
     import type { TabKey } from "./../tab";
 
-    export let key: TabKey; // 该页签的唯一标识
-    export let icon: boolean; // 是否显示图标
-    export let name: string = ""; // 该页签的名称
-    export let focus: boolean = false; // 该页签是否聚焦
+    export interface IProps {
+        key: TabKey; // 该页签的唯一标识
+        icon: boolean; // 是否显示图标
+        name?: string; // 该页签的名称
+        focus?: boolean; // 该页签是否聚焦
+    }
 
-    const dispatch = createEventDispatcher<ITabEvent>();
+    export interface IHandlers {
+        onChanged?: (params: ITabEvent["changed"]) => void; // 页签切换
+    }
+
+    export interface ISlots {
+        iconSlot?: Snippet; // 页签图标
+        text?: Snippet; // 页签文本
+    }
+
+    export type TProps = IProps & IHandlers & ISlots;
+</script>
+
+<script lang="ts">
+    const {
+        key,
+        icon,
+        name = "",
+        focus = false,
+
+        onChanged,
+
+        iconSlot,
+        text,
+    }: TProps = $props();
 
     function changed() {
         if (!focus) {
-            dispatch("changed", { key });
+            onChanged?.({ key });
         }
     }
 </script>
 
-<!-- svelte-ignore a11y-interactive-supports-focus -->
-<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y_interactive_supports_focus -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
     class="item item--full"
     class:item--focus={focus}
     data-type={name}
+    onclick={changed}
     role="button"
-    on:click={changed}
 >
-    <!-- [组件子级 / Checking for slot content • Svelte 教程 | Svelte 中文网](https://www.svelte.cn/tutorial/optional-slots) -->
+    <!-- 通过判断 snippet 属性是否存在来检测是否传入了内容 -->
+    <!-- REF: https://svelte.dev/docs/svelte/snippet -->
     <span class="fn__flex-1"></span>
-    {#if icon && $$slots.icon}
+    {#if icon && iconSlot}
         <span class="item__icon">
-            <slot name="icon" />
+            {@render iconSlot()}
         </span>
     {/if}
 
     <span class="item__text">
-        <slot name="text">text</slot>
+        {#if text}
+            {@render text()}
+        {:else}
+            text
+        {/if}
     </span>
 
     <span class="fn__flex-1"></span>

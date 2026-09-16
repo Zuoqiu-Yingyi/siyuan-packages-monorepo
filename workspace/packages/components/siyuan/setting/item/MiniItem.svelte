@@ -17,26 +17,52 @@
 
 <!-- 小型设置项(用于设置项组内) -->
 
-<script>
-    export let minWidth = "24em";
-    export let marginRight = "2em";
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
+
+    export interface IProps {
+        minWidth?: string; // 最小宽度
+        marginRight?: string; // 右侧外边距
+    }
+
+    export interface ISlots {
+        icon?: Snippet; // 图标
+        title?: Snippet; // 标题
+        input?: Snippet; // 设置项控件
+    }
+
+    export type TProps = IProps & ISlots;
+</script>
+
+<script lang="ts">
+    const {
+        minWidth = "24em",
+        marginRight = "2em",
+
+        icon,
+        title,
+        input,
+    }: TProps = $props();
 </script>
 
 <label
     style="min-width: {minWidth}; margin-right: {marginRight};"
     class="fn__flex"
 >
-    <slot name="icon" />
+    {@render icon?.()}
 
     <span class="fn__space"></span>
 
     <div class="fn__flex-1">
-        <slot name="title" />
+        {@render title?.()}
     </div>
 
     <span class="fn__space"></span>
 
-    <slot name="input" />
+    {@render input?.()}
 </label>
 
 <style lang="less">

@@ -15,39 +15,64 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { IListItem } from "./list";
+
+    export interface IProps {
+        text: IListItem["text"]; // 文本
+
+        icon?: NonNullable<IListItem["icon"]>; // 图标
+        src?: NonNullable<IListItem["src"]>; // 图片
+        meta?: NonNullable<IListItem["meta"]>; // 元信息
+        style?: NonNullable<IListItem["style"]>; // 文本样式
+
+        narrow?: NonNullable<IListItem["narrow"]>; // 是否为紧凑布局
+        border?: NonNullable<IListItem["border"]>; // 是否显示下级列表边框
+
+        fold?: NonNullable<IListItem["fold"]>; // 是否折叠下级列表
+        children?: NonNullable<IListItem["children"]>; // 下级列表
+        indent?: NonNullable<IListItem["indent"]>; // 下级列表缩进
+    }
+
+    export type TProps = IProps;
+</script>
+
 <script lang="ts">
     import Svg from "./../misc/Svg.svelte";
     import SvgArrow from "./../misc/SvgArrow.svelte";
     import List from "./List.svelte";
 
-    import type { IListItem } from "./list";
+    let {
+        text,
 
-    export let text: IListItem["text"]; // 文本
+        icon = "",
+        src = "",
+        meta = "",
+        style = "",
 
-    export let icon: NonNullable<IListItem["icon"]> = ""; // 图标
-    export let src: NonNullable<IListItem["src"]> = ""; // 图片
-    export let meta: NonNullable<IListItem["meta"]> = ""; // 元信息
-    export let style: NonNullable<IListItem["style"]> = ""; // 文本样式
+        narrow = false,
+        border = false,
 
-    export let narrow: NonNullable<IListItem["narrow"]> = false; // 是否为紧凑布局
-    export let border: NonNullable<IListItem["border"]> = false; // 是否显示下级列表边框
-
-    export let fold: NonNullable<IListItem["fold"]> = true; // 是否折叠下级列表
-    export let children: NonNullable<IListItem["children"]> = []; // 下级列表
-    export let indent: NonNullable<IListItem["indent"]> = ""; // 下级列表缩进
+        fold = $bindable(true),
+        children = [],
+        indent = "",
+    }: TProps = $props();
 
     function onToggle() {
         fold = !fold;
     }
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <li
     class="b3-list-item"
     class:b3-list-item--narrow={narrow}
     class:toggle={children.length > 0}
-    on:click={onToggle}
+    onclick={onToggle}
 >
     <!-- 下级列表折叠按钮 -->
     <span

@@ -15,68 +15,95 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { IFileTreeHandlers, IFileTreeNode } from ".";
+
+    export interface IProps extends IFileTreeNode {}
+
+    export type TProps = IProps & IFileTreeHandlers;
+</script>
+
 <script lang="ts">
-    import { createEventDispatcher, getContext, onDestroy } from "svelte";
-    import { writable } from "svelte/store";
+    import { getContext, onDestroy } from "svelte";
+    import { fromStore, writable } from "svelte/store";
+
+    import {
+        preventDefault,
+        stopPropagation,
+    } from "@workspace/utils/svelte/event";
 
     import { FileTreeNodeType } from ".";
 
     import Icon from "./../../misc/Icon.svelte";
     import Svg from "./../../misc/Svg.svelte";
     import SvgArrow from "./../../misc/SvgArrow.svelte";
+    import Node from "./Node.svelte";
 
-    import type { Unsubscriber } from "svelte/store";
+    import type { IFileTreeNodeStores, ITree } from ".";
 
-    import type { IFileTreeEvent, IFileTreeNode, IFileTreeNodeStores, ITree } from ".";
+    const {
+        type,
+        name = "",
+        path,
+        root = "",
+        depth = 0,
+        indent = "1em",
+        relative = "",
+        directory,
 
-    export let type: IFileTreeNode["type"];
-    export let name: IFileTreeNode["name"] = "";
-    export let path: IFileTreeNode["path"];
-    export let root: IFileTreeNode["root"] = "";
-    export let depth: IFileTreeNode["depth"] = 0;
-    export let indent: IFileTreeNode["indent"] = "1em";
-    export let relative: IFileTreeNode["relative"] = "";
-    export let directory: IFileTreeNode["directory"];
+        focus = false,
+        folded = true,
+        symlink = false,
+        dragging = false,
+        draggable = false,
+        hideActions = true,
 
-    export let focus: IFileTreeNode["focus"] = false;
-    export let folded: IFileTreeNode["folded"] = true;
-    export let symlink: IFileTreeNode["symlink"] = false;
-    export let dragging: IFileTreeNode["dragging"] = false;
-    export let draggable: IFileTreeNode["draggable"] = false;
-    export let hideActions: IFileTreeNode["hideActions"] = true;
+        dragoverTop = false,
+        dragover = false,
+        dragoverBottom = false,
 
-    export let dragoverTop: IFileTreeNode["dragoverTop"] = false;
-    export let dragover: IFileTreeNode["dragover"] = false;
-    export let dragoverBottom: IFileTreeNode["dragoverBottom"] = false;
+        title = "",
+        children = undefined,
 
-    export let title: IFileTreeNode["title"] = "";
-    // eslint-disable-next-line no-undef-init
-    export let children: IFileTreeNode["children"] = undefined;
+        toggleIcon = "#iconRight",
+        toggleAriaLabel = "",
 
-    export let toggleIcon: IFileTreeNode["toggleIcon"] = "#iconRight";
-    export let toggleAriaLabel: IFileTreeNode["toggleAriaLabel"] = "";
+        icon = "",
+        iconAriaLabel = "",
+        iconPopoverID = "",
 
-    export let icon: IFileTreeNode["icon"] = "";
-    export let iconAriaLabel: IFileTreeNode["iconAriaLabel"] = "";
-    export let iconPopoverID: IFileTreeNode["iconPopoverID"] = "";
+        text = "",
+        textAriaLabel = "",
 
-    export let text: IFileTreeNode["text"] = "";
-    export let textAriaLabel: IFileTreeNode["textAriaLabel"] = "";
+        menuIcon = "#iconMore",
+        menuAriaLabel = "",
 
-    export let menuIcon: IFileTreeNode["menuIcon"] = "#iconMore";
-    export let menuAriaLabel: IFileTreeNode["menuAriaLabel"] = "";
+        symlinkIcon = "#iconLink",
+        symlinkAriaLabel = "",
 
-    export let symlinkIcon: IFileTreeNode["symlinkIcon"] = "#iconLink";
-    export let symlinkAriaLabel: IFileTreeNode["symlinkAriaLabel"] = "";
+        count = Number.NaN,
+        countAriaLabel = "",
 
-    export let count: IFileTreeNode["count"] = Number.NaN;
-    export let countAriaLabel: IFileTreeNode["countAriaLabel"] = "";
+        onOpen,
+        onMenu,
+        onFold,
+        onUnfold,
+        onDrag,
+        onDragstart,
+        onDragend,
+        onDragenter,
+        onDragover,
+        onDragleave,
+        onDrop,
+    }: TProps = $props();
 
-    let li: HTMLLIElement; // 当前节点元素
-    let ul: HTMLUListElement; // 下级节点列表元素
+    let li: HTMLLIElement | undefined; // 当前节点元素
+    let ul: HTMLUListElement | undefined; // 下级节点列表元素
 
-    const dispatcher = createEventDispatcher<IFileTreeEvent>();
-
+    /* 外部响应式变量 */
     const props: IFileTreeNodeStores = {
         type: writable(type),
         name: writable(name),
@@ -121,115 +148,122 @@
         countAriaLabel: writable(countAriaLabel),
     };
 
-    $: props.type.set(type);
-    $: props.name.set(name);
-    $: props.path.set(path);
-    $: props.root.set(root);
-    $: props.depth.set(depth);
-    $: props.indent.set(indent);
-    $: props.relative.set(relative);
-    $: props.directory.set(directory);
+    /**
+     * store 的响应式视图
+     * 组件内部的渲染以 store 为准, 因此外部通过 store 写入的状态会立即反映到视图上
+     * REF: https://svelte.dev/docs/svelte/svelte-store#fromStore
+     */
+    const state = {
+        type: fromStore(props.type),
+        name: fromStore(props.name),
+        path: fromStore(props.path),
+        depth: fromStore(props.depth),
+        indent: fromStore(props.indent),
+        directory: fromStore(props.directory),
 
-    $: props.focus.set(focus);
-    $: props.folded.set(folded);
-    $: props.symlink.set(symlink);
-    $: props.dragging.set(dragging);
-    $: props.draggable.set(draggable);
-    $: props.hideActions.set(hideActions);
+        focus: fromStore(props.focus),
+        folded: fromStore(props.folded),
+        symlink: fromStore(props.symlink),
+        dragging: fromStore(props.dragging),
+        draggable: fromStore(props.draggable),
+        hideActions: fromStore(props.hideActions),
 
-    $: props.dragoverTop.set(dragoverTop);
-    $: props.dragover.set(dragover);
-    $: props.dragoverBottom.set(dragoverBottom);
+        dragoverTop: fromStore(props.dragoverTop),
+        dragover: fromStore(props.dragover),
+        dragoverBottom: fromStore(props.dragoverBottom),
 
-    $: props.title.set(title);
-    $: props.children.set(children);
+        title: fromStore(props.title),
+        children: fromStore(props.children),
 
-    $: props.toggleIcon.set(toggleIcon);
-    $: props.toggleAriaLabel.set(toggleAriaLabel);
+        toggleIcon: fromStore(props.toggleIcon),
+        toggleAriaLabel: fromStore(props.toggleAriaLabel),
 
-    $: props.icon.set(icon);
-    $: props.iconAriaLabel.set(iconAriaLabel);
-    $: props.iconPopoverID.set(iconPopoverID);
+        icon: fromStore(props.icon),
+        iconAriaLabel: fromStore(props.iconAriaLabel),
+        iconPopoverID: fromStore(props.iconPopoverID),
 
-    $: props.text.set(text);
-    $: props.textAriaLabel.set(textAriaLabel);
+        text: fromStore(props.text),
+        textAriaLabel: fromStore(props.textAriaLabel),
 
-    $: props.menuIcon.set(menuIcon);
-    $: props.menuAriaLabel.set(menuAriaLabel);
+        menuIcon: fromStore(props.menuIcon),
+        menuAriaLabel: fromStore(props.menuAriaLabel),
 
-    $: props.symlinkIcon.set(symlinkIcon);
-    $: props.symlinkAriaLabel.set(symlinkAriaLabel);
+        symlinkIcon: fromStore(props.symlinkIcon),
+        symlinkAriaLabel: fromStore(props.symlinkAriaLabel),
 
-    $: props.count.set(count);
-    $: props.countAriaLabel.set(countAriaLabel);
+        count: fromStore(props.count),
+        countAriaLabel: fromStore(props.countAriaLabel),
+    } as const;
 
-    const unsubscribes: Unsubscriber[] = [
-        props.type.subscribe((v) => (type = v)), //
-        props.name.subscribe((v) => (name = v)), //
-        props.path.subscribe((v) => (path = v)), //
-        props.root.subscribe((v) => (root = v)), //
-        props.indent.subscribe((v) => (indent = v)), //
-        props.depth.subscribe((v) => (depth = v)), //
-        props.relative.subscribe((v) => (relative = v)), //
-        props.directory.subscribe((v) => (directory = v)), //
+    /* 属性变更时同步至 store */
+    $effect(() => void props.type.set(type));
+    $effect(() => void props.name.set(name));
+    $effect(() => void props.path.set(path));
+    $effect(() => void props.root.set(root));
+    $effect(() => void props.depth.set(depth));
+    $effect(() => void props.indent.set(indent));
+    $effect(() => void props.relative.set(relative));
+    $effect(() => void props.directory.set(directory));
 
-        props.focus.subscribe((v) => (focus = v)), //
-        props.folded.subscribe((v) => (folded = v)), //
-        props.symlink.subscribe((v) => (symlink = v)), //
-        props.dragging.subscribe((v) => (dragging = v)), //
-        props.draggable.subscribe((v) => (draggable = v)), //
-        props.hideActions.subscribe((v) => (hideActions = v)), //
+    $effect(() => void props.focus.set(focus));
+    $effect(() => void props.folded.set(folded));
+    $effect(() => void props.symlink.set(symlink));
+    $effect(() => void props.dragging.set(dragging));
+    $effect(() => void props.draggable.set(draggable));
+    $effect(() => void props.hideActions.set(hideActions));
 
-        props.dragoverTop.subscribe((v) => (dragoverTop = v)), //
-        props.dragover.subscribe((v) => (dragover = v)), //
-        props.dragoverBottom.subscribe((v) => (dragoverBottom = v)), //
+    $effect(() => void props.dragoverTop.set(dragoverTop));
+    $effect(() => void props.dragover.set(dragover));
+    $effect(() => void props.dragoverBottom.set(dragoverBottom));
 
-        props.title.subscribe((v) => (title = v)), //
-        props.children.subscribe((v) => (children = v)), //
+    $effect(() => void props.title.set(title));
+    $effect(() => void props.children.set(children));
 
-        props.toggleIcon.subscribe((v) => (toggleIcon = v)), //
-        props.toggleAriaLabel.subscribe((v) => (toggleAriaLabel = v)), //
+    $effect(() => void props.toggleIcon.set(toggleIcon));
+    $effect(() => void props.toggleAriaLabel.set(toggleAriaLabel));
 
-        props.icon.subscribe((v) => (icon = v)), //
-        props.iconAriaLabel.subscribe((v) => (iconAriaLabel = v)), //
-        props.iconPopoverID.subscribe((v) => (iconPopoverID = v)), //
+    $effect(() => void props.icon.set(icon));
+    $effect(() => void props.iconAriaLabel.set(iconAriaLabel));
+    $effect(() => void props.iconPopoverID.set(iconPopoverID));
 
-        props.text.subscribe((v) => (text = v)), //
-        props.textAriaLabel.subscribe((v) => (textAriaLabel = v)), //
+    $effect(() => void props.text.set(text));
+    $effect(() => void props.textAriaLabel.set(textAriaLabel));
 
-        props.menuIcon.subscribe((v) => (menuIcon = v)), //
-        props.menuAriaLabel.subscribe((v) => (menuAriaLabel = v)), //
+    $effect(() => void props.menuIcon.set(menuIcon));
+    $effect(() => void props.menuAriaLabel.set(menuAriaLabel));
 
-        props.symlinkIcon.subscribe((v) => (symlinkIcon = v)), //
-        props.symlinkAriaLabel.subscribe((v) => (symlinkAriaLabel = v)), //
+    $effect(() => void props.symlinkIcon.set(symlinkIcon));
+    $effect(() => void props.symlinkAriaLabel.set(symlinkAriaLabel));
 
-        props.count.subscribe((v) => (count = v)), //
-        props.countAriaLabel.subscribe((v) => (countAriaLabel = v)), //
-    ];
+    $effect(() => void props.count.set(count));
+    $effect(() => void props.countAriaLabel.set(countAriaLabel));
 
     const tree = getContext<ITree>("tree");
     tree?.appendNode(props);
 
     onDestroy(() => {
         tree?.removeNode(props);
-        unsubscribes.forEach((unsubscribe) => unsubscribe());
     });
+
+    /* 构造事件载荷 */
+    function details<E extends Event>(e: E) {
+        return {
+            e,
+            li: li!,
+            ul: ul!,
+            props,
+        };
+    }
 
     /* 点击节点 */
     function open(e: MouseEvent) {
         switch (type) {
-            case FileTreeNodeType.File: // 文件节点派发打开事件
-                dispatcher("open", {
-                    e,
-                    li,
-                    ul,
-                    props,
-                    dispatcher,
-                });
+            case FileTreeNodeType.File: // 文件节点触发打开事件
+                onOpen?.(details(e));
                 break;
             case FileTreeNodeType.Root:
             case FileTreeNodeType.Folder:
-            default: // 其他节点派发折叠/展开事件
+            default: // 其他节点触发折叠/展开事件
                 // eslint-disable-next-line ts/no-use-before-define
                 toggle(e);
                 break;
@@ -239,186 +273,132 @@
     /* 点击折叠/展开按钮 */
     function toggle(e: MouseEvent) {
         if (folded) {
-            dispatcher("unfold", {
-                e,
-                li,
-                ul,
-                props,
-                dispatcher,
-            });
+            onUnfold?.(details(e));
         }
         else {
-            dispatcher("fold", {
-                e,
-                li,
-                ul,
-                props,
-                dispatcher,
-            });
+            onFold?.(details(e));
         }
     }
 
     /* 点击菜单按钮/右键菜单 */
     function menu(e: MouseEvent) {
-        dispatcher("menu", {
-            e,
-            li,
-            ul,
-            props,
-            dispatcher,
-        });
+        onMenu?.(details(e));
     }
 
     /* 拖拽开始 */
-    function ondragstart(e: DragEvent): void {
-        dispatcher("dragstart", {
-            e,
-            li,
-            ul,
-            props,
-            dispatcher,
-        });
+    function _onDragstart(e: DragEvent): void {
+        onDragstart?.(details(e));
     }
 
     /* 拖拽结束 */
-    function ondragend(e: DragEvent): void {
-        dispatcher("dragend", {
-            e,
-            li,
-            ul,
-            props,
-            dispatcher,
-        });
+    function _onDragend(e: DragEvent): void {
+        onDragend?.(details(e));
     }
 
     /* 拖拽进入 */
-    function ondragenter(e: DragEvent): void {
-        dispatcher("dragenter", {
-            e,
-            li,
-            ul,
-            props,
-            dispatcher,
-        });
+    function _onDragenter(e: DragEvent): void {
+        onDragenter?.(details(e));
     }
 
     /* 拖拽悬停 */
-    function ondragover(e: DragEvent): void {
-        dispatcher("dragover", {
-            e,
-            li,
-            ul,
-            props,
-            dispatcher,
-        });
+    function _onDragover(e: DragEvent): void {
+        onDragover?.(details(e));
     }
 
     /* 拖拽离开 */
-    function ondragleave(e: DragEvent): void {
-        dispatcher("dragleave", {
-            e,
-            li,
-            ul,
-            props,
-            dispatcher,
-        });
+    function _onDragleave(e: DragEvent): void {
+        onDragleave?.(details(e));
     }
 
     /* 拖拽离放置 */
-    function ondrop(e: DragEvent): void {
-        dispatcher("drop", {
-            e,
-            li,
-            ul,
-            props,
-            dispatcher,
-        });
+    function _onDrop(e: DragEvent): void {
+        onDrop?.(details(e));
     }
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <li
     bind:this={li}
     class="node b3-list-item"
-    class:b3-list-item--focus={focus}
-    class:b3-list-item--hide-action={hideActions}
-    class:dragging
-    class:dragover
-    class:dragover__bottom={dragoverBottom}
-    class:dragover__top={dragoverTop}
-    data-depth={depth}
-    data-directory={directory}
-    data-name={name}
-    data-path={path}
-    data-type={type}
-    {draggable}
-    {title}
-    on:dragstart|stopPropagation={ondragstart}
-    on:dragend|stopPropagation={ondragend}
-    on:dragenter|stopPropagation|preventDefault={ondragenter}
-    on:dragover|stopPropagation|preventDefault={ondragover}
-    on:dragleave|stopPropagation|preventDefault={ondragleave}
-    on:drop|stopPropagation|preventDefault={ondrop}
-    on:click|stopPropagation|preventDefault={open}
-    on:contextmenu|stopPropagation|preventDefault={menu}
+    class:b3-list-item--focus={state.focus.current}
+    class:b3-list-item--hide-action={state.hideActions.current}
+    class:dragging={state.dragging.current}
+    class:dragover={state.dragover.current}
+    class:dragover__bottom={state.dragoverBottom.current}
+    class:dragover__top={state.dragoverTop.current}
+    data-depth={state.depth.current}
+    data-directory={state.directory.current}
+    data-name={state.name.current}
+    data-path={state.path.current}
+    data-type={state.type.current}
+    draggable={state.draggable.current}
+    onclick={stopPropagation(preventDefault(open))}
+    oncontextmenu={stopPropagation(preventDefault(menu))}
+    ondragend={stopPropagation(_onDragend)}
+    ondragenter={stopPropagation(preventDefault(_onDragenter))}
+    ondragleave={stopPropagation(preventDefault(_onDragleave))}
+    ondragover={stopPropagation(preventDefault(_onDragover))}
+    ondragstart={stopPropagation(_onDragstart)}
+    ondrop={stopPropagation(preventDefault(_onDrop))}
+    title={state.title.current}
 >
     <!-- 折叠/展开按钮 -->
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-interactive-supports-focus -->
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_interactive_supports_focus -->
     <span
-        style:padding-left="calc(4px + {indent} * {depth})"
+        style:padding-left="calc(4px + {state.indent.current} * {state.depth.current})"
         class="toggle b3-list-item__toggle b3-list-item__toggle--hl"
-        class:b3-tooltips={!!toggleAriaLabel}
-        class:b3-tooltips__ne={!!toggleAriaLabel && type !== FileTreeNodeType.Root}
-        class:b3-tooltips__se={!!toggleAriaLabel && type === FileTreeNodeType.Root}
-        class:fn__hidden={type === FileTreeNodeType.File}
-        aria-label={toggleAriaLabel}
+        class:b3-tooltips={!!state.toggleAriaLabel.current}
+        class:b3-tooltips__ne={!!state.toggleAriaLabel.current && state.type.current !== FileTreeNodeType.Root}
+        class:b3-tooltips__se={!!state.toggleAriaLabel.current && state.type.current === FileTreeNodeType.Root}
+        class:fn__hidden={state.type.current === FileTreeNodeType.File}
+        aria-label={state.toggleAriaLabel.current}
+        onclick={stopPropagation(preventDefault(toggle))}
         role="button"
-        on:click|stopPropagation|preventDefault={toggle}
     >
         <SvgArrow
-            icon={toggleIcon}
-            open={!folded}
+            icon={state.toggleIcon.current}
+            open={!state.folded.current}
         />
     </span>
 
     <!-- 图标 -->
     <span
         class="icon b3-list-item__icon"
-        class:b3-tooltips={!!iconAriaLabel}
-        class:b3-tooltips__ne={!!iconAriaLabel && type !== FileTreeNodeType.Root}
-        class:b3-tooltips__se={!!iconAriaLabel && type === FileTreeNodeType.Root}
-        aria-label={iconAriaLabel}
+        class:b3-tooltips={!!state.iconAriaLabel.current}
+        class:b3-tooltips__ne={!!state.iconAriaLabel.current && state.type.current !== FileTreeNodeType.Root}
+        class:b3-tooltips__se={!!state.iconAriaLabel.current && state.type.current === FileTreeNodeType.Root}
+        aria-label={state.iconAriaLabel.current}
     >
-        {#if icon}
+        {#if state.icon.current}
             <!-- svg 图标 -->
             <Icon
-                id={iconPopoverID}
-                {icon}
+                id={state.iconPopoverID.current}
+                icon={state.icon.current}
             />
-        {:else if type === FileTreeNodeType.File}
+        {:else if state.type.current === FileTreeNodeType.File}
             <!-- 文件图标 -->
             <Svg
-                id={iconPopoverID}
+                id={state.iconPopoverID.current}
                 icon="#iconFile"
             />
-        {:else if type === FileTreeNodeType.Folder}
+        {:else if state.type.current === FileTreeNodeType.Folder}
             <!-- 文件夹图标 -->
             <Svg
-                id={iconPopoverID}
+                id={state.iconPopoverID.current}
                 icon="#iconFolder"
             />
-        {:else if type === FileTreeNodeType.Root}
+        {:else if state.type.current === FileTreeNodeType.Root}
             <!-- 根目录图标 -->
             <Svg
-                id={iconPopoverID}
+                id={state.iconPopoverID.current}
                 icon="#iconFilesRoot"
             />
         {:else}
             <!-- 未知图标 -->
             <Svg
-                id={iconPopoverID}
+                id={state.iconPopoverID.current}
                 icon="#iconHelp"
             />
         {/if}
@@ -427,84 +407,86 @@
     <!-- 文本 -->
     <span
         class="text b3-list-item__text"
-        class:ariaLabel={!!textAriaLabel}
-        class:b3-tooltips__ne={!!textAriaLabel && type !== FileTreeNodeType.Root}
-        class:b3-tooltips__se={!!textAriaLabel && type === FileTreeNodeType.Root}
-        aria-label={textAriaLabel}
+        class:ariaLabel={!!state.textAriaLabel.current}
+        class:b3-tooltips__ne={!!state.textAriaLabel.current && state.type.current !== FileTreeNodeType.Root}
+        class:b3-tooltips__se={!!state.textAriaLabel.current && state.type.current === FileTreeNodeType.Root}
+        aria-label={state.textAriaLabel.current}
     >
-        {text}
+        {state.text.current}
     </span>
 
     <!-- 菜单按钮 -->
-    <!-- svelte-ignore a11y-interactive-supports-focus -->
+    <!-- svelte-ignore a11y_interactive_supports_focus -->
     <span
         class="menu b3-list-item__action"
-        class:b3-tooltips={!!menuAriaLabel}
-        class:b3-tooltips__nw={!!menuAriaLabel && type !== FileTreeNodeType.Root}
-        class:b3-tooltips__sw={!!menuAriaLabel && type === FileTreeNodeType.Root}
+        class:b3-tooltips={!!state.menuAriaLabel.current}
+        class:b3-tooltips__nw={!!state.menuAriaLabel.current && state.type.current !== FileTreeNodeType.Root}
+        class:b3-tooltips__sw={!!state.menuAriaLabel.current && state.type.current === FileTreeNodeType.Root}
         data-type="more"
-        aria-label={menuAriaLabel}
+        aria-label={state.menuAriaLabel.current}
+        onclick={stopPropagation(preventDefault(menu))}
         role="button"
-        on:click|stopPropagation|preventDefault={menu}
     >
-        {#if menuIcon}
-            <Icon icon={menuIcon} />
+        {#if state.menuIcon.current}
+            <Icon icon={state.menuIcon.current} />
         {/if}
     </span>
 
     <!-- 符号链接 -->
-    {#if symlink}
+    {#if state.symlink.current}
         <span
             class="symblink b3-list-item__action"
-            class:b3-tooltips={!!symlinkAriaLabel}
-            class:b3-tooltips__nw={!!symlinkAriaLabel && type !== FileTreeNodeType.Root}
-            class:b3-tooltips__sw={!!symlinkAriaLabel && type === FileTreeNodeType.Root}
+            class:b3-tooltips={!!state.symlinkAriaLabel.current}
+            class:b3-tooltips__nw={!!state.symlinkAriaLabel.current && state.type.current !== FileTreeNodeType.Root}
+            class:b3-tooltips__sw={!!state.symlinkAriaLabel.current && state.type.current === FileTreeNodeType.Root}
             data-type="symlink"
-            aria-label={symlinkAriaLabel}
+            aria-label={state.symlinkAriaLabel.current}
         >
-            {#if symlinkIcon}
-                <Icon icon={symlinkIcon} />
+            {#if state.symlinkIcon.current}
+                <Icon icon={state.symlinkIcon.current} />
             {/if}
         </span>
     {/if}
 
     <!-- 计数器 -->
-    {#if !Number.isNaN(count)}
+    {#if !Number.isNaN(state.count.current)}
         <span
             class="counter"
-            class:b3-tooltips={!!countAriaLabel}
-            class:b3-tooltips__nw={!!countAriaLabel && type !== FileTreeNodeType.Root}
-            class:b3-tooltips__sw={!!countAriaLabel && type === FileTreeNodeType.Root}
-            aria-label={countAriaLabel}
+            class:b3-tooltips={!!state.countAriaLabel.current}
+            class:b3-tooltips__nw={!!state.countAriaLabel.current && state.type.current !== FileTreeNodeType.Root}
+            class:b3-tooltips__sw={!!state.countAriaLabel.current && state.type.current === FileTreeNodeType.Root}
+            aria-label={state.countAriaLabel.current}
         >
-            {count}
+            {state.count.current}
         </span>
     {/if}
 </li>
 
 <!-- 下级节点 -->
-{#if children}
+{#if state.children.current}
     <ul
         bind:this={ul}
-        style:--monaco-editor-explorer-indent-left="calc(12px + {indent} * {depth})"
+        style:--monaco-editor-explorer-indent-left="calc(12px + {state.indent.current} * {state.depth.current})"
         class="node-list"
-        class:dragging
-        class:dragover
-        class:fn__none={folded}
+        class:dragging={state.dragging.current}
+        class:dragover={state.dragover.current}
+        class:fn__none={state.folded.current}
     >
-        {#each children as node (node.path)}
-            <svelte:self
-                depth={(depth ?? 0) + 1}
-                on:open
-                on:fold
-                on:menu
-                on:unfold
-                on:dragstart
-                on:dragend
-                on:dragenter
-                on:dragover
-                on:dragleave
-                on:drop
+        <!-- 递归渲染下级节点 (Svelte 5 不再使用 <svelte:self>, 直接引用自身) -->
+        {#each state.children.current as node (node.path)}
+            <Node
+                depth={(state.depth.current ?? 0) + 1}
+                {onDrag}
+                {onDragend}
+                {onDragenter}
+                {onDragleave}
+                {onDragover}
+                {onDragstart}
+                {onDrop}
+                {onFold}
+                {onMenu}
+                {onOpen}
+                {onUnfold}
                 {...node}
             />
         {/each}

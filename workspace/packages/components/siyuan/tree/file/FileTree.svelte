@@ -15,28 +15,54 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { IFileTreeHandlers, IFileTreeRootNode } from ".";
+
+    export interface IProps {
+        roots?: IFileTreeRootNode[]; // 根节点列表
+    }
+
+    export type TProps = IProps & IFileTreeHandlers;
+</script>
+
 <script lang="ts">
     import Root from "./Root.svelte";
 
-    import type { IFileTreeRootNode } from ".";
+    const {
+        roots = [],
 
-    export let roots: IFileTreeRootNode[] = [];
+        onOpen,
+        onMenu,
+        onFold,
+        onUnfold,
+        onDrag,
+        onDragstart,
+        onDragend,
+        onDragenter,
+        onDragover,
+        onDragleave,
+        onDrop,
+    }: TProps = $props();
 </script>
 
 <div class="fn__flex-1 file-tree">
     {#each roots as root (root.path)}
         <Root
+            {onDrag}
+            {onDragend}
+            {onDragenter}
+            {onDragleave}
+            {onDragover}
+            {onDragstart}
+            {onDrop}
+            {onFold}
+            {onMenu}
+            {onOpen}
+            {onUnfold}
             {root}
-            on:open
-            on:menu
-            on:fold
-            on:unfold
-            on:dragstart
-            on:dragend
-            on:dragenter
-            on:dragover
-            on:dragleave
-            on:drop
         />
     {/each}
 </div>

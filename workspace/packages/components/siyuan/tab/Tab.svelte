@@ -15,31 +15,57 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<script
+    lang="ts"
+    module
+>
+    import type { Snippet } from "svelte";
+
+    import type { IProps as IBreadcrumbProps } from "./../breadcrumb/Breadcrumb.svelte";
+
+    export interface IProps {
+        fullscreen?: boolean; // 是否为全屏模式
+        breadcrumb?: boolean; // 是否显示面包屑
+        breadcrumbItems?: IBreadcrumbProps["items"]; // 面包屑元素列表
+        breadcrumbIcons?: IBreadcrumbProps["icons"]; // 面包屑按钮列表
+    }
+
+    export interface ISlots {
+        breadcrumbSlot?: Snippet; // 自定义面包屑
+        content?: Snippet; // 页签内容
+    }
+
+    export type TProps = IProps & ISlots;
+</script>
+
 <script lang="ts">
     import Breadcrumb from "./../breadcrumb/Breadcrumb.svelte";
 
-    import type { ComponentProps } from "svelte";
+    const {
+        fullscreen = false,
 
-    export let fullscreen: boolean = false; // 是否为全屏模式
+        breadcrumb = true,
+        breadcrumbItems = [],
+        breadcrumbIcons = [],
 
-    export let breadcrumb: boolean = true; // 是否显示面包屑
-    export let breadcrumbItems: ComponentProps<Breadcrumb>["items"] = [];
-    export let breadcrumbIcons: ComponentProps<Breadcrumb>["icons"] = [];
+        breadcrumbSlot,
+        content,
+    }: TProps = $props();
 </script>
 
 <div
     class="fn__flex-column"
     class:fullscreen
 >
-    <slot name="breadcrumb">
-        {#if breadcrumb}
-            <Breadcrumb
-                icons={breadcrumbIcons}
-                items={breadcrumbItems}
-            />
-        {/if}
-    </slot>
+    {#if breadcrumbSlot}
+        {@render breadcrumbSlot()}
+    {:else if breadcrumb}
+        <Breadcrumb
+            icons={breadcrumbIcons}
+            items={breadcrumbItems}
+        />
+    {/if}
     <div class="protyle-preview">
-        <slot name="content" />
+        {@render content?.()}
     </div>
 </div>
