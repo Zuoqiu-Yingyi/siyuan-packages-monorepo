@@ -13,7 +13,7 @@ Workspace package groups are declared in `workspace/pnpm-workspace.yaml`:
 
 Generated output normally goes to `dist/**` and is listed as a Turborepo build output.
 
-Plugins with a kernel side (`plugins/wakatime`, and the `plugins/template` scaffold) build in two Vite modes: `vite build --mode plugin` builds `src/index.ts` into `dist/index.js` (CommonJS, SiYuan frontend), then `vite build --mode kernel` builds `src/kernel.ts` into `dist/kernel.js` (ES module, goja runtime of the SiYuan kernel) without emptying `dist/`. Their `public/plugin.json` declares `kernels`.
+Plugins with a kernel side (`plugins/wakatime`, and the `plugins/template` scaffold) build in two Vite modes: `vite build --mode plugin` builds `src/index.ts` into `dist/index.js` (CommonJS, SiYuan frontend), then `vite build --mode kernel` builds `src/kernel.ts` into `dist/kernel.js` without emptying `dist/`. The kernel build uses the Vite `es` format, but the SiYuan kernel evaluates `kernel.js` as a plain goja script, so the bundle must not contain `import` or `export`. SiYuan starts `kernel.js` only when `public/plugin.json` declares `kernels`.
 
 ## Commands
 
