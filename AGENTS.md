@@ -17,7 +17,7 @@
 |---|---|
 | Project | SiYuan community packages monorepo |
 | Workspace | `workspace/` |
-| Package manager | `pnpm@12.3.4` |
+| Package manager | `pnpm@12.6.0` |
 | Build system | Turborepo + Vite |
 | Main package groups | `plugins/*`, `widgets/*`, `packages/*`, `tools/*` |
 | Test command | TODO: no repository-wide test script is defined |
@@ -41,6 +41,7 @@ pnpm -C workspace run build
 pnpm -C workspace run build:dev
 pnpm -C workspace run lint
 pnpm -C workspace run format
+pnpm -C workspace run update:pnpm
 pnpm -C workspace --filter <package-name> run <script>
 ```
 
