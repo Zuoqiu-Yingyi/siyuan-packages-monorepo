@@ -1,0 +1,23 @@
+.gitmodules
+  s_08bc93b2fa287c::t_f70e90e30d5f95 57-59
+workspace/pnpm-lock.yaml
+  s_08bc93b2fa287c::t_f70e90e30d5f95 466-477
+docs/agents/project.md
+  s_08bc93b2fa287c::t_5b0b76329c60a5 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.45-trip",
+  "base_commit_sha": "e6eed117bc94c88418938c55a0832ee8ca66b89a",
+  "prompts": {},
+  "sessions": {
+    "s_08bc93b2fa287c": {
+      "agent_id": {
+        "tool": "chengxiaobang",
+        "id": "s_x2kvs9g65t5k",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Yingyi / 颖逸 <49649786+Zuoqiu-Yingyi@users.noreply.github.com>"
+    }
+  }
+}
