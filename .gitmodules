@@ -54,3 +54,6 @@
 	path = workspace/widgets/panorama-viewer
 	url = https://github.com/Zuoqiu-Yingyi/widget-panorama-viewer.git
 	branch = main
+[submodule "workspace/plugins/im-bot"]
+	path = workspace/plugins/im-bot
+	url = https://github.com/Zuoqiu-Yingyi/im-bot.git

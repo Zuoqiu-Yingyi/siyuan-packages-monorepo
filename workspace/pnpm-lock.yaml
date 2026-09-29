@@ -463,6 +463,18 @@ importers:
         specifier: workspace:^
         version: link:../../packages/utils
 
+  plugins/im-bot:
+    dependencies:
+      '@workspace/components':
+        specifier: workspace:^
+        version: link:../../packages/components
+      '@workspace/types':
+        specifier: workspace:^
+        version: link:../../packages/types
+      '@workspace/utils':
+        specifier: workspace:^
+        version: link:../../packages/utils
+
   plugins/inbox:
     dependencies:
       '@workspace/components':
