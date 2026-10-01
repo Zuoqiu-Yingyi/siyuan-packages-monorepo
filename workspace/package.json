@@ -38,7 +38,7 @@
         "@workspace/eslint-config-custom": "workspace:*",
         "@workspace/tsconfig": "workspace:*",
         "@workspace/types": "workspace:*",
-        "siyuan": "^1.2.8"
+        "siyuan": "^1.2.9"
     },
     "devDependencies": {
         "@arco-design/web-vue": "^2.58.0",
