@@ -1,0 +1,19 @@
+workspace/pnpm-lock.yaml
+  s_dc742167056c5d::t_337324f5025124 477-479,6266-6268,12533
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.45-trip",
+  "base_commit_sha": "ce2b151b26703f43624bc154e62bd1e48386382f",
+  "prompts": {},
+  "sessions": {
+    "s_dc742167056c5d": {
+      "agent_id": {
+        "tool": "chengxiaobang",
+        "id": "s_jhkdvn9hrano",
+        "model": "kr-claude-sonnet-5"
+      },
+      "human_author": "Yingyi / 颖逸 <49649786+Zuoqiu-Yingyi@users.noreply.github.com>"
+    }
+  }
+}
